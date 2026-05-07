@@ -1,0 +1,23 @@
+{
+  "skill_name": "stack-compliance-guard",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Validar código que contiene: import db from './db.js' y fetch('/api/users')",
+      "expected_output": "Detecta los 2 patrones prohibitedos, sugiere corrección automática: exportar a variables globales y usar Dexie",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Revisar módulo de pacientes que guarda nombre, email, telefono sin cifrar",
+      "expected_output": "Detecta campos sensibles sin cryptoHelpers.encrypt(), aplica corrección automática",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Verificar que index.html usa CDNs de Tailwind y Alpine",
+      "expected_output": "Bloquea CDNs, sugiere替换 por assets/css/ y assets/js/libs/",
+      "files": []
+    }
+  ]
+}

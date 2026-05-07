@@ -1,0 +1,17 @@
+{
+  "skill_name": "design-ux-intelligence",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Define el tono visual para una app de gestión de inventario",
+      "expected_output": "Selección de tono (1-5), diferenciador clave, guía de tipografía con Google Fonts descargadas, color palette adaptada al stack offline-first",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Validar accesibilidad en un formulario de contacto con 5 campos",
+      "expected_output": "Checklist UX con: contraste >=4.5:1, labels visibles, aria-labels, focus ring, touch targets >=44px",
+      "files": []
+    }
+  ]
+}
