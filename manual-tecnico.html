@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Técnico: Stack Offline-First • ahaguilera.dev</title>
+  <meta name="description" content="Referencia técnica completa para el uso del sistema de SKILLs offline-first en OpenCode. 100% offline, sin CDNs.">
+  <meta name="author" content="Angel Hernandez - ahaguilera.dev">
+  <meta name="version" content="1.0.0">
+  
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --surface: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --accent: #3b82f6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --border: #475569;
+      --code-bg: #0b1120;
+      --radius: 0.5rem;
+      --shadow: 0 4px 12px rgba(0,0,0,0.3);
+      --transition: 0.2s ease;
+      --header-h: 60px;
+      --nav-h: 48px;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --surface: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --code-bg: #f8fafc;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; color-scheme: dark light; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+    a:hover { text-decoration: underline; }
+    img, svg { vertical-align: middle; }
+    
+    /* HEADER */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem; height: var(--header-h);
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.1rem; }
+    .logo svg { width: 24px; height: 24px; fill: var(--primary); }
+    .header-controls { display: flex; gap: 0.5rem; align-items: center; }
+    .btn-icon {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.4rem; border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: var(--transition);
+    }
+    .btn-icon:hover { background: var(--primary); border-color: var(--primary); }
+    .btn-icon svg { width: 18px; height: 18px; }
+    #search {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.4rem 0.75rem; border-radius: var(--radius); width: 160px; font-size: 0.9rem;
+    }
+    #search:focus { outline: none; border-color: var(--primary); width: 200px; }
+    
+    /* NAV */
+    nav {
+      position: sticky; top: var(--header-h); z-index: 99;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      height: var(--nav-h); overflow-x: auto; scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    .nav-list { display: flex; gap: 0.25rem; padding: 0 1rem; list-style: none; white-space: nowrap; height: 100%; align-items: center; }
+    .nav-link {
+      padding: 0.4rem 0.75rem; color: var(--text-muted); border-radius: var(--radius); font-size: 0.9rem; font-weight: 500;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--primary); color: white; text-decoration: none; }
+    
+    /* MAIN */
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    section { margin-bottom: 3.5rem; scroll-margin-top: calc(var(--header-h) + var(--nav-h) + 1rem); }
+    h1 { font-size: 2.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; display: inline-block; }
+    h2 { font-size: 1.6rem; margin: 2rem 0 1rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+    h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+    p, li { margin-bottom: 0.75rem; color: var(--text-muted); }
+    ul, ol { margin-left: 1.5rem; }
+    
+    /* CARDS & TABLES */
+    .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+    .card h4 { margin: 0 0 0.5rem 0; color: var(--text); }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: var(--bg-secondary); border-radius: var(--radius); overflow: hidden; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: var(--surface); font-weight: 600; color: var(--text); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background: rgba(255,255,255,0.03); }
+    .tag { background: var(--surface); padding: 0.15rem 0.5rem; border-radius: 0.25rem; font-size: 0.8rem; font-family: monospace; color: var(--accent); }
+    .tag.trigger { background: var(--primary); color: white; }
+    
+    /* CODE & UTILS */
+    .code-block { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); margin: 1rem 0; overflow: hidden; }
+    .code-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; background: var(--surface); font-size: 0.8rem; color: var(--text-muted); }
+    .code-content { padding: 1rem; overflow-x: auto; font-family: 'Fira Code', Consolas, monospace; font-size: 0.9rem; line-height: 1.5; color: var(--text); }
+    .copy-btn { background: var(--surface); border: none; color: var(--text); padding: 0.25rem 0.6rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; transition: var(--transition); }
+    .copy-btn:hover { background: var(--primary); }
+    .copy-btn.copied { background: var(--success); }
+    .alert { padding: 1rem; border-radius: var(--radius); margin: 1rem 0; border-left: 4px solid; }
+    .alert-info { background: rgba(59,130,246,0.1); border-color: var(--accent); }
+    .alert-warning { background: rgba(245,158,11,0.1); border-color: var(--warning); }
+    .alert-success { background: rgba(34,197,94,0.1); border-color: var(--success); }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .flow-step { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; }
+    .step-num { background: var(--primary); color: white; width: 2rem; height: 2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+    .step-text h4 { margin: 0 0 0.2rem 0; font-size: 1rem; }
+    .step-text p { margin: 0; font-size: 0.9rem; }
+    footer { text-align: center; padding: 2rem 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      header { flex-wrap: wrap; height: auto; padding: 0.5rem 0.75rem; }
+      .header-controls { order: 3; width: 100%; margin-top: 0.5rem; }
+      #search { width: 100%; }
+      nav { top: auto; position: static; }
+      .nav-list { justify-content: flex-start; }
+      h1 { font-size: 1.7rem; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    
+    /* PRINT */
+    @media print {
+      header, nav, .no-print, .copy-btn, footer { display: none !important; }
+      main { padding: 0; margin: 0; }
+      section { page-break-inside: avoid; }
+      body { background: white; color: black; font-size: 11pt; }
+      .card, table { border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 12l-2.5-1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+      <span>Manual Técnico Offline-First</span>
+    </div>
+    <div class="header-controls no-print">
+      <input type="text" id="search" placeholder="🔍 Buscar en manual...">
+      <button class="btn-icon" id="theme-toggle" aria-label="Cambiar tema">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="no-print">
+    <ul class="nav-list">
+      <li><a href="#intro" class="nav-link">Introducción</a></li>
+      <li><a href="#instalacion" class="nav-link">Instalación</a></li>
+      <li><a href="#skills" class="nav-link">SKILLs</a></li>
+      <li><a href="#flujo" class="nav-link">Flujo</a></li>
+      <li><a href="#comandos" class="nav-link">Comandos</a></li>
+      <li><a href="#troubleshooting" class="nav-link">Solución</a></li>
+      <li><a href="#changelog" class="nav-link">Changelog</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="intro">
+      <h1>📘 Manual Técnico: Stack Offline-First</h1>
+      <p>Sistema completo de desarrollo freelance para aplicaciones web 100% offline. Funciona con doble clic en <code>index.html</code>, sin servidores, sin CDNs, sin procesos de build. Diseñado para integrarse con OpenCode.ai mediante SKILLs globales.</p>
+      
+      <div class="alert alert-info">
+        <strong>⚠️ Reglas No Negociables:</strong> Prohibido <code>import/export</code>, <code>type="module"</code>, <code>fetch</code> y CDNs en runtime. Obligatorio uso de variables globales, rutas relativas y cifrado local con CryptoJS.
+      </div>
+      
+      <h2>🧱 Stack Base</h2>
+      <table>
+        <thead><tr><th>Tecnología</th><th>Propósito</th><th>Integración</th></tr></thead>
+        <tbody>
+          <tr><td>Alpine.js</td><td>Reactividad ligera</td><td>Variable global <code>Alpine</code></td></tr>
+          <tr><td>Dexie.js</td><td>Wrapper IndexedDB</td><td>Variable global <code>Dexie</code></td></tr>
+          <tr><td>CryptoJS</td><td>Cifrado AES local</td><td>Variable global <code>CryptoJS</code></td></tr>
+          <tr><td>Tailwind + DaisyUI</td><td>Estilos y componentes</td><td>CSS locales en <code>assets/</code></td></tr>
+          <tr><td>Bootstrap Icons</td><td>Iconografía</td><td>CSS + fuentes locales</td></tr>
+          <tr><td>Animate.css</td><td>Microinteracciones</td><td>CSS local</td></tr>
+          <tr><td>ApexCharts / jsPDF / SheetJS</td><td>Gráficos y exportación</td><td>Scripts locales</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="instalacion">
+      <h2>📥 Instalación</h2>
+      <p>El sistema utiliza SKILLs globales de OpenCode. No requieren instalación por proyecto.</p>
+      
+      <div class="code-block">
+        <div class="code-header"><span>Terminal (Windows)</span><button class="copy-btn">📋 Copiar</button></div>
+        <div class="code-content"><code>mkdir "%USERPROFILE%\.opencode\skills"
+xcopy /E /I /Y "ruta\clonada\SKILLS-AHAGUILERA\*" "%USERPROFILE%\.opencode\skills\"</code></div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span>Terminal (macOS/Linux)</span><button class="copy-btn">📋 Copiar</button></div>
+        <div class="code-content"><code>mkdir -p ~/.opencode/skills
+cp -r SKILLS-AHAGUILERA/* ~/.opencode/skills/</code></div>
+      </div>
+      <div class="alert alert-success">
+        ✅ Tras copiar, reinicia OpenCode: <code>opencode</code>. Las SKILLs se cargarán automáticamente.
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2>🧩 Catálogo de SKILLs</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h4>🛠️ setup-init</h4>
+          <p>Valida entorno, crea estructura de carpetas, genera <code>descargar-libs.bat</code> y verifica integridad.</p>
+          <span class="tag trigger">Trigger: iniciar setup</span>
+        </div>
+        <div class="card">
+          <h4>🎯 spec-creator</h4>
+          <p>Transforma historias en specs técnicas. Flujo interactivo con asunciones, preguntas 4+1 y barra de progreso.</p>
+          <span class="tag trigger">Trigger: definir spec app</span>
+        </div>
+        <div class="card">
+          <h4>🎨 design-ux-intelligence</h4>
+          <p>Aplica principios de diseño, accesibilidad WCAG AA, patrones táctiles y tono visual sin romper offline.</p>
+          <span class="tag trigger">Auto-activada</span>
+        </div>
+        <div class="card">
+          <h4>🛡️ stack-compliance-guard</h4>
+          <p>Valida automáticamente cada output contra <code>@AGENTS.md</code>. Bloquea imports, CDNs y omisión de cifrado.</p>
+          <span class="tag trigger">Auto-activada</span>
+        </div>
+        <div class="card">
+          <h4>💻 code-generator</h4>
+          <p>Genera código por fases (core → módulos). Pausas explícitas para evitar pérdida de contexto en OpenCode.</p>
+          <span class="tag trigger">Trigger: generar codigo</span>
+        </div>
+        <div class="card">
+          <h4>✅ validation-offline</h4>
+          <p>Análisis estático + guía DevTools + checklist UX. Genera reporte en <code>docs/validacion-[app].md</code>.</p>
+          <span class="tag trigger">Trigger: validar app</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="flujo">
+      <h2>🔄 Pipeline de Desarrollo</h2>
+      <div class="flow-step"><div class="step-num">1</div><div class="step-text"><h4>Orquestación</h4><p>Escribe <code>nuevo proyecto</code>. Rellena nombre, tipo, descripción, tono visual y módulos.</p></div></div>
+      <div class="flow-step"><div class="step-num">2</div><div class="step-text"><h4>Setup</h4><p><code>iniciar setup</code> → Crea carpetas, config y script de descarga. Ejecuta <code>.bat</code> y confirma.</p></div></div>
+      <div class="flow-step"><div class="step-num">3</div><div class="step-text"><h4>Especificación</h4><p><code>definir spec app</code> → Valida asunciones, responde preguntas 4+1, guarda <code>specs/[app].md</code>.</p></div></div>
+      <div class="flow-step"><div class="step-num">4</div><div class="step-text"><h4>Generación</h4><p><code>generar codigo</code> → Core primero (pausa), luego módulos uno a uno. Compliance auto-validado.</p></div></div>
+      <div class="flow-step"><div class="step-num">5</div><div class="step-text"><h4>Validación</h4><p><code>validar app</code> → Pruebas estáticas, comandos DevTools, reporte técnico y checklist de entrega.</p></div></div>
+      <div class="flow-step"><div class="step-num">📦</div><div class="step-text"><h4>Entrega</h4><p>ZIP web / instalador Electron + <code>GUIA_USUARIO.pdf</code> + contrato firmado.</p></div></div>
+    </section>
+
+    <section id="comandos">
+      <h2>⌨️ Referencia Rápida</h2>
+      <table>
+        <thead><tr><th>Acción</th><th>Trigger / Comando</th><th>Output Esperado</th></tr></thead>
+        <tbody>
+          <tr><td>Iniciar pipeline</td><td><code>nuevo proyecto</code></td><td>Formulario de 5 campos + orquestación</td></tr>
+          <tr><td>Preparar entorno</td><td><code>iniciar setup</code></td><td>Estructura + <code>descargar-libs.bat</code></td></tr>
+          <tr><td>Definir requisitos</td><td><code>definir spec app</code></td><td><code>specs/[app].md</code> validada</td></tr>
+          <tr><td>Generar código</td><td><code>generar codigo</code></td><td>Core + módulos por fases</td></tr>
+          <tr><td>Validar app</td><td><code>validar app</code></td><td><code>docs/validacion-[app].md</code></td></tr>
+          <tr><td>Forzar revalidación</td><td><code>/context clear</code> + trigger</td><td>Limpia contexto y reinicia SKILL</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>🛠️ Solución de Problemas</h2>
+      <table>
+        <thead><tr><th>Síntoma</th><th>Causa Probable</th><th>Solución</th></tr></thead>
+        <tbody>
+          <tr><td>Error CORS al abrir <code>index.html</code></td><td>Presencia de <code>import</code> o <code>type="module"</code></td><td>Elimina imports. Usa variables globales y orden correcto de scripts.</td></tr>
+          <tr><td><code>Dexie is not defined</code></td><td>Script de Dexie no cargó o orden incorrecto</td><td>Verifica que <code>dexie.js</code> esté antes de <code>core/db.js</code> en <code>index.html</code>.</td></tr>
+          <tr><td>OpenCode pierde contexto</td><td>Generación >15k tokens sin pausa</td><td>Respeta pausas entre fases. Usa <code>/context clear</code> si se satura.</td></tr>
+          <tr><td>SKILL no se activa</td><td>Trigger mal escrito o ruta incorrecta</td><td>Verifica que esté en <code>~/.opencode/skills/</code> y el trigger coincida exactamente.</td></tr>
+          <tr><td>Datos no persisten</td><td>Navegador en modo privado o IndexedDB bloqueada</td><td>Usa ventana normal. Verifica almacenamiento en DevTools > Application.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="changelog">
+      <h2>📜 Historial de Cambios</h2>
+      <div class="card">
+        <h4>v1.0.0 • 2026</h4>
+        <p>Lanzamiento inicial del sistema. 7 SKILLs + orquestador <code>prompt-inicial</code>. Validación automática de compliance, flujo por fases, documentación técnica completa.</p>
+      </div>
+      <div class="card">
+        <h4>v1.1.0 • Actual</h4>
+        <p>Metadata corregida, triggers estandarizados, eliminación de referencias rotas, integración completa con capa UX y compliance guard.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>🛠️ Stack Offline-First v1.1.0 • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
+  </footer>
+
+  <script>
+    // Theme Toggle
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    
+    toggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+
+    // Search Filter
+    const search = document.getElementById('search');
+    const sections = document.querySelectorAll('section');
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      sections.forEach(sec => {
+        const text = sec.innerText.toLowerCase();
+        sec.classList.toggle('hidden', q && !text.includes(q));
+      });
+    });
+
+    // Active Nav Highlight
+    const navLinks = document.querySelectorAll('.nav-link');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.remove('active'));
+          const target = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+          if (target) target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' });
+    sections.forEach(sec => observer.observe(sec));
+
+    // Copy Buttons
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('.code-block').querySelector('.code-content').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          btn.textContent = '✅ Copiado';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

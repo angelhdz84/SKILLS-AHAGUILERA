@@ -1,0 +1,207 @@
+# 📜 PLANTILLA DE CONTRATO FREELANCE (1 Página)
+*Versión adaptada para desarrollo offline-first. Lista para copiar, personalizar y firmar digitalmente.*
+
+---
+
+```markdown
+# CONTRATO DE PRESTACIÓN DE SERVICIOS DE DESARROLLO WEB
+**Desarrollo Offline-First • Entrega Profesional • Protección Mutua**
+
+---
+
+## 1️⃣ PARTES CONTRATANTES
+**DESARROLLADOR**: [Tu Nombre Completo], con domicilio en [Tu Ciudad, País], email: [tu-email@dominio.com], en adelante "EL DESARROLLADOR".
+
+**CLIENTE**: [Nombre/Razón Social del Cliente], con domicilio en [Ciudad, País], email: [email-cliente@dominio.com], en adelante "EL CLIENTE".
+
+Fecha de firma: [DD/MM/AAAA] | Proyecto: "[Nombre del Proyecto]"
+
+---
+
+## 2️⃣ OBJETO DEL CONTRATO
+EL DESARROLLADOR se compromete a desarrollar una aplicación web **100% offline-first** según especificaciones acordadas, que funcione abriendo `index.html` con doble clic, sin requerir servidor, internet ni instalación compleja.
+
+**Entregables incluidos**:
+- ✅ Código fuente funcional (HTML5, CSS3, JS ES6+, Alpine.js, Dexie.js, CryptoJS)
+- ✅ Librerías locales en `assets/` (sin dependencias externas en runtime)
+- ✅ Documentación: `GUIA_USUARIO.pdf` + `README.md` técnico
+- ✅ Reporte de validación técnica (`validacion-[app].md`)
+- ✅ Soporte post-entrega por [X] días (ver cláusula 7)
+
+**No incluye** (a menos que se pacte por escrito):
+- ❌ Hosting, dominio, certificados SSL o configuración de servidor
+- ❌ Integración con APIs externas, sincronización en la nube o backend
+- ❌ Diseño gráfico personalizado más allá de lo acordado en spec
+- ❌ Mantenimiento posterior al período de soporte incluido
+
+---
+
+## 3️⃣ ALCANCE Y ESPECIFICACIONES
+El detalle funcional, módulos, UI/UX y reglas técnicas se definen en el documento `specs/[nombre-app].md`, generado y aprobado por ambas partes antes del inicio del desarrollo. Cualquier cambio posterior al inicio requerirá:
+1. Solicitud por escrito del CLIENTE
+2. Re-evaluación de alcance y costo por EL DESARROLLADOR
+3. Aprobación y firma de adenda antes de implementar
+
+**Reglas técnicas obligatorias del stack**:
+- Funcionamiento 100% offline con protocolo `file://`
+- Sin imports ES6, sin type="module", sin fetch/CDN en runtime
+- Cifrado de campos sensibles con CryptoJS (clave local en localStorage)
+- UI con DaisyUI + Bootstrap Icons + Animate.css
+- Español como idioma de interfaz y documentación
+
+---
+
+## 4️⃣ CRONOGRAMA Y ENTREGAS
+| Hito | Descripción | Plazo estimado | Pago asociado |
+|------|-------------|----------------|---------------|
+| H1 | Aprobación de spec + 30% anticipo | Día 1 | 30% del total |
+| H2 | Entrega de versión beta para pruebas | Día [X] | - |
+| H3 | Ajustes post-feedback (máx [N] rondas) | Día [X+Y] | - |
+| H4 | Entrega final + documentación + 70% restante | Día [Z] | 70% del total |
+
+*Plazos estimados en días hábiles. Retrasos por feedback tardío del CLIENTE extienden la fecha de entrega proporcionalmente.*
+
+---
+
+## 5️⃣ CONDICIONES ECONÓMICAS
+- **Monto total**: [Cantidad] [Moneda] ([Equivalente en USD si aplica])
+- **Forma de pago**: [Transferencia / PayPal / Wise / Efectivo]
+- **Anticipo no reembolsable**: 30% para iniciar proyecto
+- **Pago final**: 70% contra entrega de archivos funcionales y documentación
+- **Intereses por mora**: [X]% mensual sobre saldos vencidos > [N] días
+- **Facturación**: EL DESARROLLADOR emitirá comprobante/factura según legislación de su país de residencia
+
+---
+
+## 6️⃣ PROPIEDAD INTELECTUAL Y CONFIDENCIALIDAD
+✅ **Propiedad del código**:
+- Tras pago total, EL CLIENTE recibe licencia perpetua, no exclusiva, para usar, modificar y distribuir la aplicación para sus fines internos.
+- EL DESARROLLADOR conserva derechos sobre: (a) su stack base reutilizable (`core/`, `skills/`, patrones genéricos), (b) mejoras al framework offline-first aplicables a otros proyectos.
+
+✅ **Confidencialidad**:
+- Ambas partes se comprometen a no divulgar información sensible del proyecto (datos de negocio, lógica propietaria, credenciales) a terceros sin consentimiento escrito.
+- Los datos de usuarios finales se almacenan LOCALMENTE en el dispositivo del CLIENTE. EL DESARROLLADOR no tiene acceso, copia ni responsabilidad sobre dichos datos tras la entrega.
+
+✅ **Uso de marca**:
+- EL DESARROLLADOR podrá incluir el proyecto en su portafolio profesional (ahaguilera.dev) salvo objeción expresa por escrito del CLIENTE antes de la firma.
+
+---
+
+## 7️⃣ SOPORTE, GARANTÍA Y LIMITACIÓN DE RESPONSABILIDAD
+🛡️ **Soporte incluido** ([X] días post-entrega):
+- Corrección de bugs no reportados durante pruebas beta
+- Aclaración de uso de funcionalidades documentadas
+- Hasta [N] horas de ajustes menores (ej: cambio de colores, textos, iconos)
+
+❌ **No cubierto en soporte gratuito**:
+- Nuevas funcionalidades, módulos o cambios de alcance
+- Problemas derivados de: (a) modificación del código por terceros, (b) uso en entornos no especificados, (c) pérdida de datos por no realizar backup (ver cláusula 8)
+
+⚠️ **Limitación de responsabilidad CRÍTICA para apps offline**:
+> EL CLIENTE reconoce y acepta que:
+> 1. Todos los datos se almacenan LOCALMENTE en su dispositivo/navegador.
+> 2. La clave de cifrado se genera y guarda en `localStorage` del navegador.
+> 3. Si el CLIENTE formatea el equipo, cambia de navegador, borra datos de navegación o pierde el dispositivo, **los datos cifrados NO podrán recuperarse** sin el backup exportado manualmente.
+> 4. Es responsabilidad exclusiva del CLIENTE realizar backups periódicos usando la función "Exportar Backup" incluida en la app.
+> 5. EL DESARROLLADOR no será responsable por pérdida de datos derivada del incumplimiento de esta cláusula.
+
+---
+
+## 8️⃣ TERMINACIÓN Y RESOLUCIÓN DE CONFLICTOS
+- **Por incumplimiento**: Cualquiera de las partes puede terminar el contrato con notificación escrita si la otra incumple obligaciones sustanciales y no subsana en [N] días.
+- **Reembolsos**: Si EL CLIENTE termina sin causa justificada, el anticipo no es reembolsable. Si EL DESARROLLADOR no entrega sin causa justificada, devolverá el 100% de lo recibido.
+- **Mediación**: En caso de disputa, las partes intentarán resolución amistosa. De no lograrse en [N] días, se someterán a mediación en [Ciudad, País] antes de cualquier acción legal.
+- **Ley aplicable**: Este contrato se rige por las leyes de [País del Desarrollador o acordado]. Para clientes internacionales, se acepta jurisdicción neutral (ej: España) si ambas partes consienten.
+
+---
+
+## 9️⃣ ACEPTACIÓN Y FIRMAS
+Al firmar, ambas partes declaran haber leído, comprendido y aceptado íntegramente este contrato.
+
+| EL DESARROLLADOR | EL CLIENTE |
+|-----------------|------------|
+| **Nombre**: [Tu Nombre] | **Nombre**: [Nombre Cliente] |
+| **Firma digital**: ___________________ | **Firma digital**: ___________________ |
+| **Fecha**: [DD/MM/AAAA] | **Fecha**: [DD/MM/AAAA] |
+| **Email**: [tu-email@dominio.com] | **Email**: [email-cliente@dominio.com] |
+
+*Este documento tiene validez como contrato electrónico según legislación aplicable. Se recomienda firmar con herramienta de firma digital (DocuSign, Adobe Sign, o PDF con certificado).*
+
+---
+📎 **Anexos obligatorios** (forman parte integral del contrato):
+1. `specs/[nombre-app].md` – Especificación técnica aprobada
+2. `docs/GUIA_USUARIO.pdf` – Manual de usuario final
+3. Cotización detallada con desglose de módulos (si aplica)
+```
+
+---
+
+## 🛠️ GUÍA RÁPIDA DE USO PARA TI (FREELANCE)
+
+### ✅ Antes de enviar al cliente:
+1. **Reemplaza todos los `[Corchetes]`** con datos reales.
+2. **Define claramente**: 
+   - `[X] días` de soporte (recomendado: 7-15 días para apps pequeñas)
+   - `[N] rondas` de ajustes (recomendado: 2-3 para evitar scope creep)
+   - `[N] horas` de ajustes menores (recomendado: 2-4 horas)
+3. **Adjunta siempre**: `specs/[app].md` + cotización detallada como anexos.
+4. **Usa firma digital**: 
+   - Opción gratis: PDF con Adobe Acrobat + imagen de firma + fecha
+   - Opción pro: DocuSign, HelloSign, o firma electrónica certificada de tu país
+
+### 💡 Consejos para proteger tu trabajo:
+| Situación | Cómo este contrato te protege |
+|-----------|-------------------------------|
+| Cliente pide "un cambio chiquito" tras entrega | Cláusula 3: cambios requieren adenda firmada + re-cotización |
+| "Se me borraron los datos, recupéralos" | Cláusula 7.5: responsabilidad de backup es del cliente |
+| Cliente no paga el 70% final | Cláusula 5: pago final contra entrega; Cláusula 8: retención de código hasta pago |
+| Cliente quiere revender tu código a terceros | Cláusula 6: licencia no exclusiva para uso interno del cliente |
+| Disputa por "no era esto lo que pedí" | Cláusula 3: spec aprobada por escrito es el único referente válido |
+
+### 🌍 Para clientes internacionales:
+- **Moneda**: Cotiza en USD para evitar fluctuaciones locales.
+- **Pago**: Usa Wise, PayPal o cripto para recibir desde países con restricciones.
+- **Jurisdicción**: Si el cliente es de España/México/Colombia, puedes acordar mediación en su país para generar confianza.
+- **Idioma**: Esta plantilla está en español. Para clientes que requieran inglés, puedo generarte una versión bilingüe.
+
+---
+
+## 🔄 VARIANTES RÁPIDAS
+
+### 📄 Versión Express (para proyectos < $300 USD o clientes recurrentes)
+*Usa solo las cláusulas 1, 2, 4, 5, 7 y 9. Reduce a ½ página.*
+
+### 📄 Versión Agencia (si subcontratas o trabajas en equipo)
+*Añade cláusula de "Subcontratación autorizada" y "Responsabilidad solidaria del desarrollador principal".*
+
+### 📄 Versión con Mantenimiento Mensual
+*Añade anexo con plan de soporte continuo: "$X/mes por hasta Y horas de ajustes + prioridad en bugs".*
+
+---
+
+## ✅ CHECKLIST PRE-FIRMA
+- [ ] Todos los `[placeholders]` reemplazados con datos reales
+- [ ] Especificación `specs/[app].md` aprobada y adjunta como anexo
+- [ ] Cliente entiende y acepta la cláusula de backup/loss de datos (¡crítica!)
+- [ ] Método de pago y moneda acordados por escrito
+- [ ] Firmas digitales válidas (no solo imagen pegada en Word)
+- [ ] Copia del contrato firmado guardada en `docs/contratos/[cliente]_[fecha].pdf`
+
+---
+
+## 🎁 BONUS: Mensaje para enviar el contrato
+```text
+Hola [Nombre], adjunto el contrato de servicios para [NombreApp]. 
+Es un documento de 1 página diseñado para ser claro y proteger a ambas partes. 
+Por favor revísalo, firma digitalmente y devuélvemelo para iniciar el proyecto. 
+Cualquier duda, estoy a un mensaje de distancia. ¡Emocionado por comenzar! 🚀
+```
+
+---
+
+Con esta plantilla, cierras el ciclo **completo y profesional**:
+```
+prompt-inicial → setup → spec → code → validate → deliver → contract → ✅ Cliente feliz + Tú protegido
+```
+
+¿Necesitas que adapte alguna cláusula específica para tu país (Cuba) o para un tipo de cliente particular (clínicas, retail, educación), o prefieres probar esta versión base primero? 📜✨
