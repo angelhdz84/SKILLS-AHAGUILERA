@@ -3,10 +3,14 @@ name: setup-init
 description: Preparar un proyecto offline-first desde cero: valida entorno, crea estructura exacta, descarga todas las librerías localmente (Tailwind, DaisyUI, Alpine, Dexie, CryptoJS, pako, ApexCharts, jsPDF, SheetJS, Bootstrap Icons, Animate.css).
 license: MIT
 compatibility: Requiere curl (Windows/macOS/Linux) y permisos de escritura. Node.js opcional para Electron.
-metadata:
-  author: OpenCode User
+meta
+  author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
   generatedBy: "setup-init skill"
+  triggers: ["iniciar setup", "crear estructura", "descargar libs", "verificar entorno", "setup"]
+  stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
+  language: es
+  outputPath: "assets/"
 ---
 
 # 🛠️ SKILL: setup-init (Entorno, Estructura y Librerías)
@@ -21,7 +25,7 @@ metadata:
 
 ### 🟢 FASE 1: Validación de Entorno
 1. Verifica mentalmente prerequisitos:
-   - `curl` disponible (Win10+/macOS/Linux)
+   - `curl` disponible (Win10+ / macOS / Linux)
    - `node` & `npm` (solo si se usará Electron después)
    - Permisos de escritura en carpeta actual
 2. Si falta algo, muestra comandos de instalación exactos por SO.
@@ -124,9 +128,6 @@ set "CURL=curl -f -L --retry 3 --retry-delay 2 -# -o"
 %CURL% "assets/css/bootstrap-icons.css" "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
 %CURL% "assets/css/animate.min.css" "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
 %CURL% "assets/fonts/bootstrap-icons.woff2" "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2"
-%CURL% "assets/fonts/inter-400.woff2" "https://fonts.gstatic.com/s/inter/v13.woff2"
-%CURL% "assets/fonts/inter-500.woff2" "https://fonts.gstatic.com/s/inter/v13.woff2"
-%CURL% "assets/fonts/inter-700.woff2" "https://fonts.gstatic.com/s/inter/v13.woff2"
 %CURL% "assets/js/libs/alpine.js" "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
 %CURL% "assets/js/libs/dexie.js" "https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"
 %CURL% "assets/js/libs/crypto-js.js" "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
@@ -137,13 +138,27 @@ set "CURL=curl -f -L --retry 3 --retry-delay 2 -# -o"
 
 echo ✅ Descarga finalizada. Presiona una tecla para salir.
 pause >nul
+```
 
-Validar que index.html generado cumple:
-Orden de scripts: CSS → Libs → Core → Modules → Main
-Sin type="module", sin CDNs
-x-cloak presente para evitar FOUC
+---
 
-📝 NOTA: Las fuentes de Google se descargan via curl (inter incluido por defecto).
-Para otras fuentes: descargar desde fonts.google.com → guardar en assets/fonts/
-Usar @font-face en CSS para fuentes locales, nunca <link> de Google en producción.
+## 🔗 INTEGRACIÓN CON OTRAS SKILLs
+| SKILL | Relación | Trigger de Handoff |
+|-------|----------|-------------------|
+| `spec-creator` | Consume estructura lista para definir módulos | `✅ Setup completado → definir spec app` |
+| `code-generator` | Genera `core/` y `modules/` desde spec validada | `📄 Spec validada → generar código base` |
+| `validation-offline` | Valida el resultado final antes de entrega | `🚀 App lista → validar app` |
+
+---
+
+## 📝 NOTAS PARA LA IA
+- Esta skill **NO escribe archivos por sí sola**. Genera comandos y scripts para que el usuario los ejecute en su terminal.
+- Siempre verifica rutas relativas y orden de carga antes de validar.
+- Si el usuario reporta error en descarga, sugiere: `1) Desactivar AV temporalmente 2) Ejecutar como Admin 3) Usar PowerShell como fallback`.
+- Mantén el tono profesional, técnico pero accesible. Zero fluff.
+
+✨ **SKILL ready. Trigger: `iniciar setup` para comenzar.**
+```
+
+---
 

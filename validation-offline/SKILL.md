@@ -3,7 +3,7 @@ name: validation-offline
 description: Valida que la app offline-first cumple estrictamente con @AGENTS.md, specs y reglas del stack. Verificación estática + guía de pruebas en DevTools + reporte técnico en docs/validacion-[app].md.
 license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
-metadata:
+meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.1"
   generatedBy: "validation-offline skill"
@@ -34,50 +34,60 @@ metadata:
 
 ### 🟡 FASE 2: Análisis Estático del Código
 Ejecuta estas comprobaciones sobre los archivos generados:
-
+```
 [▓▓░░░░░░░░░░░░░░] 25% • Análisis Estático
 🔍 Verificando reglas críticas...
-❌ import / export / type="module" → PROHIBIDO
-❌ <link href="http / <script src="http → PROHIBIDO (solo assets/)
-❌ fetch( / axios. / XMLHttpRequest → PROHIBIDO
-✅ Variables globales usadas: Dexie, CryptoJS, Alpine, UI, db, cryptoHelpers
-✅ Orden de carga en index.html: CSS → Libs → Core → Modules → Main
-✅ project.config.js tiene modulosActivos, tema.colores, app.nombre
-✅ Módulos registrados en window.MODULES con id, init, render, destroy
-✅ Campos sensibles cifrados antes de db.put() y descifrados en UI
-
+- [ ] ❌ `import` / `export` / `type="module"` → PROHIBIDO
+- [ ] ❌ `<link href="http` / `<script src="http` → PROHIBIDO (solo `assets/`)
+- [ ] ❌ `fetch(` / `axios.` / `XMLHttpRequest` → PROHIBIDO
+- [ ] ✅ Variables globales usadas: `Dexie`, `CryptoJS`, `Alpine`, `UI`, `db`, `cryptoHelpers`
+- [ ] ✅ Orden de carga en `index.html`: CSS → Libs → Core → Modules → Main
+- [ ] ✅ `project.config.js` tiene `modulosActivos`, `tema.colores`, `app.nombre`
+- [ ] ✅ Módulos registrados en `window.MODULES` con `id`, `init`, `render`, `destroy`
+- [ ] ✅ Campos sensibles cifrados antes de `db.put()` y descifrados en UI
+```
 - Si falla: marca `❌ FAIL` + línea exacta + snippet de corrección.
 - Si pasa: marca `✅ PASS`.
 
 ### 🔵 FASE 3: Guía de Validación Dinámica (DevTools)
 Como OpenCode no ejecuta navegadores, **entrega estos comandos listos para pegar en `F12 > Console`**. Pide al usuario que los ejecute uno a uno y responda `✅` o `❌ [mensaje]`.
 
+```
 [▓▓▓▓▓░░░░░░░░░░░] 50% • Validación Dinámica
 🖥️ Abre index.html con doble clic → F12 → Console. Ejuta:
-1️⃣ Librerías cargadas:
-[typeof Dexie, typeof CryptoJS, typeof Alpine, typeof XLSX].join(" | ")
-→ Esperado: "function | object | object | object"
-2️⃣ IndexedDB & Cifrado:
-db.open().then(() => cryptoHelpers.encrypt("test")).then(c => console.log("DB + Crypto:", c.startsWith("U2FsdGVkX1") ? "✅ OK" : "❌ FAIL"))
-3️⃣ Theme Toggle:
-$store.theme.toggle(); console.log(document.documentElement.classList.contains("dark") ? "✅ Modo Oscuro" : "✅ Modo Claro")
-4️⃣ Router Hash:
-location.hash = "#/dashboard"; setTimeout(() => console.log(document.getElementById("app-content")?.innerHTML.includes("animate__") ? "✅ Render OK" : "❌ Render FAIL"), 300)
-5️⃣ Exportación (si aplica):
-UI.toast("Test", "info"); console.log("✅ UI System OK")
-📝 Responde con: "1✅ 2✅ 3✅ 4❌ error... 5✅"
 
+1️⃣  Librerías cargadas:
+`[typeof Dexie, typeof CryptoJS, typeof Alpine, typeof XLSX].join(" | ")`
+→ Esperado: "function | object | object | object"
+
+2️⃣  IndexedDB & Cifrado:
+`db.open().then(() => cryptoHelpers.encrypt("test")).then(c => console.log("DB + Crypto:", c.startsWith("U2FsdGVkX1") ? "✅ OK" : "❌ FAIL"))`
+
+3️⃣  Theme Toggle:
+`$store.theme.toggle(); console.log(document.documentElement.classList.contains("dark") ? "✅ Modo Oscuro" : "✅ Modo Claro")`
+
+4️⃣  Router Hash:
+`location.hash = "#/dashboard"; setTimeout(() => console.log(document.getElementById("app-content")?.innerHTML.includes("animate__") ? "✅ Render OK" : "❌ Render FAIL"), 300)`
+
+5️⃣  Exportación (si aplica):
+`UI.toast("Test", "info"); console.log("✅ UI System OK")`
+
+📝 Responde con: "1✅ 2✅ 3✅ 4❌ error... 5✅"
+```
 
 ### 🟠 FASE 3.5: Validación de Diseño/UX (Automática con design-ux-intelligence)
+```
 [▓▓▓▓▓▓▓░░░░░░░░░] 70% • Validación de Diseño/UX
 🎨 Verificando checklist UX crítico...
+
 ✅ Contraste WCAG AA: [PASS/FAIL] → [comentario si FAIL]
 ✅ Touch targets ≥44px: [PASS/FAIL] → [elementos afectados si FAIL]
 ✅ Focus rings visibles: [PASS/FAIL]
 ✅ Empty states con CTA: [PASS/FAIL]
 ✅ Animaciones con propósito: [PASS/FAIL] → [lista si decorativas]
-📝 Si hay FAILs: Responde "corregir UX [números]" para parchear automáticamente.
 
+📝 Si hay FAILs: Responde "corregir UX [números]" para parchear automáticamente.
+```
 
 ### 🟣 FASE 4: Reporte Final & Handoff
 1. Compila resultados en tabla markdown.
@@ -87,12 +97,12 @@ UI.toast("Test", "info"); console.log("✅ UI System OK")
    - Snippets de corrección para cada FAIL
    - Checklist de pre-entrega firmado
 3. Muestra mensaje final:
-
-✅ Validación completada.
-📄 Reporte guardado en: docs/validacion-[app].md
-🚀 Si todos los checks son ✅: Listo para empaquetar y entregar.
-🛠️ Si hay ❌: Responde con "corregir [número]" y regeneraré solo lo afectado.
-
+   ```
+   ✅ Validación completada.
+   📄 Reporte guardado en: docs/validacion-[app].md
+   🚀 Si todos los checks son ✅: Listo para empaquetar y entregar.
+   🛠️ Si hay ❌: Responde con "corregir [número]" y regeneraré solo lo afectado.
+   ```
 
 ---
 
@@ -107,11 +117,12 @@ Si detecta violación, **no continúa** hasta corregirla o pedir confirmación.
 ---
 
 ## 💬 FORMATO DE SALIDA (Terminal-Friendly)
+```
 [▓▓▓▓▓▓▓░░░░░░░░░] 65% • Fase 3/4: Validación Dinámica
 🖥️ Comando 3/5:
 $store.theme.toggle(); console.log(...)
-→ Tu resultado:
-
+→ Tu resultado: 
+```
 - Usa `▓▓░░` para progreso
 - Bloques con `js` o `txt`
 - Mensajes cortos, técnicos, sin fluff
@@ -146,36 +157,33 @@ $store.theme.toggle(); console.log(...)
 const paciente = { email: inputEmail.value };
 // DESPUÉS:
 const paciente = { email: cryptoHelpers.encrypt(inputEmail.value) };
+```
 
-/* En assets/css/custom.css o inline */
-/* ANTES: */
-.text-gray-500 { color: #6b7280; }
-/* DESPUÉS (mejor contraste en modo oscuro): */
-.dark .text-gray-500 { color: #9ca3af; }
+## ✅ Checklist de Entrega
+- [ ] Funciona con doble clic en `index.html`
+- [ ] 0 errores en consola DevTools
+- [ ] Datos cifrados visibles en IndexedDB
+- [ ] Tema oscuro/claro persistente
+- [ ] Exportación PDF/Excel operativa
+- [ ] `GUIA_USUARIO.md` incluido
+- [ ] ZIP o `.exe` generado
 
-✅ Checklist de Entrega
-Funciona con doble clic en index.html
-0 errores en consola DevTools
-Datos cifrados visibles en IndexedDB
-Tema oscuro/claro persistente
-Exportación PDF/Excel operativa
-GUIA_USUARIO.md incluido
-ZIP o .exe generado
-📝 Notas para el Cliente
-Todos los datos se guardan localmente en su dispositivo.
-Para preservar su información, use la función de Backup semanal en Configuración.
-Si formatea su equipo o borra los datos del navegador, perderá acceso a los datos cifrados.
-
+## 📝 Notas para el Cliente
+> Todos los datos se guardan localmente en su dispositivo. 
+> Para preservar su información, use la función de Backup semanal en Configuración.
+> Si formatea su equipo o borra los datos del navegador, perderá acceso a los datos cifrados.
+```
 
 ---
 
-## 🔗 INTEGRACIÓN CON OTRAS SKILLS
+## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 
 ### Con `stack-compliance-guard.md`:
 - Ejecutar automáticamente como Fase 0:
-[▓░░░░░░░░░░░░░░░░░] 5% • Stack Compliance
-🛡️ Validando contra @AGENTS.md... → 12/12 checks passed
-
+  ```
+  [▓░░░░░░░░░░░░░░░░░] 5% • Stack Compliance
+  🛡️ Validando contra @AGENTS.md... → 12/12 checks passed
+  ```
 
 ### Con `design-ux-intelligence.md`:
 - Activar automáticamente en Fase 3.5 para checklist de diseño/UX
@@ -195,3 +203,6 @@ Si formatea su equipo o borra los datos del navegador, perderá acceso a los dat
 - **Idioma**: Todos los mensajes al usuario en español técnico pero claro.
 
 ✨ **SKILL ready. Trigger: `validar app` para iniciar.**
+```
+
+---

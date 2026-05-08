@@ -3,7 +3,7 @@ name: code-generator
 description: Genera código estructurado y funcional siguiendo estrictamente specs/[app].md y @AGENTS.md. Flujo por fases, validación automática de compliance, y output listo para file:// sin imports ES6.
 license: MIT
 compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports.
-metadata:
+meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
   generatedBy: "code-generator skill"
@@ -31,12 +31,14 @@ metadata:
    - Reglas de UI/UX y animaciones
    - Configuración de `project.config.js`
 2. Genera un **plan de ejecución breve**:
-📋 PLAN DE GENERACIÓN
-• Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html
-• Módulos: [lista de módulos desde spec]
-• Validación: stack-compliance-guard auto-aplicado
-• Entregable: Código por bloques con ruta exacta
-✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
+   ```
+   📋 PLAN DE GENERACIÓN
+   • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html
+   • Módulos: [lista de módulos desde spec]
+   • Validación: stack-compliance-guard auto-aplicado
+   • Entregable: Código por bloques con ruta exacta
+   ✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
+   ```
 3. **ESPERA confirmación** antes de continuar.
 
 ### 🟡 FASE 2: Core, Shell y Configuración
@@ -68,43 +70,55 @@ Genera los archivos base **en un solo bloque bien estructurado** con rutas exact
 [Config white-label completa según spec]
 
 ⏸️ PAUSA. Revisa estructura. Responde "✅ FASE 2 OK" para continuar.
+```
+4. **NO GENERA MÓDULOS AÚN**. Espera confirmación.
 
-NO GENERA MÓDULOS AÚN. Espera confirmación.
-🔵 FASE 3: Generación de Módulos (Iterativa)
+### 🔵 FASE 3: Generación de Módulos (Iterativa)
 Para cada módulo en la spec:
-Genera SOLO UN MÓDULO por turno.
-📦 MÓDULO: [nombre-id]
-### `modules/[nombre-id]/module.js`
-[Lógica CRUD, cifrado automático en campos sensibles, registro en window.MODULES, validación UI, feedback con UI.toast()]
+1. Genera **SOLO UN MÓDULO** por turno.
+2. Formato exacto:
+   ```markdown
+   📦 MÓDULO: [nombre-id]
+   ### `modules/[nombre-id]/module.js`
+   [Lógica CRUD, cifrado automático en campos sensibles, registro en window.MODULES, validación UI, feedback con UI.toast()]
 
-### `modules/[nombre-id]/module.html`
-[HTML puro + Alpine x-data/x-init, DaisyUI componentes, Bootstrap Icons en botones, Animate.css en entradas, responsive mobile-first]
+   ### `modules/[nombre-id]/module.html`
+   [HTML puro + Alpine x-data/x-init, DaisyUI componentes, Bootstrap Icons en botones, Animate.css en entradas, responsive mobile-first]
 
-🛡️ Stack Compliance: ✅ Validado automáticamente (sin imports, rutas relativas, cifrado aplicado, UI consistente)
-⏸️ PAUSA. Responde "✅ [nombre-id] OK" para el siguiente módulo.
+   🛡️ Stack Compliance: ✅ Validado automáticamente (sin imports, rutas relativas, cifrado aplicado, UI consistente)
+   ⏸️ PAUSA. Responde "✅ [nombre-id] OK" para el siguiente módulo.
+   ```
+3. Repite hasta completar todos los módulos de la spec.
 
-Repite hasta completar todos los módulos de la spec.
+### 🟣 FASE 4: Ensamblaje Final y Handoff
+1. Confirma que todos los módulos están generados.
+2. Entrega snippet final de `project.config.js` con `modulosActivos` actualizado.
+3. Mensaje de cierre:
+   ```
+   ✅ GENERACIÓN COMPLETADA
+   📂 Estructura: lista
+   🛡️ Compliance: 100% validado
+   📄 Especificación: specs/[app].md
+   🚀 Siguiente paso: validar app (ejecuta: validar app)
+   ```
 
-🟣 FASE 4: Ensamblaje Final y Handoff
-Confirma que todos los módulos están generados.
-Entrega snippet final de project.config.js con modulosActivos actualizado.
-Mensaje de cierre:
-✅ GENERACIÓN COMPLETADA
-📂 Estructura: lista
-🛡️ Compliance: 100% validado
-📄 Especificación: specs/[app].md
-🚀 Siguiente paso: validar app (ejecuta: validar app)
+---
 
-🛡️ AUTO-COMPLIANCE (EJECUTAR SIEMPRE ANTES DE MOSTRAR CÓDIGO)
-Internamente, ejecuta stack-compliance-guard sobre cada bloque:
-¿import/export/type="module"? → ELIMINAR + usar variables globales
-¿fetch/CDN/URLs absolutas? → REEMPLAZAR por Dexie/assets/
-¿Campo sensible sin cryptoHelpers.encrypt()? → AÑADIR CIFRADO
-¿UI sin DaisyUI/Bootstrap Icons/Animate.css? → APLICAR COMPONENTES
-¿Módulo no sigue contrato (id, init, render, destroy)? → REESCRIBIR
-Si falla: corrige silenciosamente y añade 🛡️ Ajustado a reglas offline-first. al output.
-📐 PATRONES DE CÓDIGO OBLIGATORIOS
-module.js (Estructura Base)
+## 🛡️ AUTO-COMPLIANCE (EJECUTAR SIEMPRE ANTES DE MOSTRAR CÓDIGO)
+Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
+- [ ] ¿`import`/`export`/`type="module"`? → ELIMINAR + usar variables globales
+- [ ] ¿`fetch`/CDN/URLs absolutas? → REEMPLAZAR por Dexie/`assets/`
+- [ ] ¿Campo sensible sin `cryptoHelpers.encrypt()`? → AÑADIR CIFRADO
+- [ ] ¿UI sin DaisyUI/Bootstrap Icons/Animate.css? → APLICAR COMPONENTES
+- [ ] ¿Módulo no sigue contrato (`id`, `init`, `render`, `destroy`)? → REESCRIBIR
+Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-first.` al output.
+
+---
+
+## 📐 PATRONES DE CÓDIGO OBLIGATORIOS
+
+### `module.js` (Estructura Base)
+```javascript
 const [NombreModulo] = {
   id: '[id-lowercase]',
   titulo: '[Título Visible]',
@@ -142,8 +156,10 @@ const [NombreModulo] = {
 
 window.MODULES = window.MODULES || {};
 window.MODULES[[NombreModulo].id] = [NombreModulo];
+```
 
-module.html (Reglas UI)
+### `module.html` (Reglas UI)
+```html
 <div x-data="[id]Data()" x-init="init()" class="animate__animated animate__fadeInUp">
   <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
     <i class="bi bi-[icon-name]"></i> [Título]
@@ -160,24 +176,30 @@ module.html (Reglas UI)
     </button>
   </div>
 </div>
+```
 
-🔗 INTEGRACIÓN CON OTRAS SKILLs
+---
 
-spec-creator.md
-Provee specs/[app].md con estructura, campos sensibles y reglas UI
-stack-compliance-guard.md
-Se ejecuta automáticamente tras generar cada bloque. Corrige o rechaza si viola reglas
-design-ux-intelligence.md
-Aplica tono visual, contrastes, espaciado y animaciones según spec
-validation-offline.md
-Consume el output de esta SKILL. Ejecuta validar app tras completar FASE 4
+## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 
-📝 NOTAS PARA LA IA
-NUNCA generes todo de una vez. Respeta las pausas entre fases. OpenCode pierde contexto >15k tokens.
-Usa rutas relativas estrictas. Ej: assets/js/libs/alpine.js, NUNCA https://... o ../core/... fuera de index.html.
-Comentarios en español. Explica lógica compleja con // 💡 ....
-Si la spec es ambigua, pregunta: ❓ La spec no define [campo/regla]. ¿Uso default del stack o prefieres especificar?
-Idioma: Todo el output, nombres de variables y comentarios en español.
-✨ SKILL ready. Trigger: generar codigo para iniciar.
+| SKILL | Rol en este flujo |
+|-------|------------------|
+| `spec-creator` | Provee `specs/[app].md` con estructura, campos sensibles y reglas UI |
+| `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque. Corrige o rechaza si viola reglas |
+| `design-ux-intelligence` | Aplica tono visual, contrastes, espaciado y animaciones según spec |
+| `validation-offline` | Consume el output de esta SKILL. Ejecuta `validar app` tras completar FASE 4 |
 
+---
+
+## 📝 NOTAS PARA LA IA
+- **NUNCA generes todo de una vez**. Respeta las pausas entre fases. OpenCode pierde contexto >15k tokens.
+- **Usa rutas relativas estrictas**. Ej: `assets/js/libs/alpine.js`, NUNCA `https://...` o `../core/...` fuera de `index.html`.
+- **Comentarios en español**. Explica lógica compleja con `// 💡 ...`.
+- **Si la spec es ambigua**, pregunta: `❓ La spec no define [campo/regla]. ¿Uso default del stack o prefieres especificar?`
+- **Idioma**: Todo el output, nombres de variables y comentarios en español.
+
+✨ **SKILL ready. Trigger: `generar codigo` para iniciar.**
+```
+
+---
 
