@@ -1,11 +1,11 @@
 ---
 name: code-generator
-description: Genera código estructurado y funcional siguiendo estrictamente specs/[app].md y @AGENTS.md. Flujo por fases, validación automática de compliance, y output listo para file:// sin imports ES6.
+description: Genera código estructurado y funcional siguiendo estrictamente specs/[app].md y @AGENTS.md. Flujo por fases, validación automática de compliance, y output listo para file:// sin imports ES6. Soporta librerías adicionales desde la spec.
 license: MIT
-compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports.
+compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports. Lee libreriasAdicionales de la spec.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "2.0"
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -30,11 +30,13 @@ meta:
    - Campos sensibles a cifrar
    - Reglas de UI/UX y animaciones
    - Configuración de `project.config.js`
-2. Genera un **plan de ejecución breve**:
+   - **Librerías adicionales** (sección `## 📚 Librerías Adicionales` o bloque `libreriasAdicionales`)
+2. Si detecta librerías adicionales, las incluye en el plan:
    ```
    📋 PLAN DE GENERACIÓN
    • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html
    • Módulos: [lista de módulos desde spec]
+   • Librerías adicionales: [qrcode.min.js, dayjs.min.js, ...] (desde spec)
    • Validación: stack-compliance-guard auto-aplicado
    • Entregable: Código por bloques con ruta exacta
    ✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
@@ -43,10 +45,14 @@ meta:
 
 ### 🟡 FASE 2: Core, Shell y Configuración
 Genera los archivos base **en un solo bloque bien estructurado** con rutas exactas:
+
+**Index.html con librerías dinámicas:**
+El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base → **Libs adicionales (desde spec)** → Core → Main
+
 ```markdown
 📁 CORE / INDEX
 ### `index.html`
-[Contenido completo con orden: CSS → Libs → Core → Main, x-cloak, sin type="module"]
+[Contenido completo con orden: CSS → Libs base → Libs adicionales → Core → Main, x-cloak, sin type="module"]
 
 ### `core/db.js`
 [Iniciación Dexie según spec. Variables globales. window.db expuesto]
@@ -71,6 +77,40 @@ Genera los archivos base **en un solo bloque bien estructurado** con rutas exact
 
 ⏸️ PAUSA. Revisa estructura. Responde "✅ FASE 2 OK" para continuar.
 ```
+
+**Reglas para inyectar librerías adicionales en index.html:**
+```html
+<!-- CSS base -->
+<link rel="stylesheet" href="assets/css/tailwind.min.css">
+<link rel="stylesheet" href="assets/css/daisyui.min.css">
+<link rel="stylesheet" href="assets/css/bootstrap-icons.css">
+<link rel="stylesheet" href="assets/css/animate.min.css">
+
+<!-- JS Librerías base -->
+<script src="assets/js/libs/alpine.js"></script>
+<script src="assets/js/libs/dexie.js"></script>
+<script src="assets/js/libs/crypto-js.js"></script>
+<script src="assets/js/libs/pako.js"></script>
+<script src="assets/js/libs/apexcharts.js"></script>
+<script src="assets/js/libs/jspdf.js"></script>
+<script src="assets/js/libs/xlsx.js"></script>
+
+<!-- 📚 JS Librerías adicionales (desde spec) -->
+<script src="assets/js/libs/qrcode.min.js"></script>
+<script src="assets/js/libs/dayjs.min.js"></script>
+<!-- FIN librerías adicionales -->
+
+<!-- Core -->
+<script src="core/db.js"></script>
+<script src="core/crypto.js"></script>
+<script src="core/ui.js"></script>
+<script src="core/theme.js"></script>
+<script src="core/app.js"></script>
+
+<!-- Main -->
+<script src="main.js"></script>
+```
+
 4. **NO GENERA MÓDULOS AÚN**. Espera confirmación.
 
 ### 🔵 FASE 3: Generación de Módulos (Iterativa)
@@ -111,6 +151,9 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Campo sensible sin `cryptoHelpers.encrypt()`? → AÑADIR CIFRADO
 - [ ] ¿UI sin DaisyUI/Bootstrap Icons/Animate.css? → APLICAR COMPONENTES
 - [ ] ¿Módulo no sigue contrato (`id`, `init`, `render`, `destroy`)? → REESCRIBIR
+- [ ] ¿Librerías adicionales cargadas vía CDN en vez de `assets/`? → REEMPLAZAR por ruta local
+- [ ] ¿`index.html` mezcla libs base con adicionales fuera de orden? → REORDENAR
+- [ ] ¿Librerías adicionales de la spec faltan en los `<script>` de index.html? → AGREGAR
 Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-first.` al output.
 
 ---
@@ -184,7 +227,8 @@ window.MODULES[[NombreModulo].id] = [NombreModulo];
 
 | SKILL | Rol en este flujo |
 |-------|------------------|
-| `spec-creator` | Provee `specs/[app].md` con estructura, campos sensibles y reglas UI |
+| `spec-creator` | Provee `specs/[app].md` con estructura, campos sensibles, reglas UI y `libreriasAdicionales` |
+| `setup-init` | Descarga las librerías adicionales a `assets/js/libs/` |
 | `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque. Corrige o rechaza si viola reglas |
 | `design-ux-intelligence` | Aplica tono visual, contrastes, espaciado y animaciones según spec |
 | `validation-offline` | Consume el output de esta SKILL. Ejecuta `validar app` tras completar FASE 4 |
@@ -196,6 +240,8 @@ window.MODULES[[NombreModulo].id] = [NombreModulo];
 - **Usa rutas relativas estrictas**. Ej: `assets/js/libs/alpine.js`, NUNCA `https://...` o `../core/...` fuera de `index.html`.
 - **Comentarios en español**. Explica lógica compleja con `// 💡 ...`.
 - **Si la spec es ambigua**, pregunta: `❓ La spec no define [campo/regla]. ¿Uso default del stack o prefieres especificar?`
+- **Librerías adicionales**: Si la spec tiene `libreriasAdicionales`, inyéctalas en `index.html` entre las libs base y los core files. El orden importa: CSS base → CSS adicional → JS libs base → JS libs adicionales → Core → Main.
+- **No asumas que la librería adicional existe**. Siempre carga desde `assets/js/libs/[nombre]`, nunca desde CDN.
 - **Idioma**: Todo el output, nombres de variables y comentarios en español.
 
 ✨ **SKILL ready. Trigger: `generar codigo` para iniciar.**

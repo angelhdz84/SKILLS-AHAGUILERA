@@ -1,11 +1,11 @@
 ---
 name: stack-compliance-guard
-description: Guarda de cumplimiento automático: valida que TODO código generado cumpla las reglas de @AGENTS.md antes de mostrarlo al usuario. Bloquea imports, CDNs, fetch y omisión de cifrado. Corrige automáticamente o pide confirmación.
+description: Guarda de cumplimiento automático: valida que TODO código generado cumpla las reglas de @AGENTS.md antes de mostrarlo al usuario. Bloquea imports, CDNs, fetch y omisión de cifrado. Verifica que librerías adicionales se carguen localmente (assets/) y no vía CDN.
 license: MIT
 compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación para spec-creator, setup-init y code-generator.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "2.0"
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -110,7 +110,52 @@ modulosActivos: [...existentes, 'nuevo-modulo']
 */
 ```
 
+### ❌ Regla 6: Librerías Adicionales mal referenciadas
+```html
+<!-- PATRÓN PROHIBIDO: Cargar librería adicional desde CDN en runtime -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<!-- PATRÓN PROHIBIDO: Librería adicional no listada en spec -->
+<!-- La librería se usa en un módulo pero nunca se agregó a la spec ni al index.html -->
+
+<!-- CORRECCIÓN AUTOMÁTICA: -->
+<!-- 1. Reemplazar CDN por ruta local: -->
+<script src="assets/js/libs/qrcode.min.js"></script>
+
+<!-- 2. Si la librería no está en la spec, generar snippet de advertencia: -->
+/*
+⚠️ Librería qrcode.min.js no está registrada en la spec.
+Agrégala en la spec bajo ## 📚 Librerías Adicionales:
+libreriasAdicionales:
+  - nombre: qrcode.min.js
+    ruta: assets/js/libs/qrcode.min.js
+    tipo: script
+Luego ejecuta setup-init para descargarla.
+*/
+```
+
 ---
+
+## 📋 CATÁLOGO DE LIBRERÍAS CONOCIDAS (para validación)
+Usa esta lista para verificar que las librerías adicionales se cargan desde la ruta correcta:
+
+| Librería | Ruta esperada |
+|----------|--------------|
+| qrcode.min.js | `assets/js/libs/qrcode.min.js` |
+| quagga.min.js | `assets/js/libs/quagga.min.js` |
+| leaflet.js | `assets/js/libs/leaflet.js` |
+| leaflet.css | `assets/css/leaflet.css` |
+| html2canvas.js | `assets/js/libs/html2canvas.min.js` |
+| dompurify.js | `assets/js/libs/dompurify.min.js` |
+| lodash.js | `assets/js/libs/lodash.min.js` |
+| dayjs.min.js | `assets/js/libs/dayjs.min.js` |
+| uuid.js | `assets/js/libs/uuid.min.js` |
+| marked.js | `assets/js/libs/marked.min.js` |
+| cleave.js | `assets/js/libs/cleave.min.js` |
+| validator.js | `assets/js/libs/validator.min.js` |
+| howler.min.js | `assets/js/libs/howler.min.js` |
+
+Si la librería no está en este catálogo, verifica que su ruta siga el patrón `assets/js/libs/[nombre]`.
 
 ## ✅ CHECKLIST DE VALIDACIÓN (Ejecutar en cada output)
 
@@ -125,6 +170,9 @@ Antes de mostrar código al usuario, verificar:
 [ ] ¿Módulo no registrable en project.config.js? → ⚠️ AÑADIR snippet
 [ ] ¿Rutas absolutas o `../` que rompen file://? → ❌ RECHAZAR
 [ ] ¿Orden de scripts en index.html incorrecto? → ❌ RECHAZAR
+[ ] ¿Librerías adicionales cargadas vía CDN y no desde `assets/`? → ❌ RECHAZAR
+[ ] ¿Librerías adicionales usadas en módulos pero no en spec ni index.html? → ⚠️ AGREGAR a spec
+[ ] ¿Librerías adicionales en index.html antes que las base? → ❌ REORDENAR
 
 ✅ Si todo PASS: mostrar código al usuario.
 ⚠️ Si hay warnings: mostrar código + nota de mejora.
@@ -168,6 +216,8 @@ Tu respuesta:
 - Cifrado aplicado en 3 campos sensibles
 - UI con DaisyUI + Bootstrap Icons + Animate.css
 - Módulo registrable en project.config.js
+- N/N librerías adicionales en assets/ (sin CDNs)
+- Orden correcto: CSS → Libs base → Libs adicionales → Core → Main
 
 ✅ Código listo para producción offline.
 ```
@@ -182,9 +232,10 @@ Tu respuesta:
 
 ### En `setup-init.md`:
 - Validar que `index.html` generado cumple:
-  - Orden de scripts: CSS → Libs → Core → Modules → Main
+  - Orden de scripts: CSS → Libs base → **Libs adicionales** → Core → Modules → Main
   - Sin `type="module"`, sin CDNs
   - `x-cloak` presente para evitar FOUC
+- Si la spec tiene `libreriasAdicionales`, verificar que todas tengan comando de descarga en el `.bat`
 
 ### En `validation-offline.md`:
 - Añadir como Fase 0 automática:
@@ -201,9 +252,11 @@ Tu respuesta:
 - **Corrección silenciosa**: Si la corrección es obvia y no ambigua (ej: añadir `encrypt()`), aplica sin preguntar.
 - **Preguntar solo si ambiguo**: Si hay múltiples formas de corregir (ej: reemplazar fetch), pide confirmación con opciones.
 - **Mantén el contexto**: Si corriges un archivo, menciona qué otros archivos podrían verse afectados.
+- **Librerías adicionales**: Si detectas `src="http"` apuntando a una librería que está en el catálogo de libs conocidas, sugiere la ruta `assets/js/libs/` correcta y recuerda que debe descargarse con `setup-init`.
+- **Catálogo**: Usa el catálogo de librerías conocidas para validar rutas. Si una librería no está en el catálogo, verifica que al menos tenga el formato `assets/js/libs/[nombre]`.
 - **Idioma**: Todos los mensajes al usuario en español técnico pero claro.
 
-✨ **SKILL ready. Se activa automáticamente. No requiere trigger.**
+✨ **SKILL ready v2. Se activa automáticamente. No requiere trigger.**
 ```
 
 ---

@@ -1,11 +1,11 @@
 ---
 name: prompt-inicial
-description: Prompt maestro para iniciar un nuevo proyecto offline-first. Orquesta automáticamente: setup → spec → generación de código → validación. Solo requiere nombre, tipo y descripción de la app.
+description: Prompt maestro para iniciar un nuevo proyecto offline-first. Orquesta automáticamente: setup → spec (con detección de librerías externas) → generación de código → validación. Solo requiere nombre, tipo y descripción de la app.
 license: MIT
 compatibility: Requiere @AGENTS.md y las 6 SKILLs base instaladas en ~/.opencode/skills/. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "2.0"
   generatedBy: "prompt-inicial orchestrator"
   triggers: ["nuevo proyecto", "iniciar pipeline", "crear app", "iniciar flujo", "prompt-inicial"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -38,22 +38,25 @@ Al recibir la configuración, sigue ESTE orden exacto. **PAUSA tras cada fase y 
 1️⃣ **FASE SETUP**
 → Ejecuta: `iniciar setup`
 → Valida entorno, crea estructura, genera `project.config.js` y `descargar-libs.bat`.
+→ Si ya existe `specs/[nombre].md` con `libreriasAdicionales`, las inyecta en el `.bat`.
 → Espera confirmación del usuario tras ejecutar `.bat`.
 → ⏸️ **PAUSA**: Espera `✅ FASE 1 OK`
 
 2️⃣ **FASE SPEC**
 → Ejecuta: `definir spec app`
 → Usa la configuración rápida como historia de usuario.
+→ Incluye **Fase 0.6 (Detección de librerías externas)**: propone librerías según la descripción de la app.
 → Genera asunciones, preguntas 4+1 con barra `▓▓░░`, y guarda en `specs/[nombre].md`.
 → Aplica automáticamente principios de `design-ux-intelligence` si se solicitó tono visual.
+→ Si se detectaron librerías adicionales, se registran en la spec bajo `## 📚 Librerías Adicionales`.
 → ⏸️ **PAUSA**: Espera `✅ FASE 2 OK`
 
 3️⃣ **FASE GENERACIÓN**
 → Ejecuta: `generar codigo`
-→ Lee `specs/[nombre].md`.
-→ FASE A: Core + `index.html` → Pausa para `✅ CORE OK`
+→ Lee `specs/[nombre].md` (incluyendo `libreriasAdicionales`).
+→ FASE A: Core + `index.html` con libs base + adicionales en orden → Pausa para `✅ CORE OK`
 → FASE B: Módulos uno por uno → Pausa para `✅ [modulo] OK`
-→ Aplica `stack-compliance-guard` automáticamente tras cada bloque.
+→ Aplica `stack-compliance-guard` automáticamente tras cada bloque (valida libs adicionales).
 → ⏸️ **PAUSA**: Espera `✅ FASE 3 OK`
 
 4️⃣ **FASE VALIDACIÓN**
@@ -70,6 +73,7 @@ Al recibir la configuración, sigue ESTE orden exacto. **PAUSA tras cada fase y 
 - ✅ OBLIGATORIO: Variables globales (`Dexie`, `CryptoJS`, `Alpine`), rutas `assets/`, `file://` compatible.
 - 🔐 Cifrado automático en campos sensibles definidos en la spec.
 - 📐 UI: DaisyUI + Bootstrap Icons + Animate.css. Español. Responsive.
+- 📚 **Librerías adicionales**: Se descargan en setup (no en runtime). Van en `assets/js/libs/`. Se cargan en index.html entre libs base y core.
 - ⏸️ PAUSA EXPLÍCITA tras cada fase. No generes todo de una vez. Respeta el contexto de OpenCode.
 
 ---
@@ -79,7 +83,8 @@ Al finalizar, muestra:
 ```
 🚀 PIPELINE COMPLETADO
 ✅ Estructura: lista
-✅ Spec: specs/[nombre].md
+✅ Spec: specs/[nombre].md (con librerías adicionales detectadas)
+✅ Librerías: 12 base + N adicionales descargadas
 ✅ Código: core/ + modules/ generados y validados
 ✅ Reporte: docs/validacion-[nombre].md
 📦 Listo para: empaquetar (ZIP) o build electron

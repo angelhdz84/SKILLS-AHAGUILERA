@@ -1,24 +1,24 @@
 ---
 name: validation-offline
-description: Valida que la app offline-first cumple estrictamente con @AGENTS.md, specs y reglas del stack. Verificación estática + guía de pruebas en DevTools + reporte técnico en docs/validacion-[app].md.
+description: Valida que la app offline-first cumple estrictamente con @AGENTS.md, specs y reglas del stack. Verificación estática + guía DevTools + tests automatizados con Playwright + reporte técnico en docs/validacion-[app].md.
 license: MIT
-compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
+compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.1"
+  version: "2.0"
   generatedBy: "validation-offline skill"
-  triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación"]
+  triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación", "test automatizado", "playwright", "e2e"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
   language: es
   outputPath: "docs/"
   reportFormat: "markdown"
 ---
 
-# 🛡️ SKILL: validation-offline (Validación Integral de Apps Offline-First)
+# 🛡️ SKILL: validation-offline v2 (Validación Integral + Testing Automatizado)
 
-> **Propósito**: Verificar que la app generada cumple estrictamente con `@AGENTS.md`, `@specs/[app].md` y las reglas del stack offline-first. Genera reporte técnico con Pass/Fail y correcciones exactas.
-> **Modo**: Diagnóstico + Guía interactiva | **Idioma**: ES | **Contexto**: Requiere `@AGENTS.md`, `@project.config.js`, `@specs/[app].md`
-> **Output**: Reporte en `docs/validacion-[app].md`
+> **Propósito**: Verificar que la app generada cumple estrictamente con `@AGENTS.md`, `@specs/[app].md` y las reglas del stack offline-first. Incluye análisis estático, guía DevTools interactiva Y tests automatizados con Playwright (sin servidor, vía `file://`).
+> **Modo**: Diagnóstico + Automatización | **Idioma**: ES | **Contexto**: Requiere `@AGENTS.md`, `@project.config.js`, `@specs/[app].md`
+> **Output**: Reporte en `docs/validacion-[app].md` + script `tests/test_[app].py`
 
 ---
 
@@ -41,7 +41,8 @@ Ejecuta estas comprobaciones sobre los archivos generados:
 - [ ] ❌ `<link href="http` / `<script src="http` → PROHIBIDO (solo `assets/`)
 - [ ] ❌ `fetch(` / `axios.` / `XMLHttpRequest` → PROHIBIDO
 - [ ] ✅ Variables globales usadas: `Dexie`, `CryptoJS`, `Alpine`, `UI`, `db`, `cryptoHelpers`
-- [ ] ✅ Orden de carga en `index.html`: CSS → Libs → Core → Modules → Main
+- [ ] ✅ Orden de carga en `index.html`: CSS → Libs base → Libs adicionales → Core → Main
+- [ ] ✅ Librerías adicionales en `assets/js/libs/` (sin CDNs)
 - [ ] ✅ `project.config.js` tiene `modulosActivos`, `tema.colores`, `app.nombre`
 - [ ] ✅ Módulos registrados en `window.MODULES` con `id`, `init`, `render`, `destroy`
 - [ ] ✅ Campos sensibles cifrados antes de `db.put()` y descifrados en UI
@@ -88,6 +89,148 @@ Como OpenCode no ejecuta navegadores, **entrega estos comandos listos para pegar
 
 📝 Si hay FAILs: Responde "corregir UX [números]" para parchear automáticamente.
 ```
+
+### 🔴 FASE 3.6: Testing Automatizado con Playwright (NUEVO v2)
+```
+[▓▓▓▓▓▓▓▓░░░░░░░░░] 80% • Testing Automatizado
+🎭 Generando script Playwright para tests E2E sin servidor (file://)
+```
+
+La app offline-first se abre con doble clic (protocolo `file://`), **no necesita servidor**. Playwright puede navegar directamente al archivo HTML. Esto permite automatizar completamente la validación dinámica.
+
+#### Paso 1: Generar script de test
+
+Crea `tests/test_[app].py` con el siguiente esquema usando los datos reales de la app:
+
+```python
+from playwright.sync_api import sync_playwright
+import json, os
+
+APP_PATH = os.path.abspath("index.html")
+REPORT = {"pass": [], "fail": []}
+
+def test(description, condition, detail=""):
+    if condition:
+        REPORT["pass"].append(f"✅ {description}")
+        print(f"  ✅ {description}")
+    else:
+        REPORT["fail"].append(f"❌ {description}: {detail}")
+        print(f"  ❌ {description}: {detail}")
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(channel="chrome", headless=True)
+    page = browser.new_page()
+    page.goto(f"file://{APP_PATH}")
+    page.wait_for_load_state("networkidle")
+
+    # 1. Consola sin errores JS
+    console_errors = []
+    page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+    page.wait_for_timeout(1000)
+    test("Sin errores en consola JS", len(console_errors) == 0, str(console_errors))
+
+    # 2. Librerías globales cargadas
+    libs = page.evaluate("""() => ({
+        Dexie: typeof Dexie === 'function',
+        CryptoJS: typeof CryptoJS === 'object',
+        Alpine: typeof Alpine === 'object',
+        UI: typeof UI === 'object'
+    })""")
+    for lib, loaded in libs.items():
+        test(f"Librería {lib} cargada", loaded)
+
+    # 3. Módulos registrados (del project.config.js)
+    modulos = page.evaluate("""() => {
+        try {
+            return (window.MODULES || []).map(m => m.id);
+        } catch(e) { return []; }
+    }""")
+    for mod_id in ["dashboard", "configuracion"]:  # ← obtener de project.config.js
+        test(f"Módulo '{mod_id}' registrado", mod_id in modulos)
+
+    # 4. Router navega a cada módulo sin error
+    for mod_id in modulos:
+        try:
+            page.evaluate(f"location.hash = '#/{mod_id}'")
+            page.wait_for_timeout(300)
+            content = page.evaluate("document.getElementById('app-content')?.innerHTML || ''")
+            test(f"Ruta '#/{mod_id}' renderiza", len(content) > 50)
+        except Exception as e:
+            test(f"Ruta '#/{mod_id}' renderiza", False, str(e))
+
+    # 5. IndexedDB abierta (verifica que db existe)
+    db_ok = page.evaluate("""async () => {
+        try {
+            await window.db.open();
+            return true;
+        } catch(e) { return false; }
+    }""")
+    test("IndexedDB accesible sin errores", db_ok)
+
+    # 6. Tema oscuro/claro toggle funciona
+    theme_toggle = page.evaluate("""() => {
+        if (!window.$store?.theme) return 'no-store';
+        const before = document.documentElement.classList.contains('dark');
+        window.$store.theme.toggle();
+        const after = document.documentElement.classList.contains('dark');
+        return before !== after ? 'ok' : 'no-change';
+    }""")
+    test("Theme toggle cambia modo oscuro/claro", theme_toggle == 'ok', theme_toggle)
+
+    # 7. Elementos UI clave presentes
+    ui_elements = page.evaluate("""() => ({
+        sidebar: !!document.querySelector('[data-sidebar], .drawer, aside'),
+        topbar: !!document.querySelector('[data-topbar], header, nav.navbar'),
+        content: !!document.getElementById('app-content')
+    })""")
+    for el, present in ui_elements.items():
+        test(f"Elemento UI '{el}' presente en DOM", present)
+
+    # 8. Screenshot para revisión visual
+    page.screenshot(path="docs/screenshot_test.png", full_page=True)
+    test("Screenshot capturado en docs/screenshot_test.png", True)
+
+    browser.close()
+
+# Reporte resumen
+print(f"\n{'='*40}")
+print(f"RESULTADOS: {len(REPORT['pass'])} ✅ | {len(REPORT['fail'])} ❌")
+print(f"{'='*40}")
+with open("docs/test_results.json", "w") as f:
+    json.dump(REPORT, f, indent=2)
+```
+
+#### Paso 2: Instrucciones para el usuario
+
+```
+📋 Para ejecutar el test automatizado:
+
+1. Instala Playwright (solo primera vez):
+   pip install playwright
+
+2. Ejecuta el script (usa Chrome del sistema, no descarga nada):
+   python tests/test_[app].py
+
+3. Revisa resultados en consola y en:
+   - docs/test_results.json  (reporte estructurado)
+   - docs/screenshot_test.png  (captura visual)
+
+4. Responde con los resultados para integrarlos al reporte final.
+```
+
+#### Paso 3: Integrar resultados al reporte
+
+Cuando el usuario ejecute y responda, parsea `docs/test_results.json`:
+
+```
+📥 Resultados recibidos:
+  ✅ 8/10 tests pasaron
+  ❌ 2 fallos: 'Módulo "reportes" registrado', 'Ruta "#/reportes" renderiza'
+```
+
+Los FAILs se agregan automáticamente a la sección de correcciones del reporte final.
+
+> **Nota para la IA**: Si el usuario no tiene Python/Playwright, salta esta fase y usa solo la Fase 3 (DevTools manual). Pregunta "¿Tienes Python y Playwright instalados? (s/n)" antes de generar el script.
 
 ### 🟣 FASE 4: Reporte Final & Handoff
 1. Compila resultados en tabla markdown.
@@ -140,6 +283,7 @@ $store.theme.toggle(); console.log(...)
 - ⚠️ Warnings: Z
 - ❌ Fail: W
 - 🎯 Cumplimiento: XX%
+- 🎭 Tests Automatizados: X✅ / Y❌ (si se ejecutaron)
 
 ## 🔍 Detalle de Checks
 | # | Regla | Estado | Comentario |
@@ -162,6 +306,7 @@ const paciente = { email: cryptoHelpers.encrypt(inputEmail.value) };
 ## ✅ Checklist de Entrega
 - [ ] Funciona con doble clic en `index.html`
 - [ ] 0 errores en consola DevTools
+- [ ] Test automatizado Playwright: 0 fallos
 - [ ] Datos cifrados visibles en IndexedDB
 - [ ] Tema oscuro/claro persistente
 - [ ] Exportación PDF/Excel operativa
@@ -195,10 +340,11 @@ const paciente = { email: cryptoHelpers.encrypt(inputEmail.value) };
 ---
 
 ## 📝 NOTAS PARA LA IA
-- **NO simules ejecución de navegador**. OpenCode es TUI. Guía al usuario a usar DevTools.
-- **Espera confirmación** tras cada bloque de comandos DevTools antes de avanzar.
+- **NO simules ejecución de navegador**. OpenCode es TUI. Guía al usuario a usar DevTools o el script Playwright.
+- **Espera confirmación** tras cada bloque de comandos DevTools y tras ejecutar test Playwright antes de avanzar.
 - **Prioriza correcciones mínimas**. No regeneres archivos completos si solo falla 1 línea.
 - **Si el usuario reporta `CORS` o `Not allowed`**: verifica rutas relativas y prohíbe `file://` + `import`.
+- **Playwright**: Antes de generar el script, pregunta si tiene Python/Playwright. Si no, salta la Fase 3.6.
 - **Mantén el reporte en `docs/`** para auditoría y handoff profesional.
 - **Idioma**: Todos los mensajes al usuario en español técnico pero claro.
 
