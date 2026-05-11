@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test App - Gestor de Tareas</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root { --color-primario: #0d9488; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; }
+    .focus-ring:focus-visible { outline: 2px solid var(--color-primario); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div x-data="tareasApp()" class="container mx-auto p-4 md:p-8 max-w-2xl">
+    <header class="text-center mb-8 animate__animated animate__fadeInDown">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
+        <i class="bi bi-check2-square text-teal-600"></i> Gestor de Tareas
+      </h1>
+      <p class="text-gray-500 mt-2">Organiza tu día</p>
+    </header>
+
+    <section class="card bg-white shadow-xl rounded-2xl p-6 mb-6">
+      <form @submit.prevent="agregarTarea" class="form-control gap-4">
+        <label for="tarea-input" class="sr-only">Nueva tarea</label>
+        <div class="flex gap-2">
+          <input id="tarea-input"
+                 type="text"
+                 x-model="nuevaTarea"
+                 @input="error=''"
+                 placeholder="Escribe una tarea..."
+                 class="input input-bordered flex-1 min-h-[44px] focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                 aria-label="Nueva tarea"
+                 minlength="3"
+                 required>
+          <button type="submit"
+                  class="btn btn-primary gap-2 focus-ring"
+                  aria-label="Agregar tarea"
+                  :disabled="!nuevaTarea.trim()">
+            <i class="bi bi-plus-lg"></i>
+            <span class="hidden sm:inline">Agregar</span>
+          </button>
+        </div>
+        <p x-show="error" x-text="error" class="text-red-600 text-sm flex items-center gap-1" role="alert">
+          <i class="bi bi-exclamation-triangle"></i>
+        </p>
+      </form>
+    </section>
+
+    <section x-show="tareas.length > 0" class="space-y-3">
+      <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+        <i class="bi bi-list-task"></i> Tareas (<span x-text="tareas.length"></span>)
+      </h2>
+      <template x-for="(tarea, index) in tareas" :key="index">
+        <div class="card bg-white shadow-md rounded-xl p-4 flex items-center justify-between animate__animated animate__fadeInUp"
+             :style="`animation-delay: ${index * 100}ms`">
+          <div class="flex items-center gap-3">
+            <button @click="toggleTarea(index)"
+                    class="btn btn-ghost btn-sm btn-circle min-h-[44px] min-w-[44px] focus-ring"
+                    :aria-label="tarea.hecha ? 'Marcar como pendiente' : 'Marcar como completada'">
+              <i :class="tarea.hecha ? 'bi bi-check-circle-fill text-teal-500' : 'bi bi-circle text-gray-400'" class="text-xl"></i>
+            </button>
+            <span :class="tarea.hecha ? 'line-through text-gray-400' : 'text-gray-700'" x-text="tarea.texto"></span>
+          </div>
+          <button @click="eliminarTarea(index)"
+                  class="btn btn-ghost btn-sm btn-circle min-h-[44px] min-w-[44px] text-red-400 hover:text-red-600 focus-ring"
+                  aria-label="Eliminar tarea">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </template>
+    </section>
+
+    <section x-show="tareas.length === 0" class="text-center py-12">
+      <i class="bi bi-inbox text-6xl text-gray-300"></i>
+      <p class="text-gray-400 mt-4">No hay tareas aún</p>
+      <p class="text-gray-400 text-sm">Agrega tu primera tarea arriba</p>
+    </section>
+
+    <footer class="text-center mt-12 py-6 text-gray-400 text-sm border-t border-gray-200">
+      <i class="bi bi-shield-check me-1"></i> Datos locales · 2026
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js" defer></script>
+  <script>
+    function tareasApp() {
+      return {
+        nuevaTarea: '',
+        error: '',
+        tareas: [
+          { texto: 'Aprender Alpine.js', hecha: true },
+          { texto: 'Crear app offline-first', hecha: false },
+          { texto: 'Ejecutar tests Playwright', hecha: false }
+        ],
+        agregarTarea() {
+          this.error = '';
+          const text = this.nuevaTarea.trim();
+          if (text.length < 3) {
+            this.error = 'La tarea debe tener al menos 3 caracteres';
+            return;
+          }
+          this.tareas.push({ texto: text, hecha: false });
+          this.nuevaTarea = '';
+        },
+        toggleTarea(index) {
+          this.tareas[index].hecha = !this.tareas[index].hecha;
+        },
+        eliminarTarea(index) {
+          if (confirm('¿Eliminar tarea?')) {
+            this.tareas.splice(index, 1);
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>
