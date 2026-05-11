@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.0"
+  version: "2.1"
   generatedBy: "validation-offline skill"
   triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación", "test automatizado", "playwright", "e2e"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -46,6 +46,11 @@ Ejecuta estas comprobaciones sobre los archivos generados:
 - [ ] ✅ `project.config.js` tiene `modulosActivos`, `tema.colores`, `app.nombre`
 - [ ] ✅ Módulos registrados en `window.MODULES` con `id`, `init`, `render`, `destroy`
 - [ ] ✅ Campos sensibles cifrados antes de `db.put()` y descifrados en UI
+- [ ] ✅ `aria-label` en botones con solo icono (`<i>` sin texto)
+- [ ] ✅ `@media (prefers-reduced-motion: reduce)` en CSS
+- [ ] ✅ Inputs tienen `<label for="...">` visible (no solo placeholder)
+- [ ] ✅ Indicador de estado online/offline en UI (badge o barra)
+- [ ] ✅ Datos mínimos recolectados (no pedir info innecesaria)
 ```
 - Si falla: marca `❌ FAIL` + línea exacta + snippet de corrección.
 - Si pasa: marca `✅ PASS`.
@@ -81,11 +86,14 @@ Como OpenCode no ejecuta navegadores, **entrega estos comandos listos para pegar
 [▓▓▓▓▓▓▓░░░░░░░░░] 70% • Validación de Diseño/UX
 🎨 Verificando checklist UX crítico...
 
-✅ Contraste WCAG AA: [PASS/FAIL] → [comentario si FAIL]
+✅ Contraste WCAG AA: [PASS/FAIL] → [ratio actual si FAIL]
 ✅ Touch targets ≥44px: [PASS/FAIL] → [elementos afectados si FAIL]
 ✅ Focus rings visibles: [PASS/FAIL]
 ✅ Empty states con CTA: [PASS/FAIL]
 ✅ Animaciones con propósito: [PASS/FAIL] → [lista si decorativas]
+✅ Screen reader labels: [PASS/FAIL] → [botones sin aria-label si FAIL]
+✅ Keyboard navigation: [PASS/FAIL] → [elementos no focusables si FAIL]
+✅ Offline indicators: [PASS/FAIL] → [falta UI de estado offline si FAIL]
 
 📝 Si hay FAILs: Responde "corregir UX [números]" para parchear automáticamente.
 ```
@@ -230,6 +238,81 @@ Cuando el usuario ejecute y responda, parsea `docs/test_results.json`:
 
 Los FAILs se agregan automáticamente a la sección de correcciones del reporte final.
 
+#### Paso 4 — Checks avanzados (a11y + offline + flaky prevention)
+
+Añade estos bloques al script `test_[app].py` generado, entre los checks existentes:
+
+```python
+# === CHECKS AVANZADOS ===
+
+# 9. Accesibilidad: elementos clave tienen aria-label
+def check_a11y(page):
+    issues = []
+    # Botones con solo icono deben tener aria-label
+    icon_buttons = page.evaluate("""() => {
+        const btns = document.querySelectorAll('button:not([aria-label]):not([aria-labelledby])');
+        return Array.from(btns).filter(b => b.querySelector('i') && !b.textContent.trim()).map(b => ({
+            tag: b.outerHTML.substring(0, 80)
+        }));
+    }""")
+    for btn in icon_buttons:
+        issues.append(f"Botón sin aria-label: {btn['tag']}")
+    # Contraste: verificar clases CSS sospechosas (text-gray-400 en fondo claro)
+    low_contrast = page.evaluate("""() => {
+        const els = document.querySelectorAll('.text-gray-400, .text-gray-300');
+        return Array.from(els).map(e => e.tagName + '.' + (e.className || ''));
+    }""")
+    for el in low_contrast:
+        issues.append(f"Posible bajo contraste en {el}")
+    return issues
+
+a11y_issues = check_a11y(page)
+test("Accesibilidad: botones con icono tienen aria-label", len(a11y_issues) == 0, str(a11y_issues))
+
+# 10. Simulación de modo offline (airplane mode)
+try:
+    context = browser.new_context()
+    offline_page = context.new_page()
+    offline_page.goto(f"file://{APP_PATH}")
+    offline_page.wait_for_load_state("networkidle")
+    # Desconectar red simulada
+    context.route("**/*", lambda route: route.abort())
+    offline_page.wait_for_timeout(500)
+    # Verificar que la app muestra estado offline sin errores
+    console_errs = []
+    offline_page.on("console", lambda msg: console_errs.append(msg.text) if msg.type == "error" else None)
+    offline_page.wait_for_timeout(1000)
+    test("Modo offline: sin errores JS al desconectar red", len(console_errs) == 0, str(console_errs))
+    context.close()
+except Exception as e:
+    test("Modo offline: simulación ejecutada", False, str(e))
+
+# 11. Navegación por teclado (Tab key)
+page.keyboard.press("Tab")
+focused = page.evaluate("() => document.activeElement?.tagName || 'none'")
+test("Navegación teclado: primer foco en elemento DOM", focused != 'none' and focused != 'body', f"activeElement: {focused}")
+
+# 12. Viewport meta tag presente (responsive)
+viewport = page.evaluate("() => document.querySelector('meta[name=\"viewport\"]')?.content || ''")
+test("Viewport meta tag presente", 'width=device-width' in viewport, viewport)
+
+# 13. Flaky test prevention: retry en checks de renderizado
+def retry_check(description, fn, retries=3, delay=500):
+    for i in range(retries):
+        try:
+            result = fn()
+            if result:
+                test(description, True)
+                return
+        except:
+            pass
+        if i < retries - 1:
+            import time; time.sleep(delay / 1000)
+    test(description, False, f"Falló tras {retries} intentos")
+
+retry_check("Render persistente tras retry", lambda: len(page.evaluate("document.getElementById('app-content')?.innerHTML || ''")) > 50)
+```
+
 > **Nota para la IA**: Si el usuario no tiene Python/Playwright, salta esta fase y usa solo la Fase 3 (DevTools manual). Pregunta "¿Tienes Python y Playwright instalados? (s/n)" antes de generar el script.
 
 ### 🟣 FASE 4: Reporte Final & Handoff
@@ -255,6 +338,10 @@ Antes de outputtear cualquier resultado:
 - [ ] ¿Falta cifrado en campos sensibles detectados en spec? → `FAIL` + patrón `cryptoHelpers.encrypt()`
 - [ ] ¿UI no usa DaisyUI/Icons/Animate.css? → `FAIL` + guía de reemplazo
 - [ ] ¿Módulo no está en `modulosActivos` o no sigue contrato? → `FAIL` + template `_template/`
+- [ ] ¿Botones icon-only sin `aria-label`? → `FAIL` + añadir atributo
+- [ ] ¿Falta `@media (prefers-reduced-motion)`? → `FAIL` + añadir regla CSS
+- [ ] ¿Inputs sin `<label>` visible (solo placeholder)? → `FAIL` + añadir `<label>`
+- [ ] ¿Sin indicador visual de estado offline? → `WARN` + sugerir badge de conexión
 Si detecta violación, **no continúa** hasta corregirla o pedir confirmación.
 
 ---

@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports. Lee libreriasAdicionales de la spec.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.0"
+  version: "2.1"
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -71,6 +71,15 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 
 ### `main.js`
 [Punto de entrada. Expone globals, llama a init(), maneja errores]
+
+### `core/network.js` (si la app requiere monitoreo de conexión)
+[Monitoreo navigator.onLine, eventos online/offline, Alpine store]
+
+### `sw.js` (si la app requiere PWA/instalabilidad)
+[Service Worker con cache-first, skipWaiting, clientsClaim]
+
+### `manifest.json` (si la app requiere PWA/instalabilidad)
+[Manifest con name, icons, display standalone, theme_color]
 
 ### `project.config.js`
 [Config white-label completa según spec]
@@ -154,6 +163,12 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Librerías adicionales cargadas vía CDN en vez de `assets/`? → REEMPLAZAR por ruta local
 - [ ] ¿`index.html` mezcla libs base con adicionales fuera de orden? → REORDENAR
 - [ ] ¿Librerías adicionales de la spec faltan en los `<script>` de index.html? → AGREGAR
+- [ ] ¿`sw.js` generado pero no registrado en index.html? → AGREGAR registro
+- [ ] ¿`manifest.json` generado pero no enlazado? → AGREGAR `<link rel="manifest">`
+- [ ] ¿Falta `core/network.js` en apps que monitorean conexión? → AGREGAR
+- [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
+- [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
+- [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
 Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-first.` al output.
 
 ---
@@ -220,6 +235,215 @@ window.MODULES[[NombreModulo].id] = [NombreModulo];
   </div>
 </div>
 ```
+
+---
+
+## 📦 PLANTILLAS AVANZADAS (De antigravity-awesome-skills)
+
+### PWA: Service Worker + Manifest
+
+Generar en FASE 2 cuando la app requiera instalabilidad o carga offline:
+
+#### `sw.js` (Service Worker con Workbox-style cache strategies)
+```javascript
+// sw.js — Offline-first cache strategies
+const CACHE = 'v1';
+const ASSETS = [
+  '/',
+  'index.html',
+  'assets/css/tailwind.min.css',
+  'assets/css/daisyui.min.css',
+  'assets/css/bootstrap-icons.css',
+  'assets/css/animate.min.css',
+  'assets/js/libs/alpine.js',
+  'assets/js/libs/dexie.js',
+  'assets/js/libs/crypto-js.js',
+  'core/db.js', 'core/crypto.js',
+  'core/ui.js', 'core/theme.js',
+  'core/app.js', 'main.js'
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+// Cache-first para assets, network-first para navegación
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req).catch(() => caches.match('index.html'))
+    );
+    return;
+  }
+  e.respondWith(
+    caches.match(req).then(r => r || fetch(req))
+  );
+});
+```
+
+#### `manifest.json`
+```json
+{
+  "name": "[Nombre App]",
+  "short_name": "[Nombre Corto]",
+  "description": "[Descripción]",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "[color primario de tema]",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+```
+
+**Registro en index.html:**
+```html
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+```
+Colocar DESPUÉS del bloque de librerías adicionales, antes de Core.
+
+### Network Status Monitoring (core/network.js)
+```javascript
+// core/network.js — Monitoreo de conectividad offline-first
+window.network = {
+  online: navigator.onLine,
+
+  init() {
+    window.addEventListener('online', () => {
+      this.online = true;
+      this._notify();
+    });
+    window.addEventListener('offline', () => {
+      this.online = false;
+      this._notify();
+    });
+  },
+
+  _notify() {
+    const evt = new CustomEvent('connection-change', {
+      detail: { online: this.online }
+    });
+    window.dispatchEvent(evt);
+    if (typeof Alpine !== 'undefined') {
+      Alpine.store('network', { online: this.online });
+    }
+  }
+};
+window.network.init();
+```
+
+**Uso en Alpine:**
+```html
+<span x-data x-init="$store.network = { online: navigator.onLine }"
+      x-on:connection-change.window="$store.network.online = $event.detail.online"
+      class="badge"
+      :class="$store.network.online ? 'badge-success' : 'badge-error'">
+  <i :class="$store.network.online ? 'bi-wifi' : 'bi-wifi-off'"></i>
+  <span x-text="$store.network.online ? 'En línea' : 'Sin conexión'"></span>
+</span>
+```
+
+### Error Handling Patterns (De error-handling-patterns)
+```javascript
+// Patrón Result Type para operaciones offline
+const Result = {
+  ok(value) { return { success: true, value }; },
+  fail(error) { return { success: false, error }; }
+};
+
+// Uso en operaciones Dexie + Crypto
+async function guardarRegistro(tabla, datos, camposSensibles = []) {
+  try {
+    const registro = { ...datos, updatedAt: new Date() };
+    for (const campo of camposSensibles) {
+      if (registro[campo]) {
+        registro[campo] = cryptoHelpers.encrypt(registro[campo]);
+      }
+    }
+    await db[tabla].put(registro);
+    UI.toast('Guardado correctamente', 'success');
+    return Result.ok(registro);
+  } catch (err) {
+    UI.toast('Error al guardar: ' + err.message, 'error');
+    return Result.fail(err.message);
+  }
+}
+
+// Graceful degradation offline
+async function cargarODefecto(tabla, id, defecto = {}) {
+  try {
+    const datos = await db[tabla].get(id);
+    return datos || defecto;
+  } catch (err) {
+    console.warn(`Offline: usando defecto para ${tabla}/${id}`, err.message);
+    return defecto;
+  }
+}
+```
+
+### UI Patterns para Estados Offline (cards, forms, empty states)
+```html
+<!-- Empty state con CTA -->
+<div class="text-center py-12 animate__animated animate__fadeIn">
+  <i class="bi bi-inbox text-6xl text-base-300"></i>
+  <h3 class="text-lg font-medium mt-4">Sin registros</h3>
+  <p class="text-sm text-base-content/60 mt-1">Agrega tu primer elemento para empezar</p>
+  <button class="btn btn-primary mt-4" @click="abrirFormulario()">
+    <i class="bi bi-plus-lg"></i> Agregar
+  </button>
+</div>
+
+<!-- Loading state con skeleton -->
+<div class="space-y-4 animate-pulse">
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-base-300 rounded-full"></div>
+    <div class="flex-1 space-y-2">
+      <div class="h-4 bg-base-300 rounded w-3/4"></div>
+      <div class="h-3 bg-base-300 rounded w-1/2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Error state con retry -->
+<div class="alert alert-error shadow-lg">
+  <i class="bi bi-exclamation-triangle"></i>
+  <span>No se pudieron cargar los datos</span>
+  <button class="btn btn-sm btn-ghost" @click="cargar()">
+    <i class="bi bi-arrow-clockwise"></i> Reintentar
+  </button>
+</div>
+
+<!-- Offline banner (se muestra cuando navigator.onLine=false) -->
+<div x-show="!$store.network?.online"
+     class="fixed top-0 inset-x-0 bg-warning text-warning-content text-center text-sm py-1 z-50
+            animate__animated animate__slideInDown">
+  <i class="bi bi-wifi-off"></i> Sin conexión — los datos se guardan localmente
+</div>
+```
+
+---
+
+## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 
 ---
 

@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.0"
+  version: "2.1"
   generatedBy: "design-ux-intelligence skill"
   triggers: ["tono visual", "diseño distintivo", "UX profesional", "validar accesibilidad", "mejorar UI", "paleta de colores", "tipografía", "estilo UI", "recomendación de diseño"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -53,6 +53,34 @@ Esta SKILL se activa cuando:
    Ej: "Transiciones suaves entre módulos con stagger animation"
 ```
 
+### Paso 1.5 — High-Agency Design Taste (De design-taste-frontend)
+```
+🎯 Principios de diseño con intención (no genérico)
+
+1. Calibrated Color — Cada color tiene un propósito:
+   - Primario: brand + CTA (máx 1)
+   - Neutro: contenido + fondo (mín 3 tonos: surface, text, muted)
+   - Acento: solo para highlight (NUNCA para body text)
+   - Error/warning/success: semántico, sin mezclar con brand
+
+2. Responsive Layout — No es "mobile-first" es "content-first":
+   - El layout cambia por contenido, no por breakpoint
+   - Whitespace es activo (respira), no vacío
+   - Máx 64ch por línea de texto
+
+3. Intentional Motion — Cada animación explica algo:
+   - FadeIn: elemento aparece (nuevo contenido)
+   - Slide: elemento se mueve (reordenamiento)
+   - Scale: elemento cambia importancia (focus/expand)
+   - NUNCA decorar por decorar
+
+4. Non-generic Identity:
+   - Sin defaults de framework (evitar look bootstrap-genérico)
+   - Diferenciador visual: bordes, radios, sombras personalizados
+   - Consistencia > creatividad (el sistema manda)
+   - Micro-interacciones: hover states, active states, transition suaves
+```
+
 ### Paso 2: Reglas de implementación (offline-compatible)
 | Elemento | Regla Offline-First | Ejemplo de Código |
 |----------|-------------------|------------------|
@@ -62,6 +90,8 @@ Esta SKILL se activa cuando:
 | **Espacial** | Escala Tailwind (`p-4`, `gap-6`). Asimetría controlada: `rounded-t-2xl rounded-b-lg`. | `<div class="p-6 md:p-8 gap-6">` |
 | **Texturas** | Gradientes CSS (`bg-gradient-to-r`), sombras (`shadow-xl`), bordes (`ring-1 ring-primary/20`). | `<header class="bg-gradient-to-r from-primary to-secondary shadow-lg">` |
 | **Iconografía** | Bootstrap Icons exclusivamente. Cada acción con icono + texto en móvil. | `<button><i class="bi bi-plus-lg"></i> <span class="sr-only md:not-sr-only">Nuevo</span></button>` |
+| **Conexión** | Indicador online/offline visible siempre. Badge fijo + eventos `online`/`offline`. | `<span class="badge badge-sm" :class="conectado ? 'badge-success' : 'badge-error'"><i :class="conectado ? 'bi-wifi' : 'bi-wifi-off'"></i> <span x-text="conectado ? 'En línea' : 'Sin conexión'"></span></span>` |
+| **Sync status** | Barra/indicador de progreso de sincronización. Animación pulse mientras sync. | `<progress class="progress progress-primary w-56" x-show="syncing" :value="syncProgress" max="100"></progress>` |
 
 ### ❌ PROHIBIDO (Bloquear automáticamente)
 - Librerías de animación externas (GSAP, Framer Motion)
@@ -238,8 +268,41 @@ Usar esta tabla para sugerir automáticamente paleta + estilo + tipografía seg�
 - [ ] Contraste texto/fondo ≥ 4.5:1 (WCAG AA) → Validar con devtools > Accessibility
 - [ ] Labels visibles en inputs (no solo placeholder) → `<label for="email">Email</label>`
 - [ ] `aria-label` en botones con solo icono → `<button aria-label="Eliminar"><i class="bi bi-trash"></i></button>`
+- [ ] `aria-live="polite"` en regiones dinámicas (toast, alerts) → `<div aria-live="polite" id="toast-container"></div>`
+- [ ] `role="alert"` en mensajes de error → `<div role="alert" class="alert alert-error">...</div>`
+- [ ] `aria-current="page"` en nav activo → `<a aria-current="page" href="#/dashboard">Dashboard</a>`
 - [ ] Focus ring visible: `focus:ring-2 focus:ring-primary focus:ring-offset-2`
 - [ ] Mensajes de error cerca del campo, en español, con icono `bi-exclamation-triangle`
+- [ ] Skip link visible al inicio: `<a href="#main-content" class="skip-link">Saltar al contenido</a>`
+
+### Prioridad 1.5: Screen Reader Testing (De screen-reader-testing)
+```
+🎯 Validación con lectores de pantalla (NVDA/ VoiceOver)
+
+1. Navegación por landmarks (roles regions):
+   - `<header role="banner">`, `<nav role="navigation">`, `<main role="main">`
+   - Cada pantalla tiene un `<h1>` único que describe su contenido
+   
+2. Formularios:
+   - Cada input tiene `<label for="id">` vinculado
+   - Errores anunciados con `aria-describedby` apuntando al mensaje
+   - `fieldset` + `legend` para grupos de checkbox/radio
+
+3. Tablas de datos (si aplica):
+   - `<table>` con `<caption>` descriptivo
+   - `<th scope="col">` en headers de columna
+   - Mensaje "Cargando..." con `aria-live="polite"` durante async
+
+4. Modales:
+   - Focus atrapado dentro del modal (focus trap)
+   - `aria-modal="true"` y `role="dialog"`
+   - Al cerrar, focus vuelve al elemento que lo abrió
+
+5. Navegación por teclado:
+   - Tab order = orden visual (sin tabindex >0)
+   - Skip link funcional: al presionar Tab al cargar, debe ser visible
+   - Todos los interactive elements son focusables (a, button, input, select, textarea)
+```
 
 ### Prioridad 2: Interacción Táctil (CRÍTICO para móvil)
 - [ ] Touch targets ≥ 44x44px (medir con devtools > Elements > Computed)
@@ -264,6 +327,10 @@ Usar esta tabla para sugerir automáticamente paleta + estilo + tipografía seg�
 - [ ] Animaciones expresan causa-efecto (ej: fila eliminada → `animate__fadeOutRight`)
 - [ ] Stagger en listas: `animation-delay: ${index * 100}ms` para `fadeInUp`
 - [ ] Respeta `prefers-reduced-motion`: `@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }`
+- [ ] Conexión offline→online: badge cambia con transición suave (`transition-colors duration-300`)
+- [ ] Sync en progreso: spinner/pulse animado mientras dura, sin bloquear UI
+- [ ] Error de sync: shake sutil en el indicador de conexión (`animate__headShake`)
+- [ ] Datos guardados localmente: checkmark efímero (`animate__fadeIn` + auto-hide 2s)
 
 ---
 

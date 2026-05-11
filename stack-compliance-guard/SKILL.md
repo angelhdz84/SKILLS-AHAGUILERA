@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación para spec-creator, setup-init y code-generator.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.0"
+  version: "2.1"
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -97,6 +97,53 @@ await db.pacientes.put(paciente);
 </button>
 ```
 
+### ❌ Regla 4.5: Omisión de Privacidad (Privacy by Design)
+```javascript
+// PATRÓN PROHIBIDO: Recolectar datos sin necesidad
+const usuario = {
+  nombre: inputNombre.value,
+  email: inputEmail.value,
+  telefono: inputTelefono.value,     // ¿Realmente necesario?
+  direccion: inputDireccion.value,   // ¿Realmente necesario?
+  fechaNacimiento: inputFecha.value  // ¿Realmente necesario?
+};
+
+// CORRECCIÓN AUTOMÁTICA:
+// 1. Revisar spec: ¿estos campos están definidos como requeridos?
+// 2. Si no están en la spec, preguntar: "¿Este campo es necesario para la funcionalidad?"
+// 3. Marcar visibilidad: datos obligatorios vs opcionales en UI
+const usuario = {};
+if (inputNombre.value) usuario.nombre = cryptoHelpers.encrypt(inputNombre.value);
+if (inputEmail.value) usuario.email = cryptoHelpers.encrypt(inputEmail.value);
+// Solo guardar lo declarado en spec
+```
+
+### ❌ Regla 4.6: Sin consentimiento local antes de guardar datos
+```javascript
+// PATRÓN PROHIBIDO: Guardar datos sin preguntar al usuario
+// En una app médica o con datos personales:
+db.pacientes.put(paciente);  // Sin consentimiento
+
+// CORRECCIÓN AUTOMÁTICA:
+// 1. Mostrar aviso de privacidad antes del primer guardado
+// 2. Guardar preferencia de consentimiento en localStorage
+// 3. No cifrar si el usuario no consintió
+
+if (!localStorage.getItem('consentimiento_privacidad')) {
+  UI.confirm(
+    '📋 Aviso de Privacidad',
+    'Los datos se guardan localmente en tu dispositivo. ' +
+    'Ningún dato se envía a servidores externos. ¿Aceptas?',
+    (acepta) => {
+      if (acepta) {
+        localStorage.setItem('consentimiento_privacidad', 'true');
+        // proceder con guardado
+      }
+    }
+  );
+}
+```
+
 ### ❌ Regla 5: Módulo no Registrable en project.config.js
 ```javascript
 // PATRÓN PROHIBIDO:
@@ -173,6 +220,27 @@ Antes de mostrar código al usuario, verificar:
 [ ] ¿Librerías adicionales cargadas vía CDN y no desde `assets/`? → ❌ RECHAZAR
 [ ] ¿Librerías adicionales usadas en módulos pero no en spec ni index.html? → ⚠️ AGREGAR a spec
 [ ] ¿Librerías adicionales en index.html antes que las base? → ❌ REORDENAR
+
+=== CHECKS DE ACCESIBILIDAD ===
+[ ] ¿Botón con solo icono y sin `aria-label`? → ❌ AÑADIR aria-label
+[ ] ¿Input sin `<label for="...">` visible? → ❌ AÑADIR label
+[ ] ¿Toast o alert sin `aria-live="polite"`? → ⚠️ AÑADIR aria-live
+[ ] ¿Modal sin `role="dialog"` ni `aria-modal="true"`? → ❌ AÑADIR atributos
+[ ] ¿Falta `@media (prefers-reduced-motion)`? → ⚠️ AÑADIR regla CSS
+[ ] ¿Tabla de datos sin `<caption>` ni `<th scope>`? → ⚠️ AÑADIR estructura
+[ ] ¿Landmark roles faltantes (banner, nav, main)? → ⚠️ AÑADIR roles
+
+=== CHECKS DE PRIVACIDAD ===
+[ ] ¿Formulario pide datos no declarados en spec? → ❌ PREGUNTAR necesidad
+[ ] ¿Se guarda automáticamente sin consentimiento? → ❌ AÑADIR flujo de consentimiento
+[ ] ¿Se recolectan datos opcionales como obligatorios? → ⚠️ MARCAR como opcional
+
+=== CHECKS DE CODE REVIEW ===
+[ ] ¿Nombres de variables claros y consistentes? → ⚠️ SUGERIR rename
+[ ] ¿Funciones >50 líneas sin dividir? → ⚠️ SUGERIR refactor
+[ ] ¿Try/catch sin manejo real (solo console.error)? → ⚠️ MEJORAR handling
+[ ] ¿Tareas destructivas sin confirmación? → ❌ AÑADIR UI.confirm()
+[ ] ¿Hardcoded strings sin español? → ❌ TRADUCIR
 
 ✅ Si todo PASS: mostrar código al usuario.
 ⚠️ Si hay warnings: mostrar código + nota de mejora.

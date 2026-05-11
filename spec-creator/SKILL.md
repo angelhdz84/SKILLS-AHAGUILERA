@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta
   author: Angel Hernandez - ahaguilera.dev
-  version: "3.0"
+  version: "3.2"
   generatedBy: "spec-creator skill"
   triggers: ["definir spec app", "nueva app completa", "crear especificación", "historia de app", "spec creator", "brainstorming app", "descubrir app", "diseñar app"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -64,7 +64,34 @@ Haz preguntas **una por mensaje**. Prioriza opción múltiple cuando sea posible
 
 Máximo 3-4 preguntas en total. Si el usuario ya dio toda la info, salta este paso.
 
-#### Paso 0.4 — Proponer 2-3 enfoques con trade-offs
+#### Paso 0.4 — ADR: Documentar decisión arquitectónica clave
+Antes de proponer enfoques, si la app requiere sync offline o manejo de datos complejo, documenta la decisión con formato ADR:
+
+```
+📐 ADR-001: Estrategia de Sync Offline
+
+Contexto:
+  La app [nombre] necesita funcionar sin conexión y sincronizar
+  datos cuando vuelva la red. Los usuarios pueden modificar los
+  mismos registros desde diferentes dispositivos.
+
+Decisión:
+  [1] Sync manual con export/import JSON (Máxima simplicidad, sin conflictos)
+  [2] Last-write-wins con timestamp (Simplicidad moderada, pérdida de datos posible)
+  [3] CRDT/operational transform (Sin pérdida, complejidad alta)
+
+Consecuencias:
+  [elegir] implicará [trade-off específico].
+  La spec incluirá esta decisión bajo ## 🧱 Arquitectura.
+
+Alternativas consideradas:
+  - Sin sync: no cumple requisito offline-multi-dispositivo
+  - Sync automático con WebRTC: requiere servidor de señalización
+```
+
+**Regla**: Si el usuario ya decidió enfoque en la historia, salta este paso.
+
+#### Paso 0.5 — Proponer 2-3 enfoques con trade-offs
 Una vez que entiendes qué construir, presenta 2-3 enfoques arquitectónicos con sus trade-offs:
 
 ```
@@ -225,6 +252,14 @@ Antes de generar el archivo final, revisa la spec con ojos frescos:
 2. **Consistencia interna**: ¿Alguna sección contradice a otra? ¿La arquitectura coincide con las descripciones de funcionalidad?
 3. **Alcance**: ¿Está suficientemente enfocado para un solo plan de implementación? Si no, sugiere descomposición.
 4. **Ambigüedad**: ¿Algún requisito podría interpretarse de dos formas distintas? Si es así, elige una y hazla explícita.
+5. **Modelado DDD** (si aplica sync/offline):
+   - ¿Los agregados (entidades que se sincronizan juntas) están claramente definidos?
+   - ¿El "bounded context" offline está separado del online?
+   - ¿Los eventos de dominio identificados (ej: "paciente-creado", "cita-cancelada") son los que activan sync?
+6. **Sync-friendly API design** (si aplica):
+   - ¿Los endpoints de sync son idempotentes? (mismo request repetido = mismo resultado)
+   - ¿Hay un endpoint `POST /sync` batch que acepte múltiples operaciones?
+   - ¿Se incluye `lastModified` timestamp en cada registro para conflict resolution?
 
 Arregla lo que encuentres inline y avanza.
 
@@ -267,6 +302,10 @@ Antes de cualquier output, verifica mentalmente:
 - [ ] **YAGNI**: ¿Hay funcionalidades innecesarias en la spec? → ELIMINAR (menos es más)
 - [ ] **Librerías externas**: Si se detectaron, ¿tienen URL de descarga válida y son offline-compatibles? → VERIFICAR con Context7 MCP
 - [ ] **Librerías externas**: ¿Están documentadas en la spec bajo `## 📚 Librerías Adicionales` con ruta y comando de descarga exactos? → AGREGAR si faltan
+- [ ] **Sync strategy**: Si la app requiere multi-dispositivo, ¿hay ADR documentando la estrategia de sync? → AGREGAR ADR
+- [ ] **Agregados DDD**: ¿Los bounded contexts offline/online están separados? → REVISAR si afecta arquitectura
+- [ ] **Privacidad**: ¿Se especifica qué datos son mínimos necesarios y cuáles se cifran? → AGREGAR sección de privacidad
+- [ ] **API sync**: Si hay sync, ¿los endpoints son idempotentes y batch? → DOCUMENTAR en sección de API
 Si falla cualquier punto, corrige silenciosamente antes de mostrar la respuesta.
 
 ---
@@ -298,6 +337,8 @@ Tu respuesta:
 6. **Backup/Export**: Manual a JSON/PDF/Excel, comprimido con pako si >1MB.
 7. **Validación**: Formularios con feedback inmediato, mensajes en español, contraste WCAG AA.
 8. **Entrega**: Web (ZIP) + opcional Electron, `GUIA_USUARIO.md` incluido.
+9. **Sync (si aplica)**: Endpoint `POST /sync` batch, registros con `lastModified`, idempotencia en writes.
+10. **Privacidad**: Datos mínimos recolectados, consentimiento local explícito antes de guardar.
 
 ---
 
