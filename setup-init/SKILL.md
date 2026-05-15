@@ -3,7 +3,7 @@ name: setup-init
 description: Preparar un proyecto offline-first desde cero: valida entorno, crea estructura exacta, descarga librerías base (Tailwind, DaisyUI, Alpine, Dexie, CryptoJS, pako, ApexCharts, jsPDF, SheetJS, Bootstrap Icons, Animate.css) + librerías adicionales detectadas en la spec.
 license: MIT
 compatibility: Requiere curl (Windows/macOS/Linux) y permisos de escritura. Node.js opcional para Electron. Lee specs/[app].md para detectar librerías adicionales.
-meta
+meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "2.0"
   generatedBy: "setup-init skill"

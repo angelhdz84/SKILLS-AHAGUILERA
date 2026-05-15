@@ -3,7 +3,7 @@ name: spec-creator
 description: Transforma ideas de apps completas en especificaciones técnicas validadas para stack offline-first. Incluye fase de descubrimiento (brainstorming con preguntas, enfoques y trade-offs), refinamiento interactivo 4+1, auto-revisión, y generación de spec en specs/[app].md.
 license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
-meta
+meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "3.2"
   generatedBy: "spec-creator skill"

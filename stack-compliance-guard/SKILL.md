@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación para spec-creator, setup-init y code-generator.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.1"
+  version: "2.2"
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -156,6 +156,127 @@ if (!localStorage.getItem('consentimiento_privacidad')) {
 modulosActivos: [...existentes, 'nuevo-modulo']
 */
 ```
+
+### ❌ Regla 6: Librerías Adicionales mal referenciadas
+
+---
+
+### ❌ Regla 7: Anti-patrones de Diseño (De pbakaus/impeccable)
+
+Detecta y corrige patrones que hacen que una interfaz se vea "genérica" o "hecha por IA". 27 reglas determinísticas:
+
+```html
+<!-- PATRÓN PROHIBIDO 7.1: Side-stripe borders -->
+<div class="border-l-4 border-primary">...</div>
+<!-- CORRECCIÓN: Usar fondo tintado, icono leading, o borde completo -->
+
+<!-- PATRÓN PROHIBIDO 7.2: Gradient text -->
+<span class="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">...</span>
+<!-- CORRECCIÓN: Usar color sólido. Énfasis vía weight o tamaño -->
+
+<!-- PATRÓN PROHIBIDO 7.3: Glassmorphism decorativo -->
+<div class="backdrop-blur-xl bg-white/10">...</div>
+<!-- CORRECCIÓN: Solo usar si cumple propósito funcional (overlay, nav fijo) -->
+
+<!-- PATRÓN PROHIBIDO 7.4: Hero-metric template -->
+<!-- Big number + small label + supporting stats + gradient accent -->
+<section><span class="text-5xl font-bold">99%</span><p>Satisfacción</p></section>
+<!-- CORRECCIÓN: Reemplazar con contenido real, testimonios, o datos contextuales -->
+
+<!-- PATRÓN PROHIBIDO 7.5: Card grids idénticos -->
+<!-- Misma tarjeta (icon + heading + text) repetida 3-6 veces -->
+<!-- CORRECCIÓN: Variar layouts, mezclar tipos de contenido -->
+
+<!-- PATRÓN PROHIBIDO 7.6: Modal como primera opción -->
+<!-- CORRECCIÓN: Agotar alternativas inline/progresivas antes de modal -->
+
+<!-- PATRÓN PROHIBIDO 7.7: Cards anidadas -->
+<div class="card"><div class="card">...</div></div>
+<!-- CORRECCIÓN: Extraer contenido anidado a su propia sección -->
+
+<!-- PATRÓN PROHIBIDO 7.8: Gray text sobre fondo de color -->
+<span class="text-gray-500 bg-primary">...</span>
+<!-- CORRECCIÓN: shade más oscuro del color de fondo, o blanco con opacidad -->
+
+<!-- PATRÓN PROHIBIDO 7.9: #000 o #fff puro -->
+<!-- CORRECCIÓN: Tintar neutros hacia el hue brand (chroma 0.005-0.01) -->
+
+<!-- PATRÓN PROHIBIDO 7.10: Bounce/elastic easing -->
+<!-- CORRECCIÓN: ease-out-quart / quint / expo -->
+
+<!-- PATRÓN PROHIBIDO 7.11: Animación de layout properties -->
+<!-- CORRECCIÓN: Usar transform + opacity, no animar height/width/top/left -->
+
+<!-- PATRÓN PROHIBIDO 7.12: Purple-to-blue gradients -->
+<!-- CORRECCIÓN: Elegir UN color sólido como acento -->
+
+<!-- PATRÓN PROHIBIDO 7.13: Inter como única opción tipográfica -->
+<!-- CORRECCIÓN: system-ui stack o fuente con personalidad según dominio -->
+
+<!-- PATRÓN PROHIBIDO 7.14: Rounded-square icon tile arriba de headings -->
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+  <i class="bi bi-... text-primary"></i>
+</div>
+<h2>Título</h2>
+<!-- CORRECCIÓN: Quitar icon tile, dejar título o icono inline -->
+
+<!-- PATRÓN PROHIBIDO 7.15: Em dashes en copy -->
+<!-- CORRECCIÓN: Usar coma, dos puntos, punto y coma, o paréntesis -->
+
+<!-- PATRÓN PROHIBIDO 7.16: Tiny uppercase tracked labels sobre cada sección -->
+<span class="text-xs uppercase tracking-widest">Sección</span>
+<!-- CORRECCIÓN: Un kicker fuerte puede ser voz; repetirlo es scaffolding -->
+
+<!-- PATRÓN PROHIBIDO 7.17: Monospace como shorthand "técnico" -->
+<!-- CORRECCIÓN: Mono SOLO si la marca es genuinamente técnica -->
+
+<!-- PATRÓN PROHIBIDO 7.18: Dark mode = light mode invertido -->
+<!-- CORRECCIÓN: dark mode tiene su propia jerarquía (surface lighter = depth) -->
+
+<!-- PATRÓN PROHIBIDO 7.19: Centered stack hero con icon-card-grid -->
+<!-- CORRECCIÓN: Asimetría, left-aligned, o grid visible como voz -->
+
+<!-- PATRÓN PROHIBIDO 7.20: All-caps body copy -->
+<!-- CORRECCIÓN: Reservar caps para labels cortos y headings -->
+
+<!-- PATRÓN PROHIBIDO 7.21: Placeholder text con bajo contraste -->
+<!-- CORRECCIÓN: Placeholder también necesita 4.5:1 mínimo -->
+
+<!-- PATRÓN PROHIBIDO 7.22: Heavy color en estados inactivos -->
+<!-- CORRECCIÓN: Inactivo = muted, activo = acento -->
+
+<!-- PATRÓN PROHIBIDO 7.23: Nested modales -->
+<!-- CORRECCIÓN: Steps progresivos en línea, no modal sobre modal -->
+
+<!-- PATRÓN PROHIBIDO 7.24: Sin skeleton states en carga -->
+<!-- CORRECCIÓN: skeleton > spinner-in-the-middle -->
+
+<!-- PATRÓN PROHIBIDO 7.25: Sin empty states que enseñen -->
+<!-- CORRECCIÓN: empty state que guía al usuario a dar el primer paso -->
+
+<!-- PATRÓN PROHIBIDO 7.26: Display fonts en UI labels o botones -->
+<!-- CORRECCIÓN: Sistema sans para UI, display reservado para branding -->
+
+<!-- PATRÓN PROHIBIDO 7.27: Sin state coverage (hover/focus/active/disabled) -->
+<!-- CORRECCIÓN: Cada interactivo tiene: default, hover, focus-visible, active, disabled -->
+```
+
+> **Uso**: Estas reglas son determinísticas (no requieren LLM). Se aplican como grep patterns sobre HTML/CSS generado. Si hay match → FAIL + snippet de corrección.
+
+### ❌ Regla 8: CLI Impeccable Detect (Opcional)
+
+Si el usuario tiene Node.js instalado, ofrecer:
+
+```
+npx impeccable detect index.html --fast --json
+```
+
+Esto escanea el HTML generado contra 24 anti-patrones sin LLM. Integrar resultados al checklist:
+- Parsear output JSON
+- Mapear cada hallazgo a un item del checklist
+- Si hay fails, sugerir correcciones automáticas
+
+**Nota**: No es obligatorio. Si el usuario no tiene Node.js, saltar.
 
 ### ❌ Regla 6: Librerías Adicionales mal referenciadas
 ```html

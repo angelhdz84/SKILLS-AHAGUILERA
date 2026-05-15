@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.1"
+  version: "2.2"
   generatedBy: "validation-offline skill"
   triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación", "test automatizado", "playwright", "e2e"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -314,6 +314,31 @@ retry_check("Render persistente tras retry", lambda: len(page.evaluate("document
 ```
 
 > **Nota para la IA**: Si el usuario no tiene Python/Playwright, salta esta fase y usa solo la Fase 3 (DevTools manual). Pregunta "¿Tienes Python y Playwright instalados? (s/n)" antes de generar el script.
+
+#### Paso 5 — Auditoría CLI con Impeccable (opcional)
+
+Si el usuario tiene Node.js, ofrecer ejecutar:
+
+```bash
+npx impeccable detect index.html --fast --json > docs/impeccable-report.json
+```
+
+Esto escanea el HTML final contra 27 anti-patrones determinísticos (gradient text, glassmorphism, side-stripe borders, etc.) sin LLM.
+
+Parsear `docs/impeccable-report.json` y agregar resultados al reporte:
+
+```
+🔍 Impeccable Audit:
+  ✅ 20/27 reglas OK
+  ⚠️ 4 warnings: glassmorphism decorativo (#3), card grid idéntico (#5),
+     gray-on-color-text (#8), placeholder contrast (#21)
+  ❌ 3 fails: centered-stack hero (#19), modal-first (#6), animated layout props (#11)
+  📄 Reporte guardado en: docs/impeccable-report.json
+```
+
+Los FAILs se agregan a la sección de correcciones del reporte final, con el snippet de corrección de `stack-compliance-guard` Regla 7.
+
+> **Nota**: Si el usuario no tiene Node.js o decline, saltar este paso sin preguntar de nuevo.
 
 ### 🟣 FASE 4: Reporte Final & Handoff
 1. Compila resultados en tabla markdown.
