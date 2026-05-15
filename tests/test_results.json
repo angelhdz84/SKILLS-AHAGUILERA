@@ -1,0 +1,52 @@
+{
+  "total": 9,
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "check": "Page Load",
+      "status": "PASS",
+      "message": "Title OK: Test App - Gestor de Tareas"
+    },
+    {
+      "check": "Alpine.js Interactivity",
+      "status": "PASS",
+      "message": "Alpine.js interactivity OK: task added"
+    },
+    {
+      "check": "Form Validation",
+      "status": "PASS",
+      "message": "Form validation OK: 'La tarea debe tener al menos 3 caracteres'"
+    },
+    {
+      "check": "Toggle Complete",
+      "status": "PASS",
+      "message": "Toggle complete OK: aria-label changed"
+    },
+    {
+      "check": "Responsive Layout",
+      "status": "PASS",
+      "message": "Responsive OK: no horizontal scroll at 375px"
+    },
+    {
+      "check": "Touch Targets",
+      "status": "PASS",
+      "message": "Touch targets OK: all 7 buttons >= 44px"
+    },
+    {
+      "check": "Focus Rings",
+      "status": "PASS",
+      "message": "Focus OK: input is focusable"
+    },
+    {
+      "check": "Viewport Meta",
+      "status": "PASS",
+      "message": "Viewport meta OK: width=device-width, initial-scale=1.0"
+    },
+    {
+      "check": "Empty State",
+      "status": "PASS",
+      "message": "Empty state OK: 'No hay tareas' visible"
+    }
+  ]
+}
