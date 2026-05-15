@@ -1,11 +1,11 @@
 ---
 name: design-ux-intelligence
-description: Aplica principios de diseño distintivo y UX profesional (extraídos de frontend-design y ui-ux-pro-max) adaptados estrictamente al stack offline-first: Alpine.js, Dexie, CryptoJS, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css.
+description: Aplica principios de diseño distintivo y UX profesional (extraídos de frontend-design, ui-ux-pro-max, interface-design y awesome-design-md) adaptados estrictamente al stack offline-first: Alpine.js, Dexie, CryptoJS, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css.
 license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.1"
+  version: "2.2"
   generatedBy: "design-ux-intelligence skill"
   triggers: ["tono visual", "diseño distintivo", "UX profesional", "validar accesibilidad", "mejorar UI", "paleta de colores", "tipografía", "estilo UI", "recomendación de diseño"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -29,6 +29,74 @@ Esta SKILL se activa cuando:
 ---
 
 ## 🎯 PRINCIPIOS DE DISEÑO DISTINTIVO (Adaptado de frontend-design)
+
+### 🔴 El Problema (De interface-design)
+```
+⚠️ ADVERTENCIA: Vas a generar output genérico.
+
+Tu entrenamiento ha visto miles de dashboards, CRUDs y formularios.
+Los patrones son fuertes. Puedes seguir TODO el proceso de abajo
+—explorar el dominio, nombrar un signature, declarar tu intención—
+y aun así producir una plantilla.
+
+Colores cálidos sobre estructuras frías. Fuentes amigables sobre
+layouts genéricos. Un "feel de clínica" que se ve como cualquier otra app.
+
+Esto sucede porque la intención vive en prosa, pero la generación
+de código tira de patrones. El gap entre ambas es donde ganan los defaults.
+
+Saltar este Paso 0 = el 99% de probabilidad de output genérico.
+```
+
+### Paso 0: Interface Discovery (De dammyjay93/interface-design)
+
+Antes de elegir paletas, tipografías o estilos, ejecuta este proceso de 5 pasos. Cada paso es una **conversación con el usuario**. No lo saltes.
+
+```
+[▓░░░░░░░░░░░░░░░░░] 0% • Interface Discovery
+
+🎯 PASO 0.1 — Intent Exploration
+¿Quién es el humano específico que usará esto?
+¿Cuál es su tarea principal (en una frase)?
+¿Qué emoción debe transmitir la interfaz?
+  - [1] Calma y confianza (healthcare, legal, fintech)
+  - [2] Energía y urgencia (fitness, gaming, deadlines)
+  - [3] Precisión y control (dashboards, admin, dev tools)
+  - [4] Calidez y cercanía (social, e-commerce, kids)
+  - [5] Prestigio y exclusividad (luxury, portfolio, premium)
+
+🎯 PASO 0.2 — Domain Exploration
+Basado en el dominio detectado:
+  - Conceptos únicos: ¿qué palabra/símbolo/color define esta app?
+  - Color world: ¿qué colores aparecen naturalmente en este dominio?
+    (ej: salud = verde, blanco, celeste; fintech = azul marino, dorado)
+  - Signature element: ¿qué elemento visual hará inconfundible esta app?
+    (ej: una barra de progreso curva, un badge con forma única,
+     un gradiente característico, bordes asimétricos)
+
+🎯 PASO 0.3 — Subtle Layering
+¿Cómo crear jerarquía visual sin gritar?
+  - Surface elevation: 2-4 niveles de fondo (canvas → surface-1 → -2 → -3)
+  - Border progression: sin borde → hairline (1px) → visible (2px)
+  - Token architecture: cada nivel tiene su token (--surface-1, --border-subtle)
+  - Sin sombras dramáticas: la profundidad se siente, no se anuncia
+
+🎯 PASO 0.4 — Infinite Expression
+Rechazar patrones idénticos. Cada pantalla emerge de su tarea:
+  - Una lista no se ve igual que un formulario
+  - Un dashboard no se ve igual que una configuración
+  - La variación viene del contenido, no de templates
+  - Pregunta: "¿Qué haría que esta pantalla no pudiera ser de otra app?"
+
+🎯 PASO 0.5 — Systemic Intent
+  - Cada decisión (color, spacing, depth, type) refuerza el "feel" declarado en 0.1
+  - Si elegiste "calma": colores fríos, transiciones lentas, espaciado generoso
+  - Si elegiste "energía": colores cálidos, micro-interacciones rápidas, contraste alto
+  - Consistencia > creatividad: el sistema manda, las excepciones se justifican
+  - Output esperado: un párrafo que cualquiera pueda leer y decir "sí, esa app se ve así"
+```
+
+> 🔑 **Regla**: Si el usuario ya definió tono visual en `spec-creator` (Pasos 1-8 de Configuración), salta los Pasos 0.1-0.2 y ve directo a 0.3-0.5. Si eligió "defaults", ejecuta TODO el Paso 0.
 
 ### Paso 1: Definir antes de codificar
 ```
