@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación para spec-creator, setup-init y code-generator.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.2"
+  version: "2.3"
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -63,10 +63,15 @@ fetch('/api/datos');
 axios.get('https://...');
 XMLHttpRequest();
 
+// PATRÓN PROHIBIDO en componentes Pines:
+<!-- <script src="//unpkg.com/alpinejs" defer></script> (debe cargarse desde assets/) -->
+<!-- <img src="https://cdn.devdojo.com/..." /> (reemplazar por SVG inline o local) -->
+
 // CORRECCIÓN AUTOMÁTICA:
 // 1. Reemplazar CDN por ruta local: `assets/css/tailwind.min.css`
 // 2. Eliminar fetch/axios: usar Dexie para datos locales
 // 3. Si se requiere dato externo: documentar que NO es compatible con offline-first
+// 4. En componentes Pines: Alpine.js debe cargarse desde assets/, no desde CDN
 ```
 
 ### ❌ Regla 3: Omisión de Cifrado en Campos Sensibles

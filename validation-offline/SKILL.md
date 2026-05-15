@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.3"
+  version: "2.4"
   generatedBy: "validation-offline skill"
   triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación", "test automatizado", "playwright", "e2e"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -54,6 +54,17 @@ Ejecuta estas comprobaciones sobre los archivos generados:
 ```
 - Si falla: marca `❌ FAIL` + línea exacta + snippet de corrección.
 - Si pasa: marca `✅ PASS`.
+
+#### 📦 Checks de Componentes Pines (si aplica)
+Cuando la app usa componentes de `components/pines/`:
+- [ ] ✅ `x-teleport` presente en modales/slide-over (para que el DOM no se anide incorrectamente)
+- [ ] ✅ `@keydown.escape` en modales/paneles (cierre con tecla Escape)
+- [ ] ✅ Sin CDN Alpine.js en páginas que usan Pines (debe cargarse desde `assets/`)
+- [ ] ✅ `window.toast()` definido si se usa Toast (verificar en `index.html` o antes de llamarlo)
+- [ ] ✅ Toast/notificaciones: `aria-live="polite"` presente en el contenedor de toasts
+- [ ] ✅ `$watch` y `$nextTick` usados correctamente en Context Menu, Hover Card (Alpine Magic properties)
+- [ ] ✅ Si usa Command Palette: `@keydown.window.cmd.k.prevent` para atajo Cmd+K
+- [ ] ✅ Contraste suficiente en componentes Tailwind nativos (bg-white + text-gray-900 = 15:1, ok)
 
 ### 🔵 FASE 3: Guía de Validación Dinámica (DevTools)
 Como OpenCode no ejecuta navegadores, **entrega estos comandos listos para pegar en `F12 > Console`**. Pide al usuario que los ejecute uno a uno y responda `✅` o `❌ [mensaje]`.

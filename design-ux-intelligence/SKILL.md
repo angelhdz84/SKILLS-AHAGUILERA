@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.3"
+  version: "2.5"
   generatedBy: "design-ux-intelligence skill"
   triggers: ["tono visual", "diseño distintivo", "UX profesional", "validar accesibilidad", "mejorar UI", "paleta de colores", "tipografía", "estilo UI", "recomendación de diseño"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -174,11 +174,11 @@ Capa opcional de control numérico (1-10). Solo activar si el usuario pide "más
 ### Paso 2: Reglas de implementación (offline-compatible)
 | Elemento | Regla Offline-First | Ejemplo de Código |
 |----------|-------------------|------------------|
-| **Tipografía** | Google Fonts descargadas a `assets/fonts/` o system fonts. Evitar Inter/Roboto si buscas distinción. | `font-family: 'Segoe UI', system-ui, sans-serif;` |
-| **Color** | Definir en `project.config.js` → `tema.colores`. Usar CSS variables para consistencia. | `--color-primario: #0d9488;` en `:root` |
-| **Motion** | Animate.css + `will-change: transform`. Máx 2 animaciones/vista. Respeta `prefers-reduced-motion`. | `<div class="animate__animated animate__fadeInUp">` |
-| **Espacial** | Escala Tailwind (`p-4`, `gap-6`). Asimetría controlada: `rounded-t-2xl rounded-b-lg`. | `<div class="p-6 md:p-8 gap-6">` |
-| **Texturas** | Gradientes CSS (`bg-gradient-to-r`), sombras (`shadow-xl`), bordes (`ring-1 ring-primary/20`). | `<header class="bg-gradient-to-r from-primary to-secondary shadow-lg">` |
+| **Tipografía** | Sistema 5 tamaños con ratio fijo (1.25-1.333). `clamp()` en displays, `rem` fijo en UI. Mín 16px body. Nombres semánticos: `--text-body`, no `--font-size-16`. | `font-size: clamp(1.5rem, 3vw + 1rem, 3rem)` en hero; `text-base` en body |
+| **Color** | Usar OKLCH (no HSL) para paletas perceptualmente uniformes. Tinted neutrals: chroma 0.005-0.01. Tokens 2-capas: primitivos (`--blue-500`) → semánticos (`--color-primary`). | `--blue-500: oklch(50% 0.2 250); --color-primary: var(--blue-500)` en `:root` |
+| **Motion** | Animate.css + `will-change`. 100/300/500 rule. GPU-safe (transform + opacity). Respeta `prefers-reduced-motion`. | `<div class="animate__animated animate__fadeInUp" style="animation-duration:300ms">` |
+| **Espacial** | Container queries para componentes, viewport para layout. Break card grid: espaciado+alineación agrupan. No nesting cards. | `@container (min-width: 400px){...}` en CSS; `grid-cols-1 md:grid-cols-2` en layout |
+| **Texturas** | Gradientes CSS, sin glassmorphism decorativo. Alpha es code smell: preferir colores sólidos. Elevation vía surface ladder + hairline. | `bg-gradient-to-r from-primary/90 to-primary/60` + `border border-base-300` |
 | **Iconografía** | Bootstrap Icons exclusivamente. Cada acción con icono + texto en móvil. | `<button><i class="bi bi-plus-lg"></i> <span class="sr-only md:not-sr-only">Nuevo</span></button>` |
 | **Conexión** | Indicador online/offline visible siempre. Badge fijo + eventos `online`/`offline`. | `<span class="badge badge-sm" :class="conectado ? 'badge-success' : 'badge-error'"><i :class="conectado ? 'bi-wifi' : 'bi-wifi-off'"></i> <span x-text="conectado ? 'En línea' : 'Sin conexión'"></span></span>` |
 | **Sync status** | Barra/indicador de progreso de sincronización. Animación pulse mientras sync. | `<progress class="progress progress-primary w-56" x-show="syncing" :value="syncProgress" max="100"></progress>` |
@@ -205,6 +205,32 @@ Capa opcional de control numérico (1-10). Solo activar si el usuario pide "más
 - **No h-screen**: usar min-h-[100dvh] para evitar jumping en iOS Safari
 - **No animar layout properties**: solo transform + opacity (GPU-safe)
 - **No bounce/linear easing**: usar cubic-bezier personalizados o spring CSS
+- **Alpha es code smell**: rgba/hsla extenso indica paleta incompleta. Usar colores sólidos en overlays. Excepción: focus rings y estados interactivos.
+- **Gray text on colored backgrounds**: usar un tono más oscuro del color de fondo, no gris puro.
+- **Pure gray sin tintar**: añadir chroma 0.005-0.01 para que los neutros respiren.
+- **Wrapping todo en cards**: no todo necesita card. Espacio+alineación crean agrupación visual.
+- **Sin sistema de escalas**: usar ratio fijo (1.25, 1.333 o 1.5) entre tamaños tipográficos.
+
+---
+
+## 📐 SISTEMA DE ESCALAS TIPOGRÁFICAS (De impeccable/typography)
+5 tamaños cubren casi todo con un ratio consistente:
+
+| Token | Ratio 1.25 | Ratio 1.333 | Uso |
+|-------|-----------|-------------|-----|
+| `--text-xs` | 0.75rem | 0.75rem | Captions, legal |
+| `--text-sm` | 0.875rem | 0.875rem | Metadata, UI secundario |
+| `--text-base` | 1rem | 1rem | Body text (mín 16px) |
+| `--text-lg` | 1.25rem | 1.333rem | Subheadings, lead |
+| `--text-xl` | 2rem+ | 2.5rem+ | Headlines, hero |
+
+**Reglas:**
+- Nombres semánticos: `--text-body`, `--text-heading` — nunca `--font-size-16`
+- Fluid type con `clamp()` en displays: `clamp(1rem, 3vw + 1rem, 2.5rem)`
+- `rem` fijo en UI de app (no fluid, preserva predictibilidad espacial)
+- Una familia basta: pesos variados crean jerarquía más limpia que dos fuentes. Solo añadir segunda cuando se necesita contraste genuino (display serif + body sans).
+- Máx 64ch por línea de texto, line-height 1.5-1.7 body / 1.1-1.2 headings
+- Nunca `px` en font-size, nunca `user-scalable=no`, nunca body < 16px
 
 ---
 
@@ -480,6 +506,41 @@ class="transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.34,1.56,
 - [ ] ¿Conexión offline→online con transición? → ❌ AÑADIR `transition-colors duration-300`
 - [ ] ¿Sync en progreso con spinner/pulse animado? → ❌ AÑADIR <span class="loading loading-spinner">
 - [ ] ¿Datos guardados con checkmark efímero? → ❌ AÑADIR `animate__fadeIn` + auto-hide
+
+---
+
+## 📦 PASO 5: COMPONENTES PINES PASTE-ABLE
+
+Componentes Alpine.js + Tailwind CSS nativo, copiados de [Pines](https://devdojo.com/pines) y adaptados al stack offline-first. Residen en `components/pines/`.
+
+| Componente | Categoría | Cuándo usarlo | Archivo |
+|-----------|-----------|---------------|---------|
+| **Command Palette** | UX | Cmd+K para navegación rápida, power users | `command.html` |
+| **Slide-over** | UX | Panel lateral para detalles, settings, filtros | `slide-over.html` |
+| **Date Picker** | Form | Selección de fecha en formularios offline | `date-picker.html` |
+| **Context Menu** | UX | Menú en click derecho para acciones contextuales | `context-menu.html` |
+| **Hover Card** | UX | Vista previa de perfil/enlace al hacer hover | `hover-card.html` |
+| **Popover** | UX | Info contextual expandible cerca del elemento | `popover.html` |
+| **Range Slider** | Form | Filtros por rango numérico (precio, fecha) | `range-slider.html` |
+| **Rating** | Form | Valoración de 1-5 estrellas | `rating.html` |
+| **Switch** | Form | Toggle on/off para preferencias | `switch.html` |
+| **Toast** | UX | Notificaciones temporales (éxito, error, alerta) | `toast.html` |
+| **Tooltip** | UX | Ayuda contextual al hacer hover | `tooltip.html` |
+| **Copy to Clipboard** | Utility | Copiar texto/código al portapapeles | `copy-to-clipboard.html` |
+| **Modal / Full Screen** | UX | Diálogos, confirmaciones, preview a pantalla completa | `modal.html`, `full-screen-modal.html` |
+| **Dropdown / Menu Bar / Nav** | Nav | Menús de navegación o acciones agrupadas | `dropdown-menu.html`, `menubar.html`, `navigation-menu.html` |
+| **Combobox / Select** | Form | Selección de opciones con búsqueda | `combobox.html`, `select.html` |
+| **Tabs / Accordion** | Nav | Organizar contenido en pestañas o secciones colapsables | `tabs.html`, `accordion.html` |
+| **Pagination / Breadcrumbs** | Nav | Navegación entre páginas y ruta de ubicación | `pagination.html`, `breadcrumbs.html` |
+| **Banner / Sticky Header** | Marketing | Avisos importantes o headers fijos | `banner.html`, `sticky-header.html` |
+| **Texto animado / Marquee** | Decorative | Headlines animados, scroll infinito de logos | `text-animation.html`, `marquee.html` |
+| **Image Gallery / Video** | Media | Galería de imágenes, reproductor de video | `image-gallery.html`, `video.html` |
+
+**Reglas de uso:**
+- Son Tailwind nativo (no DaisyUI). Funcionan con Alpine cargado desde `assets/`.
+- Para integrar con DaisyUI: mapear `bg-white` → `bg-base-100`, `text-gray-900` → `text-base-content`, `border-neutral-200` → `border-base-300`.
+- No contienen CDNs externas ni fetch. 100% offline-file compatible.
+- Ver `components/index.html` para galería navegable con preview y copia.
 
 ---
 

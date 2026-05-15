@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports. Lee libreriasAdicionales de la spec.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.2"
+  version: "2.3"
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -489,6 +489,142 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 
 ---
 
+## 🧩 PLANTILLAS DE COMPONENTES PINES
+
+Cuando la spec requiera UX avanzada, inyectar estos patrones de Pines (en `components/pines/`). Tailwind nativo, no DaisyUI.
+
+### Command Palette (Cmd+K)
+```html
+<!-- Copiar de components/pines/command.html -->
+<div x-data="{
+    cmdOpen: false,
+    cmdQuery: '',
+    cmdItems: [
+        { title: 'Ir a Dashboard', value: 'dashboard', icon: 'bi-speedometer2' },
+        { title: 'Nuevo registro', value: 'nuevo', icon: 'bi-plus-circle' },
+        { title: 'Buscar', value: 'buscar', icon: 'bi-search' }
+    ],
+    get cmdFiltered() {
+        if (!this.cmdQuery) return this.cmdItems.slice(0, 5);
+        return this.cmdItems.filter(i => i.title.toLowerCase().includes(this.cmdQuery.toLowerCase()));
+    }
+}"
+@keydown.window.cmd.k.prevent="cmdOpen = true"
+@keydown.escape="cmdOpen = false">
+    <template x-teleport="body">
+        <div x-show="cmdOpen" class="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
+             @click.away="cmdOpen = false">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="relative w-full max-w-lg bg-white rounded-xl shadow-2xl border overflow-hidden">
+                <div class="flex items-center px-4 border-b">
+                    <i class="bi bi-search text-gray-400"></i>
+                    <input x-model="cmdQuery" type="text" class="w-full px-3 py-3 text-sm bg-transparent border-0 outline-none"
+                           placeholder="Buscar...">
+                </div>
+                <div class="max-h-64 overflow-y-auto p-2">
+                    <template x-for="item in cmdFiltered" :key="item.value">
+                        <div @click="cmdOpen = false"
+                             class="flex items-center gap-3 px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-gray-100">
+                            <i :class="'bi ' + item.icon" class="text-gray-400"></i>
+                            <span x-text="item.title"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+```
+
+### Slide-over Panel
+```html
+<!-- Copiar de components/pines/slide-over.html -->
+<div x-data="{ panelOpen: false }">
+    <button @click="panelOpen = true" class="btn btn-ghost btn-sm">
+        <i class="bi bi-layout-sidebar"></i> Abrir panel
+    </button>
+    <template x-teleport="body">
+        <div x-show="panelOpen" class="fixed inset-0 z-50">
+            <div class="absolute inset-0 bg-black/20" @click="panelOpen = false"></div>
+            <div class="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-xl"
+                 x-show="panelOpen"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="translate-x-full">
+                <div class="flex items-center justify-between p-4 border-b">
+                    <h2 class="text-lg font-semibold">Panel</h2>
+                    <button @click="panelOpen = false" class="btn btn-ghost btn-sm btn-square">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="p-4 overflow-y-auto h-full pb-20">
+                    <!-- Contenido del panel -->
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+```
+
+### Date Picker
+```html
+<!-- Copiar de components/pines/date-picker.html -->
+<div x-data="{
+    selectedDate: '',
+    showPicker: false,
+    pickerMonth: new Date().getMonth(),
+    pickerYear: new Date().getFullYear(),
+    get daysInMonth() {
+        return new Date(this.pickerYear, this.pickerMonth + 1, 0).getDate();
+    },
+    get firstDayOfMonth() {
+        return new Date(this.pickerYear, this.pickerMonth, 1).getDay();
+    },
+    selectDate(day) {
+        this.selectedDate = `${this.pickerYear}-${String(this.pickerMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        this.showPicker = false;
+    },
+    prevMonth() {
+        if (this.pickerMonth === 0) { this.pickerMonth = 11; this.pickerYear--; }
+        else { this.pickerMonth--; }
+    },
+    nextMonth() {
+        if (this.pickerMonth === 11) { this.pickerMonth = 0; this.pickerYear++; }
+        else { this.pickerMonth++; }
+    }
+}" class="relative w-64">
+    <input type="text" x-model="selectedDate" @focus="showPicker = true" readonly
+           class="w-full px-3 py-2 text-sm border rounded-lg cursor-pointer bg-white"
+           placeholder="Seleccionar fecha...">
+    <div x-show="showPicker" @click.away="showPicker = false"
+         class="absolute top-full mt-1 w-64 bg-white border rounded-lg shadow-lg p-3 z-10">
+        <div class="flex items-center justify-between mb-2">
+            <button @click="prevMonth" class="p-1 hover:bg-gray-100 rounded">&lt;</button>
+            <span class="text-sm font-medium" x-text="new Date(pickerYear, pickerMonth).toLocaleDateString('es', { month: 'long', year: 'numeric' })"></span>
+            <button @click="nextMonth" class="p-1 hover:bg-gray-100 rounded">&gt;</button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center text-xs">
+            <template x-for="d in ['Do','Lu','Ma','Mi','Ju','Vi','Sa']" :key="d">
+                <span class="text-gray-500 font-medium py-1" x-text="d"></span>
+            </template>
+            <template x-for="i in firstDayOfMonth" :key="'e'+i">
+                <div></div>
+            </template>
+            <template x-for="day in daysInMonth" :key="day">
+                <button @click="selectDate(day)"
+                        :class="selectedDate.endsWith(String(day).padStart(2,'0')) ? 'bg-indigo-600 text-white' : 'hover:bg-gray-100'"
+                        class="py-1 rounded text-sm" x-text="day"></button>
+            </template>
+        </div>
+    </div>
+</div>
+```
+
+---
+
 ## 📝 NOTAS PARA LA IA
 - **NUNCA generes todo de una vez**. Respeta las pausas entre fases. OpenCode pierde contexto >15k tokens.
 - **Usa rutas relativas estrictas**. Ej: `assets/js/libs/alpine.js`, NUNCA `https://...` o `../core/...` fuera de `index.html`.
@@ -497,6 +633,7 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 - **Librerías adicionales**: Si la spec tiene `libreriasAdicionales`, inyéctalas en `index.html` entre las libs base y los core files. El orden importa: CSS base → CSS adicional → JS libs base → JS libs adicionales → Core → Main.
 - **No asumas que la librería adicional existe**. Siempre carga desde `assets/js/libs/[nombre]`, nunca desde CDN.
 - **Idioma**: Todo el output, nombres de variables y comentarios en español.
+- **Componentes Pines en `components/pines/`**: Command Palette, Slide-over, Date Picker, Context Menu, Toast, Modal, Tabs, Accordion, etc. Tailwind nativo. Ver `design-ux-intelligence` Paso 5.
 
 ✨ **SKILL ready. Trigger: `generar codigo` para iniciar.**
 ```

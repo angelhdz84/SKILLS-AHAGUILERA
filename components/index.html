@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" x-data="galleryApp()" x-init="init()">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Componentes Pines — Stack Offline-First</title>
+<script src="../assets/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+[x-cloak] { display: none !important; }
+body { font-family: system-ui, -apple-system, sans-serif; }
+.component-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.component-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.modal-bg { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+pre { max-height: 70vh; overflow: auto; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+<div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+<div>
+<h1 class="text-xl font-bold tracking-tight">Componentes Pines</h1>
+<p class="text-sm text-gray-500">Alpine.js + Tailwind CSS &middot; Offline-first</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs text-gray-400" x-text="components.length + ' componentes'"></span>
+<a href="README.md" class="text-xs text-indigo-600 hover:underline">README</a>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 py-6">
+<div class="mb-6 flex gap-3 items-center">
+<div class="relative flex-1 max-w-md">
+<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<input type="text" x-model="search" placeholder="Buscar componente..." class="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white">
+</div>
+<div class="flex gap-2 flex-wrap">
+<template x-for="cat in categories" :key="cat">
+<button @click="filter = (filter === cat ? '' : cat)" :class="filter === cat ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 transition-colors" x-text="cat"></button>
+</template>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<template x-for="comp in filtered" :key="comp.name">
+<div class="component-card bg-white rounded-xl border border-gray-200 overflow-hidden cursor-pointer" @click="showCode(comp)">
+<div class="p-4 border-b border-gray-100 flex items-center justify-between">
+<h3 class="text-sm font-semibold" x-text="comp.name"></h3>
+<span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500" x-text="comp.category"></span>
+</div>
+<div class="p-4 min-h-[100px] flex items-center justify-center text-xs text-gray-400">
+<span>Click para ver codigo</span>
+</div>
+</div>
+</template>
+</div>
+<div x-show="filtered.length === 0" class="text-center py-16 text-gray-400">
+<p class="text-lg">Ningun componente coincide con tu busqueda</p>
+</div>
+</main>
+<div x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg" @click.away="modalOpen = false" @keydown.escape="modalOpen = false">
+<div class="absolute inset-0 bg-black/40" @click="modalOpen = false"></div>
+<div class="relative bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
+<div class="flex items-center justify-between p-4 border-b border-gray-200">
+<div>
+<h2 class="text-lg font-bold" x-text="currentComp?.name"></h2>
+<span class="text-xs text-gray-400" x-text="currentComp?.category + ' / ' + currentComp?.file"></span>
+</div>
+<button @click="modalOpen = false" class="p-1 hover:bg-gray-100 rounded-lg transition-colors">
+<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+</div>
+<div class="p-4 overflow-auto">
+<pre class="text-xs bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto"><code x-text="currentCode"></code></pre>
+</div>
+<div class="p-3 border-t border-gray-200 flex justify-end gap-2">
+<button @click="copyCode()" class="px-4 py-2 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors">Copiar codigo</button>
+<button @click="modalOpen = false" class="px-4 py-2 text-xs font-medium bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">Cerrar</button>
+</div>
+</div>
+</div>
+<script>
+function galleryApp() {
+  return {
+    search: '',
+    filter: '',
+    components: [],
+    modalOpen: false,
+    currentComp: null,
+    currentCode: '',
+    get categories() {
+      return [...new Set(this.components.map(c => c.category))].sort();
+    },
+    get filtered() {
+      return this.components.filter(c => {
+        const matchSearch = !this.search || c.name.toLowerCase().includes(this.search.toLowerCase());
+        const matchFilter = !this.filter || c.category === this.filter;
+        return matchSearch && matchFilter;
+      });
+    },
+    async init() {
+      const files = [
+        { name: 'Command Palette', category: 'UX', file: 'command.html' },
+        { name: 'Slide-over', category: 'UX', file: 'slide-over.html' },
+        { name: 'Date Picker', category: 'Form', file: 'date-picker.html' },
+        { name: 'Context Menu', category: 'UX', file: 'context-menu.html' },
+        { name: 'Hover Card', category: 'UX', file: 'hover-card.html' },
+        { name: 'Popover', category: 'UX', file: 'popover.html' },
+        { name: 'Range Slider', category: 'Form', file: 'range-slider.html' },
+        { name: 'Rating', category: 'Form', file: 'rating.html' },
+        { name: 'Switch', category: 'Form', file: 'switch.html' },
+        { name: 'Toast', category: 'UX', file: 'toast.html' },
+        { name: 'Tooltip', category: 'UX', file: 'tooltip.html' },
+        { name: 'Copy to Clipboard', category: 'Utility', file: 'copy-to-clipboard.html' },
+        { name: 'Modal', category: 'UX', file: 'modal.html' },
+        { name: 'Full Screen Modal', category: 'UX', file: 'full-screen-modal.html' },
+        { name: 'Dropdown Menu', category: 'Nav', file: 'dropdown-menu.html' },
+        { name: 'Full Screen Menu', category: 'Nav', file: 'full-screen-menu.html' },
+        { name: 'Menu Bar', category: 'Nav', file: 'menubar.html' },
+        { name: 'Navigation Menu', category: 'Nav', file: 'navigation-menu.html' },
+        { name: 'Combobox', category: 'Form', file: 'combobox.html' },
+        { name: 'Select', category: 'Form', file: 'select.html' },
+        { name: 'Radio Group', category: 'Form', file: 'radio-group.html' },
+        { name: 'Tabs', category: 'Nav', file: 'tabs.html' },
+        { name: 'Accordion', category: 'UX', file: 'accordion.html' },
+        { name: 'Progress', category: 'UX', file: 'progress.html' },
+        { name: 'Pagination', category: 'Nav', file: 'pagination.html' },
+        { name: 'Breadcrumbs', category: 'Nav', file: 'breadcrumbs.html' },
+        { name: 'Banner', category: 'Marketing', file: 'banner.html' },
+        { name: 'Sticky Header', category: 'Nav', file: 'sticky-header.html' },
+        { name: 'Marquee', category: 'Decorative', file: 'marquee.html' },
+        { name: 'Text Animation', category: 'Decorative', file: 'text-animation.html' },
+        { name: 'Typing Effect', category: 'Decorative', file: 'typing-effect.html' },
+        { name: 'Image Gallery', category: 'Media', file: 'image-gallery.html' },
+        { name: 'Retro Grid', category: 'Decorative', file: 'retro-grid.html' },
+        { name: 'Quotes', category: 'Content', file: 'quotes.html' },
+        { name: 'Video', category: 'Media', file: 'video.html' }
+      ];
+      this.components = files;
+    },
+    async showCode(comp) {
+      this.currentComp = comp;
+      this.currentCode = 'Cargando...';
+      this.modalOpen = true;
+      try {
+        const res = await fetch('pines/' + comp.file);
+        this.currentCode = await res.text();
+      } catch(e) {
+        this.currentCode = 'Error al cargar: ' + e.message;
+      }
+    },
+    async copyCode() {
+      try {
+        await navigator.clipboard.writeText(this.currentCode);
+        alert('Codigo copiado al portapapeles');
+      } catch(e) {
+        alert('No se pudo copiar. Selecciona manualmente.');
+      }
+    }
+  };
+}
+</script>
+</body>
+</html>
