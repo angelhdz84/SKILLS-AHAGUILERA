@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.2"
+  version: "2.3"
   generatedBy: "design-ux-intelligence skill"
   triggers: ["tono visual", "diseño distintivo", "UX profesional", "validar accesibilidad", "mejorar UI", "paleta de colores", "tipografía", "estilo UI", "recomendación de diseño"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -149,6 +149,28 @@ Rechazar patrones idénticos. Cada pantalla emerge de su tarea:
    - Micro-interacciones: hover states, active states, transition suaves
 ```
 
+### Paso 1.6 — Design Dials (De Leonxlnx/taste-skill)
+Capa opcional de control numérico (1-10). Solo activar si el usuario pide "más control" o "ajustar fine-tuning visual". Default: `5 / 4 / 5`:
+
+```
+📊 DESIGN_VARIANCE: [5] (1=simetría perfecta, 10=caos asimétrico)
+  1-3: grids simétricos, paddings iguales
+  4-7: layouts offset, overlays suaves
+  8-10: masonry, fracciones CSS, zonas vacías
+
+🎬 MOTION_INTENSITY: [4] (1=estático, 10=cinemático)
+  1-3: solo hover/active CSS
+  4-7: Alpine transitions, stagger, fade+slide
+  8-10: scroll reveals, parallax suave con IntersectionObserver
+
+🔍 VISUAL_DENSITY: [5] (1=galería de arte, 10=cockpit de datos)
+  1-3: whitespace extremo, py-24, gap-16
+  4-7: spacing estándar de app
+  8-10: padding mínimo, divider líneas, font-mono en números
+```
+
+> **Regla**: No preguntar estos diales a menos que el usuario haya ajustado el tono visual primero. Son una capa de refinamiento, no un punto de partida.
+
 ### Paso 2: Reglas de implementación (offline-compatible)
 | Elemento | Regla Offline-First | Ejemplo de Código |
 |----------|-------------------|------------------|
@@ -167,6 +189,22 @@ Rechazar patrones idénticos. Cada pantalla emerge de su tarea:
 - Shaders CSS complejos o `clip-path` animado pesado
 - Scroll-triggered JS que requiera IntersectionObserver complejo
 - Imágenes de fondo base64 >50KB (impacto en carga inicial)
+
+#### AI Tells — Patrones que delatan UI genérica (De taste-skill)
+- **No Inter como única tipográfica**: usar Geist, Outfit, Satoshi, Cabinet Grotesk
+- **No #000 puro**: usar off-black o tinted dark (#0a0a0a, #121212)
+- **No acentos saturados >80%**: desaturar para que se mezclen con neutros
+- **No gradiente purple-to-blue**: reemplazar por acento sólido único
+- **No glassmorphism decorativo**: solo en overlays/nav fijos funcionales
+- **No 3-columnas iguales en features**: zigzag 2-col, asimétrico o masonry
+- **No centered hero si DESIGN_VARIANCE > 4**: split-screen o left-aligned
+- **No nombres genéricos**: "Juan Pérez", "Acme Corp", "SmartFlow" prohibidos
+- **No números falsos**: evitar 99.99%, usar datos orgánicos (47.2%)
+- **No placeholder text**: escribir copy real, nunca Lorem Ipsum
+- **No emojis en UI**: sustituir por Bootstrap Icons o SVG primitivos
+- **No h-screen**: usar min-h-[100dvh] para evitar jumping en iOS Safari
+- **No animar layout properties**: solo transform + opacity (GPU-safe)
+- **No bounce/linear easing**: usar cubic-bezier personalizados o spring CSS
 
 ---
 
@@ -390,15 +428,58 @@ Usar esta tabla para sugerir automáticamente paleta + estilo + tipografía seg�
 - [ ] Confirmación modal antes de acciones destructivas: `UI.confirm("¿Eliminar?")`
 - [ ] Empty states amigables con CTA: `<div class="text-center py-12"><i class="bi bi-inbox text-6xl"></i><p>Sin registros</p><button class="btn btn-primary"><i class="bi bi-plus"></i> Añadir</button></div>`
 
-### Prioridad 5: Animación con Propósito (MEDIUM)
-- [ ] Duración 150-300ms para micro-interacciones (botones, toggles)
-- [ ] Animaciones expresan causa-efecto (ej: fila eliminada → `animate__fadeOutRight`)
-- [ ] Stagger en listas: `animation-delay: ${index * 100}ms` para `fadeInUp`
-- [ ] Respeta `prefers-reduced-motion`: `@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }`
-- [ ] Conexión offline→online: badge cambia con transición suave (`transition-colors duration-300`)
-- [ ] Sync en progreso: spinner/pulse animado mientras dura, sin bloquear UI
-- [ ] Error de sync: shake sutil en el indicador de conexión (`animate__headShake`)
-- [ ] Datos guardados localmente: checkmark efímero (`animate__fadeIn` + auto-hide 2s)
+### Prioridad 5: Motion Engine (De taste-skill + soft-skill)
+
+**Dial MOTION_INTENSITY:**
+- 1-3: solo hover/active CSS (`transition-all duration-200`)
+- 4-7: plus stagger, fade+slide, micro-interacciones perpetuas
+- 8-10: plus scroll reveals (IntersectionObserver), parallax suave
+
+**Spring Physics (CSS).** Reemplazar easing lineal en elementos interactivos:
+```css
+/* En lugar de transition-all duration-300 ease-in-out */
+transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* O en Tailwind: */
+class="transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+```
+
+**Stagger Orchestration.** No montar listas/grids instantáneamente:
+```html
+<template x-for="(item, i) in items" :key="item.id">
+  <div x-show="true"
+       x-transition:enter.duration.300ms
+       :style="`animation-delay: ${i * 80}ms; transition-delay: ${i * 80}ms`">
+  </div>
+</template>
+```
+
+**Magnetic Button Hover.** Efecto de botón que "respira" al hover:
+```html
+<button class="group btn btn-primary transition-[transform,box-shadow] duration-400
+               ease-[cubic-bezier(0.34,1.56,0.64,1)]
+               hover:scale-[1.02] active:scale-[0.98]">
+  <i class="bi bi-arrow-right group-hover:translate-x-0.5 transition-transform"></i>
+</button>
+```
+
+**Perpetual Micro-Interactions** (cuando MOTION_INTENSITY > 5):
+```html
+<!-- Badge que respira infinitamente -->
+<span class="badge badge-success animate-pulse">En vivo</span>
+<!-- Shimmer skeleton en carga -->
+<div class="skeleton h-4 w-3/4 animate-shimmer bg-gradient-to-r from-base-200 via-base-100 to-base-200 bg-[length:200%_100%]"></div>
+```
+
+**Checklist Motion Engine:**
+- [ ] ¿Duración 150-400ms con spring CSS (`cubic-bezier(0.34,1.56,0.64,1)`)? → ❌ APLICAR spring
+- [ ] ¿Stagger en listas/grids con delay incremental? → ❌ AÑADIR `animation-delay`
+- [ ] ¿Skeleton loaders (no spinner genérico) en carga? → ❌ REEMPLAZAR
+- [ ] ¿GPU-safe: solo transform + opacity (nunca top/left/width/height)? → ❌ CORREGIR
+- [ ] ¿Respeta `prefers-reduced-motion`? → ❌ AÑADIR media query
+- [ ] ¿`min-h-[100dvh]` en lugar de `h-screen`? → ❌ REEMPLAZAR
+- [ ] ¿Conexión offline→online con transición? → ❌ AÑADIR `transition-colors duration-300`
+- [ ] ¿Sync en progreso con spinner/pulse animado? → ❌ AÑADIR <span class="loading loading-spinner">
+- [ ] ¿Datos guardados con checkmark efímero? → ❌ AÑADIR `animate__fadeIn` + auto-hide
 
 ---
 

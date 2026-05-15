@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.2"
+  version: "2.3"
   generatedBy: "validation-offline skill"
   triggers: ["validar app", "verificar spec", "validar stack", "chequeo calidad", "reporte validación", "test automatizado", "playwright", "e2e"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -367,6 +367,19 @@ Antes de outputtear cualquier resultado:
 - [ ] ¿Falta `@media (prefers-reduced-motion)`? → `FAIL` + añadir regla CSS
 - [ ] ¿Inputs sin `<label>` visible (solo placeholder)? → `FAIL` + añadir `<label>`
 - [ ] ¿Sin indicador visual de estado offline? → `WARN` + sugerir badge de conexión
+
+=== DESIGN AUDIT (De taste-skill/redesign-skill) ===
+- [ ] ¿Inter como única tipográfica? → `FAIL` + sugerir Geist/Outfit/Satoshi
+- [ ] ¿#000 puro en fondos? → `FAIL` + reemplazar por off-black (#0a0a0a)
+- [ ] ¿Acentos saturados >80%? → `FAIL` + desaturar (chroma < 0.08)
+- [ ] ¿3-columnas iguales en features? → `FAIL` + zigzag 2-col o masonry
+- [ ] ¿h-screen en secciones? → `FAIL` + reemplazar por min-h-[100dvh]
+- [ ] ¿Animaciones en top/left/width/height? → `FAIL` + usar transform + opacity
+- [ ] ¿Empty states sin CTA? → `WARN` + añadir botón de acción
+- [ ] ¿Skeleton loaders ausentes? → `WARN` + añadir skeleton (no spinner)
+- [ ] ¿Sin hover/focus/active en interactivos? → `FAIL` + añadir transitions
+- [ ] ¿Nombres genéricos (Acme, Juan Pérez)? → `WARN` + reemplazar por realistas
+- [ ] ¿Números falsos (99.99%)? → `WARN` + usar datos orgánicos (47.2%)
 Si detecta violación, **no continúa** hasta corregirla o pedir confirmación.
 
 ---

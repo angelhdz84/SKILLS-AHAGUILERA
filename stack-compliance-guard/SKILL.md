@@ -263,6 +263,18 @@ Detecta y corrige patrones que hacen que una interfaz se vea "genérica" o "hech
 
 > **Uso**: Estas reglas son determinísticas (no requieren LLM). Se aplican como grep patterns sobre HTML/CSS generado. Si hay match → FAIL + snippet de corrección.
 
+#### Supplement: AI Tells de taste-skill (Leonxlnx, ★17.4k)
+Reglas adicionales que impeccable no cubre:
+```html
+<!-- 7.28: Acentos saturados >80% → desaturar a chroma < 0.08 -->
+<!-- 7.29: Nombres genéricos → "Acme Corp", "SmartFlow", "Juan Pérez" prohibidos -->
+<!-- 7.30: Números falsos → 99.99%, 50%, $100.00 → usar datos orgánicos (47.2%) -->
+<!-- 7.31: Placeholder text / Lorem Ipsum → escribir copy real -->
+<!-- 7.32: Emojis en UI → reemplazar por Bootstrap Icons o SVG -->
+<!-- 7.33: h-screen → reemplazar por min-h-[100dvh] -->
+<!-- 7.34: Icons sin label contextual → añadir sr-only o aria-label -->
+```
+
 ### ❌ Regla 8: CLI Impeccable Detect (Opcional)
 
 Si el usuario tiene Node.js instalado, ofrecer:

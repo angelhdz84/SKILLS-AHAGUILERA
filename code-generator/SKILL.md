@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports. Lee libreriasAdicionales de la spec.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.1"
+  version: "2.2"
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -169,6 +169,13 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
 - [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
+
+=== OUTPUT ENFORCEMENT (De taste-skill/output-skill) ===
+- [ ] ¿`// ...` / `// TODO` / `// rest of code` en output? → ❌ COMPLETAR código real
+- [ ] ¿Skeleton/ejemplo parcial donde se pidió implementación completa? → ❌ GENERAR todo
+- [ ] ¿"for brevity", "let me know if you want me to continue" en prosa? → ❌ ELIMINAR y completar
+- [ ] ¿Secciones omitidas entre primera y última? → ❌ ESCRIBIR cada sección completa
+- [ ] ¿Count de deliverables real vs solicitado? → ✅ VERIFICAR antes de outputtear
 Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-first.` al output.
 
 ---
@@ -441,9 +448,32 @@ async function cargarODefecto(tabla, id, defecto = {}) {
 </div>
 ```
 
----
+### Motion Templates (De taste-skill)
 
-## 🔗 INTEGRACIÓN CON OTRAS SKILLs
+Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
+
+```html
+<!-- Botón con spring physics en hover/active -->
+<button class="btn btn-primary transition-[transform,opacity] duration-400
+               ease-[cubic-bezier(0.34,1.56,0.64,1)]
+               hover:scale-[1.02] active:scale-[0.98]">
+  <i class="bi bi-plus-lg group-hover:translate-x-0.5 transition-transform"></i> Acción
+</button>
+
+<!-- Stagger reveal en listas con Alpine -->
+<template x-for="(item, i) in items" :key="item.id">
+  <div x-transition:enter.duration.300ms
+       :style="`animation-delay: ${i * 80}ms; transition-delay: ${i * 80}ms`"
+       class="opacity-0 animate__animated animate__fadeInUp"
+       :class="`animate__delay-${(i % 5) * 100}ms`">
+  </div>
+</template>
+
+<!-- Skeleton shimmer en carga (GPU-safe) -->
+<div class="skeleton h-4 w-3/4 animate-shimmer bg-gradient-to-r from-base-200 via-base-100 to-base-200 bg-[length:200%_100%]"></div>
+```
+
+**Regla**: No animar `top`, `left`, `width`, `height`. Solo `transform` + `opacity`. Usar `min-h-[100dvh]` no `h-screen`.
 
 ---
 
