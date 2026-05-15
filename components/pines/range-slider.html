@@ -1,6 +1,17 @@
-﻿<!-- Componente: range-slider — tomado de Pines (devdojo.com/pines). Adaptado para stack offline-first Alpine.js + Tailwind CSS. -->
-
-
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Componente: range-slider</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #f5f5f4; font-family: system-ui, sans-serif; }
+</style>
+</head>
+<body>
 <input
     type="range" min="0" max="100" value="50" step="any" 
     class="w-full h-full appearance-none flex items-center cursor-pointer bg-transparent z-30
@@ -10,3 +21,5 @@
         [&::-webkit-slider-runnable-track]:bg-neutral-200 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:overflow-hidden [&::-moz-range-track]:bg-neutral-200 [&::-moz-range-track]:rounded-full [&::-ms-track]:bg-neutral-200 [&::-ms-track]:rounded-full
         [&::-moz-range-progress]:bg-blue-400 [&::-moz-range-progress]:rounded-full [&::-ms-fill-lower]:bg-blue-400 [&::-ms-fill-lower]:rounded-full [&::-webkit-slider-thumb]:shadow-[-999px_0px_0px_990px_#4e97ff]
     ">
+</body>
+</html>

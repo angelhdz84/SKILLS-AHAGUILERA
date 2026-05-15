@@ -1,5 +1,17 @@
-﻿<!-- Componente: text-animation — tomado de Pines (devdojo.com/pines). Adaptado para stack offline-first Alpine.js + Tailwind CSS. -->
-
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Componente: text-animation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #f5f5f4; font-family: system-ui, sans-serif; }
+</style>
+</head>
+<body>
 <h1 x-data="{
     startingAnimation: { opacity: 0, scale: 4 },
     endingAnimation: { opacity: 1, scale: 1, stagger: 0.07, duration: 1, ease: 'expo.out' },
@@ -40,3 +52,5 @@ class="invisible block text-3xl font-bold custom-font"
 >
 Librería de interfaz Pines
 </h1>
+</body>
+</html>

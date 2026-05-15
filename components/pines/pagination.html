@@ -1,5 +1,17 @@
-﻿<!-- Componente: pagination — tomado de Pines (devdojo.com/pines). Adaptado para stack offline-first Alpine.js + Tailwind CSS. -->
-
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Componente: pagination</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #f5f5f4; font-family: system-ui, sans-serif; }
+</style>
+</head>
+<body>
 <div class="flex items-center justify-between w-full h-16 px-3 border-t border-neutral-200">
     <p class="pl-2 text-sm text-gray-700">Mostrando <span class="font-medium">1</span> al <span class="font-medium">10</span> de <span class="font-medium">89</span> resultados</p>
     <nav>
@@ -58,3 +70,5 @@
         </ul>
     </nav>
 </div>
+</body>
+</html>
