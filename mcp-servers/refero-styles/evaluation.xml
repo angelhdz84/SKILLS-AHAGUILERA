@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation>
+  <!-- Evaluation questions for the refero-styles MCP server -->
+  <!-- Each question requires multiple tool calls and real API data -->
+
+  <qa_pair>
+    <question>Using refero_list_styles on page 1, what is the North Star descriptor for Linear?</question>
+    <answer>Midnight Command Center: A dark, layered interface lit by precise accents, like a high-tech control panel.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_search_styles with query "dark", how many styles on pages 1-3 have a dark color scheme?</question>
+    <answer>Multiple styles will match — the answer should be the count returned by the search tool. Expected to be above 5 based on the catalog.</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_get_design_md for Linear (id: 90ce5883-bb24-4466-93f7-801cd617b0d1), what are the two font families used?</question>
+    <answer>Inter Variable and Berkeley Mono</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_match_style for "A dark developer tool for engineers with monospaced fonts, minimal UI", what is the name of the top-ranked style?</question>
+    <answer>Linear (or a similar dark developer-focused style depending on current catalog)</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_list_styles on page 1, what is the style ID for Calendly?</question>
+    <answer>9946887b-ffa9-4276-af81-ae6352795afb</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_search_styles with query "Stripe", what is the North Star for the Stripe style?</question>
+    <answer>The North Star descriptor returned by the API for the Stripe style (fetch to verify exact value)</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_get_design_md for Apple (id: a4f123f2-cd4b-4d26-998f-a3d3ee158024), what is the color scheme?</question>
+    <answer>light</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_match_style for "A bright fintech mobile app for consumers, clean and professional", with color_scheme="light", does the top match have a light color scheme?</question>
+    <answer>yes</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_list_styles on page 2, which design system's North Star describes it as being built around Duolingo?</question>
+    <answer>Duolingo</answer>
+  </qa_pair>
+
+  <qa_pair>
+    <question>Using refero_get_design_md for ElevenLabs (id: 031056ff-7af1-46db-8daa-115f731c5d26) in json format, what is the theme field in the designSystem?</question>
+    <answer>dark</answer>
+  </qa_pair>
+</evaluation>

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SKILLS-AHAGUILERA — Manual de Referencia</title>
+<style>
+:root {
+  --canvas:#f4f5f7; --surface-0:#ffffff; --surface-1:#ffffff; --surface-2:#eeeff1; --surface-3:#e2e3e7;
+  --ink:#18181b; --ink-muted:#52525b; --ink-subtle:#a1a1aa;
+  --accent:#5e6ad2; --accent-hover:#4a56c0; --accent-soft:#eef0ff; --accent-glow:rgba(94,106,210,0.15);
+  --border:#d4d4d8; --border-hairline:#e4e4e7;
+  --success:#22c55e; --warning:#f59e0b; --error:#ef4444;
+  --font:system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Fira Code',monospace;
+  --radius:10px; --radius-sm:6px; --radius-lg:16px;
+  --sidebar-w:264px; --header-h:60px; --max-w:1000px;
+  --transition:250ms cubic-bezier(0.34,1.56,0.64,1);
+  --shadow-card:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.03);
+}
+[data-theme="dark"] {
+  --canvas:#0a0a0b; --surface-0:#0f1011; --surface-1:#141517; --surface-2:#1a1b1e; --surface-3:#202125;
+  --ink:#f7f8f8; --ink-muted:#a1a5b0; --ink-subtle:#6b6f7a;
+  --accent:#5e6ad2; --accent-hover:#828fff; --accent-soft:#181a2e; --accent-glow:rgba(94,106,210,0.12);
+  --border:#27282d; --border-hairline:#1e1f23;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.2);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);font-size:16px}
+body{
+  font-family:var(--font);background:var(--canvas);color:var(--ink);
+  line-height:1.65;font-size:0.9375rem;
+  display:flex;min-height:100vh;
+}
+::selection{background:var(--accent);color:#fff}
+a{color:var(--accent);text-decoration:none;transition:var(--transition)}
+a:hover{color:var(--accent-hover);text-decoration:underline}
+code,pre{font-family:var(--mono);font-size:0.8125rem}
+pre{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:18px;overflow-x:auto;line-height:1.55;margin:14px 0;font-size:0.8rem;
+  position:relative;
+}
+pre .hl{background:var(--accent-soft);display:inline-block;width:100%}
+code:not(pre code){
+  background:var(--accent-soft);color:var(--accent);padding:2px 7px;
+  border-radius:4px;font-size:0.8125rem;font-weight:500;
+}
+[data-theme="dark"] code:not(pre code){
+  background:rgba(94,106,210,0.15);
+}
+pre code{background:none;padding:0;border-radius:0;color:inherit;font-weight:400}
+h1,h2,h3,h4{line-height:1.25;font-weight:650;letter-spacing:-0.01em}
+h1{font-size:2rem;margin-bottom:12px;letter-spacing:-0.02em}
+h2{font-size:1.5rem;margin:48px 0 20px;padding-bottom:12px;border-bottom:1.5px solid var(--border);letter-spacing:-0.015em}
+h3{font-size:1.125rem;margin:32px 0 14px;font-weight:600}
+h4{font-size:1rem;margin:24px 0 10px;font-weight:600}
+p,li{color:var(--ink-muted);margin-bottom:8px;line-height:1.7}
+ul,ol{padding-left:22px;margin:8px 0 16px}
+li{margin-bottom:5px}
+strong{color:var(--ink);font-weight:600}
+
+/* Header */
+.header{
+  position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);
+  background:rgba(var(--surface-1),0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);z-index:100;
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+}
+@supports not (backdrop-filter:blur(12px)){
+  .header{background:var(--surface-1)}
+}
+.header-title{font-size:0.875rem;font-weight:650;display:flex;align-items:center;gap:10px;letter-spacing:-0.01em}
+.header-actions{display:flex;align-items:center;gap:6px}
+
+/* Sidebar */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
+  background:var(--surface-1);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:200;display:flex;flex-direction:column;
+}
+.sidebar-header{
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.sidebar-logo{
+  width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;
+  flex-shrink:0;
+}
+.sidebar-brand{display:flex;flex-direction:column}
+.sidebar-brand-name{font-size:0.875rem;font-weight:650;letter-spacing:-0.01em;line-height:1.2}
+.sidebar-brand-sub{font-size:0.6875rem;color:var(--ink-subtle);letter-spacing:0.02em}
+.sidebar-search{
+  margin:14px 16px;padding:9px 13px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink);font-size:0.8125rem;width:calc(100% - 32px);
+  outline:none;transition:var(--transition);flex-shrink:0;
+}
+.sidebar-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.sidebar-nav{padding:6px 0;flex:1;overflow-y:auto}
+.nav-group{padding:0 12px}
+.nav-group-title{
+  font-size:0.625rem;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--ink-subtle);padding:14px 8px 5px;font-weight:650;
+}
+.nav-link{
+  display:block;padding:7px 10px;border-radius:var(--radius-sm);
+  font-size:0.8125rem;color:var(--ink-muted);transition:var(--transition);
+  cursor:pointer;font-weight:450;border-left:2px solid transparent;
+}
+.nav-link:hover{background:var(--surface-2);color:var(--ink)}
+.nav-link.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent);font-weight:550}
+
+/* Main */
+.main{
+  margin-left:var(--sidebar-w);margin-top:var(--header-h);
+  flex:1;padding:40px 48px 100px;
+  max-width:var(--max-w);
+}
+.main.wide{max-width:1200px}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;
+  font-size:0.6875rem;font-weight:600;line-height:1.3;letter-spacing:0.01em;
+}
+.badge-accent{background:var(--accent-soft);color:var(--accent)}
+.badge-success{background:#dcfce7;color:#166534}
+.badge-warning{background:#fef3c7;color:#92400e}
+.badge-error{background:#fce4ec;color:#c62828}
+.badge-version{background:var(--surface-2);color:var(--ink-subtle);border:1px solid var(--border);font-weight:550}
+[data-theme="dark"] .badge-success{background:#052e16;color:#86efac}
+[data-theme="dark"] .badge-warning{background:#451a03;color:#fbbf24}
+[data-theme="dark"] .badge-error{background:#3b0d0d;color:#fca5a5}
+
+/* Cards */
+.card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:22px;margin-bottom:18px;transition:var(--transition);
+  box-shadow:var(--shadow-card);
+}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06);border-color:var(--accent)}
+[data-theme="dark"] .card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:14px}
+.card-title{font-size:1.0625rem;font-weight:650;margin:0;letter-spacing:-0.01em}
+.card-desc{font-size:0.8125rem;color:var(--ink-muted);margin:0;line-height:1.6}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.card-tag{
+  padding:2px 9px;border-radius:999px;font-size:0.625rem;font-weight:600;
+  border:1px solid var(--border);color:var(--ink-subtle);
+}
+.card-tag.primary{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+/* Hero Stats */
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:28px 0}
+.stat-card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;text-align:center;transition:var(--transition);
+  box-shadow:var(--shadow-card);
+}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-3px)}
+.stat-icon{font-size:1.75rem;margin-bottom:6px;display:block}
+.stat-value{font-size:1.75rem;font-weight:700;color:var(--ink);letter-spacing:-0.02em}
+.stat-label{font-size:0.75rem;color:var(--ink-muted);margin-top:2px}
+
+/* Pipeline diagram */
+.diagram{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:24px;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);margin:16px 0;justify-content:center;box-shadow:var(--shadow-card)}
+.diagram-node{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:10px 16px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--surface-2);
+  font-size:0.8125rem;font-weight:600;min-width:72px;text-align:center;
+  transition:var(--transition);
+}
+.diagram-node:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-2px)}
+.diagram-node .node-icon{font-size:1.25rem}
+.diagram-node .node-label{font-size:0.6875rem;font-weight:500;color:var(--ink-muted)}
+.diagram-arrow{font-size:1.25rem;color:var(--ink-subtle);font-weight:300}
+@media(max-width:768px){
+  .diagram{flex-direction:column;padding:16px}
+  .diagram-arrow{transform:rotate(90deg)}
+}
+
+/* Tables */
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:var(--radius-sm);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:0.8125rem}
+th,td{padding:11px 16px;text-align:left;border-bottom:1px solid var(--border-hairline)}
+th{font-weight:600;font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-subtle);background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface-2)}
+.table-wrap table{margin:0}
+
+/* Buttons */
+.btn-icon{
+  width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;
+  border:none;background:none;cursor:pointer;color:var(--ink-muted);
+  border-radius:var(--radius-sm);transition:var(--transition);font-size:1rem;
+}
+.btn-icon:hover{background:var(--surface-2);color:var(--ink)}
+
+/* Timeline */
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline::before{content:'';position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.timeline-item{position:relative;padding:0 0 24px 22px}
+.timeline-item::before{content:'';position:absolute;left:-22px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--surface-1);border:2.5px solid var(--accent);transition:var(--transition)}
+.timeline-item:hover::before{background:var(--accent);box-shadow:0 0 0 4px var(--accent-glow)}
+.timeline-date{font-size:0.6875rem;color:var(--ink-subtle);font-weight:600;letter-spacing:0.02em}
+.timeline-title{font-weight:650;font-size:0.9375rem;margin:2px 0 4px}
+.timeline-desc{font-size:0.8125rem;color:var(--ink-muted);line-height:1.6}
+
+/* Search */
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:300;backdrop-filter:blur(4px)}
+.search-overlay.open{display:block}
+.search-panel{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  width:90%;max-width:580px;max-height:70vh;
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  z-index:301;display:none;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,0.2);
+}
+.search-panel.open{display:flex;flex-direction:column;animation:slideDown 0.2s ease}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.search-input-wrap{padding:16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.search-input-wrap input{
+  width:100%;padding:12px 16px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink);font-size:0.9375rem;outline:none;
+}
+.search-input-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.search-results{overflow-y:auto;padding:6px 0}
+.search-item{
+  padding:12px 18px;cursor:pointer;transition:var(--transition);
+  border-left:3px solid transparent;
+}
+.search-item:hover,.search-item.active{background:var(--surface-2);border-left-color:var(--accent)}
+.search-item-title{font-weight:600;font-size:0.875rem}
+.search-item-path{font-size:0.6875rem;color:var(--ink-subtle);margin-top:2px}
+
+/* Integration grid */
+.integ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:16px 0}
+.integ-card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px;transition:var(--transition);box-shadow:var(--shadow-card);
+  display:flex;flex-direction:column;
+}
+.integ-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+[data-theme="dark"] .integ-card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.integ-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.integ-name{font-weight:600;font-size:0.9375rem}
+.integ-stars{display:flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--warning);font-weight:600}
+.integ-desc{font-size:0.75rem;color:var(--ink-muted);margin:0 0 10px;line-height:1.6;flex:1}
+
+/* Accordion */
+.accordion{margin:12px 0}
+.accordion-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;font-size:0.8125rem;font-weight:600;
+  transition:var(--transition);user-select:none;
+}
+.accordion-header:hover{background:var(--surface-3)}
+.accordion-header .arrow{transition:transform 0.3s ease;font-size:0.75rem}
+.accordion-header.open .arrow{transform:rotate(180deg)}
+.accordion-body{display:none;padding:16px 18px;border:1px solid var(--border);border-top:0;border-radius:0 0 var(--radius-sm) var(--radius-sm)}
+.accordion-body.open{display:block;animation:slideDown 0.2s ease}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;right:28px;padding:14px 22px;
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--radius-sm);font-size:0.8125rem;font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:500;
+  display:none;align-items:center;gap:10px;
+  animation:slideDown 0.2s ease;
+}
+.toast.show{display:flex}
+
+/* Color swatches */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:14px 0}
+.swatch-card{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px;display:flex;align-items:center;gap:12px;transition:var(--transition);
+}
+.swatch-card:hover{border-color:var(--accent)}
+.swatch-dot{width:36px;height:36px;border-radius:var(--radius-sm);flex-shrink:0;border:1px solid var(--border-hairline)}
+.swatch-info{display:flex;flex-direction:column}
+.swatch-name{font-size:0.8125rem;font-weight:600}
+.swatch-hex{font-size:0.6875rem;color:var(--ink-subtle);font-family:var(--mono)}
+
+/* Anti-pattern grid */
+.anti-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:16px 0}
+.anti-item{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 14px;font-size:0.8125rem;text-align:center;transition:var(--transition);
+  color:var(--ink-muted);
+}
+.anti-item:hover{border-color:var(--error);color:var(--error);background:#fef2f2}
+[data-theme="dark"] .anti-item:hover{background:#2a0d0d}
+.anti-item .anti-icon{margin-right:6px}
+
+/* Skill sections */
+.skill-header{
+  display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap;
+}
+.skill-icon{
+  width:48px;height:48px;border-radius:var(--radius);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+  background:var(--surface-2);border:1px solid var(--border);
+}
+.skill-info{flex:1}
+.skill-title{font-size:1.375rem;font-weight:650;margin:0;letter-spacing:-0.015em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.skill-desc{font-size:0.875rem;color:var(--ink-muted);margin:4px 0 0}
+.skill-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+/* Layer cards in design-ux */
+.layer-card{
+  display:flex;align-items:center;gap:16px;padding:16px 20px;
+  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-sm);
+  margin-bottom:10px;transition:var(--transition);box-shadow:var(--shadow-card);
+}
+.layer-card:hover{border-color:var(--accent);transform:translateX(4px)}
+.layer-num{font-size:1.5rem;font-weight:700;color:var(--accent);width:36px;text-align:center;flex-shrink:0;font-family:var(--mono)}
+.layer-content{flex:1}
+.layer-title{font-weight:600;font-size:0.9375rem}
+.layer-desc{font-size:0.75rem;color:var(--ink-muted);line-height:1.5}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar,.search-results::-webkit-scrollbar,pre::-webkit-scrollbar{width:5px;height:5px}
+.sidebar::-webkit-scrollbar-track,.search-results::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.sidebar-nav::-webkit-scrollbar-thumb:hover{background:var(--ink-subtle)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* Print */
+@media print{
+  .sidebar,.header,.search-overlay,.search-panel{display:none!important}
+  .main{margin-left:0;margin-top:0;max-width:100%;padding:20px}
+  .card,.timeline-item{break-inside:avoid;box-shadow:none}
+  .stat-card{box-shadow:none}
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{width:100%;position:relative;border-right:none;border-bottom:1px solid var(--border);max-height:50vh}
+  .main{margin-left:0;margin-top:0;padding:20px}
+  .header{left:0;position:sticky;backdrop-filter:none}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .integ-grid{grid-template-columns:1fr}
+  .anti-grid{grid-template-columns:repeat(2,1fr)}
+  .swatch-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">S</div>
+    <div class="sidebar-brand">
+      <span class="sidebar-brand-name">SKILLS-AHAGUILERA</span>
+      <span class="sidebar-brand-sub">Manual de Referencia</span>
+    </div>
+  </div>
+  <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="Buscar en el manual..." oninput="onSearchInput(this.value)">
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="nav-group">
+      <div class="nav-group-title">Introducción</div>
+      <a class="nav-link active" href="#inicio" onclick="navTo('inicio')">Inicio</a>
+      <a class="nav-link" href="#stack" onclick="navTo('stack')">El Stack</a>
+      <a class="nav-link" href="#pipeline" onclick="navTo('pipeline')">Pipeline</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Skills</div>
+      <a class="nav-link" href="#s-prompt" onclick="navTo('s-prompt')">prompt-inicial</a>
+      <a class="nav-link" href="#s-setup" onclick="navTo('s-setup')">setup-init</a>
+      <a class="nav-link" href="#s-spec" onclick="navTo('s-spec')">spec-creator</a>
+      <a class="nav-link" href="#s-design" onclick="navTo('s-design')">design-ux-intelligence</a>
+      <a class="nav-link" href="#s-code" onclick="navTo('s-code')">code-generator</a>
+      <a class="nav-link" href="#s-compliance" onclick="navTo('s-compliance')">stack-compliance-guard</a>
+      <a class="nav-link" href="#s-validation" onclick="navTo('s-validation')">validation-offline</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Integraciones</div>
+      <a class="nav-link" href="#integraciones" onclick="navTo('integraciones')">Repos Externos</a>
+      <a class="nav-link" href="#comandos" onclick="navTo('comandos')">Comandos</a>
+      <a class="nav-link" href="#convenciones" onclick="navTo('convenciones')">Convenciones</a>
+      <a class="nav-link" href="#changelog" onclick="navTo('changelog')">Historial</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-title">
+    <span>📘</span> Manual de Referencia
+  </div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="toggleTheme()" title="Tema" aria-label="Alternar tema claro/oscuro">🌓</button>
+    <button class="btn-icon" onclick="openSearch()" title="Buscar (Ctrl+K)" aria-label="Buscar en el manual">🔍</button>
+    <a href="https://github.com/Leonxlnx/taste-skill" target="_blank" class="btn-icon" title="GitHub" aria-label="Abrir GitHub">🐙</a>
+  </div>
+</header>
+
+<!-- Search -->
+<div class="search-overlay" id="searchOverlay" onclick="closeSearch()"></div>
+<div class="search-panel" id="searchPanel">
+  <div class="search-input-wrap">
+    <input type="text" id="searchInput" placeholder="Buscar skills, comandos, reglas..." oninput="doSearch(this.value)" autofocus>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<!-- Main -->
+<main class="main" id="mainContent">
+
+<!-- INICIO -->
+<section id="inicio" class="fade-in">
+  <h1>SKILLS-AHAGUILERA</h1>
+  <p style="font-size:1.0625rem;color:var(--ink);margin-bottom:8px">
+    Ecosistema de <strong>7 skills autónomas</strong> para desarrollo <strong>offline-first</strong> con agentes AI.
+  </p>
+  <p style="margin-bottom:24px">
+    Pipeline orquestado que va desde la idea hasta una app funcional lista para <code>file://</code> — sin servidor, sin build steps, sin CDNs.
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat-card"><span class="stat-icon">🚀</span><div class="stat-value">7</div><div class="stat-label">Skills Activas</div></div>
+    <div class="stat-card"><span class="stat-icon">🔌</span><div class="stat-value">4</div><div class="stat-label">Integraciones</div></div>
+    <div class="stat-card"><span class="stat-icon">📄</span><div class="stat-value">+150</div><div class="stat-label">Reglas Compliance</div></div>
+    <div class="stat-card"><span class="stat-icon">⚡</span><div class="stat-value">file://</div><div class="stat-label">Zero Build Steps</div></div>
+  </div>
+
+  <h3>Arquitectura del Stack</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Capa</th><th>Tecnología</th><th>Rol</th></tr>
+    <tr><td>Framework UI</td><td>Alpine.js 3.x</td><td>Reactividad declarativa en DOM</td></tr>
+    <tr><td>Base de Datos</td><td>Dexie.js (IndexedDB)</td><td>Persistencia offline local</td></tr>
+    <tr><td>Cifrado</td><td>CryptoJS (AES)</td><td>Campos sensibles en reposo</td></tr>
+    <tr><td>Estilos Base</td><td>Tailwind CSS 3.x</td><td>Utility-first, local</td></tr>
+    <tr><td>Componentes UI</td><td>DaisyUI 3.x</td><td>Componentes accesibles</td></tr>
+    <tr><td>Iconos</td><td>Bootstrap Icons</td><td>Iconografía vectorial</td></tr>
+    <tr><td>Animaciones</td><td>Animate.css</td><td>Motion declarativo</td></tr>
+    <tr><td>Compresión</td><td>pako</td><td>Exportación comprimida</td></tr>
+    <tr><td>Gráficos</td><td>ApexCharts</td><td>Dashboard y analytics</td></tr>
+    <tr><td>PDF</td><td>jsPDF</td><td>Exportación a PDF</td></tr>
+    <tr><td>Spreadsheets</td><td>SheetJS</td><td>Exportación a XLSX</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack" class="fade-in">
+  <h2>🎯 El Stack Offline-First</h2>
+  <p>Reglas no negociables que todo código generado debe cumplir. Definen el contrato del ecosistema.</p>
+
+  <h3>Stack compliance</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Regla</th><th>Implementación</th></tr>
+    <tr><td>No <code>import</code>/<code>export</code>/<code>type="module"</code></td><td>CORS en <code>file://</code> bloquea ES6 modules. Usar variables globales (<code>window.Alpine</code>, <code>window.Dexie</code>).</td></tr>
+    <tr><td>No <code>fetch</code>/<code>axios</code>/CDNs</td><td>100% offline. Datos en IndexedDB via Dexie. Librerías en <code>assets/</code>.</td></tr>
+    <tr><td>No build steps</td><td>Doble clic en <code>index.html</code> y funciona.</td></tr>
+    <tr><td>Campos sensibles cifrados</td><td><code>cryptoHelpers.encrypt()</code> con CryptoJS AES.</td></tr>
+    <tr><td>UI DaisyUI + Bootstrap Icons</td><td>Componentes accesibles + iconografía vectorial consistente.</td></tr>
+    <tr><td>Todo en español</td><td>UI, comentarios, nombres de variables, documentación.</td></tr>
+    <tr><td>Librerías desde <code>assets/</code></td><td>Descarga local via setup-init. Nunca CDN.</td></tr>
+  </table>
+  </div>
+
+  <h3>Privacidad por Diseño</h3>
+  <ul>
+    <li>Datos mínimos: solo lo declarado en la spec</li>
+    <li>Consentimiento explícito antes de guardar</li>
+    <li>Datos opcionales marcados claramente</li>
+    <li>Cifrado AES en reposo</li>
+  </ul>
+
+  <h3>Estructura del Proyecto</h3>
+  <pre>proyecto/
+├── index.html              # Entry point (doble clic)
+├── project.config.js       # Config white-label
+├── sw.js                   # Service Worker (PWA)
+├── manifest.json           # Manifest PWA
+├── core/
+│   ├── app.js              # Router hash-based
+│   ├── db.js               # Dexie init
+│   ├── crypto.js           # encrypt/decrypt
+│   ├── ui.js               # toast, confirm, loading
+│   ├── theme.js            # CSS variables dinámicas
+│   └── network.js          # Monitoreo online/offline
+├── modules/                # Módulos funcionales
+│   └── [modulo]/
+│       ├── module.js
+│       └── module.html
+├── assets/
+│   ├── css/                # Librerías CSS
+│   ├── js/libs/            # Librerías JS
+│   ├── fonts/              # Google Fonts locales
+│   └── icons/              # Iconos PWA
+├── specs/                  # Especificaciones
+├── tests/                  # Tests Playwright
+├── docs/                   # Reportes de validación
+└── _template/              # Template de módulo</pre>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline" class="fade-in">
+  <h2>🔁 Pipeline Orquestado</h2>
+  <p>Las 7 skills se ejecutan en orden estricto. Cada fase produce un artifact que la siguiente consume.</p>
+
+  <div class="diagram">
+    <div class="diagram-node"><div class="node-icon">🎬</div>prompt-inicial<div class="node-label">Orquestador</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">📦</div>setup-init<div class="node-label">Estructura</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">📝</div>spec-creator<div class="node-label">Especificación</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">🎨</div>design-ux<div class="node-label">Diseño</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">⚙️</div>code-generator<div class="node-label">Código</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">🛡️</div>compliance<div class="node-label">Validación</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node"><div class="node-icon">✅</div>validation<div class="node-label">Testing</div></div>
+  </div>
+
+  <h3>Contratos entre Skills</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Skill Output</th><th>Skill Input</th><th>Artifact</th></tr>
+    <tr><td>prompt-inicial</td><td>setup-init, spec-creator</td><td>Nombre + tipo + descripción app</td></tr>
+    <tr><td>setup-init</td><td>code-generator</td><td>Estructura de proyecto + librerías</td></tr>
+    <tr><td>spec-creator</td><td>code-generator, design-ux</td><td><code>specs/[app].md</code></td></tr>
+    <tr><td>design-ux-intelligence</td><td>code-generator</td><td>Tono visual + paleta + estilo + tipografía</td></tr>
+    <tr><td>code-generator</td><td>compliance, validation</td><td><code>modules/*</code>, <code>core/*</code>, <code>index.html</code></td></tr>
+    <tr><td>stack-compliance-guard</td><td>code-generator</td><td>Validación automática post-generación</td></tr>
+    <tr><td>validation-offline</td><td>—</td><td><code>docs/validacion-[app].md</code></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- SKILL: PROMPT-INICIAL -->
+<section id="s-prompt" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">🎬</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">prompt-inicial <span class="badge badge-version">v1.0</span> <span class="badge badge-accent">orquestador</span></h2>
+      <div class="skill-desc">Prompt maestro que inicia el pipeline. Recibe nombre, tipo y descripción de la app, y orquesta automáticamente setup → spec → generación → validación.</div>
+    </div>
+  </div>
+
+  <h3>Trigger</h3>
+  <div class="card">
+    <code>"nuevo proyecto"</code> · <code>"iniciar setup"</code>
+  </div>
+
+  <h3>Flujo</h3>
+  <ol>
+    <li><strong>Recibe</strong> nombre, tipo y descripción de la app del usuario</li>
+    <li><strong>Llama</strong> a <code>setup-init</code> para preparar el entorno</li>
+    <li><strong>Llama</strong> a <code>spec-creator</code> para generar especificación</li>
+    <li><strong>Orquesta</strong> code-generator + compliance-guard + validation-offline</li>
+  </ol>
+
+  <h3>Entrada</h3>
+  <pre>Nombre: "ClinikApp"
+Tipo: "Gestion de pacientes"
+Descripcion: "App offline para recepcionista de clinica medica"</pre>
+</section>
+
+<!-- SKILL: SETUP-INIT -->
+<section id="s-setup" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">📦</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">setup-init <span class="badge badge-version">v2.0</span> <span class="badge badge-success">infraestructura</span></h2>
+      <div class="skill-desc">Prepara el proyecto offline-first: valida entorno, crea estructura exacta, descarga librerías base y adicionales desde repos GitHub locales.</div>
+    </div>
+  </div>
+
+  <h3>Fases</h3>
+  <ol>
+    <li><strong>Validar entorno:</strong> curl, permisos de escritura, Node.js opcional</li>
+    <li><strong>Crear estructura:</strong> core/, modules/, assets/, specs/, tests/, docs/, _template/</li>
+    <li><strong>Descargar librerías base:</strong> Alpine.js, Dexie, CryptoJS, Tailwind, DaisyUI, Bootstrap Icons, Animate.css, pako, ApexCharts, jsPDF, SheetJS</li>
+    <li><strong>Detectar librerías adicionales</strong> desde spec y descargarlas a <code>assets/</code></li>
+  </ol>
+
+  <h3>Librerías Adicionales</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Librería</th><th>Ruta Local</th><th>Uso</th></tr>
+    <tr><td>QRCode.js</td><td>assets/js/libs/qrcode.min.js</td><td>Códigos QR</td></tr>
+    <tr><td>QuaggaJS</td><td>assets/js/libs/quagga.min.js</td><td>Escanear códigos</td></tr>
+    <tr><td>Leaflet</td><td>assets/js/libs/leaflet.js</td><td>Mapas offline</td></tr>
+    <tr><td>html2canvas</td><td>assets/js/libs/html2canvas.min.js</td><td>Capturas</td></tr>
+    <tr><td>DOMPurify</td><td>assets/js/libs/dompurify.min.js</td><td>Sanitizar HTML</td></tr>
+    <tr><td>dayjs</td><td>assets/js/libs/dayjs.min.js</td><td>Fechas ligeras</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- SKILL: SPEC-CREATOR -->
+<section id="s-spec" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">📝</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">spec-creator <span class="badge badge-version">v3.2</span> <span class="badge badge-accent">especificación</span></h2>
+      <div class="skill-desc">Transforma ideas de apps en especificaciones técnicas validadas para stack offline-first. Incluye brainstorming, refinamiento interactivo 4+1 y auto-revisión.</div>
+    </div>
+  </div>
+
+  <h3>Fases</h3>
+  <div class="diagram" style="padding:14px">
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">💡</div><div style="font-size:0.75rem">Historia</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🧠</div><div style="font-size:0.75rem">Brainstorm</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🔄</div><div style="font-size:0.75rem">4+1 Refine</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🔍</div><div style="font-size:0.75rem">Auto-review</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">📄</div><div style="font-size:0.75rem">Spec.md</div></div>
+  </div>
+
+  <h3>Refinamiento 4+1</h3>
+  <p>Cada asunción no técnica se presenta con barra de progreso y 4 opciones + "Otra":</p>
+  <pre>[🟩🟩🟨⬜⬜] Supuesto 3/5: "Los pacientes pueden agendar sin registro"
+[1] Solo con registro      [2] Invitado + registro
+[3] Solo invitado           [4] Depende del tipo de cita</pre>
+
+  <h3>Output</h3>
+  <pre>## 📋 Especificacion: ClinikApp
+### Modulos
+- pacientes: CRUD con cifrado en nombre, email, telefono
+- citas: CRUD con validacion de horarios
+- reportes: Exportacion PDF + graficos ApexCharts
+
+### Reglas UI
+- Tono visual: Profesional limpio
+- Animaciones: fadeInUp en modulos
+
+### Librerias Adicionales
+- qrcode.min.js</pre>
+</section>
+
+<!-- SKILL: DESIGN-UX -->
+<section id="s-design" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">🎨</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">design-ux-intelligence <span class="badge badge-version">v2.3</span> <span class="badge badge-accent">diseño</span></h2>
+      <div class="skill-desc">Aplica principios de diseño distintivo y UX profesional adaptados al stack offline-first. No genera código — valida, sugiere y corrige. Se activa automáticamente con spec-creator o validation-offline.</div>
+    </div>
+  </div>
+
+  <h3>Capas de Diseño</h3>
+
+  <div class="layer-card">
+    <div class="layer-num">0</div>
+    <div class="layer-content">
+      <div class="layer-title">Interface Discovery <span style="font-size:0.6875rem;color:var(--ink-subtle)">— dammyjay93/interface-design</span></div>
+      <div class="layer-desc">5 pasos: Intent Exploration, Domain Exploration, Subtle Layering, Infinite Expression, Systemic Intent. Salta 0.1-0.2 si ya hay tono visual definido.</div>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-num">1</div>
+    <div class="layer-content">
+      <div class="layer-title">Tono Visual + High-Agency Taste</div>
+      <div class="layer-desc">8 tonos: Profesional, Moderno, Minimalista, Editorial, Retro-futurista, Vercel, Linear Dark, Stripe Indigo. Color calibrado (máx 1 acento, sat &lt;80%), layout content-first, motion intencional.</div>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-num">🔢</div>
+    <div class="layer-content">
+      <div class="layer-title">Design Dials <span style="font-size:0.6875rem;color:var(--ink-subtle)">— Leonxlnx/taste-skill</span></div>
+      <div class="layer-desc"><code>DESIGN_VARIANCE</code>, <code>MOTION_INTENSITY</code>, <code>VISUAL_DENSITY</code> (1-10). Capa opcional de refinamiento sobre el tono visual.</div>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-num">🎬</div>
+    <div class="layer-content">
+      <div class="layer-title">Motion Engine <span style="font-size:0.6875rem;color:var(--ink-subtle)">— taste-skill</span></div>
+      <div class="layer-desc">Spring physics CSS, stagger orchestration, magnetic hover, micro-interacciones perpetuas. GPU-safe (solo transform + opacity).</div>
+    </div>
+  </div>
+
+  <div class="layer-card">
+    <div class="layer-num">📐</div>
+    <div class="layer-content">
+      <div class="layer-title">Design System Templates <span style="font-size:0.6875rem;color:var(--ink-subtle)">— awesome-design-md</span></div>
+      <div class="layer-desc">Vercel Precision, Linear Dark y Stripe Indigo — tokenizados y adaptados al stack offline-first con DaisyUI.</div>
+    </div>
+  </div>
+
+  <h3>Anti-Patrones (AI Tells)</h3>
+  <p>14 patrones prohibidos que delatan UI genérica, detectados automáticamente por el compliance guard:</p>
+  <div class="anti-grid">
+    <div class="anti-item"><span class="anti-icon">✕</span>Inter única</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>#000 puro</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>Purple→Blue</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>Glassmorphism</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>3 columnas</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>Genéricos</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>99.99%</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>h-screen</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>Emojis UI</div>
+    <div class="anti-item"><span class="anti-icon">✕</span>Lorem Ipsum</div>
+  </div>
+
+  <h3>Paletas × Estilos × Tipografías</h3>
+  <div class="swatch-grid">
+    <div class="swatch-card"><div class="swatch-dot" style="background:#2563EB"></div><div class="swatch-info"><span class="swatch-name">SaaS</span><span class="swatch-hex">#2563EB</span></div></div>
+    <div class="swatch-card"><div class="swatch-dot" style="background:#059669"></div><div class="swatch-info"><span class="swatch-name">E-commerce</span><span class="swatch-hex">#059669</span></div></div>
+    <div class="swatch-card"><div class="swatch-dot" style="background:#1E40AF"></div><div class="swatch-info"><span class="swatch-name">Dashboard</span><span class="swatch-hex">#1E40AF</span></div></div>
+    <div class="swatch-card"><div class="swatch-dot" style="background:#0891B2"></div><div class="swatch-info"><span class="swatch-name">Healthcare</span><span class="swatch-hex">#0891B2</span></div></div>
+    <div class="swatch-card"><div class="swatch-dot" style="background:#F59E0B"></div><div class="swatch-info"><span class="swatch-name">Fintech</span><span class="swatch-hex">#F59E0B</span></div></div>
+    <div class="swatch-card"><div class="swatch-dot" style="background:#7C3AED"></div><div class="swatch-info"><span class="swatch-name">AI / Chatbot</span><span class="swatch-hex">#7C3AED</span></div></div>
+  </div>
+</section>
+
+<!-- SKILL: CODE-GENERATOR -->
+<section id="s-code" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">⚙️</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">code-generator <span class="badge badge-version">v2.2</span> <span class="badge badge-success">generación</span></h2>
+      <div class="skill-desc">Transforma <code>specs/[app].md</code> en código funcional, modular y 100% offline. Flujo por fases con pausas para evitar pérdida de contexto. Auto-aplica stack-compliance-guard.</div>
+    </div>
+  </div>
+
+  <h3>Fases</h3>
+  <div class="diagram" style="padding:14px">
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">📖</div><div style="font-size:0.75rem">F1: Spec</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🏗️</div><div style="font-size:0.75rem">F2: Core</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">📦</div><div style="font-size:0.75rem">F3: Módulos</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🔗</div><div style="font-size:0.75rem">F4: Ensamble</div></div>
+  </div>
+
+  <h3>Contrato de Módulo</h3>
+  <p>Cada módulo sigue: <code>id</code>, <code>titulo</code>, <code>icono</code>, <code>init()</code>, <code>render()</code>, <code>destroy()</code>. Los campos sensibles se cifran con <code>cryptoHelpers.encrypt()</code> automáticamente.</p>
+
+  <h3>Output Enforcement</h3>
+  <p>Reglas anti-truncación (de taste-skill/output-skill). El generador nunca debe producir placeholders, <code>// TODO</code>, <code>// rest of code</code>, ni descripciones sin implementación. Si se acerca al límite de tokens: <code>[PAUSED — X of Y. Send "continue"]</code>.</p>
+
+  <h3>Orden de Carga</h3>
+  <pre>&lt;!-- 1. CSS Base --&gt;
+&lt;link rel="stylesheet" href="assets/css/tailwind.min.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/daisyui.min.css"&gt;
+&lt;link rel="stylesheet" href="assets/css/bootstrap-icons.css"&gt;
+
+&lt;!-- 2. JS Librerias Base --&gt;
+&lt;script src="assets/js/libs/alpine.js"&gt;&lt;/script&gt;
+&lt;script src="assets/js/libs/dexie.js"&gt;&lt;/script&gt;
+&lt;script src="assets/js/libs/crypto-js.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. Librerias Adicionales (desde spec) --&gt;
+&lt;script src="assets/js/libs/qrcode.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 4. Core --&gt;
+&lt;script src="core/db.js"&gt;&lt;/script&gt;
+&lt;script src="core/crypto.js"&gt;&lt;/script&gt;
+&lt;script src="core/ui.js"&gt;&lt;/script&gt;
+&lt;script src="core/theme.js"&gt;&lt;/script&gt;
+&lt;script src="core/app.js"&gt;&lt;/script&gt;
+
+&lt;!-- 5. Main --&gt;
+&lt;script src="main.js"&gt;&lt;/script&gt;</pre>
+</section>
+
+<!-- SKILL: COMPLIANCE -->
+<section id="s-compliance" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">🛡️</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">stack-compliance-guard <span class="badge badge-version">v2.3</span> <span class="badge badge-error">guarda</span></h2>
+      <div class="skill-desc">Se auto-activa tras cada output de código. Bloquea imports, CDNs, fetch, y omisión de cifrado. Verifica librerías locales y aplica 34 anti-patrones determinísticos.</div>
+    </div>
+  </div>
+
+  <h3>8 Reglas de Validación</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Regla</th><th>Qué detecta</th></tr>
+    <tr><td>R1: Imports ES6</td><td><code>import</code>/<code>export</code>/<code>type="module"</code> → reemplazar por globales</td></tr>
+    <tr><td>R2: CDN/Fetch</td><td><code>fetch()</code>/<code>axios</code>/URLs absolutas → Dexie/assets</td></tr>
+    <tr><td>R3: Cifrado</td><td>Campos sensibles sin <code>cryptoHelpers.encrypt()</code></td></tr>
+    <tr><td>R4: UI</td><td>Sin DaisyUI/Bootstrap Icons/Animate.css</td></tr>
+    <tr><td>R5: Módulos</td><td>Sin contrato id/init/render/destroy</td></tr>
+    <tr><td>R6: Librerías</td><td>CDN o no listadas en spec</td></tr>
+    <tr><td>R7: Anti-patrones</td><td>27 reglas impeccable + 7 supplement taste-skill</td></tr>
+    <tr><td>R8: CLI</td><td>Opcional: <code>npx impeccable detect</code></td></tr>
+  </table>
+  </div>
+
+  <h3>34 Anti-patrones</h3>
+  <p>Reglas determinísticas aplicadas como grep patterns sobre HTML/CSS generado:</p>
+  <div class="accordion">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>📋 Ver las 34 reglas (impeccable 1-27 + taste-skill 28-34)</span>
+      <span class="arrow">▾</span>
+    </div>
+    <div class="accordion-body">
+      <ol style="font-size:0.8125rem;columns:2;column-gap:24px">
+        <li>Side-stripe borders</li><li>Gradient text</li>
+        <li>Glassmorphism decorativo</li><li>Hero-metric template</li>
+        <li>Card grids idénticos</li><li>Modal como primera opción</li>
+        <li>Cards anidadas</li><li>Gray text sobre fondo</li>
+        <li>#000 o #fff puro</li><li>Bounce/elastic easing</li>
+        <li>Animación layout props</li><li>Purple-to-blue</li>
+        <li>Inter única</li><li>Rounded icon tile</li>
+        <li>Em dashes</li><li>Tiny uppercase labels</li>
+        <li>Monospace técnico</li><li>Dark mode invertido</li>
+        <li>Centered hero</li><li>All-caps body</li>
+        <li>Placeholder contraste</li><li>Heavy color inactivo</li>
+        <li>Nested modales</li><li>Sin skeleton</li>
+        <li>Sin empty states</li><li>Display fonts en UI</li>
+        <li>Sin state coverage</li><li style="color:var(--accent)">Acentos &gt;80%</li>
+        <li style="color:var(--accent)">Nombres genéricos</li><li style="color:var(--accent)">Números falsos</li>
+        <li style="color:var(--accent)">Placeholder / Lorem</li><li style="color:var(--accent)">Emojis UI</li>
+        <li style="color:var(--accent)">h-screen</li><li style="color:var(--accent)">Icons sin label</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3>Ejemplo de Corrección</h3>
+  <pre>🛡️ Stack Compliance: Corregido automaticamente
+- ❌ import db from './db.js' → window.db
+- ❌ email sin cifrar → cryptoHelpers.encrypt(email)
+- ❌ boton sin icono → &lt;i class="bi bi-check"&gt;&lt;/i&gt;
+- ❌ fetch('/api/backup') → Dexie + exportacion local</pre>
+</section>
+
+<!-- SKILL: VALIDATION -->
+<section id="s-validation" class="fade-in">
+  <div class="skill-header">
+    <div class="skill-icon">✅</div>
+    <div class="skill-info">
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">validation-offline <span class="badge badge-version">v2.3</span> <span class="badge badge-success">testing</span></h2>
+      <div class="skill-desc">Valida que la app cumple estrictamente con AGENTS.md, specs y reglas del stack. Verificación estática + DevTools + Playwright + Impeccable CLI + reporte técnico.</div>
+    </div>
+  </div>
+
+  <h3>Fases</h3>
+  <div class="diagram" style="padding:14px">
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">📄</div><div style="font-size:0.75rem">Spec</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🔍</div><div style="font-size:0.75rem">Estática</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🖥️</div><div style="font-size:0.75rem">DevTools</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">🤖</div><div style="font-size:0.75rem">Playwright</div></div>
+    <div class="diagram-arrow">→</div>
+    <div class="diagram-node" style="padding:6px 12px"><div class="node-icon">📊</div><div style="font-size:0.75rem">Reporte</div></div>
+  </div>
+
+  <h3>Checks Automáticos</h3>
+  <div class="integ-grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🔒 Sin imports ES6</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🔐 Cifrado campos</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🎨 UI + Icons</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">♿ Accesibilidad AA</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">📱 Responsive</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🌐 Offline mode</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">⌨️ Keyboard nav</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🎨 Design audit</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🔄 Flaky prevent</div>
+    <div class="integ-card" style="padding:12px;text-align:center;font-size:0.75rem">🔍 Impeccable CLI</div>
+  </div>
+
+  <h3>Test Playwright</h3>
+  <pre># Canal Chrome del sistema (channel="chrome")
+python tests/test_app.py -v
+
+# Checks:
+# 1. Pagina carga sin errores JS
+# 2. Modulos registrados en window.MODULES
+# 3. Ruta #/[modulo] renderiza
+# 4. Campos sensibles cifrados en IndexedDB
+# 5. Formularios con validacion
+# 6. Accesibilidad: aria-label
+# 7. Modo offline: sin errores al desconectar
+# 8. Keyboard nav: Tab primer elemento
+# 9. Viewport meta tag presente</pre>
+
+  <h3>Reporte de Validación</h3>
+  <p>Output: <code>docs/validacion-[app].md</code></p>
+  <pre>✅ Validacion completada.
+📄 Reporte: docs/validacion-clinikapp.md
+
+Resumen: 9/11 PASS | 2 WARN | 0 FAIL
+- Stack compliance: ✅ 8/8
+- Accesibilidad: ✅ 6/7 (⚠️ falta aria-live)
+- Design audit: ✅ 10/11 (⚠️ h-screen)
+- Responsive: ✅ 4/4
+- Offline: ✅ 2/2</pre>
+</section>
+
+<!-- INTEGRACIONES -->
+<section id="integraciones" class="fade-in">
+  <h2>🔗 Integraciones Externas</h2>
+  <p>Cuatro repositorios externos evaluados y parcialmente integrados en las skills del ecosistema.</p>
+
+  <div class="integ-grid">
+    <div class="integ-card">
+      <div class="integ-header">
+        <div class="integ-name">antigravity-awesome-skills</div>
+        <div class="integ-stars">⭐ 1.4k</div>
+      </div>
+      <div class="integ-desc">1,453 skills en 9 categorías. 5 skills del ecosistema mejoradas con +494 líneas tras análisis de gaps.</div>
+      <div class="card-tags"><span class="card-tag primary">integrado</span><span class="card-tag">v2.1</span></div>
+    </div>
+    <div class="integ-card">
+      <div class="integ-header">
+        <div class="integ-name">interface-design</div>
+        <div class="integ-stars">⭐ 13.8k</div>
+      </div>
+      <div class="integ-desc">Filosofía de diseño de 5 pasos. Integrado como Paso 0 en design-ux-intelligence.</div>
+      <div class="card-tags"><span class="card-tag primary">integrado</span><span class="card-tag">v2.2</span></div>
+    </div>
+    <div class="integ-card">
+      <div class="integ-header">
+        <div class="integ-name">impeccable</div>
+        <div class="integ-stars">⭐ 27.8k</div>
+      </div>
+      <div class="integ-desc">27 anti-pattern rules + CLI. Integrado como Regla 7 en compliance-guard y paso opcional en validation-offline.</div>
+      <div class="card-tags"><span class="card-tag primary">integrado</span><span class="card-tag">v2.2</span></div>
+    </div>
+    <div class="integ-card">
+      <div class="integ-header">
+        <div class="integ-name">taste-skill</div>
+        <div class="integ-stars">⭐ 17.4k</div>
+      </div>
+      <div class="integ-desc">12 skills anti-slop con Design Dials, Motion Engine, output enforcement. Integrado en 4 skills v2.3.</div>
+      <div class="card-tags"><span class="card-tag primary">integrado</span><span class="card-tag">v2.3</span></div>
+    </div>
+  </div>
+
+  <h3>Repositorios de Referencia</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Repositorio</th><th>Contenido</th></tr>
+    <tr><td><code>awesome-design-md</code></td><td>73 DESIGN.md de marcas (Vercel, Linear, Stripe...)</td></tr>
+    <tr><td><code>ui-ux-pro-max-skill</code></td><td>14 CSVs: paletas, estilos, tipografías</td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- COMANDOS -->
+<section id="comandos" class="fade-in">
+  <h2>💻 Comandos</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Comando</th><th>Qué hace</th></tr>
+    <tr><td><code>nuevo proyecto</code></td><td>Inicia el pipeline completo</td></tr>
+    <tr><td><code>iniciar setup</code></td><td>Prepara estructura y descarga librerías</td></tr>
+    <tr><td><code>definir spec app</code></td><td>Genera especificación técnica</td></tr>
+    <tr><td><code>generar codigo</code></td><td>Genera la app desde la spec</td></tr>
+    <tr><td><code>validar app</code></td><td>Ejecuta validación completa</td></tr>
+    <tr><td><code>validar stack</code></td><td>Verifica compliance del código</td></tr>
+    <tr><td><code>python tests/test_app.py</code></td><td>Tests E2E Playwright</td></tr>
+    <tr><td><code>npx impeccable detect index.html --fast --json</code></td><td>Escanea 27 anti-patrones</td></tr>
+  </table>
+  </div>
+
+  <h3>Pipeline</h3>
+  <pre>nuevo proyecto
+  → iniciar setup
+    → definir spec app
+      → generar codigo
+        → validar app</pre>
+</section>
+
+<!-- CONVENCIONES -->
+<section id="convenciones" class="fade-in">
+  <h2>📐 Convenciones</h2>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Convención</th><th>Regla</th></tr>
+    <tr><td>Versiones</td><td>En <code>meta.version</code> del YAML. Bump al modificar.</td></tr>
+    <tr><td>Auto-validación</td><td>stack-compliance-guard se auto-activa tras cada output.</td></tr>
+    <tr><td>PAUSA tras fase</td><td>OpenCode pierde contexto &gt;15k tokens.</td></tr>
+    <tr><td>Idioma</td><td>Todo en español: UI, comentarios, docs.</td></tr>
+    <tr><td>Rutas</td><td>Relativas estrictas. <code>assets/</code>, <code>core/</code>, <code>modules/</code>.</td></tr>
+    <tr><td>Orden scripts</td><td>CSS → Libs base → Libs adicionales → Core → Main.</td></tr>
+    <tr><td>Push</td><td>Solo commit. Push requiere confirmación explícita.</td></tr>
+  </table>
+  </div>
+
+  <h3>No Versionar</h3>
+  <div class="card">
+    <code>docs/validacion-[app].md</code> · <code>test_results.json</code> · <code>screenshot_test.png</code> · <code>skills.rar</code> · <code>manual-tecnico.html</code>
+  </div>
+</section>
+
+<!-- CHANGELOG -->
+<section id="changelog" class="fade-in">
+  <h2>📜 Historial</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">15 May 2026 · f239725</div>
+      <div class="timeline-title">taste-skill: integración en 4 skills</div>
+      <div class="timeline-desc">design-ux v2.3 (Dials + Motion Engine + AI Tells), code-gen v2.2 (output enforcement), compliance v2.3 (supplement), validation v2.3 (Design Audit).</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">15 May 2026 · aa13ff5</div>
+      <div class="timeline-title">impeccable: anti-patrones + AGENTS.md</div>
+      <div class="timeline-desc">compliance v2.2 (Regla 7: 27 reglas), validation v2.2 (Paso 5: CLI). AGENTS.md creado. Fix YAML en setup-init y spec-creator.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">15 May 2026 · c5f31a0</div>
+      <div class="timeline-title">interface-design: Paso 0</div>
+      <div class="timeline-desc">design-ux v2.2 con Interface Discovery (5 pasos) de dammyjay93.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">15 May 2026 · e895ff0</div>
+      <div class="timeline-title">antigravity: +494 líneas</div>
+      <div class="timeline-desc">5 skills mejoradas: validation-offline, spec-creator, design-ux, compliance, code-generator.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">15 May 2026 · cf09a04</div>
+      <div class="timeline-title">design-ux v2 + test Playwright</div>
+      <div class="timeline-desc">30 paletas, 12 estilos, 20 tipografías, 3 Design Systems + test E2E.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">14 May 2026 · 1d5a000</div>
+      <div class="timeline-title">Brainstorming + testing + librerías</div>
+      <div class="timeline-desc">spec-creator 4+1, code-generator con librerías adicionales, tests básicos.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">13 May 2026 · ec76484</div>
+      <div class="timeline-title">Primeras skills</div>
+      <div class="timeline-desc">Manual, Email y Contrato — skills fundacionales del ecosistema.</div>
+    </div>
+  </div>
+
+  <h3>Versiones Actuales</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Skill</th><th>v</th><th>Líneas</th></tr>
+    <tr><td>prompt-inicial</td><td>1.0</td><td>98</td></tr>
+    <tr><td>setup-init</td><td>2.0</td><td>165</td></tr>
+    <tr><td>spec-creator</td><td>3.2</td><td>299</td></tr>
+    <tr><td>design-ux-intelligence</td><td>2.3</td><td>448</td></tr>
+    <tr><td>code-generator</td><td>2.2</td><td>429</td></tr>
+    <tr><td>stack-compliance-guard</td><td>2.3</td><td>367</td></tr>
+    <tr><td>validation-offline</td><td>2.3</td><td>393</td></tr>
+  </table>
+  </div>
+</section>
+
+</main>
+
+<script>
+// Theme
+(function(){const t=localStorage.getItem('theme');document.body.setAttribute('data-theme',t||'dark')})();
+function toggleTheme(){const c=document.body.getAttribute('data-theme'),n=c==='dark'?'light':'dark';document.body.setAttribute('data-theme',n);localStorage.setItem('theme',n)}
+
+// Nav
+function navTo(id){
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const link=document.querySelector(`.nav-link[href="#${id}"]`);if(link)link.classList.add('active');
+  const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});
+  closeSearch();
+}
+
+// Scroll spy
+const secs=document.querySelectorAll('section[id]'),links=document.querySelectorAll('.nav-link');
+new IntersectionObserver(e=>{e.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`.nav-link[href="#${e.target.id}"]`);if(a)a.classList.add('active')}})},{rootMargin:'-50% 0px -50% 0px'}).forEach(o=>o.observe(secs));
+
+// Accordion
+function toggleAccordion(h){h.classList.toggle('open');h.nextElementSibling.classList.toggle('open')}
+
+// Search
+const searchData=[
+  {t:'Inicio',p:'#inicio',s:'Introducción'},{t:'El Stack Offline-First',p:'#stack',s:'Introducción'},
+  {t:'Pipeline Orquestado',p:'#pipeline',s:'Introducción'},{t:'prompt-inicial',p:'#s-prompt',s:'Skills'},
+  {t:'setup-init',p:'#s-setup',s:'Skills'},{t:'spec-creator',p:'#s-spec',s:'Skills'},
+  {t:'design-ux-intelligence',p:'#s-design',s:'Skills'},{t:'code-generator',p:'#s-code',s:'Skills'},
+  {t:'stack-compliance-guard',p:'#s-compliance',s:'Skills'},{t:'validation-offline',p:'#s-validation',s:'Skills'},
+  {t:'Integraciones Externas',p:'#integraciones',s:'Ref'},{t:'Comandos',p:'#comandos',s:'Ref'},
+  {t:'Convenciones',p:'#convenciones',s:'Ref'},{t:'Historial',p:'#changelog',s:'Ref'},
+  {t:'Stack compliance: no imports',p:'#stack',s:'Reglas'},{t:'Estructura del Proyecto',p:'#stack',s:'Reglas'},
+  {t:'Contrato de Módulo',p:'#s-code',s:'Reglas'},{t:'34 Anti-patrones',p:'#s-compliance',s:'Reglas'},
+  {t:'Design Dials (1-10)',p:'#s-design',s:'Reglas'},{t:'Motion Engine',p:'#s-design',s:'Reglas'},
+  {t:'Output Enforcement',p:'#s-code',s:'Reglas'},{t:'Refinamiento 4+1',p:'#s-spec',s:'Reglas'},
+  {t:'Librerías Adicionales',p:'#s-setup',s:'Reglas'},{t:'Tests Playwright',p:'#s-validation',s:'Reglas'},
+  {t:'Reporte de Validación',p:'#s-validation',s:'Reglas'}
+];
+function openSearch(){document.getElementById('searchOverlay').classList.add('open');document.getElementById('searchPanel').classList.add('open');setTimeout(()=>document.getElementById('searchInput').focus(),100)}
+function closeSearch(){document.getElementById('searchOverlay').classList.remove('open');document.getElementById('searchPanel').classList.remove('open');document.getElementById('searchInput').value='';document.getElementById('searchResults').innerHTML=''}
+function doSearch(q){const r=document.getElementById('searchResults');if(!q.trim()){r.innerHTML='';return}
+const query=q.toLowerCase(),m=searchData.filter(i=>i.t.toLowerCase().includes(query)||i.s.toLowerCase().includes(query));
+if(!m.length){r.innerHTML='<div style="padding:24px;text-align:center;color:var(--ink-subtle);font-size:0.8125rem">Sin resultados</div>';return}
+r.innerHTML=m.slice(0,10).map(i=>`<div class="search-item" onclick="navTo('${i.p.replace('#','')}')"><div class="search-item-title">${hl(i.t,q)}</div><div class="search-item-path">${i.s}</div></div>`).join('')}
+function hl(t,q){const r=new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');return t.replace(r,'<strong style="color:var(--accent)">$1</strong>')}
+function onSearchInput(v){const q=v.toLowerCase();document.querySelectorAll('.nav-group').forEach(g=>{let vis=!1;g.querySelectorAll('.nav-link').forEach(l=>{const m=l.textContent.toLowerCase().includes(q);l.style.display=m?'block':'none';if(m)vis=!0});g.style.display=vis||!q?'block':'none'})}
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch()}if(e.key==='Escape')closeSearch()});
+</script>
+</body>
+</html>
