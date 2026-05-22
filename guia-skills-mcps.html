@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 7 skills y 8 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 41 skills y 8 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
-  <meta name="version" content="1.0.0">
+  <meta name="version" content="2.0.0">
 
   <style>
     :root {
@@ -40,21 +40,17 @@
       --shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; color-scheme: dark light; }
+    html { scroll-behavior: smooth; color-scheme: dark light;}
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      font-size: 16px;
+      background: var(--bg); color: var(--text); line-height: 1.6; font-size: 16px;
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     header {
       position: sticky; top: 0; z-index: 100;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border);
       backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0.75rem 1rem; height: var(--header-h);
@@ -82,42 +78,43 @@
     nav::-webkit-scrollbar { display: none; }
     .nav-list { display: flex; gap: 0.25rem; padding: 0 1rem; list-style: none; white-space: nowrap; height: 100%; align-items: center; }
     .nav-link {
-      padding: 0.4rem 0.75rem; color: var(--text-muted); border-radius: var(--radius); font-size: 0.9rem; font-weight: 500;
+      padding: 0.4rem 0.65rem; color: var(--text-muted); border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; white-space: nowrap;
     }
     .nav-link:hover, .nav-link.active { background: var(--primary); color: white; text-decoration: none; }
 
-    main { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-    section { margin-bottom: 3.5rem; scroll-margin-top: calc(var(--header-h) + var(--nav-h) + 1rem); }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    section { margin-bottom: 3rem; scroll-margin-top: calc(var(--header-h) + var(--nav-h) + 1rem); }
     h1 { font-size: 2.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; display: inline-block; }
-    h2 { font-size: 1.6rem; margin: 2rem 0 1rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
-    h3 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+    h2 { font-size: 1.5rem; margin: 2rem 0 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+    h3 { font-size: 1.15rem; margin: 1.5rem 0 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+    h3 .count { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); background: var(--surface); padding: 0.1rem 0.45rem; border-radius: 1rem; }
     p, li { margin-bottom: 0.75rem; color: var(--text-muted); }
     ul, ol { margin-left: 1.5rem; }
 
-    .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
-    .card h4 { margin: 0 0 0.5rem 0; color: var(--text); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem; }
+    .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; margin-bottom: 1rem; }
+    .card h4 { margin: 0 0 0.4rem 0; color: var(--text); font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .card h4 .sub { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); }
     .tag {
       display: inline-block;
-      background: var(--surface); padding: 0.15rem 0.5rem; border-radius: 0.25rem;
-      font-size: 0.75rem; font-family: monospace; margin: 0.15rem 0.1rem;
+      background: var(--surface); padding: 0.15rem 0.45rem; border-radius: 0.25rem;
+      font-size: 0.72rem; font-family: monospace; margin: 0.1rem;
     }
     .tag.trigger { background: var(--primary); color: white; }
-    .tag.mcp { background: var(--accent); color: white; }
+    .tag.pattern { background: var(--accent); color: white; }
     .tag.version { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-    .badge { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 1rem; font-weight: 600; text-transform: uppercase; }
+    .badge { display: inline-block; font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 1rem; font-weight: 600; text-transform: uppercase; vertical-align: middle; }
     .badge-local { background: #22c55e33; color: var(--success); border: 1px solid var(--success); }
     .badge-remote { background: #3b82f633; color: var(--accent); border: 1px solid var(--accent); }
 
     table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: var(--bg-secondary); border-radius: var(--radius); overflow: hidden; }
-    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th, td { padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     th { background: var(--surface); font-weight: 600; color: var(--text); }
     tr:last-child td { border-bottom: none; }
     tr:hover { background: rgba(255,255,255,0.03); }
 
     .example-box {
       background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 1rem; margin: 0.75rem 0; font-family: 'Fira Code', Consolas, monospace; font-size: 0.9rem; line-height: 1.6;
-      position: relative;
+      padding: 0.75rem; margin: 0.5rem 0; font-family: 'Fira Code', Consolas, monospace; font-size: 0.82rem; line-height: 1.5;
     }
     .example-box .prompt { color: var(--success); }
     .example-box .comment { color: var(--text-muted); font-style: italic; }
@@ -126,47 +123,44 @@
     .example-box .arrow { color: var(--primary); font-weight: bold; }
 
     .scenario { border-left: 3px solid var(--primary); padding-left: 1rem; margin-bottom: 2rem; }
-    .scenario h4 { color: var(--text); font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .scenario h4 { color: var(--text); font-size: 1.05rem; margin-bottom: 0.5rem; }
     .scenario-steps { counter-reset: step; list-style: none; margin-left: 0; }
-    .scenario-steps li { counter-increment: step; margin-bottom: 0.5rem; padding-left: 2rem; position: relative; }
+    .scenario-steps li { counter-increment: step; margin-bottom: 0.4rem; padding-left: 2rem; position: relative; font-size: 0.92rem; }
     .scenario-steps li::before {
       content: counter(step);
-      position: absolute; left: 0; top: 0;
-      width: 1.4rem; height: 1.4rem; border-radius: 50%;
+      position: absolute; left: 0; top: 0.1rem;
+      width: 1.3rem; height: 1.3rem; border-radius: 50%;
       background: var(--primary); color: white;
-      font-size: 0.75rem; font-weight: bold;
+      font-size: 0.7rem; font-weight: bold;
       display: flex; align-items: center; justify-content: center;
     }
 
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
 
-    .skill-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
-    .trigger-list { margin: 0.5rem 0; }
-    .trigger-list .tag { margin: 0.15rem 0.1rem; }
+    .skill-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0; }
+    .trigger-list { margin: 0.4rem 0; }
+    .trigger-list .tag { margin: 0.1rem; }
+    .output-box { background: var(--bg); border: 1px dashed var(--border); border-radius: var(--radius); padding: 0.6rem; margin: 0.4rem 0; font-size: 0.82rem; color: var(--text-muted); }
+    .cat-header { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
 
-    .output-box { background: var(--bg); border: 1px dashed var(--border); border-radius: var(--radius); padding: 0.75rem; margin: 0.5rem 0; font-size: 0.85rem; color: var(--text-muted); }
+    .compact-card .tag { font-size: 0.68rem; }
+    .compact-card p { font-size: 0.85rem; margin-bottom: 0.4rem; }
+    .compact-card h4 { font-size: 0.95rem; }
 
-    footer { text-align: center; padding: 2rem 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; }
+    footer { text-align: center; padding: 2rem 1rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; }
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
       header { flex-wrap: wrap; height: auto; padding: 0.5rem 0.75rem; }
       .header-controls { order: 3; width: 100%; margin-top: 0.5rem; }
-      #search { width: 100%; }
-      #search:focus { width: 100%; }
+      #search { width: 100%; } #search:focus { width: 100%; }
       nav { top: auto; position: static; }
       .nav-list { justify-content: flex-start; }
-      h1 { font-size: 1.7rem; }
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      h1 { font-size: 1.6rem; }
     }
-    @media print {
-      header, nav, .no-print, footer { display: none !important; }
-      main { padding: 0; margin: 0; }
-      section { page-break-inside: avoid; }
-      body { background: white; color: black; font-size: 11pt; }
-      .card, table { border: 1px solid #ccc; }
-    }
+    @media print { header, nav, .no-print, footer { display: none !important; } main { padding: 0; } section { page-break-inside: avoid; } body { background: white; color: black; font-size: 10pt; } .card, table { border: 1px solid #ccc; } }
   </style>
 </head>
 <body>
@@ -185,7 +179,9 @@
 
   <nav class="no-print">
     <ul class="nav-list">
-      <li><a href="#skills" class="nav-link">Skills</a></li>
+      <li><a href="#stack" class="nav-link">Stack</a></li>
+      <li><a href="#agent" class="nav-link">Agent</a></li>
+      <li><a href="#patterns" class="nav-link">Patterns</a></li>
       <li><a href="#mcps" class="nav-link">MCPs</a></li>
       <li><a href="#escenarios" class="nav-link">Escenarios</a></li>
       <li><a href="#rapida" class="nav-link">Referencia</a></li>
@@ -195,196 +191,385 @@
   <main>
     <section id="intro">
       <h1>📘 Guía de Skills y MCPs</h1>
-      <p>Referencia práctica para usar las <strong>7 skills</strong> del pipeline offline-first y los <strong>8 servidores MCP</strong> que las potencian. Cada skill tiene triggers de activación, ejemplos de conversación y outputs esperados.</p>
+      <p>Referencia práctica de las <strong>41 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>8 servidores MCP</strong> que las potencian.</p>
+      <div class="alert alert-info" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;border-left:4px solid var(--accent)">
+        💡 <strong>Tip:</strong> Usa el buscador (<kbd>Ctrl+F</kbd> o el campo de búsqueda arriba) para encontrar cualquier skill o comando rápido.
+      </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- SKILLS -->
+    <!-- A. STACK SKILLS (7) -->
     <!-- ============================================================ -->
-    <section id="skills">
-      <h2>🧠 Skills del Stack</h2>
-      <p>Escribe el trigger en OpenCode para activar la skill. Las skills auto-activadas no requieren trigger explícito.</p>
+    <section id="stack">
+      <h2>A 🧠 Skills del Stack <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">7</span></h2>
+      <p>Pipeline principal para construir apps offline-first. Se activan con triggers explícitos (excepto design-ux y compliance que son auto-activadas).</p>
 
       <div class="grid-2">
 
-        <!-- prompt-inicial -->
         <div class="card">
           <h4>🚀 prompt-inicial <span class="tag version">v2.0</span> <span class="tag trigger">orquestador</span></h4>
-          <p>Orquesta el pipeline completo. Recibe 5 campos del usuario y dispara setup → spec → generación → validación en orden.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">nuevo proyecto</span>
-            <span class="tag trigger">iniciar pipeline</span>
-            <span class="tag trigger">crear app</span>
-            <span class="tag trigger">iniciar flujo</span>
-            <span class="tag trigger">prompt-inicial</span>
-          </div>
+          <p>Orquesta el pipeline completo. Recibe 5 campos del usuario (nombre, tipo, descripción, tono, módulos) y dispara setup → spec → generación → validación en orden.</p>
+          <div class="trigger-list"><span class="tag trigger">nuevo proyecto</span><span class="tag trigger">iniciar pipeline</span><span class="tag trigger">crear app</span><span class="tag trigger">iniciar flujo</span><span class="tag trigger">prompt-inicial</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">nuevo proyecto</span><br>
-            <span class="comment">// OpenCode te pide 5 campos:</span><br>
+            <span class="comment">// Llena los 5 campos que pide</span><br>
             <span class="output-before">📦 Nombre:</span> ClinicaDentalPro<br>
             <span class="output-before">🎯 Tipo:</span> Gesti&oacute;n de citas<br>
             <span class="output-before">💡 Descripci&oacute;n:</span> App para recepcionistas...<br>
-            <span class="output-before">🎨 Tono visual:</span> 1-6<br>
-            <span class="output-before">🔑 M&oacute;dulos:</span> dashboard, pacientes, citas
+            <span class="output-before">🎨 Tono visual:</span> 1-6 &nbsp; <span class="output-before">🔑 M&oacute;dulos:</span> dashboard, pacientes
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> Pipeline en marcha. Te guía paso a paso con pausas entre fases. Cada fase requiere confirmación explícita.
-          </div>
+          <div class="output-box"><strong>Output:</strong> Pipeline en marcha. Pausas entre fases requieren confirmación explícita.</div>
         </div>
 
-        <!-- setup-init -->
         <div class="card">
           <h4>📦 setup-init <span class="tag version">v2.0</span> <span class="tag trigger">infraestructura</span></h4>
-          <p>Valida entorno, crea estructura de carpetas, genera <code>project.config.js</code> y un script para descargar librerías locales.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">iniciar setup</span>
-            <span class="tag trigger">crear estructura</span>
-            <span class="tag trigger">descargar libs</span>
-            <span class="tag trigger">verificar entorno</span>
-            <span class="tag trigger">setup</span>
-            <span class="tag trigger">descargar adicionales</span>
-          </div>
+          <p>Valida entorno, crea estructura de carpetas, genera <code>project.config.js</code> y script de descarga de librerías locales.</p>
+          <div class="trigger-list"><span class="tag trigger">iniciar setup</span><span class="tag trigger">crear estructura</span><span class="tag trigger">descargar libs</span><span class="tag trigger">verificar entorno</span><span class="tag trigger">setup</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">iniciar setup</span><br>
-            <span class="comment">// Valida curl, permisos, crea carpetas:</span><br>
             <span class="arrow">→</span> Crea <span class="cmd">core/</span>, <span class="cmd">modules/</span>, <span class="cmd">assets/</span>...<br>
             <span class="arrow">→</span> Genera <span class="cmd">descargar-libs.bat</span><br>
-            <span class="arrow">→</span> Ejecuta el .bat (pide confirmaci&oacute;n)<br>
-            <span class="arrow">→</span> Si existe spec, descarga adicionales
+            <span class="arrow">→</span> Pide confirmación para ejecutar .bat
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> Estructura completa del proyecto + <code>project.config.js</code> + librerías en <code>assets/</code>.
-          </div>
+          <div class="output-box"><strong>Output:</strong> Estructura + <code>project.config.js</code> + librerías en <code>assets/</code>.</div>
         </div>
 
-        <!-- spec-creator -->
         <div class="card">
           <h4>📝 spec-creator <span class="tag version">v3.2</span> <span class="tag trigger">especificaci&oacute;n</span></h4>
-          <p>Transforma la historia de usuario en una spec técnica validada. Flujo interactivo: asunciones, preguntas 4+1 con barra de progreso, detección de librerías externas.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">definir spec app</span>
-            <span class="tag trigger">nueva app completa</span>
-            <span class="tag trigger">crear especificaci&oacute;n</span>
-            <span class="tag trigger">historia de app</span>
-            <span class="tag trigger">brainstorming app</span>
-            <span class="tag trigger">descubrir app</span>
-            <span class="tag trigger">dise&ntilde;ar app</span>
-          </div>
+          <p>Transforma historias de usuario en specs técnicas validadas. Flujo interactivo con asunciones (barra de progreso), preguntas 4+1, auto-revisión y detección de librerías externas.</p>
+          <div class="trigger-list"><span class="tag trigger">definir spec app</span><span class="tag trigger">nueva app completa</span><span class="tag trigger">crear especificaci&oacute;n</span><span class="tag trigger">historia de app</span><span class="tag trigger">brainstorming app</span><span class="tag trigger">descubrir app</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">definir spec app</span><br>
-            <span class="comment">// Responde asunciones una por una:</span><br>
             <span class="output-before">[🟩🟩🟨⬜⬜]</span> &iquest;Multi-idioma? <span class="cmd">No</span><br>
             <span class="output-before">[🟩🟩🟩🟩⬜]</span> &iquest;Modo oscuro? <span class="cmd">S&iacute;</span><br>
-            <span class="comment">// Luego preguntas 4+1 con opciones</span><br>
-            <span class="arrow">→</span> Genera <span class="cmd">specs/[app].md</span>
+            <span class="arrow">→</span> Preguntas 4+1 con opciones<br>
+            <span class="arrow">→</span> Guarda <span class="cmd">specs/[app].md</span>
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> <code>specs/[app].md</code> con módulos, datos, librerías, reglas de negocio y validación.
-          </div>
+          <div class="output-box"><strong>Output:</strong> <code>specs/[app].md</code> con módulos, datos, librerías, reglas de negocio.</div>
         </div>
 
-        <!-- design-ux -->
         <div class="card">
           <h4>🎨 design-ux-intelligence <span class="tag version">v2.5</span> <span class="tag trigger">dise&ntilde;o</span></h4>
-          <p>Aplica principios de diseño profesional, paletas, tipografías, componentes Pines y WCAG AA. Se auto-activa cuando se menciona tono visual o diseño.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">tono visual</span>
-            <span class="tag trigger">dise&ntilde;o distintivo</span>
-            <span class="tag trigger">UX profesional</span>
-            <span class="tag trigger">validar accesibilidad</span>
-            <span class="tag trigger">mejorar UI</span>
-            <span class="tag trigger">paleta de colores</span>
-            <span class="tag trigger">tipograf&iacute;a</span>
-            <span class="tag trigger">estilo UI</span>
-          </div>
+          <p>Aplica principios de diseño profesional, paletas de marcas reales (vía refero-styles MCP), tipografías, componentes Pines y WCAG AA. Se auto-activa al mencionar tono visual.</p>
+          <div class="trigger-list"><span class="tag trigger">tono visual</span><span class="tag trigger">dise&ntilde;o distintivo</span><span class="tag trigger">UX profesional</span><span class="tag trigger">validar accesibilidad</span><span class="tag trigger">mejorar UI</span><span class="tag trigger">paleta de colores</span><span class="tag trigger">tipograf&iacute;a</span><span class="tag trigger">estilo UI</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">tono visual moderno y profesional</span><br>
-            <span class="comment">// Propone paletas + tipografías + estilo:</span><br>
             <span class="arrow">→</span> Paleta: <span class="cmd">#0F172A</span> slate / <span class="cmd">#0D9488</span> teal<br>
             <span class="arrow">→</span> Tipograf&iacute;a: Inter + JetBrains Mono<br>
-            <span class="arrow">→</span> Componentes Pines sugeridos<br>
-            <span class="arrow">→</span> Checks WCAG AA autom&aacute;ticos
+            <span class="arrow">→</span> Componentes Pines + checks WCAG AA
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> Recomendaciones de estilo aplicadas inline. No genera código por sí sola — alimenta a code-generator.
-          </div>
+          <div class="output-box"><strong>Output:</strong> Recomendaciones de estilo. No genera código — alimenta a code-generator.</div>
         </div>
 
-        <!-- code-generator -->
         <div class="card">
           <h4>⚙️ code-generator <span class="tag version">v2.3</span> <span class="tag trigger">generaci&oacute;n</span></h4>
-          <p>Genera código por fases: core primero, luego módulos uno a uno. Lee la spec y aplica estilo de design-ux. Pausas explícitas entre fases para evitar pérdida de contexto.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">generar codigo</span>
-            <span class="tag trigger">crear m&oacute;dulos</span>
-            <span class="tag trigger">implementar spec</span>
-            <span class="tag trigger">build app</span>
-            <span class="tag trigger">escribir c&oacute;digo</span>
-          </div>
+          <p>Genera código por fases: core primero, luego módulos uno a uno. Lee spec y aplica estilo de design-ux. Pausas explícitas para no perder contexto. Compliance se valida tras cada bloque.</p>
+          <div class="trigger-list"><span class="tag trigger">generar codigo</span><span class="tag trigger">crear m&oacute;dulos</span><span class="tag trigger">implementar spec</span><span class="tag trigger">build app</span><span class="tag trigger">escribir c&oacute;digo</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">generar codigo</span><br>
-            <span class="comment">// Lee specs/[app].md y produce:</span><br>
             <span class="arrow">→</span> <b>FASE A:</b> <span class="cmd">index.html</span> + <span class="cmd">core/</span>*<br>
             <span class="arrow">→</span> ⏸️ Pausa, espera <span class="cmd">✅ CORE OK</span><br>
-            <span class="arrow">→</span> <b>FASE B:</b> M&oacute;dulo 1...<br>
-            <span class="arrow">→</span> ⏸️ Pausa, espera <span class="cmd">✅ [modulo] OK</span><br>
-            <span class="arrow">→</span> Cada bloque valida compliance autom&aacute;ticamente
+            <span class="arrow">→</span> <b>FASE B:</b> M&oacute;dulo por m&oacute;dulo
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> <code>index.html</code> + <code>core/*.js</code> + <code>modules/[nombre]/*</code>. Código listo para abrir con doble clic.
-          </div>
+          <div class="output-box"><strong>Output:</strong> <code>index.html</code> + <code>core/*.js</code> + <code>modules/[nombre]/*</code>. Listo para doble clic.</div>
         </div>
 
-        <!-- stack-compliance-guard -->
         <div class="card">
           <h4>🛡️ stack-compliance-guard <span class="tag version">v2.3</span> <span class="tag trigger">validaci&oacute;n</span></h4>
-          <p>Guarda automática que se activa tras cada output de código. Bloquea imports ES6, CDNs, fetch y omisión de cifrado. Se puede invocar manualmente para auditar código existente.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">validar stack</span>
-            <span class="tag trigger">comprobar reglas</span>
-            <span class="tag trigger">corregir imports</span>
-            <span class="tag trigger">verificar cifrado</span>
-            <span class="tag trigger">file:// compatible</span>
-          </div>
+          <p>Guarda automática post-generación. Bloquea imports ES6, CDNs, fetch y omisión de cifrado. Corrige automáticamente lo reparable o pregunta si es ambiguo.</p>
+          <div class="trigger-list"><span class="tag trigger">validar stack</span><span class="tag trigger">comprobar reglas</span><span class="tag trigger">corregir imports</span><span class="tag trigger">verificar cifrado</span><span class="tag trigger">file:// compatible</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">validar stack</span><br>
-            <span class="comment">// Escanea c&oacute;digo generado buscando violaciones:</span><br>
             <span class="arrow">→</span> ✅ Sin <span class="cmd">import/export</span><br>
-            <span class="arrow">→</span> ✅ Sin <span class="cmd">type=&quot;module&quot;</span><br>
-            <span class="arrow">→</span> ❌ <span class="cmd">&lt;script src=&quot;https://cdn...&quot;&gt;</span> <span class="comment">// BLOQUEADO</span><br>
-            <span class="arrow">→</span> ✅ CryptoJS presente<br>
-            <span class="arrow">→</span> <span class="cmd">Corrige autom&aacute;ticamente</span> lo reparable
+            <span class="arrow">→</span> ❌ CDNs → <span class="cmd">Corrigiendo</span> a rutas relativas<br>
+            <span class="arrow">→</span> ✅ CryptoJS presente
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> Reporte de compliance. Correcciones automáticas aplicadas. Si hay ambigüedades, pregunta.
+          <div class="output-box"><strong>Output:</strong> Reporte de compliance. Correcciones automáticas aplicadas.</div>
+        </div>
+
+        <div class="card">
+          <h4>✅ validation-offline <span class="tag version">v2.4</span> <span class="tag trigger">testing</span></h4>
+          <p>Validación final: análisis estático + guía DevTools + tests Playwright + auditoría a11y + checklist de entrega. Genera reporte en <code>docs/validacion-[app].md</code>.</p>
+          <div class="trigger-list"><span class="tag trigger">validar app</span><span class="tag trigger">verificar spec</span><span class="tag trigger">validar stack</span><span class="tag trigger">chequeo calidad</span><span class="tag trigger">reporte validaci&oacute;n</span><span class="tag trigger">test automatizado</span><span class="tag trigger">playwright</span><span class="tag trigger">e2e</span></div>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> <span class="cmd">validar app</span><br>
+            <span class="arrow">→</span> Est&aacute;tico: imports, CDNs, cifrado<br>
+            <span class="arrow">→</span> DevTools: consola, Lighthouse<br>
+            <span class="arrow">→</span> Tests: Playwright (si instalado)<br>
+            <span class="arrow">→</span> Reporte: <span class="cmd">docs/validacion-[app].md</span>
+          </div>
+          <div class="output-box"><strong>Output:</strong> Reporte técnico con screenshots, resultados y checklist de entrega.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- B. AGENT SKILLS (9) -->
+    <!-- ============================================================ -->
+    <section id="agent">
+      <h2>B 🤖 Agent Skills <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">9</span></h2>
+      <p>Skills funcionales instaladas como agentes. Cubren tareas específicas como documentación, office y skills management.</p>
+
+      <div class="grid-2">
+
+        <div class="card">
+          <h4>📖 find-docs</h4>
+          <p>Obtiene documentación actualizada, API references y ejemplos de código para cualquier tecnología o librería. No depende de training data.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> &iquest;C&oacute;mo se usa el hook <span class="cmd">useEffect</span> en React?<br>
+            <span class="arrow">→</span> Busca docs actualizadas de React<br>
+            <span class="arrow">→</span> Responde con sintaxis + ejemplos
           </div>
         </div>
 
-        <!-- validation-offline -->
         <div class="card">
-          <h4>✅ validation-offline <span class="tag version">v2.4</span> <span class="tag trigger">testing</span></h4>
-          <p>Validación final: análisis estático + guía DevTools + tests Playwright. Genera reporte técnico completo en <code>docs/validacion-[app].md</code>.</p>
-          <div class="trigger-list">
-            <span class="tag trigger">validar app</span>
-            <span class="tag trigger">verificar spec</span>
-            <span class="tag trigger">validar stack</span>
-            <span class="tag trigger">chequeo calidad</span>
-            <span class="tag trigger">reporte validaci&oacute;n</span>
-            <span class="tag trigger">test automatizado</span>
-            <span class="tag trigger">playwright</span>
-            <span class="tag trigger">e2e</span>
-          </div>
+          <h4>🔍 find-skills</h4>
+          <p>Ayuda a descubrir e instalar skills de agente cuando preguntas "cómo hago X". Busca en registros de skills disponibles.</p>
           <div class="example-box">
-            <span class="prompt">Tú:</span> <span class="cmd">validar app</span><br>
-            <span class="comment">// Ejecuta 4 fases de validaci&oacute;n:</span><br>
-            <span class="arrow">→</span> Verificaci&oacute;n est&aacute;tica (imports, CDNs, cifrado)<br>
-            <span class="arrow">→</span> Gu&iacute;a DevTools (consola, storage, Lighthouse)<br>
-            <span class="arrow">→</span> Tests Playwright (si est&aacute;n instalados)<br>
-            <span class="arrow">→</span> Genera <span class="cmd">docs/validacion-[app].md</span>
+            <span class="prompt">Tú:</span> &iquest;Hay una skill para editar im&aacute;genes?<br>
+            <span class="arrow">→</span> Busca en skills disponibles<br>
+            <span class="arrow">→</span> Sugiere skills relevantes para instalar
           </div>
-          <div class="output-box">
-            <strong>Output:</strong> <code>docs/validacion-[app].md</code> con resultados, screenshots y checklist de entrega.
+        </div>
+
+        <div class="card">
+          <h4>🛠️ skill-creator</h4>
+          <p>Crea skills desde cero, edita/mejora skills existentes, y mide su performance con evals, benchmarks y optimización de descripciones.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> crea una skill que valide formatos CSV<br>
+            <span class="arrow">→</span> Genera SKILL.md con YAML + instrucciones<br>
+            <span class="arrow">→</span> Guarda en <span class="cmd">~/.opencode/skills/</span>
           </div>
+        </div>
+
+        <div class="card">
+          <h4>📝 docx</h4>
+          <p>Crea, lee, edita y manipula documentos Word (.docx) con formato profesional: tablas de contenido, encabezados, numeración, imágenes, reemplazo de texto, comentarios.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> crea un documento Word con un reporte de calidad<br>
+            <span class="arrow">→</span> Genera <span class="cmd">reporte.docx</span><br>
+            <span class="arrow">→</span> Incluye TDC, tablas, encabezados
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>📄 pdf</h4>
+          <p>Lee, extrae texto/tablas, combina, divide, rota, añade marcas de agua, crea PDFs, rellena formularios, encripta y hace OCR en PDFs escaneados.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> combina estos 3 PDFs en uno solo<br>
+            <span class="arrow">→</span> Fusiona archivos<br>
+            <span class="arrow">→</span> Genera <span class="cmd">combinado.pdf</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>📽️ pptx</h4>
+          <p>Crea, edita, combina y extrae contenido de presentaciones PowerPoint. Trabaja con diapositivas, layouts, plantillas, notas del orador y comentarios.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> genera una presentaci&oacute;n de la propuesta<br>
+            <span class="arrow">→</span>Crea <span class="cmd">propuesta.pptx</span><br>
+            <span class="arrow">→</span> Diapositivas con t&iacute;tulos, bullets, notas
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>📊 xlsx</h4>
+          <p>Crea, lee, edita y convierte spreadsheets (.xlsx, .xlsm, .csv, .tsv). Soporta fórmulas, formatos, gráficos, limpieza de datos y conversión entre formatos tabulares.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> crea un Excel con los datos de ventas<br>
+            <span class="arrow">→</span> Genera <span class="cmd">ventas.xlsx</span><br>
+            <span class="arrow">→</span> Incluye fórmulas y formato
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>🎬 hyperframes</h4>
+          <p>Crea composiciones de video en HTML: animaciones, title cards, overlays, capturas sincronizadas con audio, voz en off, transiciones entre escenas y visuals reactivos al ritmo de música.</p>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> haz un video animado de introducci&oacute;n<br>
+            <span class="arrow">→</span> Genera HTML con animaciones + TTS<br>
+            <span class="arrow">→</span> Escenas con transiciones
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>🔗 context7-mcp</h4>
+          <p>Wrapper skill para el MCP context7. Resuelve librerías a IDs Context7 y consulta documentación. Usado internamente por setup-init y spec-creator.</p>
+          <div class="example-box">
+            <span class="comment">// Uso interno, no se invoca directamente</span><br>
+            <span class="arrow">→</span> setup-init: busca URL de descarga de Dexie<br>
+            <span class="arrow">→</span> spec-creator: detecta librerías adicionales
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- C. PATTERN LIBRARIES (25) -->
+    <!-- ============================================================ -->
+    <section id="patterns">
+      <h2>C 📐 Pattern Libraries <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">25</span></h2>
+      <p>Skills pasivas que proporcionan patrones UX, guías de diseño y reviewers especializados. Se activan automáticamente según el contexto. No requieren triggers del usuario.</p>
+
+      <!-- C1: Formularios y datos -->
+      <h3>📋 Formularios y Datos <span class="count">6</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>form-patterns <span class="tag pattern">UX</span></h4>
+          <p>Patrones UX para formularios: validación en tiempo real, disposición de campos, manejo de errores inline, wizards multi-paso y confirmación antes de enviar.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>list-page-patterns <span class="tag pattern">UX</span></h4>
+          <p>Patrones para páginas de listado/browse: filtros combinados, ordenación por columnas, paginación, vistas grid/table, estados vacío y de carga.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>detail-page-patterns <span class="tag pattern">UX</span></h4>
+          <p>Patrones para páginas de detalle: headers con acciones, contenido con tabs, layouts multi-columna, displays de datos relacionados y breadcrumbs.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>data-density-patterns <span class="tag pattern">UX</span></h4>
+          <p>Visualización densa de información sin solapamiento: scrolling optimizado, manejo de z-index, responsive condensing y jerarquía visual clara.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>info-card-patterns <span class="tag pattern">UX</span></h4>
+          <p>Patrones para tarjetas informativas, displays de entidades y bloques de estadísticas con iconos, etiquetas y datos resumidos.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>status-visualization-patterns <span class="tag pattern">UX</span></h4>
+          <p>Visualización de estados de sistema: indicadores en vivo, health bars, badges de estado con color, iconos y animación.</p>
+        </div>
+
+      </div>
+
+      <!-- C2: Navegación y layout -->
+      <h3>🧭 Navegación y Layout <span class="count">4</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>navigation-patterns <span class="tag pattern">UX</span></h4>
+          <p>Sidebar navigation, mobile drawers, breadcrumbs, app shell, pestañas y navegación anidada con estado activo y transiciones.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>page-structure-patterns <span class="tag pattern">UX</span></h4>
+          <p>Estructura base de páginas: estados (cargando, vacío, error, éxito), layout estándar, encabezados y contenedores responsivos.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>split-panel-patterns <span class="tag pattern">UX</span></h4>
+          <p>Layouts con paneles divididos: divisores redimensionables, multi-panel, sincronización de scroll y persistencia de tamaño.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>comparison-patterns <span class="tag pattern">UX</span></h4>
+          <p>Comparaciones lado a lado, diff highlighting (antes/después), y vistas multi-item para contrastar datos visualmente.</p>
+        </div>
+
+      </div>
+
+      <!-- C3: Interacción -->
+      <h3>🖱️ Interacción <span class="count">5</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>interaction-patterns <span class="tag pattern">UX</span></h4>
+          <p>Micro-interacciones: estados de carga, feedback visual, animaciones de transición, hover effects y mecanismos de respuesta del sistema.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>drag-drop-patterns <span class="tag pattern">UX</span></h4>
+          <p>Interacciones drag & drop: feedback visual durante arrastre, zonas de drop destacadas, reordenación de listas y validación de destino.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>keyboard-shortcuts-patterns <span class="tag pattern">UX</span></h4>
+          <p>Atajos de teclado, paleta de comandos (Cmd+K), teclas de acceso rápido, navegación por teclado y discoverability de shortcuts.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>toast-notification-patterns <span class="tag pattern">UX</span></h4>
+          <p>Notificaciones toast, snackbars, alerts y sistema de feedback: posicionamiento, duración, apilamiento, tipos (éxito/error/warning/info).</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>editor-workspace-patterns <span class="tag pattern">UX</span></h4>
+          <p>Editores multi-pestaña, workspace management, dirty state, validación en tiempo real, undo/redo y UIs de editor complejas.</p>
+        </div>
+
+      </div>
+
+      <!-- C4: Modales y feedback -->
+      <h3>💬 Modales y Feedback <span class="count">3</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>modal-patterns <span class="tag pattern">UX</span></h4>
+          <p>Diálogos modales: confirmación, edición, selector, wizard. Incluye gestión de foco, z-index, backdrop, cierre con Escape y accesibilidad.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>playback-replay-patterns <span class="tag pattern">UX</span></h4>
+          <p>Controles de reproducción/replay: timeline, botones play/pause, velocidad, barra de progreso y visualización de eventos temporales.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>event-timeline-patterns <span class="tag pattern">UX</span></h4>
+          <p>Líneas de tiempo de eventos: chronological feed, timeline visual, agrupación por fecha, scroll infinito y marcadores de eventos importantes.</p>
+        </div>
+
+      </div>
+
+      <!-- C5: Mobile y accesibilidad -->
+      <h3>📱 Mobile y Accesibilidad <span class="count">4</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>mobile-responsive-ux <span class="tag pattern">UX</span></h4>
+          <p>UX móvil: touch targets (44px+), gestos (swipe, pinch), responsive design, bottom sheets, navegación mobile-first y viewport management.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>wcag-accessibility <span class="tag pattern">a11y</span></h4>
+          <p>Checklist WCAG 2.2 completo: contraste (AA/AAA), roles ARIA, navegación por teclado, focus visible, etiquetas, screen readers y testing methods.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>ux-heuristics <span class="tag pattern">UX</span></h4>
+          <p>10 heurísticas de Nielsen: visibilidad del estado del sistema, consistencia, prevención de errores, reconocimiento, flexibilidad y diseño estético.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>turn-based-ui-patterns <span class="tag pattern">UX</span></h4>
+          <p>UIs por turnos: tableros/canvas, indicador de turno actual, historial de movimientos, temporizador y estados de juego activo/pausado.</p>
+        </div>
+
+      </div>
+
+      <!-- C6: Visual -->
+      <h3>🎨 Visual y Diseño <span class="count">3</span></h3>
+      <div class="grid-3">
+
+        <div class="card compact-card">
+          <h4>visual-design-system <span class="tag pattern">UI</span></h4>
+          <p>Principios de diseño visual: layout grid, jerarquía tipográfica, teoría del color, sistemas de espaciado (8px), elevación y sombras.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>canvas-grid-patterns <span class="tag pattern">UX</span></h4>
+          <p>Patrones para interfaces de canvas/grid: cuadrículas interactivas, zoom, pan, selección múltiple, alineación y snapping.</p>
+        </div>
+
+        <div class="card compact-card">
+          <h4>react-ux-patterns <span class="tag pattern">legacy</span></h4>
+          <p>Patrones UX específicos para React/Next.js: state management, data fetching, server components y componentes reutilizables. Legacy — el stack usa Alpine.js.</p>
         </div>
 
       </div>
@@ -394,52 +579,50 @@
     <!-- MCPs -->
     <!-- ============================================================ -->
     <section id="mcps">
-      <h2>🔌 Servidores MCP</h2>
-      <p>8 MCPs configurados en <code>opencode.json</code>. Algunos los consumen las skills automáticamente, otros puedes invocarlos manualmente en conversación.</p>
+      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">8</span></h2>
+      <p>Configurados en <code>opencode.json</code>. Algunos son consumidos automáticamente por las skills, otros se invocan manualmente en conversación.</p>
 
       <div class="grid-2">
 
         <div class="card">
           <h4>context7 <span class="badge badge-remote">remote</span></h4>
           <p>Resuelve documentación actualizada de librerías. Usado por <strong>setup-init</strong> y <strong>spec-creator</strong> para detectar URLs de descarga y versiones correctas.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// Uso autom&aacute;tico (spec-creator):</span><br>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// spec-creator lo usa automáticamente:</span><br>
             <span class="arrow">→</span> Detecta <span class="cmd">libreriasAdicionales</span><br>
-            <span class="arrow">→</span> Consulta context7: URL, version<br>
-            <span class="comment">// Uso manual en chat:</span><br>
-            <span class="prompt">Tú:</span> &iquest;Qu&eacute; versi&oacute;n de Dexie usar?<br>
-            <span class="arrow">→</span> OpenCode usa context7 internamente
+            <span class="arrow">→</span> Consulta context7: URL + versión<br>
+            <span class="comment">// Manual en chat:</span><br>
+            <span class="prompt">Tú:</span> &iquest;Qu&eacute; versi&oacute;n de Dexie usar?
           </div>
         </div>
 
         <div class="card">
           <h4>excalidraw <span class="badge badge-remote">remote</span></h4>
-          <p>Genera diagramas hand-drawn de arquitectura. Usado por <strong>spec-creator</strong> para ilustrar flujos de datos y estructura de módulos.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// spec-creator lo invoca autom&aacute;ticamente</span><br>
+          <p>Genera diagramas hand-drawn de arquitectura y flujos. Usado por <strong>spec-creator</strong> para ilustrar la estructura de módulos y datos.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// spec-creator lo invoca automáticamente</span><br>
             <span class="arrow">→</span> Diagrama de arquitectura<br>
-            <span class="arrow">→</span> Flujo de datos entre m&oacute;dulos<br>
-            <span class="comment">// Manual:</span> <span class="prompt">Tú:</span> haz un diagrama del flujo de 3 m&oacute;dulos
+            <span class="arrow">→</span> Flujo de datos entre módulos<br>
+            <span class="comment">// Manual:</span> haz un diagrama del flujo de 3 módulos
           </div>
         </div>
 
         <div class="card">
           <h4>chrome-devtools <span class="badge badge-local">local</span></h4>
-          <p>Controla Chrome DevTools para debugging, captura de consola, screenshots y auditorías. Usado por <strong>validation-offline</strong> para validación dinámica.</p>
-          <div class="example-box" style="font-size:0.82rem">
+          <p>Controla Chrome DevTools para debugging: captura de consola, screenshots, auditorías Lighthouse, heap snapshots y performance traces. Usado por <strong>validation-offline</strong>.</p>
+          <div class="example-box" style="font-size:0.8rem">
             <span class="comment">// validation-offline lo usa para:</span><br>
-            <span class="arrow">→</span> Tomar screenshot de la app<br>
+            <span class="arrow">→</span> Screenshot de la app<br>
             <span class="arrow">→</span> Revisar errores de consola<br>
             <span class="arrow">→</span> Auditar Lighthouse<br>
-            <span class="comment">// Manual:</span> abre la consola y dime si hay errores
+            <span class="comment">// Manual:</span> abre la consola y dime errores
           </div>
         </div>
 
         <div class="card">
           <h4>canva <span class="badge badge-remote">remote</span></h4>
-          <p>Genera documentos visuales tipo doc, presentación o póster desde especificaciones. Uso opcional — no es core del pipeline.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// Manual, no se auto-activa en pipeline:</span><br>
+          <p>Genera documentos visuales (docs, presentaciones, posters) desde especificaciones. Uso opcional fuera del pipeline core.</p>
+          <div class="example-box" style="font-size:0.8rem">
             <span class="prompt">Tú:</span> crea un p&oacute;ster con los resultados<br>
             <span class="arrow">→</span> Canva genera dise&ntilde;o en tu cuenta
           </div>
@@ -448,8 +631,8 @@
         <div class="card">
           <h4>filesystem <span class="badge badge-local">local</span></h4>
           <p>Acceso a archivos del proyecto. Usado por <strong>todas las skills</strong> para leer/escribir specs, código, configs y reportes.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// Uso transparente — las skills lo usan autom&aacute;ticamente</span><br>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// Uso transparente por todas las skills</span><br>
             <span class="arrow">→</span> Leer <span class="cmd">specs/[app].md</span><br>
             <span class="arrow">→</span> Escribir <span class="cmd">core/app.js</span><br>
             <span class="arrow">→</span> Guardar reporte en <span class="cmd">docs/</span>
@@ -458,33 +641,32 @@
 
         <div class="card">
           <h4>refero-styles <span class="badge badge-local">local</span></h4>
-          <p>Obtiene design.md de marcas reales (Linear, Stripe, Vercel, etc.) para inspirar paletas y estilos. Usado por <strong>design-ux-intelligence</strong>.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// design-ux lo activa autom&aacute;ticamente</span><br>
-            <span class="arrow">→</span> Busca estilo: <span class="cmd">&quot;dark minimal SaaS&quot;</span><br>
-            <span class="arrow">→</span> Obtiene paleta + tipograf&iacute;a + componentes<br>
-            <span class="comment">// Manual:</span> busca un estilo oscuro minimalista tipo Linear
+          <p>Obtiene design.md de marcas reales (Linear, Stripe, Vercel, etc.) para inspirar paletas, tipografías y componentes. Usado por <strong>design-ux-intelligence</strong>.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// design-ux lo activa automáticamente</span><br>
+            <span class="arrow">→</span> Busca: <span class="cmd">&quot;dark minimal SaaS&quot;</span><br>
+            <span class="arrow">→</span> Obtiene paleta + tipografía + componentes
           </div>
         </div>
 
         <div class="card">
           <h4>a11y <span class="badge badge-local">local</span></h4>
-          <p>Audita accesibilidad WCAG 2.2. Usado por <strong>validation-offline</strong> y <strong>design-ux</strong> para verificar contraste, ARIA, foco y etiquetas.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// validation-offline lo invoca as&iacute;:</span><br>
-            <span class="arrow">→</span> Audit URL: <span class="cmd">file:///.../index.html</span><br>
-            <span class="arrow">→</span> Tags: <span class="cmd">wcag2a, wcag2aa, best-practice</span><br>
-            <span class="arrow">→</span> Reporta violaciones con remediaci&oacute;n
+          <p>Audita accesibilidad WCAG 2.2. Usado por <strong>validation-offline</strong> y <strong>design-ux</strong> para verificar contraste, roles ARIA, foco, etiquetas y estructura semántica.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// validation-offline lo invoca así:</span><br>
+            <span class="arrow">→</span> Audit: <span class="cmd">file:///.../index.html</span><br>
+            <span class="arrow">→</span> Tags: <span class="cmd">wcag2a, wcag2aa</span><br>
+            <span class="arrow">→</span> Reporta violaciones con remediación
           </div>
         </div>
 
         <div class="card">
           <h4>web-search <span class="badge badge-local">local</span></h4>
-          <p>Búsqueda web complementaria usando DuckDuckGo. Respaldo cuando context7 no tiene la librería o se necesita información general.</p>
-          <div class="example-box" style="font-size:0.82rem">
-            <span class="comment">// Usado como fallback en setup-init</span><br>
-            <span class="arrow">→</span> Si context7 falla, busca URL de librer&iacute;a en web<br>
-            <span class="comment">// Manual:</span> busca &quot;tailwind CSS v4 release date&quot;
+          <p>Búsqueda web usando DuckDuckGo. Usado como respaldo por <strong>setup-init</strong> cuando context7 no tiene la librería solicitada.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// Fallback automático</span><br>
+            <span class="arrow">→</span> Si context7 falla, busca URL en web<br>
+            <span class="comment">// Manual:</span> busca &quot;Tailwind CSS v4 release&quot;
           </div>
         </div>
 
@@ -499,61 +681,55 @@
 
       <div class="scenario">
         <h4>🚀 Escenario 1: Crear app desde cero</h4>
-        <p>Pipeline completo: desde la idea hasta la app validada lista para entregar.</p>
+        <p>Pipeline completo desde la idea hasta la app validada.</p>
         <ol class="scenario-steps">
-          <li><strong>Prompt inicial:</strong> escribe <code>nuevo proyecto</code>. Llena los 5 campos: nombre, tipo, descripción, tono visual, módulos.</li>
-          <li><strong>Setup:</strong> OpenCode ejecuta <code>iniciar setup</code> automáticamente. Crea carpetas, <code>project.config.js</code>, descarga librerías. Dale <code>✅ FASE 1 OK</code>.</li>
-          <li><strong>Spec:</strong> <code>definir spec app</code>. Responde asunciones (barra de progreso) y preguntas 4+1. Se genera <code>specs/[app].md</code>. Dale <code>✅ FASE 2 OK</code>.</li>
-          <li><strong>Diseño:</strong> design-ux se activa automáticamente si diste tono visual. Propone paleta, tipografía, componentes.</li>
-          <li><strong>Generación:</strong> <code>generar codigo</code>. Fase A: core + index.html. Pausa (<code>✅ CORE OK</code>). Fase B: módulos uno por uno. Cada bloque pasa compliance.</li>
-          <li><strong>Validación:</strong> <code>validar app</code>. Estático + DevTools + Playwright. Genera <code>docs/validacion-[app].md</code>.</li>
+          <li><strong>Prompt inicial:</strong> escribe <code>nuevo proyecto</code>. Llena 5 campos: nombre, tipo, descripción, tono visual, módulos.</li>
+          <li><strong>Setup:</strong> <code>iniciar setup</code>. Crea carpetas, <code>project.config.js</code>, descarga librerías. Dale <code>✅ FASE 1 OK</code>.</li>
+          <li><strong>Spec:</strong> <code>definir spec app</code>. Responde asunciones + preguntas 4+1. Se genera <code>specs/[app].md</code>. Dale <code>✅ FASE 2 OK</code>.</li>
+          <li><strong>Diseño:</strong> design-ux se activa si diste tono visual. Propone paleta, tipografía, componentes.</li>
+          <li><strong>Generación:</strong> <code>generar codigo</code>. Fase A: core + index.html. Pausa. Fase B: módulos uno a uno.</li>
+          <li><strong>Validación:</strong> <code>validar app</code>. Estático + DevTools + a11y + Playwright. Genera <code>docs/validacion-[app].md</code>.</li>
         </ol>
-        <div class="output-box">
-          <strong>Resultado:</strong> <code>index.html</code> que se abre con doble clic, 100% offline, sin CDNs, con spec y reporte de validación.
-        </div>
       </div>
 
       <div class="scenario">
         <h4>🛡️ Escenario 2: Corregir compliance en app existente</h4>
-        <p>Tienes código de otro proyecto y quieres asegurarte de que cumple el stack offline-first.</p>
+        <p>Tienes código de otro proyecto y quieres asegurar que cumple el stack offline-first.</p>
         <ol class="scenario-steps">
-          <li>Abre OpenCode en la carpeta del proyecto existente.</li>
-          <li>Escribe <code>validar stack</code>. La skill escanea todos los archivos buscando violaciones.</li>
-          <li>Para cada violación: corrige automático si es posible (cambiar CDN a ruta local), o pregunta si es ambiguo.</li>
-          <li>Al final muestra un resumen: bloqueados, corregidos, pendientes.</li>
+          <li>Abre OpenCode en la carpeta del proyecto.</li>
+          <li>Escribe <code>validar stack</code>. Escanea todos los archivos buscando violaciones (imports, CDNs, cifrado).</li>
+          <li>Corrige automático lo reparable; pregunta si es ambiguo.</li>
+          <li>Recibe resumen: bloqueados, corregidos, pendientes.</li>
         </ol>
-        <div class="example-box">
+        <div class="example-box" style="font-size:0.85rem">
           <span class="prompt">Tú:</span> <span class="cmd">validar stack</span><br>
-          <span class="arrow">→</span> Busca en <span class="cmd">**/*.html</span>, <span class="cmd">**/*.js</span><br>
-          <span class="arrow">→</span> 3 violaciones encontradas: 1 import, 2 CDNs<br>
+          <span class="arrow">→</span> 3 violaciones: 1 import, 2 CDNs<br>
           <span class="arrow">→</span> <span class="cmd">Corrigiendo...</span> 2 CDNs → rutas relativas<br>
-          <span class="arrow">→</span> <span class="cmd">Pregunta:</span> El import es parte de una lib permitida?<br>
-          <span class="prompt">Tú:</span> No, elimínalo.<br>
+          <span class="arrow">→</span> Pregunta: el import es parte de lib permitida? <span class="prompt">Tú:</span> No, elimínalo.<br>
           <span class="arrow">→</span> <span class="cmd">✅ Stack compliant.</span>
         </div>
       </div>
 
       <div class="scenario">
         <h4>🎨 Escenario 3: Mejorar diseño y accesibilidad</h4>
-        <p>Tu app funciona pero quieres darle un look más profesional y asegurar WCAG AA.</p>
+        <p>Tu app funciona pero quieres darle un look profesional + WCAG AA.</p>
         <ol class="scenario-steps">
           <li>Escribe <code>mejorar UI</code> o <code>tono visual moderno</code>. design-ux se activa.</li>
-          <li>Propone paletas, tipografías, bordes, sombras y espaciado basados en marcas reales (vía refero-styles).</li>
-          <li>Selecciona una propuesta. design-ux actualiza las variables CSS en <code>project.config.js</code>.</li>
-          <li>Luego escribe <code>validar accesibilidad</code>. El MCP a11y audita contraste, ARIA, foco y etiquetas.</li>
-          <li>Corrige los issues reportados (cambia colores de bajo contraste, añade roles ARIA, etiqueta inputs).</li>
+          <li>Propone paletas, tipografías y espaciado basados en marcas reales (vía refero-styles MCP).</li>
+          <li>Selecciona una propuesta. design-ux actualiza variables CSS en <code>project.config.js</code>.</li>
+          <li>Escribe <code>validar accesibilidad</code>. El MCP a11y audita contraste, ARIA, foco y etiquetas.</li>
+          <li>Corrige los issues reportados.</li>
         </ol>
       </div>
 
       <div class="scenario">
-        <h4>✅ Escenario 4: Validar app existente con reporte</h4>
-        <p>Quieres un reporte profesional de la calidad de tu app antes de entregarla al cliente.</p>
+        <h4>📄 Escenario 4: Usar agent skills para documentos</h4>
+        <p>Necesitas exportar resultados a formatos de oficina.</p>
         <ol class="scenario-steps">
-          <li>Ejecuta <code>validar app</code>. validation-offline inicia su pipeline de 4 fases.</li>
-          <li><strong>Fase 1:</strong> Verificación estática — compliance guard chequea imports, CDNs, cifrado.</li>
-          <li><strong>Fase 2:</strong> Guía DevTools — te da comandos para revisar consola, Application tab, Lighthouse.</li>
-          <li><strong>Fase 3:</strong> Tests Playwright — si tienes Python, ejecuta <code>python tests/test_app.py</code>.</li>
-          <li><strong>Fase 4:</strong> Genera reporte completo en <code>docs/validacion-[app].md</code> con screenshots, resultados y checklist de entrega.</li>
+          <li><strong>Word:</strong> <code>crea un documento Word con el reporte de validación</code> → skill docx genera <code>.docx</code>.</li>
+          <li><strong>Excel:</strong> <code>exporta estos datos a Excel</code> → skill xlsx genera <code>.xlsx</code> con fórmulas.</li>
+          <li><strong>Presentación:</strong> <code>haz una presentación de la propuesta</code> → skill pptx genera <code>.pptx</code>.</li>
+          <li><strong>PDF:</strong> <code>convierte el informe a PDF</code> → skill pdf genera <code>.pdf</code>.</li>
         </ol>
       </div>
     </section>
@@ -564,17 +740,51 @@
     <section id="rapida">
       <h2>⚡ Referencia Rápida</h2>
 
-      <h3>Triggers de Skills</h3>
+      <h3>Skills por Categoría y Trigger</h3>
       <table>
-        <thead><tr><th>Skill</th><th>Trigger principal</th><th>Auto-activada</th></tr></thead>
+        <thead><tr><th>Categoría</th><th>Skill</th><th>Trigger / Activación</th></tr></thead>
         <tbody>
-          <tr><td>prompt-inicial</td><td><code>nuevo proyecto</code></td><td>No</td></tr>
-          <tr><td>setup-init</td><td><code>iniciar setup</code></td><td>No</td></tr>
-          <tr><td>spec-creator</td><td><code>definir spec app</code></td><td>No</td></tr>
-          <tr><td>design-ux-intelligence</td><td><code>tono visual</code></td><td>Sí</td></tr>
-          <tr><td>code-generator</td><td><code>generar codigo</code></td><td>No</td></tr>
-          <tr><td>stack-compliance-guard</td><td><code>validar stack</code></td><td>Sí (post-generación)</td></tr>
-          <tr><td>validation-offline</td><td><code>validar app</code></td><td>No</td></tr>
+          <tr><td rowspan="7">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
+          <tr><td>setup-init</td><td><code>iniciar setup</code> — explícito</td></tr>
+          <tr><td>spec-creator</td><td><code>definir spec app</code> — explícito</td></tr>
+          <tr><td>design-ux-intelligence</td><td><code>tono visual</code> — <strong>auto</strong></td></tr>
+          <tr><td>code-generator</td><td><code>generar codigo</code> — explícito</td></tr>
+          <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
+          <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
+          <tr><td rowspan="9">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
+          <tr><td>find-skills</td><td><code>encuentra una skill para [tarea]</code></td></tr>
+          <tr><td>skill-creator</td><td><code>crea una skill para [propósito]</code></td></tr>
+          <tr><td>docx</td><td><code>crea un documento Word</code></td></tr>
+          <tr><td>pdf</td><td><code>convierte a PDF</code> / <code>extrae texto del PDF</code></td></tr>
+          <tr><td>pptx</td><td><code>haz una presentación</code> / <code>crea un PowerPoint</code></td></tr>
+          <tr><td>xlsx</td><td><code>crea un Excel</code> / <code>exporta a spreadsheet</code></td></tr>
+          <tr><td>hyperframes</td><td><code>haz un video animado</code></td></tr>
+          <tr><td>context7-mcp</td><td>Uso interno — no se invoca directamente</td></tr>
+          <tr><td rowspan="25">Patterns</td><td>form-patterns</td><td rowspan="25"><strong>Auto-activadas</strong> por contexto / reviewer</td></tr>
+          <tr><td>list-page-patterns</td></tr>
+          <tr><td>detail-page-patterns</td></tr>
+          <tr><td>data-density-patterns</td></tr>
+          <tr><td>info-card-patterns</td></tr>
+          <tr><td>status-visualization-patterns</td></tr>
+          <tr><td>navigation-patterns</td></tr>
+          <tr><td>page-structure-patterns</td></tr>
+          <tr><td>split-panel-patterns</td></tr>
+          <tr><td>comparison-patterns</td></tr>
+          <tr><td>interaction-patterns</td></tr>
+          <tr><td>drag-drop-patterns</td></tr>
+          <tr><td>keyboard-shortcuts-patterns</td></tr>
+          <tr><td>toast-notification-patterns</td></tr>
+          <tr><td>editor-workspace-patterns</td></tr>
+          <tr><td>modal-patterns</td></tr>
+          <tr><td>playback-replay-patterns</td></tr>
+          <tr><td>event-timeline-patterns</td></tr>
+          <tr><td>mobile-responsive-ux</td></tr>
+          <tr><td>wcag-accessibility</td></tr>
+          <tr><td>ux-heuristics</td></tr>
+          <tr><td>turn-based-ui-patterns</td></tr>
+          <tr><td>visual-design-system</td></tr>
+          <tr><td>canvas-grid-patterns</td></tr>
+          <tr><td>react-ux-patterns</td></tr>
         </tbody>
       </table>
 
@@ -584,8 +794,8 @@
         <tbody>
           <tr><td>context7</td><td><span class="badge badge-remote">remote</span></td><td>setup-init, spec-creator</td></tr>
           <tr><td>excalidraw</td><td><span class="badge badge-remote">remote</span></td><td>spec-creator</td></tr>
-          <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline</td></tr>
           <tr><td>canva</td><td><span class="badge badge-remote">remote</span></td><td>Opcional</td></tr>
+          <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline</td></tr>
           <tr><td>filesystem</td><td><span class="badge badge-local">local</span></td><td>Todas las skills</td></tr>
           <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux</td></tr>
           <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux</td></tr>
@@ -596,7 +806,7 @@
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 41 skills • 8 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 
@@ -611,19 +821,16 @@
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
     });
-
     const search = document.getElementById('search');
-    const sections = document.querySelectorAll('section');
     const cards = document.querySelectorAll('.card');
+    const sections = document.querySelectorAll('section');
     search.addEventListener('input', (e) => {
       const q = e.target.value.toLowerCase().trim();
-      if (!q) { cards.forEach(c => c.closest('section')?.classList.remove('hidden')); cards.forEach(c => c.style.display = ''); return; }
+      if (!q) { cards.forEach(c => c.style.display = ''); return; }
       cards.forEach(c => {
-        const text = c.innerText.toLowerCase();
-        c.style.display = text.includes(q) ? '' : 'none';
+        c.style.display = c.innerText.toLowerCase().includes(q) ? '' : 'none';
       });
     });
-
     const navLinks = document.querySelectorAll('.nav-link');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
