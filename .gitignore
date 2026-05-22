@@ -1,0 +1,10 @@
+# Archivos generados por skills
+docs/validacion-*.md
+docs/test_results.json
+docs/screenshot_*.png
+tests/test_results.json
+skills.rar
+
+# Dependencias de MCP servers
+mcp-servers/*/node_modules/
+mcp-servers/*/dist/

@@ -21,12 +21,16 @@
 ## Estructura del repo
 
 ```
-skill-name/SKILL.md         — cada skill es un archivo YAML+Markdown autónomo
-tests/test_app.py            — Playwright E2E (channel="chrome", no descarga Chromium)
-tests/test-app.html          — app de prueba Alpine.js para E2E
-tests/test_results.json      — artifact generado, excluir de commits
-docs/                        — reportes de validación (generados)
-specs/                       — specs técnicas (generadas por spec-creator)
+skill-name/SKILL.md            — cada skill es un archivo YAML+Markdown autónomo
+project.config.js              — configuración white-label (app.nombre, modulosActivos, tema.colores)
+components/pines/              — 35 componentes Alpine.js + Tailwind paste-able
+tests/test_app.py              — Playwright E2E (channel="chrome", no descarga Chromium)
+tests/test-app.html            — app de prueba Alpine.js para E2E
+docs/                          — reportes de validación / screenshots (generados, excluir commits)
+specs/                         — specs técnicas (generadas por spec-creator)
+manual-referencia.html         — manual offline de referencia de skills
+PLANTILLA DE CONTRATO FREELANCE.txt     — template de entrega a cliente
+PLANTILLA DE CORREO DE ENTREGA PROFESIONAL.txt — template de entrega a cliente
 ```
 
 ## Comandos
@@ -47,14 +51,9 @@ python tests/test_app.py
 - **code-generator**: un módulo por turno. Pausa tras cada uno. Lee `libreriasAdicionales` de la spec.
 - **validation-offline**: pregunta primero si tiene Python/Playwright. Si no, salta Fase 3.6 (automatizada) y solo da comandos DevTools manuales.
 - **Push requiere confirmación explícita** — solo hacer commit, no push sin pedir.
+- **MCPs**: 8 servidores en opencode.json (context7, excalidraw, chrome-devtools, canva, filesystem, refero-styles, a11y, web-search)
 
 ## Archivos generados (no versionar)
 
 - `docs/validacion-[app].md`, `docs/test_results.json`, `docs/screenshot_test.png`
-- `skills.rar`, `manual-tecnico.html`
-
-## Referencias externas relacionadas
-
-- `D:\REPOSITORIOS GitHUB\awesome-design-md\` — 73 DESIGN.md de marcas (Vercel, Linear, Stripe...)
-- `D:\REPOSITORIOS GitHUB\ui-ux-pro-max-skill\` — 14 CSVs con paletas/estilos/tipografías
-- `D:\REPOSITORIOS GitHUB\antigravity-awesome-skills\` — 1.453 skills catalog (parcialmente clonado)
+- `skills.rar`

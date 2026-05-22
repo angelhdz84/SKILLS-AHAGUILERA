@@ -2,7 +2,7 @@
 name: prompt-inicial
 description: Prompt maestro para iniciar un nuevo proyecto offline-first. Orquesta automáticamente: setup → spec (con detección de librerías externas) → generación de código → validación. Solo requiere nombre, tipo y descripción de la app.
 license: MIT
-compatibility: Requiere @AGENTS.md y las 6 SKILLs base instaladas en ~/.opencode/skills/. Funciona con file://, sin imports ES6, sin CDNs en runtime.
+compatibility: Requiere @AGENTS.md y las 7 SKILLs base instaladas en ~/.opencode/skills/. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "2.0"
@@ -16,7 +16,7 @@ meta:
 # 🚀 PROMPT: prompt-inicial (Orquestador Maestro del Pipeline)
 
 > **Propósito**: Orquestar automáticamente todo el flujo de desarrollo freelance: setup → spec → generación → validación. Solo requiere rellenar 5 campos rápidos.
-> **Modo**: Orquestador interactivo | **Idioma**: ES | **Contexto**: Requiere las 6 SKILLs base cargadas
+> **Modo**: Orquestador interactivo | **Idioma**: ES | **Contexto**: Requiere las 7 SKILLs base cargadas
 > **Output**: Guía paso a paso con pausas explícitas y handoff entre fases
 
 ---

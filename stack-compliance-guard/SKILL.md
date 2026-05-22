@@ -162,9 +162,7 @@ modulosActivos: [...existentes, 'nuevo-modulo']
 */
 ```
 
-### ❌ Regla 6: Librerías Adicionales mal referenciadas
-
----
+<!-- Regla 6 removida por duplicado (ver abajo) -->
 
 ### ❌ Regla 7: Anti-patrones de Diseño (De pbakaus/impeccable)
 

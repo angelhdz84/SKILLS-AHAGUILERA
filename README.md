@@ -81,13 +81,24 @@ validar app → análisis estático + DevTools + docs/validacion-[app].md
 ## 📁 Estructura del Repositorio
 ```
 SKILLS-AHAGUILERA/
-├── setup-init/
-├── spec-creator/
-├── design-ux-intelligence/
-├── stack-compliance-guard/
-├── code-generator/
-├── validation-offline/
-├── prompt-inicial/
+├── setup-init/                  — Valida entorno, crea estructura, descarga librerías
+├── spec-creator/                — Transforma historias en specs técnicas
+├── design-ux-intelligence/      — Diseño distintivo y UX profesional
+├── stack-compliance-guard/      — Guarda de cumplimiento automático
+├── code-generator/              — Generación de código por fases
+├── validation-offline/          — Validación integral + tests E2E
+├── prompt-inicial/              — Orquestador maestro del pipeline
+├── components/                  — 35 componentes Pines + galería
+├── tests/                       — Scripts Playwright E2E
+├── mcp-servers/                 — MCP servers locales (refero-styles)
+├── docs/                        — Reportes de validación (generados)
+├── specs/                       — Specs técnicas (generadas)
+├── project.config.js            — Configuración white-label
+├── AGENTS.md                    — Instrucciones para OpenCode
+├── manual-referencia.html       — Manual offline de skills
+├── manual-tecnico.html          — Guía técnica offline
+├── PLANTILLA DE CONTRATO FREELANCE.txt
+├── PLANTILLA DE CORREO DE ENTREGA PROFESIONAL.txt
 └── README.md
 ```
 
@@ -142,39 +153,6 @@ Uso comercial permitido. Atribución recomendada. Sin garantía expresa.
 2. Pégalo en la raíz de tu repositorio y guarda como `README.md`
 3. Haz commit y push para actualizar tu GitHub
 
----
 
-## 🎉 ¡SISTEMA COMPLETO ENTREGADO!
-
-Has recibido los **8 archivos completos y corregidos** de tu sistema de SKILLs:
-
-| # | Archivo | Estado |
-|---|---------|--------|
-| 1 | `setup-init/SKILL.md` | ✅ Entregado |
-| 2 | `spec-creator/SKILL.md` | ✅ Entregado |
-| 3 | `design-ux-intelligence/SKILL.md` | ✅ Entregado |
-| 4 | `stack-compliance-guard/SKILL.md` | ✅ Entregado |
-| 5 | `code-generator/SKILL.md` | ✅ Entregado |
-| 6 | `validation-offline/SKILL.md` | ✅ Entregado |
-| 7 | `prompt-inicial/SKILL.md` | ✅ Entregado |
-| 8 | `README.md` | ✅ Entregado |
-
-### 📋 Checklist Final de Verificación
-- [ ] Todos los archivos tienen metadata YAML correcta (`author`, `version`, `triggers`, `stack`)
-- [ ] Autor: `Angel Hernandez - ahaguilera.dev`
-- [ ] Sin referencias a archivos inexistentes
-- [ ] Contenido completo (no truncado)
-- [ ] Formato compatible con OpenCode
-- [ ] 100% en español, reglas offline-first integradas
-- [ ] README profesional con instalación, flujo, reglas y licencias
-
-### 🚀 Comandos para Actualizar tu Repo
-```bash
-cd SKILLS-AHAGUILERA
-git add .
-git commit -m "feat: sistema completo de SKILLs offline-first corregido y optimizado"
-git push origin main
-```
 
 ---
-
