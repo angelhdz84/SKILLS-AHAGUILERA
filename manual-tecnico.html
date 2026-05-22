@@ -172,6 +172,8 @@
       <li><a href="#skills" class="nav-link">SKILLs</a></li>
       <li><a href="#flujo" class="nav-link">Flujo</a></li>
       <li><a href="#comandos" class="nav-link">Comandos</a></li>
+      <li><a href="#componentes" class="nav-link">Componentes</a></li>
+      <li><a href="#mcps" class="nav-link">MCPs</a></li>
       <li><a href="#troubleshooting" class="nav-link">Solución</a></li>
       <li><a href="#changelog" class="nav-link">Changelog</a></li>
     </ul>
@@ -223,6 +225,11 @@ cp -r SKILLS-AHAGUILERA/* ~/.opencode/skills/</code></div>
     <section id="skills">
       <h2>🧩 Catálogo de SKILLs</h2>
       <div class="grid-2">
+        <div class="card">
+          <h4>🚀 prompt-inicial</h4>
+          <p>Orquestador maestro. Recibe nombre, tipo, descripción, tono y módulos. Dispara pipeline completo.</p>
+          <span class="tag trigger">Trigger: nuevo proyecto</span>
+        </div>
         <div class="card">
           <h4>🛠️ setup-init</h4>
           <p>Valida entorno, crea estructura de carpetas, genera <code>descargar-libs.bat</code> y verifica integridad.</p>
@@ -281,6 +288,39 @@ cp -r SKILLS-AHAGUILERA/* ~/.opencode/skills/</code></div>
       </table>
     </section>
 
+    <section id="componentes">
+      <h2>🧩 Componentes Pines (Alpine.js + Tailwind)</h2>
+      <p>35 componentes Alpine.js reutilizables, traducidos al español, ubicados en <code>components/pines/</code>. Diseñados para ser copiados como HTML plano.</p>
+      <table>
+        <thead><tr><th>Categoría</th><th>Componentes</th></tr></thead>
+        <tbody>
+          <tr><td>Navegación</td><td>Navbar responsive, Sidebar colapsable, Tabs, Breadcrumbs, Paginación, Stepper, Bottom Nav</td></tr>
+          <tr><td>Formularios</td><td>Input con validación, Select searchable, Checkbox toggle, Radio group, Date picker, Rating, Slider, Upload zone, Color picker</td></tr>
+          <tr><td>Feedback</td><td>Toast stack, Modal, Confirm dialog, Alert bar, Skeleton loader, Empty state, Progress bar</td></tr>
+          <tr><td>Datos</td><td>Data table, Kanban board, Timeline, Stat card, Chart wrapper, Card grid, List group, Tree view</td></tr>
+          <tr><td>Utils</td><td>Tooltip, Popover, Dropdown, Accordion, Carousel, Infinite scroll, Copy to clipboard</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="mcps">
+      <h2>🔌 Servidores MCP</h2>
+      <p>8 servidores MCP conectados vía <code>opencode.json</code> para extender capacidades de las skills:</p>
+      <table>
+        <thead><tr><th>MCP</th><th>Función</th></tr></thead>
+        <tbody>
+          <tr><td>context7</td><td>Documentación de librerías externas</td></tr>
+          <tr><td>excalidraw</td><td>Diagramas de arquitectura hand-drawn</td></tr>
+          <tr><td>chrome-devtools</td><td>Validación dinámica y debugging</td></tr>
+          <tr><td>canva</td><td>Generación de documentos visuales</td></tr>
+          <tr><td>filesystem</td><td>Acceso a archivos del proyecto</td></tr>
+          <tr><td>refero-styles</td><td>Diseño por referencia (design-ux)</td></tr>
+          <tr><td>a11y</td><td>Auditoría WCAG 2.2</td></tr>
+          <tr><td>web-search</td><td>Búsqueda web complementaria</td></tr>
+        </tbody>
+      </table>
+    </section>
+
     <section id="troubleshooting">
       <h2>🛠️ Solución de Problemas</h2>
       <table>
@@ -303,7 +343,7 @@ cp -r SKILLS-AHAGUILERA/* ~/.opencode/skills/</code></div>
       </div>
       <div class="card">
         <h4>v1.1.0 • Actual</h4>
-        <p>Metadata corregida, triggers estandarizados, eliminación de referencias rotas, integración completa con capa UX y compliance guard.</p>
+        <p>prompt-inicial v2.0 (orquestador reparado). project.config.js white-label. <code>specs/</code> + <code>.gitignore</code> creados. 35 componentes Pines traducidos. 8 MCPs documentados. manual-referencia.html y manual-tecnico.html actualizados. Artefactos git-ignorados.</p>
       </div>
     </section>
   </main>

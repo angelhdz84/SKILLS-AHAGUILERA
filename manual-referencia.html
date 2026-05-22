@@ -485,6 +485,7 @@ tr:hover td{background:var(--surface-2)}
   <pre>proyecto/
 ├── index.html              # Entry point (doble clic)
 ├── project.config.js       # Config white-label
+├── .gitignore              # Excluye artefactos generados
 ├── sw.js                   # Service Worker (PWA)
 ├── manifest.json           # Manifest PWA
 ├── core/
@@ -506,6 +507,8 @@ tr:hover td{background:var(--surface-2)}
 ├── specs/                  # Especificaciones
 ├── tests/                  # Tests Playwright
 ├── docs/                   # Reportes de validación
+├── mcp-servers/            # MCP servers locales
+│   └── refero-styles/      # Diseño por referencia
 └── _template/              # Template de módulo</pre>
 </section>
 
@@ -550,7 +553,7 @@ tr:hover td{background:var(--surface-2)}
   <div class="skill-header">
     <div class="skill-icon">🎬</div>
     <div class="skill-info">
-      <h2 class="skill-title" style="margin:0;border:none;padding:0">prompt-inicial <span class="badge badge-version">v1.0</span> <span class="badge badge-accent">orquestador</span></h2>
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">prompt-inicial <span class="badge badge-version">v2.0</span> <span class="badge badge-accent">orquestador</span></h2>
       <div class="skill-desc">Prompt maestro que inicia el pipeline. Recibe nombre, tipo y descripción de la app, y orquesta automáticamente setup → spec → generación → validación.</div>
     </div>
   </div>
@@ -655,7 +658,7 @@ Descripcion: "App offline para recepcionista de clinica medica"</pre>
   <div class="skill-header">
     <div class="skill-icon">🎨</div>
     <div class="skill-info">
-      <h2 class="skill-title" style="margin:0;border:none;padding:0">design-ux-intelligence <span class="badge badge-version">v2.3</span> <span class="badge badge-accent">diseño</span></h2>
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">design-ux-intelligence <span class="badge badge-version">v2.5</span> <span class="badge badge-accent">diseño</span></h2>
       <div class="skill-desc">Aplica principios de diseño distintivo y UX profesional adaptados al stack offline-first. No genera código — valida, sugiere y corrige. Se activa automáticamente con spec-creator o validation-offline.</div>
     </div>
   </div>
@@ -733,7 +736,7 @@ Descripcion: "App offline para recepcionista de clinica medica"</pre>
   <div class="skill-header">
     <div class="skill-icon">⚙️</div>
     <div class="skill-info">
-      <h2 class="skill-title" style="margin:0;border:none;padding:0">code-generator <span class="badge badge-version">v2.2</span> <span class="badge badge-success">generación</span></h2>
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">code-generator <span class="badge badge-version">v2.3</span> <span class="badge badge-success">generación</span></h2>
       <div class="skill-desc">Transforma <code>specs/[app].md</code> en código funcional, modular y 100% offline. Flujo por fases con pausas para evitar pérdida de contexto. Auto-aplica stack-compliance-guard.</div>
     </div>
   </div>
@@ -848,7 +851,7 @@ Descripcion: "App offline para recepcionista de clinica medica"</pre>
   <div class="skill-header">
     <div class="skill-icon">✅</div>
     <div class="skill-info">
-      <h2 class="skill-title" style="margin:0;border:none;padding:0">validation-offline <span class="badge badge-version">v2.3</span> <span class="badge badge-success">testing</span></h2>
+      <h2 class="skill-title" style="margin:0;border:none;padding:0">validation-offline <span class="badge badge-version">v2.4</span> <span class="badge badge-success">testing</span></h2>
       <div class="skill-desc">Valida que la app cumple estrictamente con AGENTS.md, specs y reglas del stack. Verificación estática + DevTools + Playwright + Impeccable CLI + reporte técnico.</div>
     </div>
   </div>
@@ -911,7 +914,7 @@ Resumen: 9/11 PASS | 2 WARN | 0 FAIL
 <!-- INTEGRACIONES -->
 <section id="integraciones" class="fade-in">
   <h2>🔗 Integraciones Externas</h2>
-  <p>Cuatro repositorios externos evaluados y parcialmente integrados en las skills del ecosistema.</p>
+  <p>Cuatro repositorios externos evaluados e integrados, más 8 servidores MCP conectados en opencode.json.</p>
 
   <div class="integ-grid">
     <div class="integ-card">
@@ -948,12 +951,30 @@ Resumen: 9/11 PASS | 2 WARN | 0 FAIL
     </div>
   </div>
 
-  <h3>Repositorios de Referencia</h3>
+  <h3>Servidores MCP</h3>
+  <p>El archivo <code>opencode.json</code> conecta 8 servidores MCP que las skills utilizan para documentación, diseño y validación:</p>
   <div class="table-wrap">
   <table>
-    <tr><th>Repositorio</th><th>Contenido</th></tr>
-    <tr><td><code>awesome-design-md</code></td><td>73 DESIGN.md de marcas (Vercel, Linear, Stripe...)</td></tr>
-    <tr><td><code>ui-ux-pro-max-skill</code></td><td>14 CSVs: paletas, estilos, tipografías</td></tr>
+    <tr><th>MCP</th><th>Tipo</th><th>Uso en skills</th></tr>
+    <tr><td>context7</td><td>remote</td><td>Resolver URLs de librerías (setup-init, spec-creator)</td></tr>
+    <tr><td>excalidraw</td><td>remote</td><td>Diagramas de arquitectura (spec-creator)</td></tr>
+    <tr><td>chrome-devtools</td><td>local</td><td>Validación dinámica (validation-offline)</td></tr>
+    <tr><td>canva</td><td>local</td><td>Generar documentos visuales (opcional)</td></tr>
+    <tr><td>filesystem</td><td>local</td><td>Acceso a archivos del proyecto</td></tr>
+    <tr><td>refero-styles</td><td>local</td><td>Obtener design.md de marcas reales (design-ux)</td></tr>
+    <tr><td>a11y</td><td>local</td><td>Auditar accesibilidad WCAG (validation-offline)</td></tr>
+    <tr><td>web-search</td><td>local</td><td>Búsqueda web complementaria</td></tr>
+  </table>
+  </div>
+
+  <h3>Repositorios de Referencia</h3>
+  <p>Estos repositorios se evaluaron y su contenido se integró <strong>inline</strong> en las skills. Ya no se requiere clonarlos localmente.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Repositorio</th><th>Contenido</th><th>Integrado en</th></tr>
+    <tr><td><code>awesome-design-md</code></td><td>73 DESIGN.md de marcas</td><td>design-ux v2.5 (Design System Templates)</td></tr>
+    <tr><td><code>ui-ux-pro-max-skill</code></td><td>14 CSVs: paletas, estilos, tipografías</td><td>design-ux v2.5 (paletas × estilos × tipografías)</td></tr>
+    <tr><td><code>antigravity-awesome-skills</code></td><td>1,453 skills catalog</td><td>5 skills (validation, spec, design, compliance, code-gen)</td></tr>
   </table>
   </div>
 </section>
@@ -1001,7 +1022,7 @@ Resumen: 9/11 PASS | 2 WARN | 0 FAIL
 
   <h3>No Versionar</h3>
   <div class="card">
-    <code>docs/validacion-[app].md</code> · <code>test_results.json</code> · <code>screenshot_test.png</code> · <code>skills.rar</code> · <code>manual-tecnico.html</code>
+    <code>docs/validacion-[app].md</code> · <code>test_results.json</code> · <code>screenshot_test.png</code> · <code>skills.rar</code>
   </div>
 </section>
 
@@ -1010,6 +1031,21 @@ Resumen: 9/11 PASS | 2 WARN | 0 FAIL
   <h2>📜 Historial</h2>
 
   <div class="timeline">
+    <div class="timeline-item" style="border-left-color:var(--accent)">
+      <div class="timeline-date">22 May 2026 · 81a63b5</div>
+      <div class="timeline-title">Cleanup: project.config.js + specs/ + .gitignore</div>
+      <div class="timeline-desc">Creado project.config.js (white-label), specs/, .gitignore. Corregido prompt-inicial v2.0. Eliminada Regla 6 duplicada. Removidos artefactos generados del tracking.</div>
+    </div>
+    <div class="timeline-item" style="border-left-color:var(--accent)">
+      <div class="timeline-date">20 May 2026 · 05d3480</div>
+      <div class="timeline-title">MCP refero-styles + manual-referencia.html</div>
+      <div class="timeline-desc">Construido y commiteado refero-styles MCP. manual-referencia.html creado. docs/screenshot_manual.png.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">19 May 2026 · ab2905f</div>
+      <div class="timeline-title">35 componentes Pines (Alpine.js + Tailwind)</div>
+      <div class="timeline-desc">Integrados y traducidos al español. design-ux v2.5 (Paso 5), code-gen v2.3 (+3 plantillas), compliance v2.3 (Regla 2 extendida), validation v2.4 (+8 checks).</div>
+    </div>
     <div class="timeline-item">
       <div class="timeline-date">15 May 2026 · f239725</div>
       <div class="timeline-title">taste-skill: integración en 4 skills</div>
@@ -1051,13 +1087,13 @@ Resumen: 9/11 PASS | 2 WARN | 0 FAIL
   <div class="table-wrap">
   <table>
     <tr><th>Skill</th><th>v</th><th>Líneas</th></tr>
-    <tr><td>prompt-inicial</td><td>1.0</td><td>98</td></tr>
-    <tr><td>setup-init</td><td>2.0</td><td>165</td></tr>
-    <tr><td>spec-creator</td><td>3.2</td><td>299</td></tr>
-    <tr><td>design-ux-intelligence</td><td>2.3</td><td>448</td></tr>
-    <tr><td>code-generator</td><td>2.2</td><td>429</td></tr>
-    <tr><td>stack-compliance-guard</td><td>2.3</td><td>367</td></tr>
-    <tr><td>validation-offline</td><td>2.3</td><td>393</td></tr>
+    <tr><td>prompt-inicial</td><td>2.0</td><td>118</td></tr>
+    <tr><td>setup-init</td><td>2.0</td><td>198</td></tr>
+    <tr><td>spec-creator</td><td>3.2</td><td>376</td></tr>
+    <tr><td>design-ux-intelligence</td><td>2.5</td><td>596</td></tr>
+    <tr><td>code-generator</td><td>2.3</td><td>642</td></tr>
+    <tr><td>stack-compliance-guard</td><td>2.3</td><td>469</td></tr>
+    <tr><td>validation-offline</td><td>2.4</td><td>490</td></tr>
   </table>
   </div>
 </section>
