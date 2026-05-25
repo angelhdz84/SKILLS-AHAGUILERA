@@ -17,6 +17,7 @@ docs/                          — reportes de validación / screenshots (genera
 specs/                         — specs técnicas (generadas por spec-creator)
 guia-skills-mcps.html          — guía de skills y MCPs
 manual-referencia.html         — manual offline de referencia de skills
+manual-de-uso.html             — manual de uso de skills con ejemplos prácticos
 PLANTILLA DE CONTRATO FREELANCE.txt
 PLANTILLA DE CORREO DE ENTREGA PROFESIONAL.txt
 ```
