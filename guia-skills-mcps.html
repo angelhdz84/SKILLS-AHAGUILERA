@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 41 skills y 8 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 42 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
   <meta name="version" content="2.0.0">
 
@@ -191,17 +191,17 @@
   <main>
     <section id="intro">
       <h1>📘 Guía de Skills y MCPs</h1>
-      <p>Referencia práctica de las <strong>41 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>8 servidores MCP</strong> que las potencian.</p>
+      <p>Referencia práctica de las <strong>42 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>9 servidores MCP</strong> que las potencian.</p>
       <div class="alert alert-info" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;border-left:4px solid var(--accent)">
         💡 <strong>Tip:</strong> Usa el buscador (<kbd>Ctrl+F</kbd> o el campo de búsqueda arriba) para encontrar cualquier skill o comando rápido.
       </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- A. STACK SKILLS (7) -->
+    <!-- A. STACK SKILLS (8) -->
     <!-- ============================================================ -->
     <section id="stack">
-      <h2>A 🧠 Skills del Stack <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">7</span></h2>
+      <h2>A 🧠 Skills del Stack <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">8</span></h2>
       <p>Pipeline principal para construir apps offline-first. Se activan con triggers explícitos (excepto design-ux y compliance que son auto-activadas).</p>
 
       <div class="grid-2">
@@ -299,6 +299,21 @@
             <span class="arrow">→</span> Reporte: <span class="cmd">docs/validacion-[app].md</span>
           </div>
           <div class="output-box"><strong>Output:</strong> Reporte técnico con screenshots, resultados y checklist de entrega.</div>
+        </div>
+
+        <div class="card">
+          <h4>🧠 llm-wiki <span class="tag version">v1.0</span> <span class="tag trigger">conocimiento</span></h4>
+          <p>Mantiene un wiki persistente (<code>wiki/</code>) con páginas markdown generadas por LLM + grafo en MCP Memory. Se auto-activa tras spec-creator, code-generator y validation-offline para ingestar sus outputs. Opera en 3 modos: ingest (procesar fuentes), query (responder desde el wiki), lint (revisar salud del wiki).</p>
+          <div class="trigger-list"><span class="tag trigger">guarda esto</span><span class="tag trigger">recuerda que</span><span class="tag trigger">documenta esta decisión</span><span class="tag trigger">crea wiki</span><span class="tag trigger">resume esta fuente</span><span class="tag trigger">lint wiki</span><span class="tag trigger">auto-ingest pipeline</span></div>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> <span class="cmd">guarda esto</span><br>
+            <span class="comment">// Ocurre automáticamente tras spec-creator, code-generator, validation-offline</span><br>
+            <span class="arrow">→</span> Ingest: lee fuente, extrae entidades<br>
+            <span class="arrow">→</span> Crea/actualiza páginas en <span class="cmd">wiki/</span><br>
+            <span class="arrow">→</span> Persiste en MCP memory (search_nodes, create_entities)<br>
+            <span class="arrow">→</span> Cross-refs con páginas existentes
+          </div>
+          <div class="output-box"><strong>Output:</strong> <code>wiki/</code> (páginas markdown) + entidades/relaciones en MCP memory (grafo persistente).</div>
         </div>
 
       </div>
@@ -579,7 +594,7 @@
     <!-- MCPs -->
     <!-- ============================================================ -->
     <section id="mcps">
-      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">8</span></h2>
+      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">9</span></h2>
       <p>Configurados en <code>opencode.json</code>. Algunos son consumidos automáticamente por las skills, otros se invocan manualmente en conversación.</p>
 
       <div class="grid-2">
@@ -670,6 +685,18 @@
           </div>
         </div>
 
+        <div class="card">
+          <h4>memory <span class="badge badge-local">local</span></h4>
+          <p>Grafo de conocimiento persistente (<code>@modelcontextprotocol/server-memory</code>). Usado por <strong>llm-wiki</strong> como backend de búsqueda rápida: busca entidades relacionadas, crea relaciones, agrega observaciones. Datos almacenados en JSONL local.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// llm-wiki lo usa automáticamente en cada ingest/query:</span><br>
+            <span class="arrow">→</span> <span class="cmd">search_nodes</span> — busca contexto antes de responder<br>
+            <span class="arrow">→</span> <span class="cmd">create_entities</span> — nueva fuente / concepto<br>
+            <span class="arrow">→</span> <span class="cmd">create_relations</span> — conecta con entidades existentes<br>
+            <span class="arrow">→</span> <span class="cmd">read_graph</span> — lint y visión completa
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -744,11 +771,12 @@
       <table>
         <thead><tr><th>Categoría</th><th>Skill</th><th>Trigger / Activación</th></tr></thead>
         <tbody>
-          <tr><td rowspan="7">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
+          <tr><td rowspan="8">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
           <tr><td>setup-init</td><td><code>iniciar setup</code> — explícito</td></tr>
           <tr><td>spec-creator</td><td><code>definir spec app</code> — explícito</td></tr>
           <tr><td>design-ux-intelligence</td><td><code>tono visual</code> — <strong>auto</strong></td></tr>
           <tr><td>code-generator</td><td><code>generar codigo</code> — explícito</td></tr>
+          <tr><td>llm-wiki</td><td><code>guarda esto</code> o <strong>auto</strong> tras pipeline</td></tr>
           <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
           <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
           <tr><td rowspan="9">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
@@ -800,13 +828,14 @@
           <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux</td></tr>
           <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux</td></tr>
           <tr><td>web-search</td><td><span class="badge badge-local">local</span></td><td>setup-init (fallback)</td></tr>
+          <tr><td>memory</td><td><span class="badge badge-local">local</span></td><td>llm-wiki</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 41 skills • 8 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 42 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 

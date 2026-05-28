@@ -13,6 +13,7 @@ project.config.js              — configuración white-label
 components/pines/              — 35 componentes Alpine.js + Tailwind paste-able
 tests/test_app.py              — Playwright E2E (channel="chrome")
 tests/test-app.html            — app de prueba Alpine.js para E2E
+wiki/                          — wiki de conocimiento persistente (generado por llm-wiki)
 docs/                          — reportes de validación / screenshots (generados, excluir commits)
 specs/                         — specs técnicas (generadas por spec-creator)
 guia-skills-mcps.html          — guía de skills y MCPs
@@ -25,4 +26,4 @@ PLANTILLA DE CORREO DE ENTREGA PROFESIONAL.txt
 ## Comandos disponibles
 
 Usa `/comando` en OpenCode:
-`/new` `/setup` `/spec` `/build` `/test` `/compliance` `/status` `/archive` `/docs`
+`/new` `/setup` `/spec` `/build` `/test` `/compliance` `/status` `/archive` `/docs` `/wiki`
