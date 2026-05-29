@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 42 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 43 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
   <meta name="version" content="2.0.0">
 
@@ -299,6 +299,20 @@
             <span class="arrow">→</span> Reporte: <span class="cmd">docs/validacion-[app].md</span>
           </div>
           <div class="output-box"><strong>Output:</strong> Reporte técnico con screenshots, resultados y checklist de entrega.</div>
+        </div>
+
+        <div class="card">
+          <h4>🔄 ux-refactor <span class="tag version">v1.0</span> <span class="tag trigger">refactor</span></h4>
+          <p>Audita y mejora la UX/UI de apps offline-first existentes sin regenerarlas. 4 fases: auditoría (con a11y MCP), recomendación (con pattern-matrix y refero-styles), implementación in-place y validación (stack-compliance-guard). Lee el código actual y lo modifica directamente.</p>
+          <div class="trigger-list"><span class="tag trigger">mejorar UI</span><span class="tag trigger">cambiar diseño</span><span class="tag trigger">refactor UX</span><span class="tag trigger">mejorar la interfaz</span><span class="tag trigger">auditoria UX</span><span class="tag trigger">hacer mas bonito</span></div>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> <span class="cmd">mejorar la UI de mi app de inventario</span><br>
+            <span class="arrow">→</span> <b>FASE 1:</b> Audit: layout, estados, a11y, responsive, stack<br>
+            <span class="arrow">→</span> <b>FASE 2:</b> Recomienda: x-cloak, loading states, paleta refero<br>
+            <span class="arrow">→</span> <b>FASE 3:</b> Edita index.html, core/ui.js, modules/<br>
+            <span class="arrow">→</span> <b>FASE 4:</b> Valida: compliance + a11y + checklist
+          </div>
+          <div class="output-box"><strong>Output:</strong> Archivos modificados in-place + <code>docs/refactor-[app].md</code>.</div>
         </div>
 
         <div class="card">
@@ -771,7 +785,7 @@
       <table>
         <thead><tr><th>Categoría</th><th>Skill</th><th>Trigger / Activación</th></tr></thead>
         <tbody>
-          <tr><td rowspan="8">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
+          <tr><td rowspan="9">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
           <tr><td>setup-init</td><td><code>iniciar setup</code> — explícito</td></tr>
           <tr><td>spec-creator</td><td><code>definir spec app</code> — explícito</td></tr>
           <tr><td>design-ux-intelligence</td><td><code>tono visual</code> — <strong>auto</strong></td></tr>
@@ -779,6 +793,7 @@
           <tr><td>llm-wiki</td><td><code>guarda esto</code> o <strong>auto</strong> tras pipeline</td></tr>
           <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
           <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
+          <tr><td>ux-refactor</td><td><code>mejorar UI</code> / <code>refactor UX</code> — explícito</td></tr>
           <tr><td rowspan="9">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
           <tr><td>find-skills</td><td><code>encuentra una skill para [tarea]</code></td></tr>
           <tr><td>skill-creator</td><td><code>crea una skill para [propósito]</code></td></tr>
@@ -825,8 +840,8 @@
           <tr><td>canva</td><td><span class="badge badge-remote">remote</span></td><td>Opcional</td></tr>
           <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline</td></tr>
           <tr><td>filesystem</td><td><span class="badge badge-local">local</span></td><td>Todas las skills</td></tr>
-          <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux</td></tr>
-          <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux</td></tr>
+          <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux, ux-refactor</td></tr>
+          <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux, ux-refactor</td></tr>
           <tr><td>web-search</td><td><span class="badge badge-local">local</span></td><td>setup-init (fallback)</td></tr>
           <tr><td>memory</td><td><span class="badge badge-local">local</span></td><td>llm-wiki</td></tr>
         </tbody>
@@ -835,7 +850,7 @@
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 42 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 43 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 

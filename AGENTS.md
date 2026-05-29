@@ -16,6 +16,7 @@ tests/test-app.html            — app de prueba Alpine.js para E2E
 wiki/                          — wiki de conocimiento persistente (generado por llm-wiki)
 docs/                          — reportes de validación / screenshots (generados, excluir commits)
 specs/                         — specs técnicas (generadas por spec-creator)
+ux-refactor/                   — skill de refactorización UX/UI (4 fases)
 guia-skills-mcps.html          — guía de skills y MCPs
 manual-referencia.html         — manual offline de referencia de skills
 manual-de-uso.html             — manual de uso de skills con ejemplos prácticos

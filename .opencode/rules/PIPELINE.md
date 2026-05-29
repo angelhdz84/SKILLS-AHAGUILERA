@@ -14,8 +14,8 @@
 | prompt-inicial | setup-init, spec-creator | Nombre + tipo + descripción app |
 | setup-init | code-generator | Estructura de proyecto + librerías |
 | spec-creator | code-generator, design-ux, llm-wiki | `specs/[app].md` → llm-wiki ingesta automática |
-| design-ux-intelligence | code-generator | Tono visual + paleta + estilo + tipografía |
-| code-generator | compliance, validation, llm-wiki | `modules/*`, `core/*`, `index.html` → llm-wiki registra patrones |
+| design-ux-intelligence | code-generator, ux-refactor | Tono visual + paleta + estilo + tipografía |
+| code-generator | compliance, validation, llm-wiki, ux-refactor | `modules/*`, `core/*`, `index.html` → llm-wiki registra patrones |
 | stack-compliance-guard | code-generator | Validación automática post-generación |
 | validation-offline | llm-wiki | `docs/validacion-[app].md` → llm-wiki actualiza app |
 | llm-wiki | — | `wiki/` (páginas markdown) + MCP memory (grafo persistente) |
