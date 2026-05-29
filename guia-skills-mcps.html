@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 43 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 44 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
   <meta name="version" content="2.0.0">
 
@@ -432,6 +432,20 @@
           </div>
         </div>
 
+        <div class="card">
+          <h4>🌐 ux-ui-universal <span class="tag version">v1.0</span> <span class="tag trigger">refactor multi-stack</span></h4>
+          <p>Audita y mejora la UX/UI de cualquier app web, independientemente del stack (React, Vue, Angular, Svelte, Vanilla JS, etc.). Detecta automáticamente el framework, adapta las recomendaciones con context7, y aplica cambios in-place. 4 fases: audit &rarr; recommend &rarr; implement &rarr; validate.</p>
+          <div class="trigger-list"><span class="tag trigger">refactorizar UI de</span><span class="tag trigger">mejorar interfaz de [app]</span><span class="tag trigger">auditar UX de [proyecto]</span></div>
+          <div class="example-box">
+            <span class="prompt">Tú:</span> <span class="cmd">auditar UX de mi app React</span><br>
+            <span class="arrow">→</span> <b>FASE 1:</b> Detecta React 19 + Vite, audita layout, a11y, responsive<br>
+            <span class="arrow">→</span> <b>FASE 2:</b> Plan adaptado a React (hooks, JSX, Tailwind)<br>
+            <span class="arrow">→</span> <b>FASE 3:</b> Edita componentes JSX, añade focus trap con context7<br>
+            <span class="arrow">→</span> <b>FASE 4:</b> Lighthouse + a11y MCP + checklist
+          </div>
+          <div class="output-box"><strong>Output:</strong> Archivos modificados in-place + <code>docs/refactor-[app].md</code> + reporte Lighthouse.</div>
+        </div>
+
       </div>
     </section>
 
@@ -794,7 +808,7 @@
           <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
           <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
           <tr><td>ux-refactor</td><td><code>mejorar UI</code> / <code>refactor UX</code> — explícito</td></tr>
-          <tr><td rowspan="9">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
+          <tr><td rowspan="10">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
           <tr><td>find-skills</td><td><code>encuentra una skill para [tarea]</code></td></tr>
           <tr><td>skill-creator</td><td><code>crea una skill para [propósito]</code></td></tr>
           <tr><td>docx</td><td><code>crea un documento Word</code></td></tr>
@@ -803,6 +817,7 @@
           <tr><td>xlsx</td><td><code>crea un Excel</code> / <code>exporta a spreadsheet</code></td></tr>
           <tr><td>hyperframes</td><td><code>haz un video animado</code></td></tr>
           <tr><td>context7-mcp</td><td>Uso interno — no se invoca directamente</td></tr>
+          <tr><td>ux-ui-universal</td><td><code>auditar UX</code> / <code>refactorizar UI de</code> — explícito</td></tr>
           <tr><td rowspan="25">Patterns</td><td>form-patterns</td><td rowspan="25"><strong>Auto-activadas</strong> por contexto / reviewer</td></tr>
           <tr><td>list-page-patterns</td></tr>
           <tr><td>detail-page-patterns</td></tr>
@@ -835,10 +850,10 @@
       <table>
         <thead><tr><th>MCP</th><th>Tipo</th><th>Consumido por</th></tr></thead>
         <tbody>
-          <tr><td>context7</td><td><span class="badge badge-remote">remote</span></td><td>setup-init, spec-creator</td></tr>
+          <tr><td>context7</td><td><span class="badge badge-remote">remote</span></td><td>setup-init, spec-creator, ux-ui-universal</td></tr>
           <tr><td>excalidraw</td><td><span class="badge badge-remote">remote</span></td><td>spec-creator</td></tr>
           <tr><td>canva</td><td><span class="badge badge-remote">remote</span></td><td>Opcional</td></tr>
-          <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline</td></tr>
+          <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline, ux-ui-universal</td></tr>
           <tr><td>filesystem</td><td><span class="badge badge-local">local</span></td><td>Todas las skills</td></tr>
           <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux, ux-refactor</td></tr>
           <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux, ux-refactor</td></tr>
@@ -850,7 +865,7 @@
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 43 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 44 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 
