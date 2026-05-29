@@ -1,11 +1,11 @@
 ---
 name: ux-ui-universal
-description: Audita, recomienda y aplica mejoras de UX/UI a cualquier app web existente, independientemente del stack. Detecta automaticamente el framework (React, Vue, Angular, Svelte, Vanilla, etc.) y adapta las recomendaciones. 4 fases: audit → recommend → implement → validate. Usa context7 para obtener documentacion actualizada del framework detectado.
+description: Audita, recomienda y aplica mejoras de UX/UI a cualquier app web existente, independientemente del stack. Detecta automaticamente el framework (React, Vue, Angular, Svelte, Django, Rails, Laravel, ASP.NET, Spring Boot, etc.) y adapta las recomendaciones usando context7. 4 fases: audit → recommend → implement → validate.
 license: MIT
-compatibility: Funciona con cualquier app web. Detecta automaticamente React, Vue, Angular, Svelte, Next.js, Nuxt, SvelteKit, Solid, Vanilla JS, y otros. Lee codigo existente y lo modifica in-place sin regenerar la app. No requiere project.config.js ni estructura especifica.
+compatibility: Funciona con cualquier app web. Detecta automaticamente React, Vue, Angular, Svelte, Next.js, Nuxt, SvelteKit, Solid, Django, Rails, Laravel, ASP.NET, Spring Boot, WordPress, Vanilla JS, y otros. Lee codigo existente y lo modifica in-place sin regenerar la app.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "1.1"
   generatedBy: "ux-ui-universal skill"
   triggers: ["mejorar UI", "mejorar diseño", "cambiar diseño", "refactor UX", "refactorizar interfaz", "cambiar apariencia", "mejorar la interfaz", "hacer mas bonito", "aplicar diseño profesional", "ux audit", "auditoria UX", "refactorizar UI de"]
   language: es
@@ -18,12 +18,17 @@ meta:
     - "context7"
     - "chrome-devtools"
   stackDetection:
-    methods:
-      - "package.json dependencies"
-      - "tsconfig / vite.config / next.config / nuxt.config"
-      - "CDN scripts en <head>"
-      - "import/require statements en JS/TS"
-      - "extension de archivos (.jsx, .tsx, .vue, .svelte, .cshtml)"
+    packageJson: ["react", "next", "vue", "nuxt", "svelte", "solid-js", "@angular/core", "stimulus", "livewire", "alpinejs"]
+    configFiles: ["next.config", "nuxt.config", "svelte.config", "vite.config", "angular.json", "tailwind.config"]
+    backendSignals:
+      - "requirements.txt + django → Django"
+      - "Gemfile + rails → Rails"
+      - "composer.json + laravel → Laravel"
+      - ".csproj / .cshtml → ASP.NET"
+      - "pom.xml / build.gradle + spring-boot → Spring Boot"
+      - "theme.json + wp-content → WordPress"
+      - "package.json + next → Next.js (fullstack)"
+    templateExtensions: [".jsx", ".tsx", ".vue", ".svelte", ".jinja", ".jinja2", ".erb", ".haml", ".blade.php", ".cshtml", ".liquid", ".twig"]
   orchestrates:
     - "page-structure-patterns"
     - "form-patterns"
@@ -53,11 +58,13 @@ meta:
     - "Logica CRUD y acceso a datos"
     - "API calls y autenticacion"
     - "Testing y configuracion de build"
+    - "Migraciones y schemas de base de datos"
+    - "Controladores, servicios, repositorios"
 ---
 
 # SKILL: ux-ui-universal (Refactorizacion UX/UI Multi-Stack)
 
-> **Proposito**: Mejorar la experiencia de usuario y apariencia visual de cualquier app web, independientemente del framework o stack. Detecta automaticamente el stack, adapta las recomendaciones, y aplica cambios in-place.
+> **Proposito**: Mejorar la experiencia de usuario y apariencia visual de **cualquier app web**, independientemente del framework o stack. Detecta automaticamente el stack, consulta context7 para obtener APIs actualizadas, y aplica cambios in-place.
 > **Modo**: 4 fases secuenciales | **Idioma**: ES | **Contexto**: Cualquier app web
 > **Input**: Codigo fuente existente (cualquier estructura)
 > **Output**: Archivos modificados in-place + reporte de cambios en `docs/refactor-[app].md`
@@ -68,22 +75,10 @@ meta:
 
 1. **NO regenerar la app** — trabajas sobre el codigo existente, editandolo in-place
 2. **NO tocar logica de negocio** — solo UI: plantillas, CSS, clases, atributos, estructura DOM, ARIA, colores, tipografia
-3. **SI adaptar al stack detectado** — cada framework tiene sus propias convenciones (JSX, templates, directivas, etc.)
-4. **SI usar context7** para obtener documentacion actualizada del framework detectado (APIs, patrones, version reciente)
-5. **SI orquestar** skills de patrones (form-patterns, modal-patterns, etc.) y MCPs (a11y, refero-styles, context7) como oraculos de consulta
-6. **Validar con Lighthouse + a11y MCP** al final
-
-## CUANDO ACTIVARSE
-
-El usuario dice frases como:
-- "mejorar la UI de [app]"
-- "cambiar el diseño de [app]"
-- "hacer mas bonito [app]"
-- "refactorizar la interfaz de [app]"
-- "aplicar diseño profesional a [app]"
-- "auditar UX de [app]"
-- "mejorar aspecto visual de [app]"
-- "refactorizar UI de [proyecto]"
+3. **NO escribir codigo de ejemplo hardcodeado** — los .md solo tienen queries para context7; el codigo concreto se obtiene via context7 segun el stack detectado
+4. **SI detectar el stack** en FASE 1 para adaptar todo el flujo
+5. **SI usar context7** para obtener documentacion actualizada del stack detectado
+6. **SI orquestar** skills de patrones (form-patterns, modal-patterns, etc.) y MCPs (a11y, refero-styles, context7) como oraculos de consulta
 
 ---
 
@@ -91,56 +86,96 @@ El usuario dice frases como:
 
 ```
 [▓▓▓▓░░░░░░░░░░░░] 25% • Detectando stack y auditando UX/UI...
-(stack detection + audit-checklist + a11y MCP + refero-styles + context7)
+(stack detection + audit-checklist + a11y MCP + refero-styles)
 ```
 
-### Paso 1.1 — Detectar stack y explorar proyecto
-Lee la estructura del proyecto para detectar automaticamente el framework:
+### Paso 1.1 — Detectar stack (completo)
 
-**Indicios de stack:**
-| Señal | Stack probable |
-|-------|---------------|
+Busca multiples señales para identificar el stack con precision:
+
+**Frontend JS:**
+| Señal | Stack |
+|-------|-------|
 | `package.json` con `react`, `next` | React / Next.js |
-| `.jsx` / `.tsx` files | React / Solid |
 | `package.json` con `vue`, `nuxt` | Vue / Nuxt |
-| `.vue` files + `<template>` | Vue |
-| `angular.json`, `@angular/core` | Angular |
-| `.component.ts` + decorator `@Component` | Angular |
-| `.svelte` files + `$:` | Svelte |
-| `solid-js` o `.jsx` con `<For>` | Solid |
-| Sin framework, imports vanilla | Vanilla JS |
-| `vendor/`, `plugins/`, `<script>` tags | WordPress / CMS |
+| `package.json` con `@angular/core`, `angular.json` | Angular |
+| `package.json` con `svelte`, `sveltekit` | Svelte / SvelteKit |
+| `package.json` con `solid-js` | Solid |
+| `.vue` files | Vue |
+| `.svelte` files | Svelte |
+| `.jsx` / `.tsx` files | React / Solid |
+| Sin seniales de framework | Vanilla JS |
 
-Para confirmar o resolver dudas, usa **context7**: `ctx7 resolve-library-id` con el nombre del candidato.
+**Backend / Fullstack:**
+| Señal | Stack |
+|-------|-------|
+| `requirements.txt` + `django` | Django |
+| `Pipfile` + `django` | Django |
+| `Gemfile` + `rails` | Ruby on Rails |
+| `composer.json` + `laravel` | Laravel |
+| `.csproj` / `.sln` / `.cshtml` files | ASP.NET / Blazor |
+| `pom.xml` + `spring-boot` / `build.gradle` + `spring-boot` | Spring Boot |
+| `theme.json` + `wp-content` | WordPress |
+| `package.json` + `next` (con `pages/` o `app/`) | Next.js (fullstack) |
+| `package.json` + `nuxt` | Nuxt (fullstack) |
 
-### Paso 1.2 — Identificar estructura de archivos
-Busca los archivos clave de UI segun el stack detectado:
+**CSS Framework:**
+| Señal | Stack |
+|-------|-------|
+| `tailwind.config.*` | Tailwind CSS |
+| `_variables.scss` + `bootstrap` | Bootstrap |
+| `@mui/material` en package.json | MUI |
+| `@angular/material` | Angular Material |
+| `primevue` / `primeng` / `primereact` | Prime* |
+| `bulma` | Bulma |
 
-**React/Next:** `pages/`, `app/`, `src/components/`, `src/app.jsx`
-**Vue/Nuxt:** `pages/`, `components/`, `layouts/`, `App.vue`
-**Angular:** `src/app/`, `*.component.html`, `*.component.ts`
-**Svelte:** `src/routes/`, `src/lib/`, `*.svelte`
-**Vanilla:** `index.html`, `js/`, `css/`, `src/`
+**Template engine (backend):**
+| Extension | Engine |
+|-----------|--------|
+| `.jinja` / `.jinja2` / `.html` (Django) | Jinja2 / Django templates |
+| `.erb` | ERB (Rails) |
+| `.haml` | Haml (Rails) |
+| `.blade.php` | Blade (Laravel) |
+| `.cshtml` | Razor (ASP.NET) |
+| `.liquid` | Liquid (Shopify / Jekyll) |
+| `.twig` | Twig (Symfony) |
+
+### Paso 1.2 — Identificar estructura de archivos de UI
+
+Segun el stack detectado, busca estos patrones:
+
+**Frontend SPA:**
+- React: `src/components/`, `src/app/`, `*.jsx`
+- Vue: `src/components/`, `src/layouts/`, `*.vue`
+- Angular: `src/app/`, `*.component.html`, `*.component.ts`
+- Svelte: `src/lib/`, `src/routes/`, `*.svelte`
+
+**Backend rendered:**
+- Django: `templates/`, `templates/*/`, `static/`, `static/*/css/`
+- Rails: `app/views/`, `app/views/layouts/`, `app/assets/stylesheets/`
+- Laravel: `resources/views/`, `resources/views/layouts/`, `public/css/`
+- ASP.NET: `Pages/`, `Views/`, `wwwroot/css/`
+- Spring Boot: `src/main/resources/templates/`, `static/`
+
+**CSS:** busca el archivo principal de estilos segun el framework detectado.
 
 ### Paso 1.3 — Ejecutar auditoria sistematica
+
 Usa `references/audit-checklist.md` para revisar cada aspecto:
 
-1. **Inspeccion visual** — Abre la app en navegador (si disponible) o revisa el HTML/plantillas
+1. **Inspeccion visual** — Abre la app en navegador (si disponible) o revisa HTML/plantillas
 2. **Inspeccion de codigo** — Busca clases, atributos, estructura en los archivos detectados
 3. **A11y check** — Usa MCP de accesibilidad para verificar contraste, roles, ARIA
-4. **Stack check** — Verifica que el codigo siga las convenciones del framework detectado
+4. **Stack conventions** — Verifica que el codigo siga las convenciones del framework detectado
 5. **Refero match** — Si aplica, usa refero-styles para encontrar paletas de marca reales
-6. **Context7 refresh** — Si hay dudas sobre buenas practicas del stack, consulta context7
-
-Seccion 7 del checklist: generala dinamicamente basandote en el stack detectado.
+6. **Generar seccion 7** — Crea dinamicamente la seccion 7 del checklist con items especificos del stack detectado, usando context7 si es necesario
 
 ### Paso 1.4 — Compilar reporte de auditoria
-Genera un resumen estructurado:
 
 ```
 📋 REPORTE DE AUDITORIA UX/UI — [app]
 
-Stack detectado: React 19 + Next.js 15 + Tailwind CSS
+Stack detectado: [framework + version + CSS framework]
 
 CRITICOS (debe corregirse):
 - [ ] [item] — [archivo:linea]
@@ -159,8 +194,9 @@ ESTILO RECOMENDADO (de refero-styles):
 ```
 
 ### Paso 1.5 — Pedir confirmacion
+
 ```
-📊 Auditoria completa. Stack: [framework]. Encontrados [N] items (X criticos, Y altos).
+📊 Auditoria completa. Stack: [framework + version]. Encontrados [N] items (X criticos, Y altos).
 ¿Procedo con FASE 2: Recomendacion detallada?
 [1] Si, continuar
 [2] Mostrar solo criticos/altos
@@ -172,83 +208,109 @@ ESTILO RECOMENDADO (de refero-styles):
 ## FASE 2: RECOMENDACION
 
 ```
-[▓▓▓▓▓▓▓▓░░░░░░░░] 50% • Generando plan de accion adaptado al stack...
-(pattern-matrix + refero-styles + context7)
+[▓▓▓▓▓▓▓▓░░░░░░░░] 50% • Generando plan de accion con context7...
+(pattern-matrix + context7 batch queries + refero-styles)
 ```
 
-### Paso 2.1 — Seleccionar patrones aplicables
-Para cada item de la auditoria, consulta `references/pattern-matrix.md` para determinar que patron/es aplicar.
+### Paso 2.1 — Mapear problemas a patrones
 
-Usa la columna correspondiente al **stack detectado** para obtener ejemplos concretos.
+Para cada item de la auditoria, consulta `references/pattern-matrix.md`.
+Tiene 3 columnas: **Problema** → **Patron** → **context7 query base**.
 
-### Paso 2.2 — Refrescar con context7 (si aplica)
-Para frameworks populares, usa context7 para verificar que los patrones y APIs sugeridos esten actualizados:
+**No uses los ejemplos hardcodeados del pattern-matrix** — son solo queries para context7.
+El codigo concreto se obtiene en el paso siguiente.
+
+### Paso 2.2 — Batch de consultas context7
+
+Agrupa los items por stack detectado y haz consultas **en paralelo** a context7:
 
 ```
-context7_resolve-library-id(query="React focus trap modal 2026", libraryName="react")
-→ ID: /facebook/react
-→ Query docs: "How to implement focus trap with useFocusTrap in React"
-→ Ajusta recomendacion si la API cambio
+// Ejemplo para items detectados en React 19:
+context7: "modal dialog focus trap React 19 2026"
+context7: "form validation react hook form zod React 19"
+context7: "table sort filter pagination React 19"
+context7: "toast notification library React 19"
+context7: "keyboard shortcuts navigation React 19"
 ```
 
-Casos donde usar context7 siempre:
-- APIs de animacion/transicion del framework
-- Manejo de formularios y validacion
-- Patrones de modales/dialogos
-- Atajos de teclado
-- Drag and drop
+```
+// Ejemplo para items detectados en Django 5.1:
+context7: "Django crispy forms inline validation 5.1"
+context7: "Django message framework toast Bootstrap 5"
+context7: "Django pagination class template 5.1"
+context7: "Django modal dialog HTMX Bootstrap 5"
+context7: "Django template breadcrumb pattern"
+```
+
+```
+// Ejemplo para items detectados en Rails 8:
+context7: "Rails simple form error styling 8"
+context7: "Rails Turbo Stream toast notification"
+context7: "Rails Hotwire modal dialog stimulus controller"
+context7: "Rails will paginate bootstrap 5 styling"
+```
+
+**Casos donde context7 es obligatorio:**
+- Formularios y validacion (APIs cambian por version)
+- Modales/dialogos (cada framework tiene su implementacion)
+- Drag and drop (distinto en React vs Vue vs Angular vs vanilla)
+- Animaciones y transiciones (librerias especificas)
+- Atajos de teclado (binding distinto en cada stack)
+- Toasts/notificaciones (librerias especificas)
+- Paginacion, tabs, breadcrumbs (componentes propios del framework)
+
+**Casos donde NO se necesita context7:**
+- Contraste, ARIA roles, focus visible (WCAG es universal)
+- Espaciado, tipografia, modo oscuro (CSS puro)
+- Layout responsive (media queries)
+- Iconografia (elegir libreria)
 
 ### Paso 2.3 — Consultar oraculos de patrones (si aplica)
-Para items especificos, carga la skill de patron correspondiente:
-- **Layout**: page-structure-patterns
-- **Navegacion**: navigation-patterns
-- **Formularios**: form-patterns
-- **Modales**: modal-patterns
-- **Listas**: list-page-patterns
-- **Detalle**: detail-page-patterns
-- **Micro-interacciones**: interaction-patterns, toast-notification-patterns
-- **Datos densos**: data-density-patterns, status-visualization-patterns
-- **Responsive**: mobile-responsive-ux
-- **Accesibilidad**: wcag-accessibility + a11y MCP
-- **Diseno visual**: visual-design-system + refero-styles MCP
 
-No dupliques el contenido de la skill — usala como referencia y adapta sus recomendaciones al contexto del framework detectado.
+Para items complejos, carga la skill de patron correspondiente como referencia teorica:
+- **Modales**: modal-patterns (focus trap, Escape, backdrop, aria-modal)
+- **Formularios**: form-patterns (validacion inline, errores, wizard)
+- **Listas**: list-page-patterns (filtros, paginacion, sorting)
+- **Layout**: page-structure-patterns (app shell, estados loading/empty/error)
+- **Micro-interacciones**: interaction-patterns, toast-notification-patterns
+- **Accesibilidad**: wcag-accessibility + a11y MCP
+
+No dupliques el contenido de la skill — usala como referencia conceptual y adapta la implementacion al stack detectado.
 
 ### Paso 2.4 — Construir plan de accion detallado
-Para cada item a corregir, especifica:
+
+Cada item debe incluir la respuesta de context7:
 
 ```
 ### [N] — [titulo del cambio]
 **Stack**: [framework detectado]
 **Archivo**: `ruta/al/archivo`
-**Lineas**: ~[lineas a modificar]
 **Patron**: [nombre del patron]
-**Context7 usado**: [Si/No — que se consulto]
+**context7 query**: "[query usada]"
+**context7 resultado**: [resumen de lo que devolvio context7]
 **Cambio concreto**:
 - Reemplazar `[codigo actual]` por `[codigo nuevo]`
 - Agregar `[nuevo codigo]`
-- Eliminar `[codigo a eliminar]`
-**Impacto**: [bajo/medio/alto] — [explicacion]
+**Impacto**: [bajo/medio/alto]
 ```
 
 ### Paso 2.5 — Mostrar plan y esperar confirmacion
+
 ```
 📋 PLAN DE ACCION — [app]
 
-Stack: React 19 + Next.js 15
+Stack: Django 5.1 + Bootstrap 5 + HTMX
+
+Consultas context7 realizadas: 5
 
 Prioridad 1 - Criticos (N items):
-  [1.1] [titulo] — [archivo]
-  [1.2] [titulo] — [archivo]
+  [1.1] [titulo] — [archivo] ← context7: [framework] modal focus trap
 
 Prioridad 2 - Altos (N items):
-  [2.1] [titulo] — [archivo]
+  [2.1] [titulo] — [archivo] ← context7: [framework] form validation
 
 Prioridad 3 - Medios (N items):
-  [3.1] [titulo] — [archivo]
-
-Prioridad 4 - Bajos (N items):
-  [4.1] [titulo] — [archivo]
+  [3.1] [titulo] — [archivo] ← context7: [framework] toast
 
 Diseno referente: [nombre] de refero.design
 
@@ -265,47 +327,77 @@ Diseno referente: [nombre] de refero.design
 
 ```
 [▓▓▓▓▓▓▓▓▓▓▓▓░░░░] 75% • Aplicando cambios UX/UI en [framework]...
-(patrones aplicados + edits directos al codigo)
+(context7 output aplicado a archivos concretos)
 ```
 
 ### Paso 3.1 — Aplicar cambios por archivo
-Procesa las modificaciones en orden de prioridad (critico → alto → medio → bajo). Para cada cambio:
+
+Procesa las modificaciones en orden de prioridad. Para cada cambio:
 
 1. **Lee el archivo** actual (estado mas reciente)
-2. **Aplica la edicion** con las herramientas de edicion
-3. **Verifica** que el cambio sea correcto sintacticamente segun el stack
-4. **Pasa al siguiente** sin esperar confirmacion (a menos que el cambio sea ambiguo)
+2. **Usa el output de context7** como guia de implementacion
+3. **Aplica la edicion** adaptando al archivo concreto del proyecto
+4. **Verifica** que el cambio sea correcto sintacticamente segun el stack
 
-**Reglas de implementacion segun stack:**
+**Reglas por tipo de stack:**
 
-**React/Next:**
-- Componentes JSX/TSX: modifica JSX, className, style objects
-- No uses dangerouslySetInnerHTML
-- Estado local con hooks (no this.setState)
-- Tailwind CSS: modifica strings className
+**React/Next (JSX/TSX):**
+- Modifica JSX, className, style objects
+- No dangerouslySetInnerHTML
+- Estado local con hooks funcionales
+- Tailwind: modifica strings className
 
-**Vue/Nuxt:**
-- Templates .vue: modifica template + script setup
-- Usa `v-bind`, `v-if`, `v-for` segun el patron
+**Vue/Nuxt (SFC .vue):**
+- Modifica `<template>` + `<script setup>`
+- Usa v-bind, v-if, v-for, v-model
 - No toques composables de negocio
-- `<script setup>` es el estandar moderno
 
 **Angular:**
-- Templates HTML: modifica directivas estructurales, bindings, clases
-- Component TS: modifica template, styles, host
+- Modifica template HTML + component TS
 - No toques servicios, guards, resolvers
-- Standalone components es el estandar actual
+- Standalone components es el estandar
 
-**Svelte/SvelteKit:**
-- Archivos .svelte: modifica markup, styles, reactive declarations
-- No toques load functions ni stores de negocio
+**Svelte (.svelte):**
+- Modifica markup, style, reactive declarations
+- No toques load functions ni stores
 
-**Vanilla:**
+**Django (Jinja templates):**
+- Modifica `templates/*.html`
+- Template tags: `{% %}`, `{{ }}`, `{% block %}`
+- Static files en `static/`
+- No toques `views.py`, `models.py`, `urls.py`
+
+**Rails (ERB/Haml):**
+- Modifica `app/views/*.html.erb`
+- Partials con `render partial:`
+- Assets en `app/assets/stylesheets/`
+- No toques `controllers/`, `models/`, `helpers/`
+
+**Laravel (Blade):**
+- Modifica `resources/views/*.blade.php`
+- Directivas: `@section`, `@yield`, `@include`
+- Livewire: modifica componentes en `resources/views/livewire/`
+- No toques `app/Http/Controllers/`, `app/Models/`
+
+**ASP.NET (Razor/Blazor):**
+- Modifica `.cshtml` (Razor Pages) o `.razor` (Blazor)
+- Tag Helpers: `<form asp-action>`, `<a asp-page>`
+- CSS en `wwwroot/css/`
+- No toques `Pages/*.cshtml.cs`, `Controllers/`, `Services/`
+
+**Spring Boot (Thymeleaf):**
+- Modifica `src/main/resources/templates/*.html`
+- Atributos Thymeleaf: `th:text`, `th:field`, `th:each`
+- CSS en `src/main/resources/static/css/`
+- No toques `@Controller`, `@Service`, `@Repository`
+
+**Vanilla JS:**
 - Modifica HTML + CSS + JS directamente
-- Usa classList, textContent, createElement (no innerHTML)
+- classList, textContent, createElement (no innerHTML)
 - Event delegation para listas
 
 ### Paso 3.2 — Aplicar refero-styles (opcional)
+
 Si en FASE 2 se selecciono un estilo de refero-styles:
 1. Carga `refero_get_design_md` para el estilo seleccionado
 2. Extrae paleta de colores
@@ -313,13 +405,15 @@ Si en FASE 2 se selecciono un estilo de refero-styles:
 4. Ajusta clases de componentes segun corresponda
 
 ### Paso 3.3 — Reporte de cambios aplicados
+
 ```
-✅ [3/15] • [titulo del cambio] — [archivo] — OK
-✅ [4/15] • [titulo del cambio] — [archivo] — OK
+✅ [3/15] • [titulo] — [archivo] — OK (context7: modal focus trap)
+✅ [4/15] • [titulo] — [archivo] — OK (context7: form validation)
 ⚠️ [5/15] • [titulo] — requiere decision manual
 ```
 
 ### Paso 3.4 — Confirmar fin de implementacion
+
 ```
 📦 Implementacion completada: [N] cambios aplicados, [M] pendientes.
 ¿Procedo con FASE 4: Validacion?
@@ -338,6 +432,7 @@ Si en FASE 2 se selecciono un estilo de refero-styles:
 ```
 
 ### Paso 4.1 — Verificacion de checklist
+
 Re-corre los items de `references/audit-checklist.md` que se marcaron como corregidos:
 
 ```
@@ -348,44 +443,48 @@ Re-corre los items de `references/audit-checklist.md` que se marcaron como corre
 ```
 
 ### Paso 4.2 — Lighthouse / a11y check
+
 Si el usuario tiene la app abierta en navegador:
 - Ejecuta auditoria Lighthouse (accesibilidad, SEO, best practices)
 - Verifica contraste con a11y MCP
 - Toma screenshot de antes/despues (opcional)
 
-### Paso 4.3 — Stack-specific validation
+### Paso 4.3 — Stack validation
+
 Verifica que los cambios respeten las convenciones del framework:
-- React: sin referencias a variables no definidas, keys en listas
-- Vue: directivas correctas, sin referencias rotas
-- Angular: binding syntax correcto
-- General: sin console.log, sin importaciones rotas
+- **React:** sin referencias a variables no definidas, keys en listas
+- **Vue:** directivas correctas, sintaxis `<script setup>`
+- **Angular:** binding syntax, standalone components
+- **Django:** template tags correctos, static files
+- **Rails:** ERB syntax, partials
+- **Laravel:** Blade directives
+- **General:** sin console.log, sin importaciones rotas
 
 ### Paso 4.4 — Generar reporte final
-Guarda el reporte completo en `docs/refactor-[app].md`:
 
 ```
 # Reporte de Refactorizacion UX/UI — [app]
 
 Fecha: [fecha]
-Skill: ux-ui-universal v1.0
+Skill: ux-ui-universal v1.1
 App: [nombre]
 Stack: [framework + version]
 Archivos modificados: [N]
+Consultas context7: [N]
 
 ## Cambios realizados
 
 ### Criticos (N)
-- [x] [item] — resuelto
-- [ ] [item] — pendiente (razon)
+- [x] [item] ← context7: [query]
 
 ### Altos (N)
-- [x] [item] — resuelto
+- [x] [item] ← context7: [query]
 
 ### Medios (N)
-- [x] [item] — resuelto
+- [x] [item]
 
 ### Bajos (N)
-- [x] [item] — resuelto
+- [x] [item]
 
 ## Diseno referente
 [estilo] de refero.design
@@ -396,21 +495,20 @@ Archivos modificados: [N]
 - Lighthouse SEO: [score]
 - Items checklist verificados: [N/M]
 - Stack conventions: OK / [observaciones]
-
-## Screenshots
-[antes.png] [despues.png] (si se tomaron)
 ```
 
 ### Paso 4.5 — Resumen final
+
 ```
 ✅ REFACTORIZACION COMPLETADA — [app]
 
-Stack: [framework]
+Stack: [framework version]
 Archivos modificados: [N]
 Items corregidos: [N] (Criticos: [N], Altos: [N], Medios: [N])
+Consultas context7: [N]
 Lighthouse a11y: [antes → despues]
 Reporte: docs/refactor-[app].md
 
-💡 Tip: Revisa la app en el navegador para confirmar los cambios.
+💡 Revisa la app en el navegador para confirmar los cambios.
 Si algo no se ve bien, puedo ajustarlo.
 ```

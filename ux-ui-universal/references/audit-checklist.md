@@ -175,6 +175,51 @@ Esta seccion se completa segun el stack detectado en FASE 1.
 - [ ] No fugas de memoria (removeEventListener en destroy)
 - [ ] Web Components con Shadow DOM (si se usan)
 
+### 7.6 Django / Jinja
+- [ ] Template inheritance sin duplicacion de bloques
+- [ ] Static files con `{% static %}` en lugar de rutas hardcodeadas
+- [ ] CSRF token en todos los formularios POST
+- [ ] Messages framework para notificaciones al usuario
+- [ ] Pagination class en listas con `{% include "pagination.html" %}`
+- [ ] Formularios con crispy-forms para rendering consistente
+
+### 7.7 Ruby on Rails / ERB / Haml
+- [ ] Partials para componentes reutilizables
+- [ ] Turbo Drive / Hotwire para navegacion SPA-like
+- [ ] Stimulus controllers para JS interactivo
+- [ ] Flash messages estandarizados en layout
+- [ ] Tailwind via gem tailwindcss-rails (si aplica)
+- [ ] View components (Component gem) para encapsulacion
+
+### 7.8 Laravel / Blade
+- [ ] Blade components con slots y atributos
+- [ ] Alpine.js + Livewire para interactividad
+- [ ] Tailwind + `@apply` para componentes reutilizables
+- [ ] `@error` directivas para feedback de validacion
+- [ ] `@include` para partials sin duplicacion
+- [ ] Vite para asset bundling (no Mix legacy)
+
+### 7.9 ASP.NET / Razor / Blazor
+- [ ] Tag Helpers para formularios y enlaces
+- [ ] Blazor: render mode correcto (SSR / Server / WASM / Auto)
+- [ ] Razor Pages: PageModel handlers bien nombrados
+- [ ] _Layout.cshtml con secciones definidas
+- [ ] wwwroot/lib con librerias JS locales (no CDN runtime)
+
+### 7.10 Spring Boot / Thymeleaf
+- [ ] Fragmentos reutilizables con `th:include` / `th:replace`
+- [ ] Formularios con `th:field` + `th:errors` para validacion
+- [ ] Messages internacionalizados con `#{...}`
+- [ ] Layout con `th:fragment` + `layout:decorate`
+- [ ] Static resources en `src/main/resources/static/`
+
+### 7.11 WordPress
+- [ ] Tema hijo (child theme) para personalizaciones
+- [ ] Scripts y estilos encolados con wp_enqueue_script / wp_enqueue_style
+- [ ] Sin hardcode de bloques Gutenberg en PHP templates
+- [ ] WooCommerce: template overriding via theme
+- [ ] ACF fields con rendering consistente
+
 ## Severidad
 
 | Severidad | Significado | Accion |

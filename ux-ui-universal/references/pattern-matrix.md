@@ -1,103 +1,89 @@
-# Matriz de Patrones UX: Problema → Remedio (Multi-Stack)
+# Matriz de Patrones UX: Problema → Patrón → context7 Query
 
 Guia para seleccionar que patron aplicar segun el problema detectado
 durante la auditoria (FASE 1). Se usa en FASE 2 para construir el plan.
-Los ejemplos por stack son referencias — el LLM debe actualizarlos con
-context7 si detecta el framework correspondiente.
+
+Cada fila indica que patron de referencia cargar y que query usar en
+**context7** para obtener codigo actualizado segun el stack detectado.
 
 ## Problemas de Layout
 
-| Problema | Patron | React / Next | Vue / Nuxt | Angular | Vanilla JS |
-|----------|--------|-------------|------------|---------|------------|
-| Sin estados loading/empty/error | page-structure-patterns | Conditional render + spinner component | v-if con skeleton | *ngIf else + ng-template | class toggle + DOM manipulation |
-| Layout no responsive | mobile-responsive-ux | Tailwind / CSS Grid + media queries | Igual | Igual | Igual |
-| Scroll horizontal en mobile | page-structure-patterns | `overflow-x-hidden` + `max-width: 100%` | Igual | Igual | Igual |
-| Header/footer mal estructurados | page-structure-patterns | Layout component con sticky header | Layout slots + `<RouterView>` | `app-header` + `app-footer` components | fixed/sticky position |
-| Sidebar no colapsa en mobile | navigation-patterns | Drawer component + overlay | `<Transition>` + v-if sidebar | Sidebar component + backdrop | CSS class toggle + event listener |
+| Problema | Patron | context7 query base |
+|----------|--------|---------------------|
+| Sin estados loading/empty/error | page-structure-patterns | "loading skeleton empty state pattern [framework] [version]" |
+| Layout no responsive | mobile-responsive-ux | "responsive layout breakpoints [framework]" |
+| Scroll horizontal en mobile | page-structure-patterns | "prevent horizontal overflow [framework]" |
+| Header/footer mal estructurados | page-structure-patterns | "sticky header footer layout [framework]" |
+| Sidebar no colapsa en mobile | navigation-patterns | "collapsible sidebar responsive drawer [framework]" |
 
 ## Problemas de Navegacion
 
-| Problema | Patron | React / Next | Vue / Nuxt | Angular | Vanilla JS |
-|----------|--------|-------------|------------|---------|------------|
-| Sin indicador de ruta activa | navigation-patterns | `usePathname()` + active class | `router-link-active` + `router-link-exact-active` | `routerLinkActive` directive | hash-based listener + class toggle |
-| Transiciones bruscas entre rutas | interaction-patterns | framer-motion AnimatePresence | `<Transition>` wrapping router-view | Router outlet animations | CSS transitions on route change |
-| Breadcrumbs faltantes en detalle | detail-page-patterns | Breadcrumb component basado en ruta | `<Breadcrumb>` + useRoute | Breadcrumb con Router | Array en URL hash + DOM |
-| Sin navegacion por teclado | keyboard-shortcuts-patterns | useHotkeys / react-hotkeys-hook | `v-on:keydown` | HostListener o @HostBinding | keydown event listener global |
+| Problema | Patron | context7 query base |
+|----------|--------|---------------------|
+| Sin indicador de ruta activa | navigation-patterns | "active route indicator [framework]" |
+| Transiciones bruscas entre rutas | interaction-patterns | "page transition animation route change [framework]" |
+| Breadcrumbs faltantes en detalle | detail-page-patterns | "breadcrumb component [framework]" |
+| Sin navegacion por teclado | keyboard-shortcuts-patterns | "keyboard shortcuts hotkeys [framework]" |
 
 ## Problemas de Componentes
 
-| Problema | Patron | React / Next | Vue / Nuxt | Angular | Vanilla JS |
-|----------|--------|-------------|------------|---------|------------|
-| Formularios sin validacion inline | form-patterns | react-hook-form + zod | VeeValidate + yup | ReactiveForms + Validators | Constraint Validation API + CSS |
-| Modales sin focus trap | modal-patterns | `useFocusTrap` + `aria-modal` | `<Teleport to="body">` + focus-trap | CDK FocusTrap | `tabindex` loop + keydown listener |
-| Listas sin paginacion/filtros | list-page-patterns | TanStack Query + pagination | VueUse + computed filter | Angular CDK pagination | Event delegation + array slice |
-| Detalle sin tabs/sections | detail-page-patterns | Tab component con estado local | `<Tabs>` con v-model | Angular Material tabs | Button group + show/hide |
-| Tarjetas de informacion pobres | info-card-patterns | Card component con props | Card con slots | Card @Input | Template clone |
-| Tablas densas dificiles de leer | data-density-patterns | TanStack Table + sticky header | vue-good-table | Angular CDK Table | position: sticky + nth-child |
-| Sin comparacion lado a lado | comparison-patterns | Flexbox grid + diff state | v-for + v-if comparison | CSS Grid + *ngFor | Flexbox + event handlers |
+| Problema | Patron | context7 query base |
+|----------|--------|---------------------|
+| Formularios sin validacion inline | form-patterns | "form validation inline error [framework] [version]" |
+| Modales sin focus trap | modal-patterns | "modal dialog focus trap [framework] [version]" |
+| Listas sin paginacion/filtros | list-page-patterns | "table pagination search filter [framework]" |
+| Detalle sin tabs/sections | detail-page-patterns | "tab component navigation [framework]" |
+| Tarjetas de informacion pobres | info-card-patterns | "card component design pattern [framework]" |
+| Tablas densas dificiles de leer | data-density-patterns | "data table sticky header striped rows [framework]" |
+| Sin comparacion lado a lado | comparison-patterns | "side by side comparison diff [framework]" |
 
 ## Problemas de Micro-Interacciones
 
-| Problema | Patron | React / Next | Vue / Nuxt | Angular | Vanilla JS |
-|----------|--------|-------------|------------|---------|------------|
-| Botones sin loading state | interaction-patterns | `useState` + `disabled` + spinner | `ref` + `:disabled` | `(click)` + `[disabled]` + spinner | `classList.add('loading')` + `disabled` |
-| Sin toasts en operaciones CRUD | toast-notification-patterns | react-hot-toast / Sonner | vue3-toastify | Angular Material Snackbar | Custom toast position fixed |
-| Sin confirmacion en delete | modal-patterns | window.confirm o modal custom | window.confirm o modal | MatDialog confirm | confirm() dialog o modal |
-| Drag and drop no implementado | drag-drop-patterns | @hello-pangea/dnd | vuedraggable | Angular CDK DragDrop | HTML5 Drag and Drop API |
-| Transiciones ausentes o bruscas | interaction-patterns | framer-motion / CSS transitions | `<Transition>` + `<TransitionGroup>` | Angular animations | CSS transitions + keyframes |
-| Feedback hover/focus insuficiente | interaction-patterns | `:hover` + `:focus-visible` CSS | Igual | Igual | Igual |
+| Problema | Patron | context7 query base |
+|----------|--------|---------------------|
+| Botones sin loading state | interaction-patterns | "loading button spinner disabled state [framework]" |
+| Sin toasts en operaciones CRUD | toast-notification-patterns | "toast notification snackbar [framework] [version]" |
+| Sin confirmacion en delete | modal-patterns | "delete confirmation dialog [framework]" |
+| Drag and drop no implementado | drag-drop-patterns | "drag and drop [framework] [version]" |
+| Transiciones ausentes o bruscas | interaction-patterns | "css transition animation library [framework]" |
+| Feedback hover/focus insuficiente | interaction-patterns | "hover focus visible styles best practice" |
 
 ## Problemas de Accesibilidad
 
-| Problema | Patron | Remedio (generico) |
+| Problema | Patron | context7 query base |
 |----------|--------|---------------------|
-| Contraste insuficiente | wcag-accessibility, visual-design-system | Ajustar paleta a ratios WCAG AA (4.5:1 texto, 3:1 grande) |
-| Roles ARIA faltantes | wcag-accessibility | Añadir `role`, `aria-*` segun patron (modal, tab, alert) |
-| Sin skip link / focus visible | wcag-accessibility | Skip link al inicio, `:focus-visible` en todos los elementos |
-| Labels de formulario ausentes | form-patterns, wcag-accessibility | `<label for="">`, `aria-label`, `aria-labelledby` |
-| Mensajes no anunciados a SR | wcag-accessibility | `aria-live="polite/assertive"`, `role="alert"`, `role="status"` |
-| Sin estructura de headings | wcag-accessibility | Jerarquia h1 > h2 > h3 sin saltos |
-| Tabla sin `<th>` / scope | wcag-accessibility | `<th scope="col/row">` en encabezados |
+| Contraste insuficiente | wcag-accessibility | "WCAG AA color contrast ratio tool" |
+| Roles ARIA faltantes | wcag-accessibility | "ARIA roles modal tab dialog [framework]" |
+| Sin skip link / focus visible | wcag-accessibility | "skip link focus visible outline [framework]" |
+| Labels de formulario ausentes | form-patterns, wcag-accessibility | "form label aria-label accessibility [framework]" |
+| Mensajes no anunciados a SR | wcag-accessibility | "aria-live role alert screen reader [framework]" |
 
 ## Problemas de Visual / Diseno
 
-| Problema | Patron | Remedio (generico) |
+| Problema | Patron | context7 query base |
 |----------|--------|---------------------|
-| Paleta inconsistente o fea | refero-styles MCP | Obtener paleta de marca real desde refero.design, aplicar CSS variables |
-| Tipografia sin jerarquia | visual-design-system | Type scale: 1rem body, 1.25rem h3, 1.5rem h2, 2rem h1 |
-| Espaciado irregular | visual-design-system | Sistema 8px: espaciados multiples de 8 (8, 16, 24, 32, 48) |
-| Modo oscuro faltante | visual-design-system | CSS custom properties + media query prefers-color-scheme + toggle |
-| Sin iconografia consistente | visual-design-system | Una sola libreria de iconos (Bootstrap Icons, Lucide, Heroicons, Phosphor) |
-| Animaciones excesivas o lentas | interaction-patterns | `prefers-reduced-motion`, duracion 200-300ms, solo transform+opacity |
+| Paleta inconsistente | refero-styles MCP | (usar refero-styles, no context7) |
+| Tipografia sin jerarquia | visual-design-system | "type scale hierarchy CSS best practice" |
+| Espaciado irregular | visual-design-system | "CSS spacing system 8px grid" |
+| Modo oscuro faltante | visual-design-system | "dark mode CSS custom properties toggle" |
+| Animaciones excesivas o lentas | interaction-patterns | "prefers-reduced-motion CSS animation performance" |
 
-## Problemas de Datos Densos
+## Problemas de Datos Densos / Juego / Editor
 
-| Problema | Patron | Referencia |
-|----------|--------|------------|
-| Dashboard con muchos widgets | data-density-patterns, status-visualization-patterns | Grid denso, z-index, scroll sections |
-| Muchos datos en una tabla | data-density-patterns, list-page-patterns | Paginacion, filtros, sticky header |
-| Timeline de eventos larga | event-timeline-patterns, playback-replay-patterns | Timeline visual, agrupacion, scroll virtual |
-| Status/health de multiples items | status-visualization-patterns | Badges, health bars, indicadores color |
+| Problema | Patron | context7 query base |
+|----------|--------|---------------------|
+| Dashboard con muchos widgets | data-density-patterns, status-visualization-patterns | "dashboard grid layout overview cards" |
+| Timeline de eventos larga | event-timeline-patterns | "event timeline component [framework]" |
+| UI de juego por turnos | turn-based-ui-patterns | "turn based game UI phase system" |
+| Canvas/grid interactivo | canvas-grid-patterns | "canvas grid zoom pan selection" |
+| Editor multi-pestana | editor-workspace-patterns | "multi tab editor workspace dirty state" |
+| Panel dividido redimensionable | split-panel-patterns | "resizable split panel [framework]" |
 
-## Problemas de Juego / Turnos
+## Como usar esta matriz
 
-| Problema | Patron | Referencia |
-|----------|--------|------------|
-| UI de juego por turnos | turn-based-ui-patterns | Fase banner, barra de accion, historial |
-| Canvas/grid interactivo | canvas-grid-patterns | Grid, zoom, pan, seleccion |
-| Controles VCR/replay | playback-replay-patterns | Play/pause, timeline, velocidad |
-
-## Problemas de Editor / Workspace
-
-| Problema | Patron | Referencia |
-|----------|--------|------------|
-| Editor multi-pestana | editor-workspace-patterns | Tabs, dirty state, undo/redo |
-| Panel dividido redimensionable | split-panel-patterns | Divisor, multi-panel, persistencia |
-| Validacion en tiempo real | editor-workspace-patterns | Inline errors, lint, auto-save |
-
-## Prioridad de aplicacion
-
-1. **Critico**: Layout roto, sin estados, sin accesibilidad basica, memory leaks
-2. **Alto**: Micro-interacciones faltantes, responsive deficiente, contraste insuficiente
-3. **Medio**: Transiciones, pulido visual, modo oscuro
-4. **Bajo**: Animaciones extra, micro-refinamientos, variaciones de tema
+1. Identifica el problema en la auditoria (FASE 1)
+2. Busca el problema en esta matriz
+3. Toma el **Patron** y carga esa skill como referencia teorica
+4. Toma la **context7 query base** y completala con `[framework]` `[version]` detectados
+5. Llama a context7 con la query completa para obtener codigo actualizado
+6. Adapta el resultado al archivo concreto detectado en la auditoria
