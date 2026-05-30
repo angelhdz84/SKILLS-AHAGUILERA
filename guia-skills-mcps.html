@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 44 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 45 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
   <meta name="version" content="2.0.0">
 
@@ -337,10 +337,24 @@
     <!-- B. AGENT SKILLS (9) -->
     <!-- ============================================================ -->
     <section id="agent">
-      <h2>B 🤖 Agent Skills <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">9</span></h2>
+      <h2>B 🤖 Agent Skills <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">10</span></h2>
       <p>Skills funcionales instaladas como agentes. Cubren tareas específicas como documentación, office y skills management.</p>
 
       <div class="grid-2">
+
+        <div class="card">
+          <h4>🐙 github-page-publish <span class="tag version">v1.0</span> <span class="tag trigger">publicaci&oacute;n</span></h4>
+          <p>Publica commits locales a GitHub y despliega a GitHub Pages. 4 fases: diagnostico &rarr; commit &rarr; push &rarr; deploy. Genera mensajes de commit desde el diff y verifica el Action workflow de Pages.</p>
+          <div class="trigger-list"><span class="tag trigger">publicar</span><span class="tag trigger">subir cambios</span><span class="tag trigger">deploy pages</span><span class="tag trigger">hacer push</span></div>
+          <div class="example-box">
+            <span class="prompt">T&uacute;:</span> <span class="cmd">publica los cambios</span><br>
+            <span class="arrow">&rarr;</span> <b>FASE 1:</b> Diagn&oacute;stico: status, remoto, rama, &uacute;ltimos commits<br>
+            <span class="arrow">&rarr;</span> <b>FASE 2:</b> Commit: mensaje auto-generado desde diff<br>
+            <span class="arrow">&rarr;</span> <b>FASE 3:</b> Push: git push a rama activa<br>
+            <span class="arrow">&rarr;</span> <b>FASE 4:</b> Deploy: verifica action y muestra URL de Pages
+          </div>
+          <div class="output-box"><strong>Output:</strong> Commit en GitHub + URL de Pages desplegada.</div>
+        </div>
 
         <div class="card">
           <h4>📖 find-docs</h4>
@@ -808,7 +822,8 @@
           <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
           <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
           <tr><td>ux-refactor</td><td><code>mejorar UI</code> / <code>refactor UX</code> — explícito</td></tr>
-          <tr><td rowspan="10">Agent</td><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
+          <tr><td rowspan="11">Agent</td><td>github-page-publish</td><td><code>publicar</code> / <code>subir cambios</code> / <code>deploy pages</code></td></tr>
+          <tr><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
           <tr><td>find-skills</td><td><code>encuentra una skill para [tarea]</code></td></tr>
           <tr><td>skill-creator</td><td><code>crea una skill para [propósito]</code></td></tr>
           <tr><td>docx</td><td><code>crea un documento Word</code></td></tr>
@@ -852,7 +867,7 @@
         <tbody>
           <tr><td>context7</td><td><span class="badge badge-remote">remote</span></td><td>setup-init, spec-creator, ux-ui-universal</td></tr>
           <tr><td>excalidraw</td><td><span class="badge badge-remote">remote</span></td><td>spec-creator</td></tr>
-          <tr><td>github</td><td><span class="badge badge-local">local</span></td><td>UX skills, CI/CD</td></tr>
+          <tr><td>github</td><td><span class="badge badge-local">local</span></td><td>github-page-publish, CI/CD</td></tr>
           <tr><td>chrome-devtools</td><td><span class="badge badge-local">local</span></td><td>validation-offline, ux-ui-universal</td></tr>
           <tr><td>filesystem</td><td><span class="badge badge-local">local</span></td><td>Todas las skills</td></tr>
           <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux, ux-refactor</td></tr>
@@ -865,7 +880,7 @@
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 44 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 45 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 
