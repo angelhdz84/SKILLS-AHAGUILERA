@@ -191,7 +191,7 @@
   <main>
     <section id="intro">
       <h1>📘 Guía de Skills y MCPs</h1>
-      <p>Referencia práctica de las <strong>42 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>9 servidores MCP</strong> que las potencian.</p>
+      <p>Referencia práctica de las <strong>42 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>12 servidores MCP</strong> que las potencian.</p>
       <div class="alert alert-info" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;border-left:4px solid var(--accent)">
         💡 <strong>Tip:</strong> Usa el buscador (<kbd>Ctrl+F</kbd> o el campo de búsqueda arriba) para encontrar cualquier skill o comando rápido.
       </div>
@@ -636,7 +636,7 @@
     <!-- MCPs -->
     <!-- ============================================================ -->
     <section id="mcps">
-      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">9</span></h2>
+      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">12</span></h2>
       <p>Configurados en <code>opencode.json</code>. Algunos son consumidos automáticamente por las skills, otros se invocan manualmente en conversación.</p>
 
       <div class="grid-2">
@@ -739,6 +739,37 @@
           </div>
         </div>
 
+        <div class="card">
+          <h4>stocky <span class="badge badge-local">local</span></h4>
+          <p>Busca y descarga imágenes gratuitas desde <strong>Pexels</strong> y <strong>Unsplash</strong>. Integrado con las skills <strong>docx</strong>, <strong>pptx</strong> y <strong>pdf</strong> para insertar imágenes en documentos, presentaciones y PDFs.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="prompt">T&uacute;:</span> busca fotos de oficina moderna en Pexels<br>
+            <span class="arrow">&rarr;</span> <span class="cmd">search_stock_images("oficina moderna")</span><br>
+            <span class="arrow">&rarr;</span> Descarga + inserta en documento con docx/pptx/pdf<br>
+            <span class="comment">// Requiere API keys gratuitas de Pexels (pexels.com/api) y Unsplash (unsplash.com/developers)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>supabase <span class="badge badge-local">local</span></h4>
+          <p>Base de datos Postgres, Auth, Edge Functions, Storage, Realtime y APIs instantáneas vía Supabase MCP. Usado directamente en conversación para consultas SQL, migraciones y gestión del proyecto.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="prompt">T&uacute;:</span> lista las tablas de la base de datos<br>
+            <span class="arrow">&rarr;</span> <span class="cmd">supabase_list_tables(schemas: ["public"])</span><br>
+            <span class="arrow">&rarr;</span> Crea migraciones, despliega Edge Functions, consulta logs
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>shadcn-ui <span class="badge badge-local">local</span></h4>
+          <p>Componentes UI y bloques de shadcn/ui v4 para React/Next.js. Usado por <strong>ux-ui-universal</strong> cuando la app target es React.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// ux-ui-universal lo usa automáticamente en apps React</span><br>
+            <span class="arrow">&rarr;</span> Obtiene componentes, temas y bloques prebuilt<br>
+            <span class="arrow">&rarr;</span> Temas personalizados vía TweakCN
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -799,6 +830,18 @@
           <li><strong>Excel:</strong> <code>exporta estos datos a Excel</code> → skill xlsx genera <code>.xlsx</code> con fórmulas.</li>
           <li><strong>Presentación:</strong> <code>haz una presentación de la propuesta</code> → skill pptx genera <code>.pptx</code>.</li>
           <li><strong>PDF:</strong> <code>convierte el informe a PDF</code> → skill pdf genera <code>.pdf</code>.</li>
+        </ol>
+      </div>
+
+      <div class="scenario">
+        <h4>📸 Escenario 5: Buscar imágenes e insertarlas en documentos</h4>
+        <p>Combinación de Stocky + skills office para crear documentos profesionales con fotos reales.</p>
+        <ol class="scenario-steps">
+          <li><strong>Buscar:</strong> pide <code>busca fotos de paisajes urbanos en Pexels</code>. Stocky busca en Pexels y Unsplash.</li>
+          <li><strong>Descargar:</strong> selecciona una imagen y descárgala: <code>descarga pexels_123456</code>.</li>
+          <li><strong>Insertar en Word:</strong> <code>crea un documento Word con la imagen descargada</code>. La skill docx la incrusta.</li>
+          <li><strong>O en presentación:</strong> <code>haz una presentación con 3 imágenes de paisajes</code>. pptx las coloca en diapositivas.</li>
+          <li><strong>O en PDF:</strong> <code>genera un PDF catálogo con estas imágenes</code>. pdf las empaqueta.</li>
         </ol>
       </div>
     </section>
@@ -873,14 +916,17 @@
           <tr><td>refero-styles</td><td><span class="badge badge-local">local</span></td><td>design-ux, ux-refactor</td></tr>
           <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux, ux-refactor</td></tr>
           <tr><td>web-search</td><td><span class="badge badge-local">local</span></td><td>setup-init (fallback)</td></tr>
+          <tr><td>shadcn-ui</td><td><span class="badge badge-local">local</span></td><td>ux-ui-universal (React/Next.js)</td></tr>
+          <tr><td>supabase</td><td><span class="badge badge-local">local</span></td><td>Base de datos, Auth, Edge Functions</td></tr>
           <tr><td>memory</td><td><span class="badge badge-local">local</span></td><td>llm-wiki</td></tr>
+          <tr><td>stocky</td><td><span class="badge badge-local">local</span></td><td>docx, pptx, pdf, branding</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 45 skills • 9 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 45 skills • 12 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 
