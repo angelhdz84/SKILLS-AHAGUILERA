@@ -18,6 +18,7 @@ docs/                          — reportes de validación / screenshots (genera
 specs/                         — specs técnicas (generadas por spec-creator)
 ux-refactor/                   — skill de refactorización UX/UI (4 fases)
 github-page-publish/           — skill de publicación y deploy a GitHub Pages
+daisyui-patterns/              — skill de patrones DaisyUI 5 + Alpine.js
 guia-skills-mcps.html          — guía de skills y MCPs
 manual-referencia.html         — manual offline de referencia de skills
 manual-de-uso.html             — manual de uso de skills con ejemplos prácticos

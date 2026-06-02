@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
-  <meta name="description" content="Guía práctica de las 45 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
+  <meta name="description" content="Guía práctica de las 46 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
   <meta name="version" content="2.0.0">
 
@@ -313,6 +313,19 @@
             <span class="arrow">→</span> <b>FASE 4:</b> Valida: compliance + a11y + checklist
           </div>
           <div class="output-box"><strong>Output:</strong> Archivos modificados in-place + <code>docs/refactor-[app].md</code>.</div>
+        </div>
+
+        <div class="card">
+          <h4>🌼 daisyui-patterns <span class="tag version">v1.0</span> <span class="tag trigger">componentes</span></h4>
+          <p>Patrones de componentes DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial v&iacute;a <code>SKILL.md</code> de daisyui.com m&aacute;s patrones de integraci&oacute;n (<code>x-data</code>, <code>$persist</code>, modales, drawer, dropdowns, tabs, tooltips). Consumido por code-generator, design-ux y ux-refactor.</p>
+          <div class="trigger-list"><span class="tag trigger">daisyui</span><span class="tag trigger">componente daisyui</span><span class="tag trigger">modal con alpine</span><span class="tag trigger">daisyui 5</span></div>
+          <div class="example-box">
+            <span class="prompt">T&uacute;:</span> <span class="cmd">crea un formulario con daisyui y alpine</span><br>
+            <span class="arrow">&rarr;</span> Usa <code>use daisyui-gitmcp</code> para docs actualizadas<br>
+            <span class="arrow">&rarr;</span> Combina <code>input</code>, <code>btn</code>, <code>card</code> de DaisyUI 5<br>
+            <span class="arrow">&rarr;</span> A&ntilde;ade <code>x-data</code> y <code>$persist</code> para estado reactivo
+          </div>
+          <div class="output-box"><strong>Output:</strong> Componentes DaisyUI 5 funcionales con Alpine.js.</div>
         </div>
 
         <div class="card">
@@ -856,7 +869,7 @@
       <table>
         <thead><tr><th>Categoría</th><th>Skill</th><th>Trigger / Activación</th></tr></thead>
         <tbody>
-          <tr><td rowspan="9">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
+          <tr><td rowspan="10">Stack</td><td>prompt-inicial</td><td><code>nuevo proyecto</code> — explícito</td></tr>
           <tr><td>setup-init</td><td><code>iniciar setup</code> — explícito</td></tr>
           <tr><td>spec-creator</td><td><code>definir spec app</code> — explícito</td></tr>
           <tr><td>design-ux-intelligence</td><td><code>tono visual</code> — <strong>auto</strong></td></tr>
@@ -865,6 +878,7 @@
           <tr><td>stack-compliance-guard</td><td><code>validar stack</code> — <strong>auto</strong> post-generación</td></tr>
           <tr><td>validation-offline</td><td><code>validar app</code> — explícito</td></tr>
           <tr><td>ux-refactor</td><td><code>mejorar UI</code> / <code>refactor UX</code> — explícito</td></tr>
+          <tr><td>daisyui-patterns</td><td><code>daisyui</code> / <code>componente daisyui</code> — explícito</td></tr>
           <tr><td rowspan="11">Agent</td><td>github-page-publish</td><td><code>publicar</code> / <code>subir cambios</code> / <code>deploy pages</code></td></tr>
           <tr><td>find-docs</td><td><code>busca documentación de [lib]</code></td></tr>
           <tr><td>find-skills</td><td><code>encuentra una skill para [tarea]</code></td></tr>
@@ -920,13 +934,14 @@
           <tr><td>supabase</td><td><span class="badge badge-local">local</span></td><td>Base de datos, Auth, Edge Functions</td></tr>
           <tr><td>memory</td><td><span class="badge badge-local">local</span></td><td>llm-wiki</td></tr>
           <tr><td>stocky</td><td><span class="badge badge-local">local</span></td><td>docx, pptx, pdf, branding</td></tr>
+          <tr><td>daisyui-gitmcp</td><td><span class="badge badge-remote">remote</span></td><td>daisyui-patterns, code-generator, design-ux</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 45 skills • 12 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v1.1.0 • 46 skills • 13 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 
