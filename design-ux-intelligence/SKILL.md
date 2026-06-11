@@ -5,10 +5,12 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.5"
+  version: "2.6"
   generatedBy: "design-ux-intelligence skill"
   triggers: ["tono visual", "diseño distintivo", "UX profesional", "validar accesibilidad", "mejorar UI", "paleta de colores", "tipografía", "estilo UI", "recomendación de diseño"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
+  perfiles: [lite, full]
+  iconSet: "bootstrap-icons"
   language: es
 ---
 
@@ -590,7 +592,13 @@ Componentes Alpine.js + Tailwind CSS nativo, copiados de [Pines](https://devdojo
 - En validación, sé específico: no digas "mejorar contraste", di "cambiar `text-gray-500` a `text-gray-700` en línea 42 de `module.html`".
 - Mantén el lenguaje en español técnico pero accesible.
 
-✨ **SKILL ready. Se activa automáticamente con spec-creator o validation-offline.**
+### 📝 Notas de unificación de perfiles
+- **Iconos**: Bootstrap Icons es el set único para ambos perfiles (Lite y Full). Funciona en file:// y Bun sin build step. No usar Lucide.
+- **Animaciones**: Animate.css incluido en ambos perfiles (~3KB, irrelevante en .exe de 50MB).
+- **Perfil Full**: Mismas reglas de diseño UX que Lite. El frontend es idéntico. La única diferencia es el runtime.
+- **Refero MCP**: La inspiración de diseño vía refero.design aplica igual a ambos perfiles.
+
+✨ **SKILL ready v2.6. Se activa automáticamente con spec-creator o validation-offline.**
 ```
 
 ---

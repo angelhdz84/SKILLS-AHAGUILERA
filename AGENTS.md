@@ -5,28 +5,73 @@
 {file:.opencode/rules/TOOL_USAGE.md}
 {file:.opencode/rules/RESPONSE_STYLE.md}
 
-## Estructura del repo
+## Identidad
 
+Meta-repo de 14 skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). No es una app. Skills generan apps en directorios externos, no dentro del repo.
+
+## Perfiles
+
+| Perfil | Runtime | DB | Cifrado | Empaquetado |
+|--------|---------|----|---------|-------------|
+| Lite | Doble clic `index.html` | Dexie (IndexedDB) | CryptoJS | ZIP + GitHub Pages |
+| Full | Bun --compile .exe | Dexie + SQLite (opcional) | CryptoJS | .exe + Pages + Release |
+
+El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
+
+## Skills
+
+| Directorio | Propósito | Perfiles |
+|-----------|-----------|----------|
+| `prompt-inicial/` | Orquestador maestro del pipeline completo | lite, full |
+| `setup-init/` | Valida entorno, crea estructura, instala librerías | lite, full |
+| `spec-creator/` | Historia de usuario → spec técnica validada v4 | lite, full |
+| `design-ux-intelligence/` | Diseño visual + checklist UX crítico | lite, full |
+| `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno | lite, full |
+| `validation-offline/` | Validación estática + DevTools + Playwright E2E + reporte | lite, full |
+| `ux-refactor/` | Refactor UX/UI 4 fases para apps offline-first existentes | lite, full |
+| `ux-ui-universal/` | Refactor UX/UI multi-stack vía context7 (React, Django, etc.) | multi-stack |
+| `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
+| `daisyui-patterns/` | Patrones DaisyUI 5 + Alpine.js | lite, full |
+| `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
+| `llm-wiki/` | Wiki persistente (markdown versionado + MCP memory graph) | lite, full |
+| `github-page-publish/` | **(deprecado)** Reemplazado por deployment-jigue | — |
+
+## MCP Servers
+
+- `mcp-servers/stocky/` — Python. Busca imágenes Pexels + Unsplash. Setup: `pip install -e .`
+- `mcp-servers/refero-styles/` — TypeScript. Busca sistemas de diseño en refero.design. Setup: `npm install && npm run build`
+
+## Comandos slash
+
+| Comando | Trigger | Efecto |
+|---------|---------|--------|
+| `/new` | `nuevo proyecto` | Pipeline orquestado completo (pregunta perfil) |
+| `/setup` | `iniciar setup` | Crea estructura + instala librerías según perfil |
+| `/spec` | `definir spec app` | spec-creator con fases de refinamiento |
+| `/build` | `generar codigo` | Fase A (core/index.html) + Fase B (módulos uno por uno) |
+| `/test` | `validar app` | Estático + DevTools + Playwright + reporte en docs/ |
+| `/compliance` | — | Ejecuta stack-compliance-guard manualmente |
+| `/status` | — | Lee pipeline state (specs/, project.config.js, docs/) |
+| `/archive` | — | Mueve spec + reporte a specs/archive/ |
+| `/docs` | — | Abre guia-skills-mcps.html |
+| `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
+| `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
+
+## Directorios generados (no versionar)
+
+`docs/`, `specs/`, `wiki/` son output de skills. `tests/` contiene app de prueba y resultados.
+
+## Tests
+
+```powershell
+cd tests; python -m pytest test_app.py -v
 ```
-skill-name/SKILL.md            — cada skill es un archivo YAML+Markdown autónomo
-project.config.js              — configuración white-label
-components/pines/              — 35 componentes Alpine.js + Tailwind paste-able
-tests/test_app.py              — Playwright E2E (channel="chrome")
-tests/test-app.html            — app de prueba Alpine.js para E2E
-wiki/                          — wiki de conocimiento persistente (generado por llm-wiki)
-docs/                          — reportes de validación / screenshots (generados, excluir commits)
-specs/                         — specs técnicas (generadas por spec-creator)
-ux-refactor/                   — skill de refactorización UX/UI (4 fases)
-github-page-publish/           — skill de publicación y deploy a GitHub Pages
-daisyui-patterns/              — skill de patrones DaisyUI 5 + Alpine.js
-guia-skills-mcps.html          — guía de skills y MCPs
-manual-referencia.html         — manual offline de referencia de skills
-manual-de-uso.html             — manual de uso de skills con ejemplos prácticos
-PLANTILLA DE CONTRATO FREELANCE.txt
-PLANTILLA DE CORREO DE ENTREGA PROFESIONAL.txt
-```
 
-## Comandos disponibles
+Playwright E2E sobre `test-app.html` (Alpine.js task manager). Requiere Chrome system channel.
 
-Usa `/comando` en OpenCode:
-`/new` `/setup` `/spec` `/build` `/test` `/compliance` `/status` `/archive` `/docs` `/wiki`
+## Deploy
+
+Push a `main` → GitHub Actions (`deploy-pages.yml`) → GitHub Pages. Sin build step (`path: .`).
+
+Para empaquetado profesional: `publicar` → deployment-jigue segun perfil.

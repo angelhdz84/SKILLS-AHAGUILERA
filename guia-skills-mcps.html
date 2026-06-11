@@ -6,7 +6,7 @@
   <title>Guía de Skills y MCPs • ahaguilera.dev</title>
   <meta name="description" content="Guía práctica de las 46 skills y 9 MCPs del stack offline-first. Triggers, ejemplos de uso y escenarios completos.">
   <meta name="author" content="Angel Hernandez - ahaguilera.dev">
-  <meta name="version" content="2.0.0">
+  <meta name="version" content="2.1.0">
 
   <style>
     :root {
@@ -191,7 +191,7 @@
   <main>
     <section id="intro">
       <h1>📘 Guía de Skills y MCPs</h1>
-      <p>Referencia práctica de las <strong>42 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>12 servidores MCP</strong> que las potencian.</p>
+      <p>Referencia práctica de las <strong>46 skills</strong> instaladas en el sistema, organizadas en 3 categorías, más <strong>13 servidores MCP</strong> que las potencian.</p>
       <div class="alert alert-info" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;border-left:4px solid var(--accent)">
         💡 <strong>Tip:</strong> Usa el buscador (<kbd>Ctrl+F</kbd> o el campo de búsqueda arriba) para encontrar cualquier skill o comando rápido.
       </div>
@@ -222,8 +222,8 @@
         </div>
 
         <div class="card">
-          <h4>📦 setup-init <span class="tag version">v2.0</span> <span class="tag trigger">infraestructura</span></h4>
-          <p>Valida entorno, crea estructura de carpetas, genera <code>project.config.js</code> y script de descarga de librerías locales.</p>
+          <h4>📦 setup-init <span class="tag version">v3.0</span> <span class="tag trigger">infraestructura</span></h4>
+          <p>Valida entorno, crea estructura de carpetas, genera <code>project.config.js</code> y script de descarga de librerías locales. Ahora con DaisyUI 5 standalone + <code>@tailwindcss/browser@4</code> como runtime JS en vez de Tailwind CSS 2.</p>
           <div class="trigger-list"><span class="tag trigger">iniciar setup</span><span class="tag trigger">crear estructura</span><span class="tag trigger">descargar libs</span><span class="tag trigger">verificar entorno</span><span class="tag trigger">setup</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">iniciar setup</span><br>
@@ -262,8 +262,8 @@
         </div>
 
         <div class="card">
-          <h4>⚙️ code-generator <span class="tag version">v2.3</span> <span class="tag trigger">generaci&oacute;n</span></h4>
-          <p>Genera código por fases: core primero, luego módulos uno a uno. Lee spec y aplica estilo de design-ux. Pausas explícitas para no perder contexto. Compliance se valida tras cada bloque.</p>
+          <h4>⚙️ code-generator <span class="tag version">v3.0</span> <span class="tag trigger">generaci&oacute;n</span></h4>
+          <p>Genera código por fases: core primero, luego módulos uno a uno. Ahora con componentes DaisyUI 5 (modales con <code>&lt;dialog&gt;</code>, dropdowns con <code>&lt;details&gt;</code>, skeletons nativos) + Tailwind CSS 4 (<code>@tailwindcss/browser</code> runtime). Lee spec y aplica estilo de design-ux.</p>
           <div class="trigger-list"><span class="tag trigger">generar codigo</span><span class="tag trigger">crear m&oacute;dulos</span><span class="tag trigger">implementar spec</span><span class="tag trigger">build app</span><span class="tag trigger">escribir c&oacute;digo</span></div>
           <div class="example-box">
             <span class="prompt">Tú:</span> <span class="cmd">generar codigo</span><br>
@@ -649,7 +649,7 @@
     <!-- MCPs -->
     <!-- ============================================================ -->
     <section id="mcps">
-      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">12</span></h2>
+      <h2>🔌 Servidores MCP <span class="count" style="font-size:0.8rem;font-weight:400;color:var(--text-muted);background:var(--surface);padding:0.1rem 0.5rem;border-radius:1rem;vertical-align:middle">13</span></h2>
       <p>Configurados en <code>opencode.json</code>. Algunos son consumidos automáticamente por las skills, otros se invocan manualmente en conversación.</p>
 
       <div class="grid-2">
@@ -779,7 +779,18 @@
           <div class="example-box" style="font-size:0.8rem">
             <span class="comment">// ux-ui-universal lo usa automáticamente en apps React</span><br>
             <span class="arrow">&rarr;</span> Obtiene componentes, temas y bloques prebuilt<br>
-            <span class="arrow">&rarr;</span> Temas personalizados vía TweakCN
+            <span class="arrow">&rarr;</span> Temas personalizados v&iacute;a TweakCN
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>daisyui-gitmcp <span class="badge badge-remote">remote</span></h4>
+          <p>Acceso remoto gratuito a la documentación oficial de DaisyUI 5 vía GitMCP (<code>gitmcp.io/saadeghi/daisyui</code>). Usado por <strong>daisyui-patterns</strong>, <strong>code-generator</strong> y <strong>design-ux</strong> para consultar componentes, temas y API actualizadas.</p>
+          <div class="example-box" style="font-size:0.8rem">
+            <span class="comment">// code-generator lo usa automáticamente al generar componentes</span><br>
+            <span class="arrow">&rarr;</span> Consulta sintaxis de DaisyUI 5<br>
+            <span class="arrow">&rarr;</span> Obtiene clases de componentes y modales<br>
+            <span class="comment">// Manual:</span> usa daisyui-gitmcp para docs de DaisyUI 5
           </div>
         </div>
 
@@ -931,17 +942,17 @@
           <tr><td>a11y</td><td><span class="badge badge-local">local</span></td><td>validation-offline, design-ux, ux-refactor</td></tr>
           <tr><td>web-search</td><td><span class="badge badge-local">local</span></td><td>setup-init (fallback)</td></tr>
           <tr><td>shadcn-ui</td><td><span class="badge badge-local">local</span></td><td>ux-ui-universal (React/Next.js)</td></tr>
+          <tr><td>daisyui-gitmcp</td><td><span class="badge badge-remote">remote</span></td><td>daisyui-patterns, code-generator, design-ux</td></tr>
           <tr><td>supabase</td><td><span class="badge badge-local">local</span></td><td>Base de datos, Auth, Edge Functions</td></tr>
           <tr><td>memory</td><td><span class="badge badge-local">local</span></td><td>llm-wiki</td></tr>
           <tr><td>stocky</td><td><span class="badge badge-local">local</span></td><td>docx, pptx, pdf, branding</td></tr>
-          <tr><td>daisyui-gitmcp</td><td><span class="badge badge-remote">remote</span></td><td>daisyui-patterns, code-generator, design-ux</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
   <footer>
-    <p>🛠️ Stack Offline-First v1.1.0 • 46 skills • 13 MCPs • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
+    <p>🛠️ Stack Offline-First v2.0.0 • 46 skills • 13 MCPs • DaisyUI 5 + Tailwind CSS 4 • <a href="https://ahaguilera.dev">ahaguilera.dev</a></p>
     <p class="no-print" style="margin-top:0.5rem; font-size:0.8rem;">100% offline • Sin CDNs • Monolítico • Doble clic para abrir</p>
   </footer>
 

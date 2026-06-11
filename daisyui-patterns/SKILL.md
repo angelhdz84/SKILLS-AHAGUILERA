@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere DaisyUI 5 + Tailwind CSS 4. Compatible con stack offline-first (assets/ local o CDN).
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "1.1"
   triggers:
     - "daisyui"
     - "componente daisyui"
@@ -166,6 +166,13 @@ DaisyUI 5 + Tailwind CSS 4 se cargan desde `assets/`:
 Sin npm, sin build step. Todas las clases de DaisyUI 5 funcionan directamente.
 
 ---
+
+## NOTAS DE PERFIL
+
+- DaisyUI 5 se usa igual en ambos perfiles (Lite y Full). No hay diferencias de componentes entre perfiles.
+- En perfil Lite: carga desde `assets/css/daisyui.min.css` (descargado por curl).
+- En perfil Full: carga vía `bun add daisyui` y configuración en `tailwind.config.js` como plugin.
+- Los patrones Alpine + DaisyUI (modales, drawers, dropdowns, tabs) son idénticos en ambos perfiles.
 
 ## REFERENCIAS
 

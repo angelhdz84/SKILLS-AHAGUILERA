@@ -5,7 +5,8 @@ license: MIT
 compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación para spec-creator, setup-init y code-generator.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.3"
+  version: "2.4"
+  perfiles: [lite, full]
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -356,6 +357,13 @@ Antes de mostrar código al usuario, verificar:
 [ ] ¿Librerías adicionales cargadas vía CDN y no desde `assets/`? → ❌ RECHAZAR
 [ ] ¿Librerías adicionales usadas en módulos pero no en spec ni index.html? → ⚠️ AGREGAR a spec
 [ ] ¿Librerías adicionales en index.html antes que las base? → ❌ REORDENAR
+
+=== CHECKS DE PERFIL ===
+[ ] ¿Perfil Lite pero usa `import`/`export` en módulos? → ❌ RECHAZAR
+[ ] ¿Perfil Lite pero usa `fetch`/`axios`? → ❌ RECHAZAR (usar Dexie)
+[ ] ¿Perfil Full pero falta `src/index.js`? → ⚠️ AGREGAR entry point
+[ ] ¿Perfil Full y modelos IA se cargan vía CDN? → ❌ RECHAZAR (usar `assets/models/`)
+[ ] ¿Perfil Full pero `import` en `public/` JS? → ❌ RECHAZAR (solo en src/)
 
 === CHECKS DE ACCESIBILIDAD ===
 [ ] ¿Botón con solo icono y sin `aria-label`? → ❌ AÑADIR aria-label

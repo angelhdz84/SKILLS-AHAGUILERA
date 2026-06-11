@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Guia del Stack Unificado - Offline-First Profesional</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#ffffff;--surface:#f4f5f7;--surface2:#e8eaed;--border:#dadce0;
+    --text:#1a1a2e;--text2:#5f6368;--text3:#80868b;
+    --accent:#e94560;--accent2:#0f3460;--accent3:#16213e;
+    --green:#2ecc71;--orange:#f39c12;--blue:#3498db;--purple:#9b59b6;
+    --warn-bg:#fff3cd;--warn-border:#f39c12;
+    --info-bg:#d1ecf1;--info-border:#3498db;
+    --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'Cascadia Code','JetBrains Mono','Fira Code',monospace;
+    --radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08)
+  }
+  html{scroll-behavior:smooth;font-size:16px}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  img{max-width:100%;height:auto}
+
+  /* ── Header ── */
+  header{position:sticky;top:0;z-index:100;background:var(--accent3);color:#fff;padding:0 16px;display:flex;align-items:center;height:56px;gap:12px}
+  header h1{font-size:18px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hamburger{display:none;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;padding:4px 8px}
+  @media(max-width:768px){.hamburger{display:block}}
+
+  /* ── Drawer ── */
+  .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200}
+  .drawer-overlay.open{display:block}
+  .drawer{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:var(--bg);z-index:300;overflow-y:auto;transition:left .25s;box-shadow:2px 0 8px rgba(0,0,0,.15)}
+  .drawer.open{left:0}
+  .drawer-header{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--border)}
+  .drawer-header h2{font-size:16px;color:var(--accent2)}
+  .drawer-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text2)}
+  .drawer nav a{display:block;padding:10px 16px;color:var(--text);font-size:14px;border-bottom:1px solid var(--surface2);transition:background .15s}
+  .drawer nav a:hover{background:var(--surface);text-decoration:none}
+  .drawer nav .part-label{display:block;padding:10px 16px 4px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600}
+
+  /* ── Layout ── */
+  .container{max-width:960px;margin:0 auto;padding:24px 16px 60px}
+  section{margin-bottom:40px}
+  @media(max-width:768px){.container{padding:16px 12px 40px}}
+
+  /* ── Typography ── */
+  h2{font-size:26px;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid var(--accent)}
+  h3{font-size:20px;color:var(--accent2);margin:24px 0 12px}
+  h4{font-size:17px;color:var(--text);margin:20px 0 8px}
+  p,li{font-size:15px;color:var(--text);margin-bottom:8px}
+  ul,ol{padding-left:24px;margin-bottom:12px}
+  li{margin-bottom:4px}
+  strong{color:var(--accent3)}
+
+  /* ── Cards ── */
+  .card{background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .card h4{margin-top:0}
+  .card-bordered{border:1px solid var(--border)}
+  .card-accent{border-left:4px solid var(--accent)}
+  .card-green{border-left:4px solid var(--green)}
+  .card-blue{border-left:4px solid var(--blue)}
+  .card-orange{border-left:4px solid var(--orange)}
+  .card-purple{border-left:4px solid var(--purple)}
+
+  /* ── Tables ── */
+  .table-wrap{overflow-x:auto;margin-bottom:16px;border-radius:var(--radius);border:1px solid var(--border)}
+  table{width:100%;border-collapse:collapse;font-size:14px;min-width:600px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+  th{background:var(--accent2);color:#fff;font-weight:600;white-space:nowrap}
+  tr:nth-child(even){background:var(--surface)}
+  tr:hover{background:var(--surface2)}
+  td:first-child{font-weight:600}
+  @media(max-width:768px){table{font-size:13px}th,td{padding:8px}}
+
+  /* ── Details expandible ── */
+  details.card{margin-bottom:12px;cursor:pointer}
+  details.card summary{font-weight:600;font-size:15px;cursor:pointer;outline:none;display:flex;align-items:center;gap:8px}
+  details.card summary::-webkit-details-marker{color:var(--accent)}
+  details.card[open]{padding-bottom:16px}
+  details.card[open] summary{margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
+
+  /* ── Notes ── */
+  .note{padding:12px 16px;border-radius:var(--radius);margin:12px 0;font-size:14px;border-left:4px solid transparent}
+  .note.note-key{background:var(--info-bg);border-color:var(--info-border)}
+  .note.note-warn{background:var(--warn-bg);border-color:var(--warn-border)}
+  .note.note-green{background:#eafaf1;border-color:var(--green)}
+  .note.note-purple{background:#f0e6ff;border-color:var(--purple)}
+  .note strong{display:block;margin-bottom:2px;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+
+  /* ── Tags / Badges ── */
+  .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;margin:0 4px 4px 0}
+  .tag-lite{background:#d1ecf1;color:#0c5460}
+  .tag-full{background:#f0e6ff;color:#6c2d9e}
+  .tag-both{background:#eafaf1;color:#155724}
+  .tag-new{background:#fff3cd;color:#856404}
+
+  /* ── Code blocks ── */
+  pre{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.5;margin:12px 0;tab-size:2}
+  code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2px 5px;border-radius:3px}
+  pre code{background:none;padding:0}
+
+  /* ── Comparacion dual (lite vs full) ── */
+  .dual{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+  @media(max-width:640px){.dual{grid-template-columns:1fr}}
+  .dual-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .dual-card .dual-header{padding:8px 14px;font-weight:700;font-size:14px;color:#fff}
+  .dual-card.lite .dual-header{background:var(--blue)}
+  .dual-card.full .dual-header{background:var(--purple)}
+  .dual-card .dual-body{padding:14px;font-size:13px;background:var(--surface)}
+  .dual-card .dual-body pre{font-size:12px;padding:10px;margin:8px 0}
+
+  /* ── Venn CSS ── */
+  .venn-wrap{display:flex;justify-content:center;align-items:center;padding:30px 10px;margin:16px 0}
+  .venn{position:relative;width:300px;height:220px}
+  @media(max-width:480px){.venn{width:240px;height:180px}}
+  .venn-circle{position:absolute;width:200px;height:200px;border-radius:50%;opacity:.7;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;text-align:center;padding:10px;color:#fff}
+  @media(max-width:480px){.venn-circle{width:150px;height:150px;font-size:11px}}
+  .venn-left{left:0;top:10px;background:var(--blue)}
+  .venn-right{right:0;top:10px;background:var(--purple)}
+  .venn-center{left:50%;top:10px;transform:translateX(-50%);background:var(--green);z-index:2;width:180px;height:180px}
+  @media(max-width:480px){.venn-center{width:130px;height:130px;font-size:11px}}
+  .venn-label{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--text2);font-weight:600;white-space:nowrap}
+
+  /* ── Diagrama pipeline ── */
+  .pipeline{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+  .pipe-step{background:var(--accent2);color:#fff;padding:8px 14px;border-radius:var(--radius);font-size:13px;font-weight:600;white-space:nowrap}
+  .pipe-arrow{color:var(--text3);font-size:20px;font-weight:700}
+  @media(max-width:600px){.pipe-step{font-size:12px;padding:6px 10px}}
+  .pipe-step.lite{background:var(--blue)}
+  .pipe-step.full{background:var(--purple)}
+  .pipe-step.both{background:var(--accent2)}
+
+  /* ── Arbol decision ── */
+  .tree{display:flex;flex-direction:column;align-items:center;gap:6px;margin:16px 0;font-size:14px}
+  .tree-node{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:10px 20px;font-weight:600;text-align:center;min-width:120px}
+  .tree-node.root{border-color:var(--accent2);background:var(--accent3);color:#fff}
+  .tree-node.lite{border-color:var(--blue);background:#d1ecf1;color:#0c5460}
+  .tree-node.full{border-color:var(--purple);background:#f0e6ff;color:#6c2d9e}
+  .tree-branch{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+  .tree-arrow{color:var(--text3);font-size:18px}
+  @media(max-width:480px){.tree-node{min-width:90px;padding:8px 12px;font-size:13px}.tree-branch{gap:10px}}
+
+  /* ── FAQ ── */
+  .faq details{margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;background:var(--surface)}
+  .faq details summary{font-weight:600;cursor:pointer;outline:none}
+  .faq details[open] summary{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+  /* ── Roadmap ── */
+  .roadmap{position:relative;padding-left:28px;margin:16px 0}
+  .roadmap::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:3px;background:var(--border);border-radius:2px}
+  .roadmap-item{position:relative;margin-bottom:20px;padding:14px 18px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border)}
+  .roadmap-item::before{content:'';position:absolute;left:-24px;top:18px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg)}
+  .roadmap-item.done::before{background:var(--green)}
+  .roadmap-item.future::before{background:var(--orange)}
+  .roadmap-item h4{margin:0 0 4px}
+  .roadmap-item .tag{margin-left:0}
+
+  /* ── Checklist ── */
+  .checklist{list-style:none;padding:0}
+  .checklist li{margin-bottom:6px;display:flex;align-items:flex-start;gap:8px}
+  .checklist input[type=checkbox]{margin-top:4px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0}
+  .checklist label{font-size:14px;cursor:pointer;flex:1}
+
+  /* ── Footer ── */
+  footer{text-align:center;padding:24px;color:var(--text3);font-size:13px;border-top:1px solid var(--border);margin-top:40px}
+
+  /* ── Print ── */
+  @media print{header{position:static;print-color-adjust:exact}.hamburger,.drawer-overlay,.drawer{display:none!important}pre{break-inside:avoid}.card{break-inside:avoid}section{page-break-inside:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Abrir menu">&#9776;</button>
+  <h1>Stack Unificado — Gu&iacute;a</h1>
+  <span style="font-size:12px;opacity:.8;white-space:nowrap" id="readingTime"></span>
+</header>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2>Contenido</h2>
+    <button class="drawer-close" onclick="toggleDrawer()">&times;</button>
+  </div>
+  <nav>
+    <span class="part-label">Parte 1 — Analisis</span>
+    <a href="#p1-1" onclick="toggleDrawer()">1.1 &iquest;Por que unificar?</a>
+    <a href="#p1-2" onclick="toggleDrawer()">1.2 Comparativa lado a lado</a>
+    <a href="#p1-3" onclick="toggleDrawer()">1.3 Stack actual vs futuro</a>
+
+    <span class="part-label">Parte 2 — Skills</span>
+    <a href="#p2-1" onclick="toggleDrawer()">2.1 Skills sin cambios (4)</a>
+    <a href="#p2-2" onclick="toggleDrawer()">2.2 Cambios minimos (3)</a>
+    <a href="#p2-3" onclick="toggleDrawer()">2.3 Cambios significativos (3)</a>
+    <a href="#p2-4" onclick="toggleDrawer()">2.4 Skills nuevas (2)</a>
+    <a href="#p2-ejemplos" onclick="toggleDrawer()">2.5 Ejemplos por perfil</a>
+
+    <span class="part-label">Parte 3 — Spec Mejorada</span>
+    <a href="#p3-1" onclick="toggleDrawer()">3.1 Estructura actual vs nueva</a>
+    <a href="#p3-2" onclick="toggleDrawer()">3.2 Modelo de Datos</a>
+    <a href="#p3-3" onclick="toggleDrawer()">3.3 User Journeys</a>
+    <a href="#p3-4" onclick="toggleDrawer()">3.4 Wireframes textuales</a>
+    <a href="#p3-5" onclick="toggleDrawer()">3.5 Testing Criteria</a>
+    <a href="#p3-6" onclick="toggleDrawer()">3.6 Asunciones 4+1</a>
+
+    <span class="part-label">Parte 4 — Mini IA</span>
+    <a href="#p4-1" onclick="toggleDrawer()">4.1 Pipeline RAG local</a>
+    <a href="#p4-2" onclick="toggleDrawer()">4.2 Stack tecnologico</a>
+    <a href="#p4-3" onclick="toggleDrawer()">4.3 Modelos recomendados</a>
+
+    <span class="part-label">Parte 5 — Deployment</span>
+    <a href="#p5-1" onclick="toggleDrawer()">5.1 Tabla de opciones</a>
+    <a href="#p5-2" onclick="toggleDrawer()">5.2 Estrategia de venta</a>
+
+    <span class="part-label">Parte 6 — Recomendaciones</span>
+    <a href="#p6-1" onclick="toggleDrawer()">6.1 Arbol de decision</a>
+    <a href="#p6-2" onclick="toggleDrawer()">6.2 Roadmap sugerido</a>
+    <a href="#p6-3" onclick="toggleDrawer()">6.3 FAQ</a>
+
+    <span class="part-label">Parte 7</span>
+    <a href="#p7" onclick="toggleDrawer()">Conclusion</a>
+  </nav>
+</div>
+
+<main class="container">
+
+<!-- ═══════════ INTRO ═══════════ -->
+<section>
+<p style="font-size:17px;color:var(--text2);margin-bottom:24px">
+Este documento analiza la evolucion de <strong>SKILLS-AHAGUILERA</strong> hacia un stack unificado que ofrece dos perfiles:
+<strong>Lite</strong> (el actual, file:// + Dexie) y <strong>Full</strong> (Bun + SQLite + .exe).
+El objetivo: mantener la simplicidad actual y anadir capacidades profesionales para vender mejor.
+</p>
+</section>
+
+<!-- ═══════════ PARTE 1: ANALISIS ═══════════ -->
+<section>
+<h2>Parte 1 — Analisis</h2>
+
+<h3 id="p1-1">1.1 &iquest;Por que unificar?</h3>
+
+<div class="card card-blue">
+<p>Actualmente tienes <strong>SKILLS-AHAGUILERA</strong> (offline-first puro) y estabas considerando crear <strong>ATEJE-SKILLS</strong> (Bun + SQLite) como repositorio separado. Unificarlos en un solo stack con dos perfiles tiene estas ventajas:</p>
+</div>
+
+<div class="dual">
+<div class="card card-green">
+<h4>👍 Ventajas de unificar</h4>
+<ul>
+<li><strong>0 skills duplicadas</strong> &mdash; spec-creator, daisyui-patterns, llm-wiki, ux-ui-universal son identicas en ambos stacks. Con repos separados tendrias que mantenerlas dos veces.</li>
+<li><strong>El stack actual no se rompe</strong> &mdash; El perfil Lite es exactamente SKILLS-AHAGUILERA hoy. Nadie pierde nada.</li>
+<li><strong>El perfil Full es un upgrade</strong>, no un reemplazo. El mismo code-generador elige plantillas distintas segun el perfil.</li>
+<li><strong>Deployment diferenciado</strong>: apps Lite van a GitHub Pages, apps Full se compilan a .exe. El orquestador sabe cual usar.</li>
+<li><strong>La Mini IA funciona en ambos perfiles</strong>: Transformers.js no requiere Bun.</li>
+</ul>
+</div>
+<div class="card card-orange">
+<h4>👎 Riesgos a mitigar</h4>
+<ul>
+<li><strong>Complejidad del code-generator</strong> &mdash; Al tener dos ramas de generacion, el SKILL.md se vuelve mas denso. Solucion: usar directorio <code>templates/lite/</code> y <code>templates/full/</code>.</li>
+<li><strong>Confusion del usuario</strong> &mdash; &quot;Lite&quot; suena a inferior. Solucion: llamarlo perfil <strong>Web</strong> (abre con doble clic) y <strong>Desktop</strong> (compila a .exe).</li>
+<li><strong>Mantenimiento de dos ramas</strong> &mdash; Cada mejora a los templates debe aplicarse en ambos perfiles si aplica. Solucion: compartir logica comun (Alpine stores, UI helpers, routing) y solo diferenciar la capa de datos.</li>
+</ul>
+</div>
+</div>
+
+<div class="note note-key">
+<strong>💡 Diferencia clave</strong>
+Los dos perfiles comparten el <strong>80% del frontend</strong> (Alpine, DaisyUI, modulos, routing, UI helpers). Solo cambia la capa de datos (Dexie vs fetch API) y la existencia de un servidor. Esto hace que mantener ambos sea practico.
+</div>
+
+<h3 id="p1-2">1.2 Comparativa lado a lado</h3>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Aspecto</th><th>Lite (actual)</th><th>Full (nuevo)</th><th>&iquest;Compatible?</th></tr>
+</thead>
+<tbody>
+<tr><td>Runtime</td><td>file:// (doble clic)</td><td>Bun (servidor)</td><td>🟡 file:// base + Bun opcional</td></tr>
+<tr><td>Base de datos</td><td>Dexie (IndexedDB)</td><td>bun:sqlite (SQLite)</td><td>🟢 Dexie + SQLite coexisten</td></tr>
+<tr><td>Crypto</td><td>CryptoJS</td><td>Web Crypto API</td><td>🟢 Ambos por deteccion</td></tr>
+<tr><td>CSS</td><td>Tailwind CDN play</td><td>Tailwind CLI (compilado)</td><td>🟢 CDN play + CLI opcional</td></tr>
+<tr><td>Iconos</td><td>Bootstrap Icons</td><td>Lucide</td><td>🟢 Lucide default, Bootstrap fallback</td></tr>
+<tr><td>Build</td><td>Ninguno</td><td>bun build --compile</td><td>🟢 Solo produccion</td></tr>
+<tr><td>Peso .exe</td><td>N/A (solo .html)</td><td>50-55 MB</td><td>🟢 Solo cuando se compila</td></tr>
+<tr><td>IA Local</td><td>No incluida</td><td>Transformers.js + ONNX</td><td>🟢 Opcional en ambos</td></tr>
+<tr><td>Libs extra</td><td>ApexCharts, jsPDF, SheetJS, Pako</td><td>No incluidas</td><td>🟢 Disponibles en ambos</td></tr>
+<tr><td>Proteccion IP</td><td>Codigo visible</td><td>Binario ofuscado</td><td>🟡 Binario solo al compilar</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note note-warn">
+<strong>⚠️ Atencion</strong>
+File:// y Bun son <strong>mutuamente excluyentes</strong> como runtime. No puedes tener ambos como default sin bifurcar la logica. Por eso el stack unificado no intenta fusionarlos, sino ofrecerlos como <strong>perfiles seleccionables</strong> al crear proyecto.
+</div>
+
+<h3 id="p1-3">1.3 Stack actual vs futuro — Diagrama de Venn</h3>
+
+<p>Lo que comparten ambos perfiles (zona central) vs lo que es exclusivo de cada uno:</p>
+
+<div class="venn-wrap">
+<div class="venn">
+<div class="venn-circle venn-left" style="left:0">
+  Lite<br>
+  <span style="font-size:11px;font-weight:400">file://, Dexie,<br>CryptoJS, CDN play,<br>Bootstrap Icons,<br>Animate.css,<br>ApexCharts, jsPDF,<br>SheetJS, Pako</span>
+</div>
+<div class="venn-circle venn-right" style="right:0">
+  Full<br>
+  <span style="font-size:11px;font-weight:400">Bun, SQLite,<br>Web Crypto,<br>Tailwind CLI,<br>Lucide,<br>bun --compile,<br>Transformers.js</span>
+</div>
+<div class="venn-circle venn-center" style="transform:translateX(-50%)">
+  Comparten<br>
+  <span style="font-size:11px;font-weight:400">Alpine.js, DaisyUI,<br>modulos JS, routing<br>hash, UI helpers,<br>espanol, offline-first,<br>sin CDNs runtime,<br>sin telemetria</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ═══════════ PARTE 2: SKILLS ═══════════ -->
+<section>
+<h2>Parte 2 — Skills</h2>
+
+<p>De las 14 skills totales (12 existentes + 2 nuevas), el impacto del perfil se distribuye asi:</p>
+
+<h3 id="p2-1">2.1 Skills sin cambios <span class="tag tag-both">4 skills</span></h3>
+
+<p>Estas skills funcionan identico en ambos perfiles. No necesitan modificacion:</p>
+
+<table>
+<thead><tr><th>Skill</th><th>&iquest;Por que no cambia?</th></tr></thead>
+<tbody>
+<tr><td><strong>spec-creator</strong></td><td>Genera specs de funcionalidad, no de tecnologia. La deteccion de librerias adicionales funciona igual (curl para Lite, npm para Full).</td></tr>
+<tr><td><strong>daisyui-patterns</strong></td><td>DaisyUI 5 + Alpine.js es identico. Los componentes UI son los mismos.</td></tr>
+<tr><td><strong>llm-wiki</strong></td><td>Wiki persistente markdown + MCP memory. No depende del runtime.</td></tr>
+<tr><td><strong>ux-ui-universal</strong></td><td>Multi-stack via context7. No depende del stack base.</td></tr>
+</tbody>
+</table>
+
+<h3 id="p2-2">2.2 Cambios minimos <span class="tag tag-both">3 skills</span></h3>
+
+<details class="card">
+<summary><span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span> design-ux-intelligence</summary>
+<p><strong>Que cambia:</strong></p>
+<ul>
+<li><strong>Iconos:</strong> Bootstrap Icons sigue siendo compatible, pero el default pasa a ser <strong>Lucide</strong> (mas moderno, mejor percepcion profesional).</li>
+<li><strong>Animaciones:</strong> Animate.css solo se incluye en perfil Lite. En Full, las animaciones se manejan con Tailwind + CSS nativo (reduce peso).</li>
+<li><strong>Fuentes:</strong> En Full, las fuentes se sirven desde <code>publico/fonts/</code> o system-ui. En Lite, se descargan a <code>assets/fonts/</code> como hoy.</li>
+</ul>
+<p><strong>Impacto en el SKILL.md:</strong> Agregar al Paso 2 una nota: &quot;Si perfil=Full, usa Lucide en lugar de Bootstrap Icons y omite Animate.css.&quot;</p>
+</details>
+
+<details class="card">
+<summary><span class="tag tag-both">Ambos</span> stack-compliance-guard</summary>
+<p><strong>Que cambia:</strong></p>
+<ul>
+<li><strong>Reglas nuevas para perfil Full:</strong>
+  <ul>
+  <li>Permite <code>import/export</code> en <code>.ts</code> del servidor (Bun los soporta nativamente).</li>
+  <li>Permite <code>fetch('/api/...')</code> en modulos frontend (rutas relativas al servidor Bun).</li>
+  <li>Verifica <code>env.allowRemoteModels = false</code> si se usa Transformers.js.</li>
+  <li>Verifica migraciones SQLite con WAL + foreign_keys.</li>
+  </ul>
+</li>
+<li><strong>Reglas que aplican en ambos perfiles:</strong> Sin CDNs, sin telemetria, cifrado de datos sensibles, espanol, UI DaisyUI.</li>
+</ul>
+<p><strong>Impacto en el SKILL.md:</strong> Agregar un bloque condicional &quot;Si perfil=Full:&quot; en el checklist de validacion.</p>
+</details>
+
+<details class="card">
+<summary><span class="tag tag-both">Ambos</span> ux-refactor</summary>
+<p><strong>Que cambia:</strong></p>
+<ul>
+<li>La fase de auditoria debe detectar el perfil del proyecto (existe <code>servidor.ts</code>? hay <code>package.json</code> con bun? o solo <code>index.html</code>?).</li>
+<li>Las recomendaciones de refactor se adaptan al perfil detectado.</li>
+</ul>
+<p><strong>Impacto en el SKILL.md:</strong> Agregar paso de deteccion de perfil al inicio de la Fase 1 (Auditoria).</p>
+</details>
+
+<h3 id="p2-3">2.3 Cambios significativos <span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span> <span class="tag tag-both">3 skills</span></h3>
+
+<details class="card">
+<summary><span class="tag tag-both">Ambos</span> prompt-inicial (Orquestador)</summary>
+<p><strong>Que cambia:</strong> Se anade el campo &quot;Perfil&quot; al formulario de configuracion rapida:</p>
+<pre><code>📦 Nombre del proyecto: [Ej: ClinicaDentalPro]
+🎯 Tipo de app: [Ej: Gestion de citas]
+💡 Descripcion breve: [1-2 lineas]
+🎨 Tono visual: [1-6]
+🔑 Modulos requeridos: [dashboard, pacientes, citas...]
+📋 Perfil: [1] Lite (file:// + Dexie, sin build)
+         [2] Full (Bun + SQLite + .exe + IA opcional)</code></pre>
+<p><strong>Como se propaga:</strong> El perfil se guarda en <code>project.config.js</code> como <code>APP_CONFIG.perfil</code> y se pasa como variable a todas las skills downstream. Cada skill lee <code>perfil</code> y ramifica segun corresponda.</p>
+
+<div class="note note-key">
+<strong>💡 Por que esto importa</strong>
+Al preguntar el perfil al inicio, el orquestador puede presentar un pipeline adaptado. Por ejemplo, si el perfil es Lite, no muestra el paso de compilacion. Si es Full, si.
+</div>
+</details>
+
+<details class="card">
+<summary><span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span> setup-init</summary>
+<p><strong>Que cambia:</strong> El proceso de preparacion del entorno es completamente diferente:</p>
+
+<div class="dual">
+<div class="dual-card lite">
+<div class="dual-header">Perfil Lite (como hoy)</div>
+<div class="dual-body">
+<ol>
+<li>Verifica que <code>curl</code> existe</li>
+<li>Crea estructura de carpetas</li>
+<li>Genera <code>scripts/descargar-libs.bat</code></li>
+<li>12 librerias via curl a <code>assets/</code></li>
+<li>No requiere npm ni node</li>
+</ol>
+</div>
+</div>
+<div class="dual-card full">
+<div class="dual-header">Perfil Full (nuevo)</div>
+<div class="dual-body">
+<ol>
+<li>Verifica <code>bun -v</code> (&gt;= 1.2)</li>
+<li>Ejecuta <code>bun init -y</code></li>
+<li><code>bun add alpinejs tailwindcss @tailwindcss/cli daisyui lucide</code></li>
+<li>Genera <code>tailwind.config.js</code>, <code>tsconfig.json</code></li>
+<li>Crea <code>src/</code>, <code>publico/</code>, <code>publico/bestiario/</code></li>
+</ol>
+</div>
+</div>
+</div>
+
+<p><strong>Ejemplo concreto del SKILL.md:</strong> En la seccion de descarga de librerias, se ramifica asi:</p>
+<pre><code>=== FASE 3: Descarga de dependencias ===
+
+Si perfil = "Lite":
+  1. Genera `scripts/descargar-libs.bat` con las 12 URLs curl
+  2. El usuario ejecuta el .bat con doble clic
+
+Si perfil = "Full":
+  1. Muestra: `bun add alpinejs tailwindcss daisyui lucide`
+  2. Muestra: `bun add -D @tailwindcss/cli typescript`
+  3. Si la spec tiene librerias adicionales, las anade:
+     `bun add qrcode dayjs marked`
+  4. Genera `tailwind.config.js` con contenido de DaisyUI
+  5. Genera `tsconfig.json` para Bun
+  6. Crea `src/input.css` con @import "tailwindcss" y @plugin "daisyui"</code></pre>
+</details>
+
+<details class="card">
+<summary><span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span> code-generator</summary>
+<p><strong>Que cambia:</strong> Es la skill con mayor impacto. El template de cada modulo cambia segun el perfil:</p>
+
+<h4>Template: Capa de datos (db.js)</h4>
+<div class="dual">
+<div class="dual-card lite">
+<div class="dual-header">Perfil Lite — db.js</div>
+<div class="dual-body">
+<pre><code>// Lite: IndexedDB via Dexie
+const db = new Dexie('AppDB');
+db.version(1).stores({
+  pacientes: '++id, nombre, email',
+  citas: '++id, pacienteId, fecha'
+});
+window.db = db;
+
+async function getAll(tabla) {
+  return await db[tabla].toArray();
+}
+async function save(tabla, datos) {
+  return await db[tabla].put(datos);
+}</code></pre>
+</div>
+</div>
+<div class="dual-card full">
+<div class="dual-header">Perfil Full — db.js</div>
+<div class="dual-body">
+<pre><code>// Full: fetch al servidor Bun
+const API = '/api';
+
+async function getAll(tabla) {
+  const res = await fetch(`${API}/${tabla}`);
+  return res.json();
+}
+async function save(tabla, datos) {
+  const res = await fetch(`${API}/${tabla}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(datos)
+  });
+  return res.json();
+}
+
+// Fallback offline a Dexie
+async function saveOffline(tabla, datos) {
+  if (!navigator.onLine) {
+    return await dbLocal[tabla].put(datos);
+  }
+  return save(tabla, datos);
+}</code></pre>
+</div>
+</div>
+</div>
+
+<h4>Template: Modulo Alpine (module.js)</h4>
+<div class="dual">
+<div class="dual-card lite">
+<div class="dual-header">Perfil Lite — module.js</div>
+<div class="dual-body">
+<pre><code>const Pacientes = {
+  id: 'pacientes',
+  titulo: 'Pacientes',
+  icono: 'bi bi-people',
+
+  async render() {
+    // Datos directos de IndexedDB
+    const items = await db.pacientes.toArray();
+    return `...`; // HTML con Alpine
+  },
+
+  async guardar(datos) {
+    datos.nombre = cryptoHelpers.encrypt(datos.nombre);
+    await db.pacientes.put(datos);
+    UI.toast('Guardado', 'success');
+  }
+};</code></pre>
+</div>
+</div>
+<div class="dual-card full">
+<div class="dual-header">Perfil Full — module.js</div>
+<div class="dual-body">
+<pre><code>const Pacientes = {
+  id: 'pacientes',
+  titulo: 'Pacientes',
+  icono: 'bi bi-people',
+
+  async render() {
+    // Datos via API Bun
+    const res = await fetch('/api/pacientes');
+    const items = await res.json();
+    return `...`; // HTML con Alpine
+  },
+
+  async guardar(datos) {
+    const res = await fetch('/api/pacientes', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(datos)
+    });
+    if (res.ok) UI.toast('Guardado', 'success');
+  }
+};</code></pre>
+</div>
+</div>
+</div>
+
+<div class="note note-key">
+<strong>💡 Por que esto importa</strong>
+Nota que el <strong>HTML del modulo</strong> (module.html) es identico en ambos perfiles. Solo cambia la capa de datos. Esto significa que el 80% del codigo generado se reutiliza entre perfiles. Los templates de Alpine.js, DaisyUI, routing, UI helpers son los mismos.
+</div>
+</details>
+
+<h3 id="p2-4">2.4 Skills nuevas <span class="tag tag-new">2 nuevas</span></h3>
+
+<details class="card card-purple">
+<summary><span class="tag tag-new">Nueva</span> ateje-deployment-jigue</summary>
+<p><strong>Proposito:</strong> Compilar y empaquetar la app Full a .exe portable.</p>
+
+<p><strong>Trigger:</strong> <code>compilar app</code> (solo disponible si perfil = Full)</p>
+
+<p><strong>Flujo:</strong></p>
+<pre><code>=== ateje-deployment-jigue ===
+1. Verifica que existe el proyecto Full
+2. Compila CSS:   bunx tailwindcss --minify -i src/input.css -o publico/estilos.css
+3. Compila .exe:  bun build ./servidor.ts --compile --outfile compilados/app.exe
+4. Copia assets:  cp -r publico/* compilados/distribucion/
+5. Comprime:      cd compilados && zip -r app-portable.zip distribucion/
+6. Resultado:     compilados/app-portable.zip (~55 MB)
+
+📦 Entregable final:
+   app-portable.zip/
+   ├── app.exe          (Bun runtime + codigo compilado)
+   ├── estilos.css      (Tailwind + DaisyUI minificado)
+   ├── index.html       (entry point HTML)
+   └── bestiario/       (librerias JS estaticas)</code></pre>
+
+<div class="note note-warn">
+<strong>⚠️ Atencion</strong>
+<code>bun build --compile</code> genera un binario de ~50 MB porque empaqueta el runtime Bun. Esto es normal. No requiere que el cliente instale Bun. El .exe es autocontenido. Alternativas mas ligeras (Neutralino 1-2 MB, Tauri 5-15 MB) requieren otros lenguajes (Rust).
+</div>
+</details>
+
+<details class="card card-purple">
+<summary><span class="tag tag-new">Nueva</span> ateje-ia-jutia <span class="tag tag-full">Full</span> <span class="tag tag-lite">Lite</span></summary>
+<p><strong>Proposito:</strong> Anadir IA local (Transformers.js + ONNX) a cualquier app, independientemente del perfil.</p>
+
+<p><strong>Trigger:</strong> <code>anadir ia</code> (opcional, no se activa en pipeline base)</p>
+
+<p><strong>Que genera:</strong></p>
+<pre><code>=== ateje-ia-jutia ===
+1. Crea publico/workers/jutia-worker.js (Web Worker)
+2. Anade Transformers.js al index.html:
+   &lt;script src="bestiario/transformers.min.js"&gt;&lt;/script&gt;
+3. Crea src/ia.js  (capa de IA con pipeline RAG)
+4. Crea src/descargar-modelos.ts  (script de descarga unica)
+
+Configuracion critica en el Worker:
+   env.localModelPath = '/modelos/';
+   env.allowRemoteModels = false;  // ❌ NUNCA true</code></pre>
+
+<div class="note note-key">
+<strong>💡 Diferencia clave</strong>
+A diferencia del perfil (Lite/Full), la IA es <strong>opcional en ambos</strong>. Puedes tener una app Full sin IA perfectamente funcional. La skill ia-jutia solo se activa si el usuario la pide explicitamente o si el orquestador detecta que la spec requiere procesamiento de lenguaje.
+</div>
+</details>
+
+<h3 id="p2-ejemplos">2.5 Ejemplos de uso por perfil</h3>
+
+<p>El mismo proyecto, generado en cada perfil. Ejemplo: app de gestion de pacientes.</p>
+
+<div class="dual">
+<div class="dual-card lite">
+<div class="dual-header">Perfil Lite</div>
+<div class="dual-body">
+<pre><code>/clinica-lite/
+├── index.html          ← Doble clic para abrir
+├── project.config.js
+├── assets/
+│   ├── css/            (tailwind+daisyui+bootstrap-icons)
+│   ├── js/libs/        (alpine+dexie+crypto-js+apexcharts+...)
+│   └── fonts/
+├── core/
+│   ├── app.js          (router hash)
+│   ├── db.js           (Dexie)
+│   ├── crypto.js       (CryptoJS)
+│   └── ui.js           (helpers)
+├── modules/
+│   ├── dashboard/
+│   ├── pacientes/
+│   └── citas/
+└── docs/               (reportes generados)</code></pre>
+<p><strong>Entrega:</strong> .zip con los archivos. El cliente abre index.html.</p>
+<p><strong>Peso:</strong> ~5 MB (librerias) + datos.</p>
+</div>
+</div>
+<div class="dual-card full">
+<div class="dual-header">Perfil Full</div>
+<div class="dual-body">
+<pre><code>/clinica-full/
+├── servidor.ts         ← bun --hot servidor.ts
+├── package.json
+├── tailwind.config.js
+├── tsconfig.json
+├── src/
+│   ├── input.css       (@tailwind + @plugin daisyui)
+│   └── ia.js           (opcional, solo si se pide)
+├── publico/
+│   ├── index.html
+│   ├── estilos.css     (compilado por Tailwind CLI)
+│   ├── bestiario/      (librerias JS)
+│   ├── modules/        (modulos Alpine.js)
+│   └── models/         (ONNX si aplica IA)
+├── core/
+│   ├── app.js
+│   ├── db.js           (fetch a /api/...)
+│   ├── crypto.js       (Web Crypto o CryptoJS)
+│   └── ui.js
+└── compilados/
+    └── clinica.exe     ← bun build --compile</code></pre>
+<p><strong>Entrega:</strong> clinica.exe (~55 MB). El cliente hace doble clic en .exe.</p>
+</div>
+</div>
+</div>
+
+<div class="note note-green">
+<strong>🎯 Recomendacion</strong>
+Para <strong>demos y desarrollo rapido</strong>, usa perfil Lite. Cuando tengas la funcionalidad lista y quieras entregar al cliente, compila en Full. El codigo de modulos Alpine.js se reutiliza entre perfiles. No tienes que reescribir nada.
+</div>
+</section>
+
+<!-- ═══════════ PARTE 3: SPEC MEJORADA ═══════════ -->
+<section>
+<h2>Parte 3 — Spec Mejorada</h2>
+
+<p>La spec actual genera apps funcionales pero con margen de mejora en calidad y detalle. Las siguientes secciones nuevas o mejoradas elevan el nivel sin alargar excesivamente el proceso.</p>
+
+<h3 id="p3-1">3.1 Estructura actual vs nueva</h3>
+
+<div class="dual">
+<div class="dual-card lite">
+<div class="dual-header">Estructura actual</div>
+<div class="dual-body">
+<ol>
+<li>Descripcion</li>
+<li>Criterios de Aceptacion (Gherkin)</li>
+<li>Arquitectura y Modulos</li>
+<li>Seguridad y Datos</li>
+<li>UI/UX y Animaciones</li>
+<li>Librerias Adicionales</li>
+<li>Configuracion (project.config.js)</li>
+<li>Pre-requisitos y Checklist</li>
+</ol>
+</div>
+</div>
+<div class="dual-card full">
+<div class="dual-header">Estructura propuesta</div>
+<div class="dual-body">
+<ol>
+<li>Descripcion</li>
+<li>Criterios de Aceptacion (Gherkin)</li>
+<li>Arquitectura y Modulos</li>
+<li><strong>Modelo de Datos Detallado</strong> ← nueva</li>
+<li><strong>User Journeys</strong> ← nueva</li>
+<li>Seguridad y Datos</li>
+<li><strong>UI/UX — Wireframes</strong> ← mejorada</li>
+<li>Librerias Adicionales</li>
+<li>Configuracion</li>
+<li><strong>Testing y Criterios</strong> ← nueva</li>
+<li>Pre-requisitos y Checklist</li>
+</ol>
+</div>
+</div>
+</div>
+
+<h3 id="p3-2">3.2 Modelo de Datos Detallado</h3>
+
+<p>Cada entidad con su esquema completo: campos, tipos, obligatoriedad, campos sensibles y validacion.</p>
+<div class="card">
+<pre><code>## Modelo de Datos Detallado
+
+### Entidad: Paciente
+| Campo          | Tipo        | Obligatorio | Sensible | Validacion        | Default     |
+|----------------|-------------|-------------|----------|-------------------|-------------|
+| id             | autoIncr    | si          | no       | —                 | —           |
+| nombre         | string      | si          | ✅ si    | min 2, max 100    | —           |
+| email          | string      | si          | ✅ si    | formato email      | —           |
+| telefono       | string      | no          | ✅ si    | digitos+guiones   | —           |
+| fechaNac       | date        | no          | no       | &lt; hoy            | —           |
+| activo         | boolean     | no          | no       | —                 | true        |
+| createdAt      | timestamp   | auto        | no       | —                 | Date.now()  |
+
+### Indices y relaciones
+- Indice compuesto: (activo, nombre) para listado rapido
+- Relacion: Paciente 1:N Cita (via pacienteId)
+- Busqueda textual: nombre + email indexados con FlexSearch</code></pre>
+
+<div class="note note-key">
+<strong>💡 Por que esto importa</strong>
+Sin modelo de datos explicito, el code-generador inventa los campos sobre la marcha. Con esta seccion, la spec ya define exactamente que guardar, de que tipo, y que cifrar. El codigo generado es consistente desde la primera iteracion.
+</div>
+</div>
+
+<h3 id="p3-3">3.3 User Journeys</h3>
+
+<p>Para cada modulo, el flujo completo del usuario incluyendo caminos alternativos y errores.</p>
+
+<details class="card">
+<summary>Ejemplo: Journey "Registrar nuevo paciente"</summary>
+<pre><code>### Journey: Registrar nuevo paciente
+
+**Actor:** Recepcionista
+**Modulo:** Pacientes
+**Precondicion:** Usuario autenticado en la app
+
+**Flujo feliz:**
+1. Usuario hace clic en "Nuevo paciente" (btn-primary en header)
+2. Sistema abre modal/slide-over con formulario vacio
+   Campos: nombre, email, telefono, fechaNacimiento
+3. Usuario completa campos y hace clic en "Guardar" (btn-primary con loading)
+4. Sistema valida en cliente:
+   - nombre no vacio (min 2 caracteres)
+   - email con formato valido
+   - telefono: solo digitos, guiones y espacios
+5. Sistema cifra nombre y email con cryptoHelpers.encrypt()
+6. Sistema guarda en IndexedDB (Lite) o via API POST /api/pacientes (Full)
+7. Sistema muestra toast "Paciente registrado correctamente" (duracion 3s)
+8. Sistema cierra formulario y actualiza listado (el nuevo aparece primero)
+9. ✅ Caso exitoso
+
+**Flujo alternativo A: Email duplicado**
+   - 5a. Sistema detecta email existente en BD
+   - 6a. Muestra toast error "Ya existe un paciente con ese email"
+   - 7a. Campo email marcado en rojo con mensaje "Email ya registrado"
+   - 8a. No cierra formulario. Usuario corrige.
+
+**Flujo alternativo B: Sin conexion (Full + Dexie fallback)**
+   - 4a. navigator.onLine = false
+   - 5a. Sistema muestra badge "Sin conexion — guardando localmente"
+   - 6a. Guarda en IndexedDB local (cache)
+   - 7a. Toast "Guardado localmente. Se sincronizara al reconectar"
+   - 8a. Agenda sync cuando vuelva la conexion
+
+**Flujo alternativo C: Error de validacion**
+   - 3a. Usuario ingresa email invalido: "correo@"
+   - 4a. Validacion en blur detecta email invalido
+   - 5a. Campo email muestra error inline: "Ingrese un email valido"
+   - 6a. Boton Guardar deshabilitado hasta corregir
+   - 7a. Usuario corrige y reintenta → flujo feliz
+
+**Postcondicion:** Paciente guardado en BD local. Listado actualizado.</code></pre>
+
+<div class="note note-warn">
+<strong>⚠️ Atencion</strong>
+Los journeys son la seccion mas valiosa y la mas costosa de generar. El spec-creator debe detectar automaticamente los flujos alternativos tipicos: validacion fallida, duplicados, sin conexion, datos vacios. No preguntar cada uno al usuario.
+</div>
+</details>
+
+<h3 id="p3-4">3.4 Wireframes textuales</h3>
+
+<p>Cada pantalla descrita en detalle: layout, elementos, estados.</p>
+
+<details class="card">
+<summary>Ejemplo: Pantalla "Listado de Pacientes"</summary>
+<pre><code>### Pantalla: Listado de Pacientes
+
+**Layout general:**
+┌──────────────┬──────────────────────────────────┐
+│   Sidebar    │  Header: "[icono] Pacientes"     │
+│   Dashboard  │    [campo busqueda] [Nuevo]       │
+│   Pacientes  ├──────────────────────────────────┤
+│   Citas      │  Tabla de pacientes:              │
+│   Reportes   │  Nombre | Email | Telef | Accion  │
+│              │  ───────────────────────────────  │
+│              │  Juan P. | juan@.. | 555.. | ✎ 🗑  │
+│              │  Maria G. | maria@.. | 555.. | ✎ 🗑 │
+│              │  [paginacion si &gt; 20 registros]    │
+│              │                                    │
+│              │  **Empty state** (si no hay datos): │
+│              │    [icono inbox grande]            │
+│              │    "No hay pacientes registrados"  │
+│              │    "Agrega tu primer paciente"     │
+│              │    [btn "Crear paciente"]          │
+└──────────────┴──────────────────────────────────┘
+
+**Estados de carga:**
+- Carga inicial: skeleton de 5 filas (3 columnas) con shimmer
+- Error de carga: alert error + boton "Reintentar"
+- Sin datos: empty state con CTA (descripcion arriba)
+
+**Modales/Acciones:**
+- Nuevo: slide-over panel desde derecha (padding 24px, ancho max 480px)
+- Editar: mismo slide-over, campos pre-poblados
+- Eliminar: modal de confirmacion "¿Eliminar a [nombre]?"
+  [Cancelar] [Eliminar] (btn-error)
+
+**Responsive (&lt; 768px):**
+- Sidebar colapsa a hamburger menu
+- Tabla se convierte en cards apiladas
+- Busqueda pasa a ancho completo
+- Boton "Nuevo" flotante (FAB) abajo a la derecha</code></pre>
+
+<div class="note note-green">
+<strong>🎯 Recomendacion</strong>
+Los wireframes textuales reemplazan la necesidad de mockups graficos. Describir el layout, los estados (vacio/carga/error) y el comportamiento responsive es suficiente para que el code-generador produzca una UI consistente y completa.
+</div>
+</details>
+
+<h3 id="p3-5">3.5 Testing Criteria</h3>
+
+<p>Checklist de pruebas manuales y automatizables que deben pasar antes de entregar.</p>
+
+<div class="card">
+<pre><code>## Testing y Criterios de Aceptacion
+
+### Tests manuales (QA)
+- [ ] Crear paciente con datos validos → aparece en listado inmediatamente
+- [ ] Crear paciente con email invalido → muestra error "Email no valido"
+- [ ] Buscar paciente por nombre parcial → resultados filtrados en tiempo real
+- [ ] Eliminar paciente → confirmacion modal → desaparece del listado
+- [ ] Editar paciente → cambios reflejados en listado y detalle
+- [ ] Sin conexion (desactivar WiFi) → badge "offline" visible + datos guardan local
+- [ ] Volver a conectar → badge cambia a "online" sin errores
+- [ ] Exportar a PDF → archivo se descarga con datos visibles
+- [ ] Modo oscuro → toggle funciona, persiste al recargar
+
+### Tests automatizables (Playwright)
+- [ ] Carga inicial: 0 errores en consola, librerias globales presentes
+- [ ] CRUD completo: crear, leer, actualizar, eliminar paciente
+- [ ] Busqueda: input de busqueda filtra tabla en &lt; 200ms
+- [ ] Exportacion: clic en exportar genera archivo (verificar tipo MIME)
+- [ ] Responsive: viewport 320px sin scroll horizontal
+- [ ] Accesibilidad: botones icon-only tienen aria-label
+- [ ] Tema oscuro: clases CSS cambian correctamente
+
+### Criterios de aceptacion (Gherkin)
+Escenario: Recepcionista registra nuevo paciente
+  Dado que el recepcionista esta en el modulo Pacientes
+  Cuando hace clic en "Nuevo paciente"
+  Y completa el formulario con datos validos
+  Y hace clic en "Guardar"
+  Entonces el sistema guarda el paciente en la base de datos
+  Y muestra un toast de confirmacion
+  Y el paciente aparece en el listado
+
+Escenario: Recepcionista busca paciente
+  Dado que hay 10+ pacientes registrados
+  Cuando escribe "Maria" en el campo de busqueda
+  Entonces la tabla muestra solo pacientes con "Maria" en nombre o email
+  Y la busqueda se actualiza en menos de 200ms</code></pre>
+</div>
+
+<h3 id="p3-6">3.6 Asunciones 4+1 — Comparacion</h3>
+
+<p>Las asunciones actuales son muy tecnicas. Las nuevas mezclan negocio con UX:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>Asuncion actual</th><th>Asuncion propuesta</th><th>Mejora</th></tr></thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Arquitectura SPA hash-based</td>
+<td><strong>Flujo principal:</strong> &iquest;El usuario sigue una secuencia fija (A→B→C) o salta entre modulos libremente?</td>
+<td>Define si el router necesita wizard/steps o navegacion libre</td>
+</tr>
+<tr>
+<td>2</td>
+<td>IndexedDB via Dexie, sin JOINs</td>
+<td><strong>Datos concretos:</strong> &iquest;Que entidades maneja la app? &iquest;Que campos tiene cada una? (&iquest;Quieres repasarlas una por una?)</td>
+<td>Obtiene el esquema exacto antes de generar codigo</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Clave cifrado en localStorage</td>
+<td><strong>Pantallas clave:</strong> &iquest;Cuales son las 3-4 pantallas principales? &iquest;Que ve el usuario en cada estado (vacio, carga, error)?</td>
+<td>Cubre los 3 estados (empty, loading, error) desde la spec</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Mobile-first, modo oscuro claro</td>
+<td><strong>Reglas de negocio:</strong> &iquest;Hay calculos, validaciones, logicas especificas del dominio? (ej: "no agendar citas en feriados", "maximo 3 cuotas")</td>
+<td>Captura reglas de dominio que el generador no puede adivinar</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Modulos activables en config</td>
+<td><strong>Contenido/copy:</strong> &iquest;Textos especificos para botones, mensajes, ayuda? (&iquest;O prefieres genericos y luego personalizar?)</td>
+<td>Evita nombres genericos ("Guardar", "Cancelar") cuando el dominio tiene vocabulario propio</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="note note-key">
+<strong>💡 Por que cambiar las asunciones</strong>
+Las asunciones actuales son decisiones tecnicas que el usuario no deberia tener que validar (&quot;Arquitectura SPA hash-based&quot;). Las nuevas asunciones son sobre el <strong>negocio y la experiencia de usuario</strong> — cosas que solo el usuario conoce y que el agente no puede adivinar. El refinamiento 4+1 se vuelve asi mas util y menos tecnico.
+</div>
+</section>
+
+<!-- ═══════════ PARTE 4: MINI IA ═══════════ -->
+<section>
+<h2>Parte 4 — Mini IA Local</h2>
+
+<h3 id="p4-1">4.1 Pipeline RAG local</h3>
+
+<p>El usuario hace una pregunta, el sistema busca en BD y documentacion local, y extrae la respuesta. Todo offline.</p>
+
+<div class="card">
+<pre><code>┌──────────────────────────────────────────────────┐
+│            &quot;&iquest;Cuantos pacientes nuevos            │
+│             hubo este mes?&quot;                       │
+└────────────────────┬─────────────────────────────┘
+                     ↓
+┌──────────────────────────────────────────────────┐
+│  [1] FlexSearch (full-text en BD + docs)          │
+│  Busca por keywords: "pacientes", "nuevos",      │
+│  "mes" en datos y documentacion tecnica           │
+│  → Recupera top-10 fragmentos                     │
+│  → Tiempo: &lt; 5ms                                  │
+└────────────────────┬─────────────────────────────┘
+                     ↓
+┌──────────────────────────────────────────────────┐
+│  [2] Transformers.js (embeddings semanticos)      │
+│  Convierte pregunta y fragmentos a vectores       │
+│  all-MiniLM-L6-v2 (80MB cuantizado)               │
+│  Similitud coseno → re-rank top-5                 │
+│  → Tiempo: ~200ms                                 │
+└────────────────────┬─────────────────────────────┘
+                     ↓
+┌──────────────────────────────────────────────────┐
+│  [3] Transformers.js QA (respuesta extractiva)    │
+│  Modelo: distilbert-base-multilingual-cased       │
+│  Entrada: pregunta + mejor fragmento              │
+│  Salida: &quot;Hubo 12 pacientes nuevos en Junio 2025&quot; │
+│  → Tiempo: ~300-500ms                             │
+└────────────────────┬─────────────────────────────┘
+                     ↓
+┌──────────────────────────────────────────────────┐
+│  Respuesta al usuario con cita del fragmento      │
+│  ✅ &quot;Hubo 12 pacientes nuevos en Junio 2025&quot;      │
+│  📄 Fuente: Reporte Mensual (modulo dashboard)   │
+└──────────────────────────────────────────────────┘</code></pre>
+</div>
+
+<div class="note note-key">
+<strong>💡 Diferencia clave</strong>
+Los 3 niveles son independientes. Puedes tener solo busqueda full-text (nivel 1, ~7 KB) sin descargar modelos ONNX. La IA con modelos solo se activa si el usuario la solicita o si la spec detecta necesidad de busqueda semantica.
+</div>
+
+<h3 id="p4-2">4.2 Stack tecnologico de la Mini IA</h3>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Componente</th><th>Tecnologia</th><th>Peso</th><th>Notas</th></tr></thead>
+<tbody>
+<tr><td>Runtime ML</td><td>Transformers.js v4</td><td>~9 MB</td><td>Apache-2.0. Backend ONNX WASM.</td></tr>
+<tr><td>Embeddings</td><td>all-MiniLM-L6-v2</td><td>~80 MB</td><td>Soporta espanol. Cuantizado Q8.</td></tr>
+<tr><td>QA Extractivo</td><td>distilbert multilingual</td><td>~70 MB</td><td>Modelo distilled BERT. Buena relacion calidad/velocidad.</td></tr>
+<tr><td>Busqueda</td><td>FlexSearch</td><td>~7-16 KB</td><td>Indice full-text persistente en IndexedDB.</td></tr>
+<tr><td>Worker</td><td>Web Worker (navegador)</td><td>—</td><td>Obligatorio: no bloquear UI con inferencia.</td></tr>
+<tr><td>Almacenamiento</td><td>Dexie / SQLite</td><td>—</td><td>Embeddings e indices guardados localmente.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note note-warn">
+<strong>⚠️ Atencion</strong>
+La primera ejecucion requiere descargar ~150 MB en modelos ONNX. Esto ocurre UNA VEZ y los modelos quedan cacheados (en navegador via Cache API, o en disco via Bun). Despues funciona 100% offline. Alternativa: incluir modelos en el .exe (aumenta el peso final pero elimina descarga inicial).
+</div>
+
+<h3 id="p4-3">4.3 Modelos recomendados</h3>
+
+<div class="dual">
+<div class="card card-blue">
+<h4>Embeddings (busqueda semantica)</h4>
+<p><strong>Modelo:</strong> <code>Xenova/all-MiniLM-L6-v2</code></p>
+<ul>
+<li>Peso: ~80 MB cuantizado</li>
+<li>Idiomas: multilingual (espanol incluido)</li>
+<li>Dimension: 384</li>
+<li>Uso: Convertir texto a vectores para busqueda por significado</li>
+</ul>
+</div>
+<div class="card card-purple">
+<h4>QA Extractivo (preguntas y respuestas)</h4>
+<p><strong>Modelo:</strong> <code>Xenova/distilbert-base-multilingual-cased</code></p>
+<ul>
+<li>Peso: ~70 MB cuantizado</li>
+<li>Idiomas: multilingual (espanol incluido)</li>
+<li>Uso: Extraer respuesta de un fragmento de texto</li>
+<li>Alternativa espanol: <code>Xenova/bert-base-spanish-wwm-uncased</code></li>
+</ul>
+</div>
+</div>
+
+<div class="note note-green">
+<strong>🎯 Recomendacion</strong>
+Empieza solo con <strong>FlexSearch</strong> (nivel 1). No requiere descarga de modelos, pesa 7 KB y cubre el 80% de las necesidades de busqueda en apps de gestion. Anade Transformers.js solo si el usuario explicitamente pide "busqueda inteligente" o "IA".
+</div>
+</section>
+
+<!-- ═══════════ PARTE 5: DEPLOYMENT ═══════════ -->
+<section>
+<h2>Parte 5 — Deployment y Venta</h2>
+
+<h3 id="p5-1">5.1 Tabla de opciones de empaquetado</h3>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Opcion</th><th>Peso .exe</th><th>Runtime</th><th>Prot. IP</th><th>Curva</th><th>Ideal para</th></tr></thead>
+<tbody>
+<tr><td><strong>.html puro</strong></td><td>0 MB + assets</td><td>Navegador</td><td>Nula</td><td>Nula</td><td>Demos, entregas rapidas, presupuesto minimo</td></tr>
+<tr><td><strong>Bun --compile</strong></td><td>50-55 MB</td><td>Bun incluido</td><td>Ofuscado</td><td>JS puro</td><td>Apps complejas con backend local, BD SQLite ⬅ RECOMENDADO</td></tr>
+<tr><td><strong>Neutralino.js</strong></td><td>1-2 MB</td><td>WebView OS</td><td>Binario</td><td>Config</td><td>Apps ligeras, wrappers de UI, kioskos</td></tr>
+<tr><td><strong>Tauri</strong></td><td>5-15 MB</td><td>WebView + Rust</td><td>Binario++</td><td>Rust basico</td><td>Apps medianas, rendimiento critico, OTA updates</td></tr>
+<tr><td><strong>Electron</strong></td><td>150-300 MB</td><td>Chromium</td><td>Ofuscado</td><td>JS puro</td><td>Apps legacy, APIs nativas varias</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note note-key">
+<strong>💡 Diferencia clave</strong>
+Bun --compile y Neutralino.js son rutas alternativas. El primero incluye un runtime JS completo (~50 MB). El segundo usa el WebView del sistema operativo (~2 MB). La desventaja de Neutralino: APIs nativas limitadas, WebView varia por OS. Para el 80% de los casos, Bun --compile da el mejor balance entre peso aceptable y capacidad.
+</div>
+
+<h3 id="p5-2">5.2 Estrategia de venta</h3>
+
+<div class="card card-green">
+<h4>Percepcion del cliente</h4>
+<table>
+<thead><tr><th>Formato</th><th>El cliente ve...</th><th>Rango de precio tipico</th></tr></thead>
+<tbody>
+<tr><td>.html suelto</td><td>"Un archivo que me enviaron"</td><td>$ 50 - $ 200</td></tr>
+<tr><td>.exe (Bun)</td><td>"Un programa instalado"</td><td>$ 500 - $ 2.000</td></tr>
+<tr><td>.exe (Tauri)</td><td>"Una app ligera profesional"</td><td>$ 800 - $ 3.000</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card card-blue">
+<h4>Personalizacion profesional</h4>
+<ul>
+<li><strong>Icono de aplicacion:</strong> .ico integrado en el .exe. El logo del cliente en el escritorio.</li>
+<li><strong>Ventana sin bordes:</strong> Sin barra de direcciones, sin botones de navegador. Parece nativo.</li>
+<li><strong>Splash screen:</strong> Pantalla de carga con logo mientras se inicia.</li>
+<li><strong>Nombre del proceso:</strong> Aparece como "ClinicaPro.exe" no como "bun.exe" o "node.exe".</li>
+<li><strong>Instalador opcional:</strong> NSIS o Inno Setup para crear setup.exe con acceso directo y desinstalador.</li>
+</ul>
+</div>
+
+<div class="card card-orange">
+<h4>Proteccion del codigo</h4>
+<p>El .html se entrega con codigo fuente visible. El .exe de Bun se entrega compilado (no es ofuscacion total, pero requiere ingenieria inversa avanzada). Para proteccion adicional:</p>
+<ul>
+<li>Minificar codigo antes de compilar</li>
+<li>Ofuscadores JS (javascript-obfuscator) antes del build</li>
+<li>Archivo de licencia .key firmado con Web Crypto</li>
+</ul>
+</div>
+</section>
+
+<!-- ═══════════ PARTE 6: RECOMENDACIONES ═══════════ -->
+<section>
+<h2>Parte 6 — Recomendaciones</h2>
+
+<h3 id="p6-1">6.1 Arbol de decision: &iquest;Que perfil elegir?</h3>
+
+<div class="tree">
+<div class="tree-node root">&iquest;Que vas a construir?</div>
+<div class="tree-arrow">&#8595;</div>
+<div class="tree-branch">
+<div style="text-align:center">
+<div class="tree-node">App simple<br><span style="font-weight:400;font-size:13px">CRUD, gestion,<br>menos de 10 modulos</span></div>
+<div class="tree-arrow">&#8595;</div>
+<div class="tree-node lite">Lite<br><span style="font-weight:400;font-size:12px">file:// + Dexie</span></div>
+</div>
+<div style="text-align:center">
+<div class="tree-node">App compleja<br><span style="font-weight:400;font-size:13px">Reportes, SQL, auth,<br>IA, muchos datos</span></div>
+<div class="tree-arrow">&#8595;</div>
+<div class="tree-node full">Full<br><span style="font-weight:400;font-size:12px">Bun + SQLite + .exe</span></div>
+</div>
+<div style="text-align:center">
+<div class="tree-node">&iquest;No sabes?<br><span style="font-weight:400;font-size:13px">Empieza simple y<br>migra si hace falta</span></div>
+<div class="tree-arrow">&#8595;</div>
+<div class="tree-node lite">Lite primero<br><span style="font-weight:400;font-size:12px">Siempre puedes<br>pasar a Full luego</span></div>
+</div>
+</div>
+</div>
+
+<p style="margin-top:16px"><strong>Regla general:</strong> Empieza siempre en <strong>Lite</strong> (desarrollo rapido, sin build, doble clic). Si el proyecto requiere SQLite, autenticacion server-side, IA o entrega en .exe, migras a <strong>Full</strong>. La migracion es practicamente cambiar la capa de datos (Dexie → fetch API) y generar el servidor.</p>
+
+<h3 id="p6-2">6.2 Roadmap sugerido</h3>
+
+<div class="roadmap">
+<div class="roadmap-item done">
+<h4>Fase 1: Skills sin cambios (listo)</h4>
+<p>spec-creator, daisyui-patterns, llm-wiki, ux-ui-universal no se tocan.</p>
+<span class="tag tag-both">Ya funciona</span>
+</div>
+<div class="roadmap-item done">
+<h4>Fase 2: Cambios minimos</h4>
+<p>design-ux-intelligence (Lucide default, Animate.css condicional), stack-compliance-guard (reglas Full), ux-refactor (deteccion de perfil).</p>
+<span class="tag tag-both">1-2 dias</span>
+</div>
+<div class="roadmap-item">
+<h4>Fase 3: prompt-inicial + setup-init</h4>
+<p>Selector de perfil en el orquestador. setup-init ramifica: curl vs bun init.</p>
+<span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span>
+</div>
+<div class="roadmap-item">
+<h4>Fase 4: code-generator + templates</h4>
+<p>Crear directorio templates/lite/ y templates/full/. El generador elige segun perfil.</p>
+<span class="tag tag-lite">Lite</span> <span class="tag tag-full">Full</span>
+</div>
+<div class="roadmap-item future">
+<h4>Fase 5: deployment-jigue + ia-jutia</h4>
+<p>Skills nuevas: compilacion a .exe y Mini IA opcional.</p>
+<span class="tag tag-new">Nuevas</span>
+</div>
+<div class="roadmap-item future">
+<h4>Fase 6: Spec mejorada</h4>
+<p>Actualizar spec-creator con nuevas secciones (Modelo Datos, Journeys, Wireframes, Testing). Refinar asunciones 4+1.</p>
+<span class="tag tag-both">Mejora continua</span>
+</div>
+</div>
+
+<h3 id="p6-3">6.3 FAQ</h3>
+
+<div class="faq">
+<details>
+<summary>&iquest;Si elijo Lite, puedo migrar a Full despues?</summary>
+<p><strong>Si, y es el camino recomendado.</strong> Los modulos Alpine.js son identicos. Solo cambia la capa de datos (db.js) y la existencia de un servidor. Puedes empezar en Lite, desarrollar toda la funcionalidad, y cuando estes listo para entregar, activar el perfil Full para generar el servidor y compilar a .exe.</p>
+</details>
+
+<details>
+<summary>&iquest;Pesa mucho el .exe de Bun?</summary>
+<p><strong>~50-55 MB.</strong> Bun empaqueta su runtime en el binario. Esto significa que el cliente NO necesita instalar Bun, Node.js ni nada. El .exe es autocontenido. Es comparable al peso de cualquier app desktop moderna. Si 50 MB es demasiado, evaluar Neutralino.js (~2 MB) o Tauri (~10 MB).</p>
+</details>
+
+<details>
+<summary>&iquest;La Mini IA funciona en el perfil Lite?</summary>
+<p><strong>Si.</strong> Transformers.js funciona en el navegador, no requiere Bun. Los modelos se descargan una vez (~150 MB) y se cachean. La unica diferencia entre Lite y Full es que en Full puedes usar el Worker de Bun en lugar del Web Worker del navegador.</p>
+</details>
+
+<details>
+<summary>&iquest;Que pasa con las apps existentes creadas con SKILLS-AHAGUILERA?</summary>
+<p><strong>Siguen funcionando exactamente igual.</strong> El perfil Lite es SKILLS-AHAGUILERA sin cambios. El stack unificado solo anade opciones, no modifica el comportamiento existente.</p>
+</details>
+
+<details>
+<summary>&iquest;Merezco mantener dos ramas de templates en code-generator?</summary>
+<p><strong>No es tan grave como parece.</strong> Los templates comparten ~80% del codigo (Alpine stores, UI helpers, routing, modulos HTML). Solo la capa de datos (db.js) y el entry point (index.html vs servidor.ts) son diferentes. Puedes tener un template base compartido y solo templated diferenciados para esas piezas.</p>
+</details>
+
+<details>
+<summary>&iquest;Puedo personalizar el icono del .exe?</summary>
+<p><strong>Si.</strong> Bun soporta <code>--icon</code> en <code>bun build --compile</code> para Windows (<code>.ico</code>) y macOS (<code>.icns</code>). Tambien puedes embeber metadatos (version, descripcion, compania) con <code>--metadata</code>.</p>
+</details>
+
+<details>
+<summary>&iquest;Que licencia tienen los modelos ONNX de la Mini IA?</summary>
+<p>Todos los modelos mencionados son <strong>Apache-2.0</strong> (Transformers.js, all-MiniLM-L6-v2, distilbert, bert-spanish). No hay restricciones de uso comercial.</p>
+</details>
+</div>
+
+</section>
+
+<!-- ═══════════ PARTE 7: CONCLUSION ═══════════ -->
+<section>
+<h2 id="p7">Parte 7 — Conclusion</h2>
+
+<div class="card card-green">
+<h4>Resumen ejecutivo</h4>
+<ul>
+<li><strong>No crees ATEJE-SKILLS</strong> como repo separado. Evoluciona SKILLS-AHAGUILERA anadiendo un selector de perfil al inicio.</li>
+<li><strong>4 skills no cambian</strong>, 3 requieren cambios minimos, 3 requieren cambios significativos, 2 son nuevas.</li>
+<li><strong>El 80% del codigo</strong> (Alpine, DaisyUI, modulos, routing) se comparte entre perfiles. Solo la capa de datos cambia.</li>
+<li><strong>Las specs mejoradas</strong> (Modelo Datos, Journeys, Wireframes, Testing) elevan la calidad sin alargar el proceso.</li>
+<li><strong>La Mini IA</strong> es opcional y funciona en ambos perfiles. Empezar solo con FlexSearch (7 KB, sin modelos).</li>
+<li><strong>La entrega en .exe</strong> via Bun --compile pesa ~55 MB pero no requiere runtime externo y protege el codigo.</li>
+</ul>
+</div>
+
+<div class="note note-green">
+<strong>🎯 Voto final</strong>
+Unificar en un solo stack con perfiles (Web/Desktop). La alternativa de dos repos separados duplica mantenimiento sin beneficio real. El stack actual no se rompe, solo se expande.
+</div>
+
+<div class="card">
+<h4>Checklist de decision</h4>
+<ul class="checklist">
+<li><label><input type="checkbox"> Leer la Parte 1: entender los perfiles Lite y Full</label></li>
+<li><label><input type="checkbox"> Revisar la Parte 2: que skills cambian y como</label></li>
+<li><label><input type="checkbox"> Evaluar las specs mejoradas (Parte 3) para el proximo proyecto</label></li>
+<li><label><input type="checkbox"> Decidir si la Mini IA (Parte 4) es necesaria ahora o mas adelante</label></li>
+<li><label><input type="checkbox"> Revisar la estrategia de venta (Parte 5) para el proximo presupuesto</label></li>
+<li><label><input type="checkbox"> Usar el arbol de decision (Parte 6) para elegir perfil en el proximo proyecto</label></li>
+<li><label><input type="checkbox"> Confirmar la decision de unificar en un solo stack</label></li>
+</ul>
+</div>
+</section>
+
+</main>
+
+<footer>
+<p>Documento generado para estudio — Stack Offline-First Profesional</p>
+<p>Basado en SKILLS-AHAGUILERA + ATEJE &mdash; 2025</p>
+</footer>
+
+<script>
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('drawerOverlay').classList.toggle('open');
+  document.body.style.overflow = document.getElementById('drawer').classList.contains('open') ? 'hidden' : '';
+}
+
+// Calcular tiempo de lectura
+(function(){
+  const text = document.body.innerText;
+  const words = text.split(/\\s+/).length;
+  const min = Math.max(1, Math.round(words / 200));
+  document.getElementById('readingTime').textContent = min + ' min de lectura';
+})();
+</script>
+
+</body>
+</html>

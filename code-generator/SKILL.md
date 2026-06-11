@@ -5,7 +5,8 @@ license: MIT
 compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes. Funciona offline-first, sin builds, sin CDNs, sin imports. Lee libreriasAdicionales de la spec.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "2.3"
+  version: "3.0"
+  perfiles: [lite, full]
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -24,19 +25,26 @@ meta:
 
 ## 🔄 FLUJO OBLIGATORIO (NO OMITIR FASES)
 
-### 🟢 FASE 1: Carga de Spec y Plan de Ejecución
+> **Nota**: ~95% del código es idéntico entre perfiles (Alpine + Dexie + CryptoJS + UI). Solo difieren setup/build/deploy. Los templates core son los mismos para Lite y Full.
+
+### 🟢 FASE 1: Carga de Spec y Perfil
 1. Lee `specs/[app].md` y extrae:
    - Módulos requeridos (`modulosActivos`)
    - Campos sensibles a cifrar
    - Reglas de UI/UX y animaciones
    - Configuración de `project.config.js`
    - **Librerías adicionales** (sección `## 📚 Librerías Adicionales` o bloque `libreriasAdicionales`)
-2. Si detecta librerías adicionales, las incluye en el plan:
+   - **Perfil** (`project.config.js` → `APP_CONFIG.perfil`: lite/full)
+   - **IA Jutia** (`APP_CONFIG.iaJutia.perfil`: lite/full/no)
+2. Si detecta librerías adicionales o IA, las incluye en el plan:
    ```
    📋 PLAN DE GENERACIÓN
-   • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html
-   • Módulos: [lista de módulos desde spec]
-   • Librerías adicionales: [qrcode.min.js, dayjs.min.js, ...] (desde spec)
+   • Perfil: [lite|full]
+   • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html (compartido 95%)
+   • Módulos: [lista de módulos desde spec] (compartidos)
+   • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
+   • Librerías adicionales: [lista] (desde spec)
+   • Full extra: src/index.js (Bun server entry point)
    • Validación: stack-compliance-guard auto-aplicado
    • Entregable: Código por bloques con ruta exacta
    ✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
@@ -44,7 +52,8 @@ meta:
 3. **ESPERA confirmación** antes de continuar.
 
 ### 🟡 FASE 2: Core, Shell y Configuración
-Genera los archivos base **en un solo bloque bien estructurado** con rutas exactas:
+Genera los archivos base **en un solo bloque bien estructurado** con rutas exactas.
+**Estos archivos son idénticos para Lite y Full:**
 
 **Index.html con librerías dinámicas:**
 El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base → **Libs adicionales (desde spec)** → Core → Main
@@ -82,7 +91,25 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 [Manifest con name, icons, display standalone, theme_color]
 
 ### `project.config.js`
-[Config white-label completa según spec]
+[Config white-label completa según spec, incluyendo APP_CONFIG.perfil y APP_CONFIG.iaJutia]
+
+**Si perfil=Full, añadir archivo extra:**
+### `src/index.js`
+[Entry point para Bun --compile. Servidor estático que sirve public/]
+```javascript
+import { serve } from 'bun';
+import { join } from 'path';
+const port = process.env.PORT || 3000;
+serve({
+  port,
+  async fetch(req) {
+    const url = new URL(req.url);
+    let path = url.pathname === '/' ? '/index.html' : url.pathname;
+    try { return new Response(Bun.file(join(import.meta.dir, '../public', path))); }
+    catch { return new Response('Not Found', { status: 404 }); }
+  }
+});
+```
 
 ⏸️ PAUSA. Revisa estructura. Responde "✅ FASE 2 OK" para continuar.
 ```
@@ -142,14 +169,21 @@ Para cada módulo en la spec:
 ### 🟣 FASE 4: Ensamblaje Final y Handoff
 1. Confirma que todos los módulos están generados.
 2. Entrega snippet final de `project.config.js` con `modulosActivos` actualizado.
-3. Mensaje de cierre:
-   ```
-   ✅ GENERACIÓN COMPLETADA
-   📂 Estructura: lista
-   🛡️ Compliance: 100% validado
-   📄 Especificación: specs/[app].md
-   🚀 Siguiente paso: validar app (ejecuta: validar app)
-   ```
+3. Si perfil=Full, sugiere compilar:
+```bash
+bun build --compile ./src/index.js --outfile dist/[app].exe
+```
+4. Mensaje de cierre:
+```
+✅ GENERACIÓN COMPLETADA
+📦 Perfil: [lite|full]
+📂 Estructura: lista
+🧠 IA Jutia: [lite|full|no]
+🛡️ Compliance: 100% validado
+📄 Especificación: specs/[app].md
+🚀 Siguiente paso: validar app (ejecuta: validar app)
+📦 Para empaquetar: ejecuta publicar
+```
 
 ---
 
@@ -169,6 +203,9 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
 - [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
+- [ ] **Perfil**: ¿perfil=Lite pero genera `src/index.js`? → ❌ RECHAZAR (solo Full)
+- [ ] **Perfil**: ¿perfil=Full pero no genera `src/index.js`? → ❌ RECHAZAR
+- [ ] **Perfil**: ¿perfil=Full y usa `import` en `public/` JS? → ❌ RECHAZAR (import solo en src/)
 
 === OUTPUT ENFORCEMENT (De taste-skill/output-skill) ===
 - [ ] ¿`// ...` / `// TODO` / `// rest of code` en output? → ❌ COMPLETAR código real
@@ -482,10 +519,12 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 | SKILL | Rol en este flujo |
 |-------|------------------|
 | `spec-creator` | Provee `specs/[app].md` con estructura, campos sensibles, reglas UI y `libreriasAdicionales` |
-| `setup-init` | Descarga las librerías adicionales a `assets/js/libs/` |
-| `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque. Corrige o rechaza si viola reglas |
+| `setup-init` | Instala librerías (Lite: curl a assets/ / Full: bun add npm) |
+| `ia-jutia` | Si se incluye, genera módulo IA + core/ia.js según perfil Lite/Full |
+| `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque |
 | `design-ux-intelligence` | Aplica tono visual, contrastes, espaciado y animaciones según spec |
-| `validation-offline` | Consume el output de esta SKILL. Ejecuta `validar app` tras completar FASE 4 |
+| `validation-offline` | Ejecuta `validar app` tras completar FASE 4 |
+| `deployment-jigue` | Empaqueta (Lite: ZIP / Full: .exe) y despliega a Pages |
 
 ---
 

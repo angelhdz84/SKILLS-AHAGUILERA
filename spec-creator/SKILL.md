@@ -5,7 +5,8 @@ license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "3.2"
+  version: "4.0"
+  perfiles: [lite, full]
   generatedBy: "spec-creator skill"
   triggers: ["definir spec app", "nueva app completa", "crear especificación", "historia de app", "spec creator", "brainstorming app", "descubrir app", "diseñar app"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -270,9 +271,23 @@ Arregla lo que encuentres inline y avanza.
    ## 🎯 Descripción
    ## ✅ Criterios de Aceptación (Gherkin)
    ## 🧱 Arquitectura y Módulos
+   ## 📐 Modelo de Datos Detallado
+   ### Tablas (Dexie schema)
+   | Campo | Tipo | Cifrado | Índice | Descripción |
+   ### Relaciones
+   ### Perfil Lite: schema Dexie
+   ### Perfil Full: schema SQL adicional
    ## 🔐 Seguridad y Datos
    ## 🎨 UI/UX y Animaciones
+   ## 🧭 User Journeys
+   ### Journey 1: [nombre]
+   ### Journey 2: [nombre]
+   ## ✅ Testing Criteria
+   ### Unitarios
+   ### Integración
+   ### E2E (Playwright)
    ## 📚 Librerías Adicionales
+   ## 🧠 IA Jutia (opcional)
    ## ⚙️ Configuración (project.config.js)
    ## 📦 Pre-requisitos y Checklist
    ```
@@ -328,17 +343,17 @@ Tu respuesta:
 
 ---
 
-## 📋 LISTA DE ASUNCIONES BASE (Adaptar según historia)
-1. **Arquitectura**: SPA hash-based, router en `core/app.js`, módulos en `modules/`.
-2. **Datos**: IndexedDB vía Dexie, sin JOINs complejos, <1000 registros/tabla.
-3. **Seguridad**: Clave cifrado en `localStorage`, prompt inicial si aplica.
-4. **UI/UX**: Mobile-first, modo oscuro/claro persistente, animaciones `fadeInUp` escalonadas.
-5. **Módulos**: Activables/desactivables en `project.config.js`.
-6. **Backup/Export**: Manual a JSON/PDF/Excel, comprimido con pako si >1MB.
-7. **Validación**: Formularios con feedback inmediato, mensajes en español, contraste WCAG AA.
-8. **Entrega**: Web (ZIP) + opcional Electron, `GUIA_USUARIO.md` incluido.
-9. **Sync (si aplica)**: Endpoint `POST /sync` batch, registros con `lastModified`, idempotencia en writes.
-10. **Privacidad**: Datos mínimos recolectados, consentimiento local explícito antes de guardar.
+## 📋 LISTA DE ASUNCIONES (Refocus Business/UX — Adaptar según historia)
+1. **Usuarios**: [perfil usuario] usará la app [frecuencia], en [dispositivo].
+2. **Datos**: Volumen estimado [N] registros/mes, [crece/no crece].
+3. **UX**: La interfaz debe priorizar [rapidez/simplicidad/detalle].
+4. **Distribución**: La app se entregará como [ZIP / .exe / ambos].
+5. **Privacidad**: Los datos [incluyen/no incluyen] información sensible.
+6. **Módulos**: Activables/desactivables en `project.config.js`.
+7. **Backup/Export**: Manual a JSON/PDF/Excel.
+8. **Validación**: Formularios con feedback inmediato, mensajes en español.
+9. **Sync (si aplica)**: Estrategia definida en ADR.
+10. **IA Jutia (si aplica)**: Perfil [lite/full/no] según necesidades de búsqueda y análisis.
 
 ---
 
