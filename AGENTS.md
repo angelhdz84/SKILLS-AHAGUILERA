@@ -34,6 +34,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `daisyui-patterns/` | Patrones DaisyUI 5 + Alpine.js | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
+| `supercharged-pipeline/` | Pipeline potenciado SP+SA: brainstorming => subagents => dual review | lite, full |
 | `llm-wiki/` | Wiki persistente (markdown versionado + MCP memory graph) | lite, full |
 | `github-page-publish/` | **(deprecado)** Reemplazado por deployment-jigue | — |
 
@@ -57,6 +58,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `/docs` | — | Abre guia-skills-mcps.html |
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
+| `/pro` | `pipeline potenciado` | Orquesta Superpowers + SA: brainstorming => spec => writing-plans => subagents => dual review => deploy |
 
 ## Directorios generados (no versionar)
 
