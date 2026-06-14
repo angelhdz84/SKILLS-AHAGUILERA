@@ -8,7 +8,7 @@ meta:
   version: "3.0"
   perfiles: [lite, full]
   generatedBy: "prompt-inicial orchestrator"
-  triggers: ["nuevo proyecto", "iniciar pipeline", "crear app", "iniciar flujo", "prompt-inicial"]
+  triggers: ["nuevo proyecto", "iniciar pipeline", "crear app", "iniciar flujo", "prompt-inicial", "/pro"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
   language: es
   pipeline: true
@@ -133,6 +133,9 @@ Al finalizar, muestra:
 | `ia-jutia` | Módulo de IA opcional (Lite/Full) | `mini ia` |
 | `validation-offline` | Fase 4: Reporte final | `validar app` |
 | `deployment-jigue` | Fase 5: Empaquetado y deploy | `publicar` |
+| `supercharged-pipeline` | Pipeline potenciado SP+SA (alternativa a /new) | `/pro` |
+| `ux-refactor` | Refactor UX/UI para apps existentes | `/refactor` |
+| `daisyui-patterns` | Patrones DaisyUI 5 + Alpine.js | Auto-activada por code-generator |
 
 ---
 

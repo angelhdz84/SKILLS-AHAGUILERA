@@ -38,6 +38,17 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `llm-wiki/` | Wiki persistente (markdown versionado + MCP memory graph) | lite, full |
 | `github-page-publish/` | **(deprecado)** Reemplazado por deployment-jigue | — |
 
+## Agente Orchestrator
+
+El agente **Orchestrator** (registrado en `opencode.json` como agente `primary`) es la puerta de entrada principal del pipeline. Soporta dos modos:
+
+| Modo | Comando | Pipeline | Cuándo usarlo |
+|------|---------|----------|---------------|
+| Clásico | `/new` | 5 fases: setup → spec → build → validate → deploy | Proyectos simples, prototipos rápidos |
+| Supercharged | `/pro` | 7 fases: brainstorming → spec → writing-plans → subagents → dual review → deploy | Proyectos complejos, producción, equipo |
+
+El Orchestrador pregunta el modo si no se especifica. Si Superpowers no está instalado, hace fallback automático al modo clásico.
+
 ## MCP Servers
 
 - `mcp-servers/stocky/` — Python. Busca imágenes Pexels + Unsplash. Setup: `pip install -e .`
@@ -47,7 +58,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
 | Comando | Trigger | Efecto |
 |---------|---------|--------|
-| `/new` | `nuevo proyecto` | Pipeline orquestado completo (pregunta perfil) |
+| `/new` | `nuevo proyecto` | Pipeline clásico 5 fases vía Orchestrator (setup→spec→build→validate→deploy) |
 | `/setup` | `iniciar setup` | Crea estructura + instala librerías según perfil |
 | `/spec` | `definir spec app` | spec-creator con fases de refinamiento |
 | `/build` | `generar codigo` | Fase A (core/index.html) + Fase B (módulos uno por uno) |
@@ -58,7 +69,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `/docs` | — | Abre guia-skills-mcps.html |
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
-| `/pro` | `pipeline potenciado` | Orquesta Superpowers + SA: brainstorming => spec => writing-plans => subagents => dual review => deploy |
+| `/pro` | `pipeline potenciado` | Pipeline supercharged 7 fases vía Orchestrator: brainstorming→spec→writing-plans→subagents→dual review→deploy |
 
 ## Directorios generados (no versionar)
 

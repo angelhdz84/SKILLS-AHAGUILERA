@@ -8,3 +8,6 @@ skills.rar
 # Dependencias de MCP servers
 mcp-servers/*/node_modules/
 mcp-servers/*/dist/
+
+# Backup zip
+opencode-backup-*.zip
