@@ -7,7 +7,7 @@
 
 ## Identidad
 
-Meta-repo de 14 skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). No es una app. Skills generan apps en directorios externos, no dentro del repo.
+Meta-repo de 16 skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). No es una app. Skills generan apps en directorios externos, no dentro del repo.
 
 ## Perfiles
 
@@ -18,36 +18,75 @@ Meta-repo de 14 skills OpenCode (SKILL.md autónomos en directorios raíz) para 
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
-## Skills
+## Skills — Skill-Layer Architecture (5 Engines + 5 Standalone)
+
+### Motores (engines) — Skills de orquestación que reemplazan funcionalidad previa
+
+| Directorio | Propósito | Reemplaza a | Perfiles |
+|-----------|-----------|-------------|----------|
+| `pipeline-engine/` | Orquestador maestro dual: Classic (5 fases, /new) y Design (10 fases, /pro) | prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator | lite, full |
+| `spec-engine/` | Spec funcional + DESIGN.md brand layer con 286 referencias oh-my-design | spec-creator + omd:init + omd:taste | lite, full |
+| `design-engine/` | Brand context injection + tokens DaisyUI + captura de preferencias persistentes | design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn | lite, full |
+| `validation-engine/` | 4 fases: compliance → brand audit → DevTools/Playwright → QA rubric + modo refactor | validation-offline + ux-refactor + omd:designer-review + omd:final-qa | lite, full |
+| `wiki-engine/` | Wiki persistente + preferencias de diseño .omd/preferences.md + MCP memory | llm-wiki + omd:remember + omd:learn | lite, full |
+
+### Skills standalone (no reemplazadas)
 
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
-| `prompt-inicial/` | Orquestador maestro del pipeline completo | lite, full |
 | `setup-init/` | Valida entorno, crea estructura, instala librerías | lite, full |
-| `spec-creator/` | Historia de usuario → spec técnica validada v4 | lite, full |
-| `design-ux-intelligence/` | Diseño visual + checklist UX crítico | lite, full |
-| `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | `code-generator/` | Genera código por fases desde specs, un módulo por turno | lite, full |
-| `validation-offline/` | Validación estática + DevTools + Playwright E2E + reporte | lite, full |
-| `ux-refactor/` | Refactor UX/UI 4 fases para apps offline-first existentes | lite, full |
-| `ux-ui-universal/` | Refactor UX/UI multi-stack vía context7 (React, Django, etc.) | multi-stack |
+| `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
-| `daisyui-patterns/` | Patrones DaisyUI 5 + Alpine.js | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
-| `supercharged-pipeline/` | Pipeline potenciado SP+SA: brainstorming => subagents => dual review | lite, full |
-| `llm-wiki/` | Wiki persistente (markdown versionado + MCP memory graph) | lite, full |
-| `github-page-publish/` | **(deprecado)** Reemplazado por deployment-jigue | — |
+
+### Skills externas (oh-my-design, 16 skills en `~/.opencode/skills/omd-*`)
+
+Catálogo de 286 referencias de diseño reales (DESIGN.md de Stripe, Linear, Vercel, etc.). Consumidas por los engines, ejecución delegada a sub-agentes OpenCode.
+
+### Skills deprecadas (mantenidas por compatibilidad, redirigen a engines)
+
+| Directorio | Estado | Reemplazo |
+|-----------|--------|-----------|
+| `prompt-inicial/` | @deprecated | pipeline-engine (/new) |
+| `spec-creator/` | @deprecated | spec-engine (/spec) |
+| `design-ux-intelligence/` | @deprecated | design-engine |
+| `validation-offline/` | @deprecated | validation-engine (/test) |
+| `ux-refactor/` | @deprecated | validation-engine (modo refactor) |
+| `llm-wiki/` | @deprecated | wiki-engine |
+| `supercharged-pipeline/` | @deprecated | pipeline-engine (/pro) |
+| `daisyui-patterns/` | @deprecated | design-engine |
+| `ux-ui-universal/` | eliminado | OmD multi-stack |
+| `github-page-publish/` | deprecado previamente | deployment-jigue |
 
 ## Agente Orchestrator
 
-El agente **Orchestrator** (registrado en `opencode.json` como agente `primary`) es la puerta de entrada principal del pipeline. Soporta dos modos:
+El agente **Orchestrator** (registrado en `opencode.json` como agente `primary`) activa **pipeline-engine** como puerta de entrada principal. Soporta dos modos:
 
 | Modo | Comando | Pipeline | Cuándo usarlo |
 |------|---------|----------|---------------|
-| Clásico | `/new` | 5 fases: setup → spec → build → validate → deploy | Proyectos simples, prototipos rápidos |
-| Supercharged | `/pro` | 7 fases: brainstorming → spec → writing-plans → subagents → dual review → deploy | Proyectos complejos, producción, equipo |
+| Classic | `/new` | 5 fases: setup → spec → design → build → validate → deploy | Proyectos simples, prototipos rápidos |
+| Design | `/pro` | 10 fases: taste → init → design → spec → code → inject → review → QA → pack → deploy | Proyectos con marca, producción, equipo |
 
-El Orchestrador pregunta el modo si no se especifica. Si Superpowers no está instalado, hace fallback automático al modo clásico.
+El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no está disponible, fallback automático al modo Classic.
+
+## Pipeline (orden exacto)
+
+`nuevo proyecto` → `iniciar setup` → `generar spec + brand` → `aplicar diseño` → `generar codigo` → `validar + auditar marca` → `publicar`
+
+## Contratos entre Skills
+
+| Emisor | Receptor(es) | Artefacto |
+|--------|-------------|-----------|
+| pipeline-engine | setup-init, spec-engine | Nombre + tipo + descripción + perfil + modo (classic/design) |
+| setup-init | code-generator | Estructura + librerías según perfil |
+| spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` + `specs/DESIGN.md` |
+| design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` |
+| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` (+ src/ en Full) |
+| stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
+| validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
+| deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + Release (Full) |
+| wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
 
 ## MCP Servers
 
@@ -58,22 +97,25 @@ El Orchestrador pregunta el modo si no se especifica. Si Superpowers no está in
 
 | Comando | Trigger | Efecto |
 |---------|---------|--------|
-| `/new` | `nuevo proyecto` | Pipeline clásico 5 fases vía Orchestrator (setup→spec→build→validate→deploy) |
+| `/new` | `nuevo proyecto` | pipeline-engine → setup-init → spec-engine → design-engine → code-generator → validation-engine → deployment-jigue |
+| `/pro` | `pipeline potenciado` | pipeline-engine modo Design: 10 fases con brand layer OmD |
 | `/setup` | `iniciar setup` | Crea estructura + instala librerías según perfil |
-| `/spec` | `definir spec app` | spec-creator con fases de refinamiento |
-| `/build` | `generar codigo` | Fase A (core/index.html) + Fase B (módulos uno por uno) |
-| `/test` | `validar app` | Estático + DevTools + Playwright + reporte en docs/ |
-| `/compliance` | — | Ejecuta stack-compliance-guard manualmente |
+| `/spec` | `definir spec app` | spec-engine: spec funcional + DESIGN.md brand layer |
+| `/build` | `generar codigo` | code-generator: Fase A (core/index.html) + Fase B (módulos uno por uno) |
+| `/test` | `validar app` | validation-engine: compliance → brand audit → DevTools/Playwright → QA rubric |
+| `/validate` | `validar diseño` | validation-engine modo brand audit: verifica coherencia con DESIGN.md |
+| `/refactor` | `refactorizar ux` | validation-engine modo refactor: auto-corrige desviaciones de diseño |
+| `/compliance` | — | stack-compliance-guard manual |
 | `/status` | — | Lee pipeline state (specs/, project.config.js, docs/) |
 | `/archive` | — | Mueve spec + reporte a specs/archive/ |
 | `/docs` | — | Abre guia-skills-mcps.html |
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
-| `/pro` | `pipeline potenciado` | Pipeline supercharged 7 fases vía Orchestrator: brainstorming→spec→writing-plans→subagents→dual review→deploy |
+| `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
 
 ## Directorios generados (no versionar)
 
-`docs/`, `specs/`, `wiki/` son output de skills. `tests/` contiene app de prueba y resultados.
+`docs/`, `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
 
 ## Tests
 

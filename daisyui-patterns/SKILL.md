@@ -1,6 +1,9 @@
 ---
+# @deprecated — Absorbido por design-engine
+# Motivo: El conocimiento de DaisyUI 5 + Alpine.js ahora es parte integral de design-engine
+# Migración: design-engine aplica patrones DaisyUI directamente al generar UI
 name: daisyui-patterns
-description: Patrones de componentes DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial via SKILL.md de daisyui.com + integracion con Alpine (x-data, $persist, modales, drawer, dropdowns). Consumido por code-generator, design-ux-intelligence, ux-refactor.
+description: [DEPRECATED] Absorbido por design-engine. Patrones de componentes DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial via SKILL.md de daisyui.com + integracion con Alpine (x-data, $persist, modales, drawer, dropdowns). Consumido por code-generator, design-ux-intelligence, ux-refactor.
 license: MIT
 compatibility: Requiere DaisyUI 5 + Tailwind CSS 4. Compatible con stack offline-first (assets/ local o CDN).
 meta:

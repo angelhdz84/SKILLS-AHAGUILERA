@@ -1,9 +1,9 @@
 # Pipeline orquestado (orden exacto)
 
-`nuevo proyecto` → `iniciar setup` → `definir spec app` → `generar codigo` → `validar app` → `publicar`
+`nuevo proyecto` → `iniciar setup` → `generar spec + brand` → `aplicar diseño` → `generar codigo` → `validar + auditar marca` → `publicar`
 
 - **PAUSA tras cada fase**. OpenCode pierde contexto >15k tokens. No generar todo de una vez.
-- `prompt-inicial/SKILL.md` es el orquestador maestro. Los triggers se listan en metadata YAML de cada skill.
+- `pipeline-engine/SKILL.md` es el orquestador maestro. Soporta dos modos: Classic (5 fases, /new) y Design (10 fases, /pro).
 - `stack-compliance-guard` se auto-activa tras cada output de código. No requiere trigger.
 - **Push requiere confirmación explícita** — solo hacer commit, no push sin pedir.
 - **Perfil (lite/full)** se define en `project.config.js` y determina setup, templates y empaquetado.
@@ -11,21 +11,21 @@
 
 ## Contratos entre Skills
 
-| Skill Output | Skill Input | Artifact |
-|---|---|---|
-| prompt-inicial | setup-init, spec-creator | Nombre + tipo + descripción + perfil (lite/full) |
+| Emisor | Receptor(es) | Artefacto |
+|--------|-------------|-----------|
+| pipeline-engine | setup-init, spec-engine | Nombre + tipo + descripción + perfil + modo (classic/design) |
 | setup-init | code-generator | Estructura + librerías según perfil (curl o bun add) |
-| spec-creator | code-generator, design-ux, llm-wiki | `specs/[app].md` v4 con modelo datos + journeys + testing |
-| design-ux-intelligence | code-generator, ux-refactor | Tono visual + paleta + estilo + tipografía |
-| code-generator | compliance, validation, llm-wiki, ux-refactor, ia-jutia | `modules/*`, `core/*`, `index.html` (+ src/ en Full) |
+| spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` (con modelo datos + journeys + testing) + `specs/DESIGN.md` (brand layer) |
+| design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` (tokens, paleta, tipografía) |
+| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` (+ src/ en Full) |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
-| ia-jutia | code-generator, setup-init | `modules/ia-jutia/` + `core/ia.js` según perfil Lite/Full |
-| validation-offline | llm-wiki | `docs/validacion-[app].md` → llm-wiki actualiza app |
+| validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
 | deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + Release (Full) |
-| llm-wiki | — | `wiki/` (páginas markdown) + MCP memory (grafo persistente) |
+| wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
 
 ## Archivos generados (no versionar)
 
 - `docs/validacion-[app].md`, `docs/test_results.json`, `docs/screenshot_test.png`
 - `dist/[app].zip` (Lite) o `dist/[app].exe` (Full)
+- `.omd/preferences.md` (preferencias de diseño persistentes)
 - `skills.rar`

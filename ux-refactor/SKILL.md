@@ -1,6 +1,9 @@
 ---
+# @deprecated — Absorbido por validation-engine
+# Motivo: Unificación con validation-offline + omd:designer-review + omd:final-qa en validation-engine
+# Migración: validation-engine tiene modo "refactor" que auto-corrige desviaciones de DESIGN.md
 name: ux-refactor
-description: Audita, recomienda y aplica mejoras de UX/UI a apps offline-first existentes. 4 fases: audit → recommend → implement → validate. Lee codigo existente y lo modifica in-place sin regenerar la app. Orquesta design-ux-intelligence, interaction-patterns, page-structure-patterns y demas skills/patrones.
+description: [DEPRECATED] Absorbido por validation-engine (modo refactor). Audita, recomienda y aplica mejoras de UX/UI a apps offline-first existentes. 4 fases: audit → recommend → implement → validate. Lee codigo existente y lo modifica in-place sin regenerar la app. Orquesta design-ux-intelligence, interaction-patterns, page-structure-patterns y demas skills/patrones.
 license: MIT
 compatibility: Requiere @AGENTS.md y project.config.js. Funciona sobre apps offline-first existentes (Alpine.js, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css). No usa spec-creator ni code-generator.
 meta:

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Referencia Completa • Stack Offline-First</title>
+<meta name="description" content="Inventario completo de 69 skills, 12 MCPs, pipeline, comandos y stack offline-first para estudio y consulta rapida.">
+<style>
+:root {
+  --bg: #0f172a; --bg2: #1e293b; --surface: #334155;
+  --text: #f8fafc; --text2: #94a3b8; --text3: #64748b;
+  --primary: #0d9488; --primary2: #0f766e;
+  --accent: #3b82f6; --success: #22c55e; --warning: #f59e0b;
+  --error: #ef4444; --border: #475569;
+  --radius: 0.5rem; --shadow: 0 2px 8px rgba(0,0,0,0.25);
+  --h: 56px;
+}
+[data-theme="light"] {
+  --bg: #f8fafc; --bg2: #f1f5f9; --surface: #e2e8f0;
+  --text: #0f172a; --text2: #64748b; --text3: #94a3b8;
+  --border: #cbd5e1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; color-scheme: dark light; font-size: 15px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1rem; height: var(--h);
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.05rem; }
+.header-actions { display: flex; gap: 0.5rem; align-items: center; }
+.btn-icon {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.6rem; border-radius: var(--radius); cursor: pointer;
+  font-size: 0.85rem; transition: 0.15s;
+}
+.btn-icon:hover { background: var(--primary); border-color: var(--primary); }
+#search {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.7rem; border-radius: var(--radius); width: 180px; font-size: 0.85rem;
+}
+#search:focus { outline: none; border-color: var(--primary); width: 260px; }
+
+nav {
+  position: sticky; top: var(--h); z-index: 99;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none; height: 38px;
+}
+nav::-webkit-scrollbar { display: none; }
+.nav-list { display: flex; gap: 0.15rem; padding: 0 0.75rem; list-style: none; white-space: nowrap; height: 100%; align-items: center; }
+.nav-link {
+  padding: 0.25rem 0.55rem; color: var(--text2); border-radius: var(--radius);
+  font-size: 0.78rem; font-weight: 500;
+}
+.nav-link:hover, .nav-link.active { background: var(--primary); color: #fff; text-decoration: none; }
+
+main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+section { margin-bottom: 2.5rem; scroll-margin-top: calc(var(--h) + 38px + 0.5rem); }
+h1 { font-size: 1.8rem; border-bottom: 2px solid var(--primary); padding-bottom: 0.4rem; display: inline-block; }
+h2 { font-size: 1.3rem; margin: 1.5rem 0 0.5rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+h3 { font-size: 1.05rem; margin: 1rem 0 0.4rem; display: flex; align-items: center; gap: 0.4rem; }
+p, li { color: var(--text2); font-size: 0.92rem; margin-bottom: 0.5rem; }
+ul, ol { margin-left: 1.3rem; }
+
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.85rem; margin-bottom: 0.75rem;
+}
+.card h4 { font-size: 0.95rem; margin: 0 0 0.25rem; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.card p { font-size: 0.85rem; margin-bottom: 0.3rem; }
+.tag {
+  display: inline-block; background: var(--surface); padding: 0.1rem 0.4rem;
+  border-radius: 0.2rem; font-size: 0.68rem; font-family: monospace;
+}
+.tag.trig { background: var(--primary); color: #fff; }
+.tag.cat { background: var(--accent); color: #fff; }
+.tag.super { background: #7c3aed; color: #fff; }
+.tag.agent { background: #e11d48; color: #fff; }
+.tag.pat { background: #0891b2; color: #fff; }
+.tag.sub { background: #ca8a04; color: #fff; }
+.badge {
+  display: inline-block; font-size: 0.6rem; padding: 0.05rem 0.35rem; border-radius: 1rem;
+  font-weight: 600; text-transform: uppercase; vertical-align: middle;
+}
+.badge-local { background: #22c55e33; color: var(--success); border: 1px solid var(--success); }
+.badge-remote { background: #3b82f633; color: var(--accent); border: 1px solid var(--accent); }
+.badge-count {
+  font-size: 0.7rem; font-weight: 400; color: var(--text3);
+  background: var(--surface); padding: 0.05rem 0.4rem; border-radius: 1rem;
+}
+
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; background: var(--bg2); border-radius: var(--radius); overflow: hidden; font-size: 0.85rem; }
+th, td { padding: 0.4rem 0.6rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--surface); font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 0.75rem; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.6rem; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; }
+
+.example {
+  background: #0b1120; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.5rem 0.65rem; font-family: 'Fira Code', Consolas, monospace;
+  font-size: 0.78rem; line-height: 1.5; margin: 0.3rem 0;
+}
+.example .c { color: var(--text3); font-style: italic; }
+.example .p { color: var(--success); }
+.example .cmd { color: var(--accent); font-weight: 600; }
+.example .a { color: var(--primary); font-weight: 600; }
+
+.flow { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; padding: 0.6rem; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin: 0.5rem 0; }
+.flow-step { background: var(--surface); padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.78rem; white-space: nowrap; }
+.flow-arrow { color: var(--primary); font-size: 1rem; }
+
+.section-header { display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0.75rem; }
+.section-header h2 { margin: 0; }
+
+.highlight-box {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.75rem; border-left: 3px solid var(--primary); margin: 0.75rem 0;
+}
+.dl { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.6rem; font-size: 0.85rem; }
+.dt { color: var(--text3); font-weight: 600; }
+.dd { color: var(--text2); }
+
+.mermaid { background: var(--bg2); padding: 0.5rem; border-radius: var(--radius); font-family: monospace; font-size: 0.78rem; overflow-x: auto; }
+
+@media (max-width: 768px) {
+  header { flex-wrap: wrap; height: auto; padding: 0.4rem 0.75rem; }
+  .header-actions { order: 3; width: 100%; margin-top: 0.3rem; }
+  #search { width: 100%; } #search:focus { width: 100%; }
+  h1 { font-size: 1.4rem; }
+}
+@media print {
+  header, nav, .no-print, #search { display: none !important; } main { padding: 0; }
+  body { background: #fff; color: #000; font-size: 9pt; }
+  .card { border: 1px solid #ccc; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 12l-2.5-1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+    <span>Ref. Completa Stack</span>
+  </div>
+  <div class="header-actions no-print">
+    <input type="text" id="search" placeholder="Buscar skill, MCP, comando...">
+    <button class="btn-icon" id="theme-toggle">Tema</button>
+  </div>
+</header>
+
+<nav class="no-print">
+  <ul class="nav-list">
+    <li><a href="#stack" class="nav-link">Stack</a></li>
+    <li><a href="#skills" class="nav-link">Skills</a></li>
+    <li><a href="#pipeline" class="nav-link">Pipeline</a></li>
+    <li><a href="#mcps" class="nav-link">MCPs</a></li>
+    <li><a href="#commands" class="nav-link">Comandos</a></li>
+    <li><a href="#agents" class="nav-link">Agentes</a></li>
+    <li><a href="#profiles" class="nav-link">Perfiles</a></li>
+    <li><a href="#rules" class="nav-link">Reglas</a></li>
+    <li><a href="#contracts" class="nav-link">Contratos</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- ===== INTRO ===== -->
+<section id="intro">
+  <h1>Guia de Estudio Completa</h1>
+  <p>Stack offline-first profesional. <strong>69 skills</strong>, <strong>12 MCPs</strong>, 5 agentes registrados, 9 comandos slash. Arquitectura: Apps que funcionan con doble clic en <code>index.html</code>, sin servidores, sin CDNs, sin builds.</p>
+  <div class="highlight-box">
+    <strong>Atajo:</strong> Usa <kbd>Ctrl+F</kbd> o el campo de busqueda arriba para encontrar cualquier skill, MCP o comando.
+  </div>
+</section>
+
+<!-- ===== A. STACK OVERVIEW ===== -->
+<section id="stack">
+  <h1>A. Stack Tecnologico</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span style="color:var(--primary)">&#9654;</span> Runtime</h4>
+      <div class="dl">
+        <span class="dt">Frontend</span><span class="dd">Alpine.js v3 (global, via <code>&lt;script&gt;</code>)</span>
+        <span class="dt">CSS</span><span class="dd">Tailwind CSS 4 via <code>@tailwindcss/browser</code> runtime</span>
+        <span class="dt">UI Kit</span><span class="dd">DaisyUI 5 (standalone, sin npm)</span>
+        <span class="dt">Iconos</span><span class="dd">Bootstrap Icons v1.11</span>
+        <span class="dt">Animacion</span><span class="dd">Animate.css v4</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4><span style="color:var(--primary)">&#9654;</span> Datos y Seguridad</h4>
+      <div class="dl">
+        <span class="dt">DB Local</span><span class="dd">Dexie.js v4 (IndexedDB wrapper). Full: + SQLite via <code>Bun.sqlite</code></span>
+        <span class="dt">Cifrado</span><span class="dd">CryptoJS AES (campos sensibles)</span>
+        <span class="dt">Compresion</span><span class="dd">pako (ZIP en memoria)</span>
+        <span class="dt">Sync</span><span class="dd">Ninguno (offline-first puro). No usa Supabase ni backend externo.</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4><span style="color:var(--primary)">&#9654;</span> Exportacion / Utilidades</h4>
+      <div class="dl">
+        <span class="dt">PDF</span><span class="dd">jsPDF v2.5</span>
+        <span class="dt">Excel</span><span class="dd">SheetJS v0.20</span>
+        <span class="dt">Graficos</span><span class="dd">ApexCharts v3.45</span>
+        <span class="dt">Busqueda</span><span class="dd">FlexSearch (Lite) / Transformers.js (Full)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4><span style="color:var(--primary)">&#9654;</span> Entorno OpenCode</h4>
+      <div class="dl">
+        <span class="dt">Runtime</span><span class="dd">PowerShell 5.1 (Windows)</span>
+        <span class="dt">Plugins</span><span class="dd">@warp-dot-dev/opencode-warp, superpowers</span>
+        <span class="dt">Shell config</span><span class="dd"><code>opencode.jsonc</code></span>
+        <span class="dt">AGENTS.md</span><span class="dd">Reglas + skills + comandos slash</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== B. SKILLS ===== -->
+<section id="skills">
+  <h1>B. Inventario de Skills <span class="badge-count">69 total</span></h1>
+
+  <!-- B1: STACK SKILLS -->
+  <div class="section-header">
+    <h2>B1. Skills del Stack <span class="badge-count">16</span></h2>
+  </div>
+  <p>Skills del pipeline principal y modulos operativos del stack offline-first. Instaladas en <code>~/.opencode/skills/</code>.</p>
+  <div class="grid2">
+
+    <div class="card">
+      <h4>prompt-inicial <span class="tag cat">orquestador</span> <span class="tag trig">nuevo proyecto</span></h4>
+      <p>Orquesta el pipeline completo: recibe 5 campos del usuario (nombre, tipo, descripcion, tono, modulos) y dispara setup &rarr; spec &rarr; generacion &rarr; validacion.</p>
+    </div>
+
+    <div class="card">
+      <h4>setup-init <span class="tag cat">infraestructura</span> <span class="tag trig">iniciar setup</span></h4>
+      <p>Valida entorno, crea estructura de carpetas, genera <code>project.config.js</code> y script de descarga de librerias locales (DaisyUI 5 + Tailwind 4 runtime).</p>
+    </div>
+
+    <div class="card">
+      <h4>spec-creator <span class="tag cat">especificacion</span> <span class="tag trig">definir spec app</span></h4>
+      <p>Transforma historias de usuario en specs tecnicas validadas. Flujo interactivo: asunciones con barra de progreso, preguntas 4+1, auto-revision, deteccion de librerias externas via context7 MCP.</p>
+    </div>
+
+    <div class="card">
+      <h4>design-ux-intelligence <span class="tag cat">diseno</span> <span class="tag trig">auto + tono visual</span></h4>
+      <p>Aplica principios de diseno profesional con paletas de marcas reales (refero-styles MCP), tipografia, componentes Pines y validacion WCAG AA. Se auto-activa al mencionar tono visual.</p>
+    </div>
+
+    <div class="card">
+      <h4>code-generator <span class="tag cat">generacion</span> <span class="tag trig">generar codigo</span></h4>
+      <p>Genera codigo por fases: core primero, luego modulos uno a uno. Fase A = index.html + core/; Fase B = modulos/. Pausas explicitas entre modulos. Lee spec y aplica estilo de design-ux.</p>
+    </div>
+
+    <div class="card">
+      <h4>stack-compliance-guard <span class="tag cat">validacion</span> <span class="tag trig">auto post-generacion</span></h4>
+      <p>Guarda automatica: bloquea imports ES6, CDNs, fetch y omision de cifrado. Corrige automaticamente lo reparable. Se ejecuta tras cada output de codigo. Tambien manual con <code>validar stack</code>.</p>
+    </div>
+
+    <div class="card">
+      <h4>validation-offline <span class="tag cat">testing</span> <span class="tag trig">validar app</span></h4>
+      <p>Validacion final: analisis estatico + guia DevTools (consola, Lighthouse, network) + tests Playwright + auditoria a11y + checklist de entrega. Genera reporte en <code>docs/validacion-[app].md</code>.</p>
+    </div>
+
+    <div class="card">
+      <h4>ux-refactor <span class="tag cat">refactor</span> <span class="tag trig">mejorar UI</span></h4>
+      <p>Audita y mejora UX/UI de apps existentes sin regenerarlas. 4 fases: auditoria &rarr; recomendacion (refero-styles + pattern-matrix) &rarr; implementacion in-place &rarr; validacion (compliance + a11y).</p>
+    </div>
+
+    <div class="card">
+      <h4>daisyui-patterns <span class="tag cat">componentes</span> <span class="tag trig">daisyui</span></h4>
+      <p>Patrones DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial via daisyui-gitmcp MCP. Consumido por code-generator, design-ux, ux-refactor.</p>
+    </div>
+
+    <div class="card">
+      <h4>llm-wiki <span class="tag cat">conocimiento</span> <span class="tag trig">guarda esto</span></h4>
+      <p>Wiki persistente con paginas markdown (<code>wiki/</code>) + grafo en MCP memory. 3 modos: ingest (procesar fuentes), query (responder desde wiki), lint (revisar salud). Auto-activado tras spec, code-gen, validation.</p>
+    </div>
+
+    <div class="card">
+      <h4>ia-jutia <span class="tag cat">mini IA</span> <span class="tag trig">mini ia</span></h4>
+      <p>Mini IA offline-first. Lite: FlexSearch + estadisticas + predicciones. Full: + ingesta PDF/DOCX/XLSX/CSV/MD + Transformers.js QA extractivo. Atajo global Cmd+K.</p>
+    </div>
+
+    <div class="card">
+      <h4>deployment-jigue <span class="tag cat">deploy</span> <span class="tag trig">publicar</span></h4>
+      <p>Publica cambios a GitHub, despliega Pages y empaqueta segun perfil. Lite: ZIP + Pages. Full: <code>bun build --compile .exe</code> + Pages + Release.</p>
+    </div>
+
+    <div class="card">
+      <h4>supercharged-pipeline <span class="tag cat">potenciado</span> <span class="tag trig">/pro</span></h4>
+      <p>Pipeline potenciado por Superpowers: 7 fases con brainstorming &rarr; spec &rarr; writing-plans &rarr; subagents &rarr; dual review &rarr; deploy. Checkpoints humanos en cada fase.</p>
+    </div>
+
+    <div class="card">
+      <h4>mermaid-graph-writer <span class="tag cat">diagramas</span> <span class="tag trig">mermaid</span></h4>
+      <p>Escribe diagramas Mermaid precisos: flowcharts, sequence, state, ER, timeline, mindmap, Gantt. No renderiza, solo escribe sintaxis.</p>
+    </div>
+
+    <div class="card">
+      <h4>mermaid-graph-renderer <span class="tag cat">diagramas</span> <span class="tag trig">render mermaid</span></h4>
+      <p>Renderiza diagramas Mermaid a SVG/PNG/PDF. Cubre lazy loading, SSR, CLI batch export y rendering nativo Rust.</p>
+    </div>
+
+    <div class="card">
+      <h4>ux-ui-universal <span class="tag cat">multi-stack</span> <span class="tag trig">refactorizar UI de</span></h4>
+      <p>Audita y mejora UX/UI de cualquier app web (React, Vue, Angular, Svelte, Django, Rails, etc.). Detecta framework, adapta recomendaciones con context7, aplica cambios in-place. 4 fases.</p>
+    </div>
+
+  </div>
+
+  <!-- B2: AGENT SKILLS -->
+  <div class="section-header">
+    <h2>B2. Agent Skills <span class="badge-count">14</span></h2>
+  </div>
+  <p>Skills funcionales en <code>~/.agents/skills/</code>. Cubren office, documentacion, diseno, y skills management.</p>
+  <div class="grid3">
+
+    <div class="card">
+      <h4>docx <span class="tag agent">Word</span></h4>
+      <p>Crea, lee, edita y manipula documentos .docx: tablas de contenido, encabezados, imagenes, comentarios, reemplazo de texto.</p>
+    </div>
+
+    <div class="card">
+      <h4>pdf <span class="tag agent">PDF</span></h4>
+      <p>Operaciones completas con PDFs: lectura, extraccion, combinacion, division, rotacion, marcas de agua, OCR, formularios.</p>
+    </div>
+
+    <div class="card">
+      <h4>pptx <span class="tag agent">PowerPoint</span></h4>
+      <p>Crea, edita, combina y extrae contenido de presentaciones .pptx. Trabaja con layouts, plantillas, notas del orador.</p>
+    </div>
+
+    <div class="card">
+      <h4>xlsx <span class="tag agent">Excel</span></h4>
+      <p>Crea, lee, edita y convierte spreadsheets (.xlsx, .csv, .tsv). Formulas, formatos, graficos, limpieza de datos.</p>
+    </div>
+
+    <div class="card">
+      <h4>find-docs <span class="tag agent">docs</span></h4>
+      <p>Obtiene documentacion actualizada, API references y ejemplos de codigo para cualquier tecnologia. No depende de training data.</p>
+    </div>
+
+    <div class="card">
+      <h4>find-skills <span class="tag agent">skills</span></h4>
+      <p>Ayuda a descubrir e instalar skills de agente. Busca en registros de skills disponibles cuando preguntas "como hago X".</p>
+    </div>
+
+    <div class="card">
+      <h4>skill-creator <span class="tag agent">skills</span></h4>
+      <p>Crea skills desde cero, edita/mejora skills existentes, mide performance con evals, benchmarks y optimizacion de descripciones.</p>
+    </div>
+
+    <div class="card">
+      <h4>context7-mcp <span class="tag agent">wrapper</span></h4>
+      <p>Wrapper skill para el MCP context7. Resuelve librerias a IDs Context7 y consulta documentacion. Uso interno por setup-init y spec-creator.</p>
+    </div>
+
+    <div class="card">
+      <h4>supabase <span class="tag agent">backend</span> <span class="tag" style="background:#e11d48;color:#fff">externo</span></h4>
+      <p>Operaciones completas con Supabase: Database, Auth, Edge Functions, Storage, Realtime, RLS, migraciones SQL. NO es parte del stack offline-first; util para proyectos Full con backend.</p>
+    </div>
+
+    <div class="card">
+      <h4>supabase-postgres-best-practices <span class="tag agent">DB</span> <span class="tag" style="background:#e11d48;color:#fff">externo</span></h4>
+      <p>Optimizacion Postgres y mejores practicas de Supabase: queries, schema design, configuracion. Externo al stack offline-first.</p>
+    </div>
+
+    <div class="card">
+      <h4>design-doc-mermaid <span class="tag agent">docs</span></h4>
+      <p>Crea diagramas Mermaid y documentacion de diseno. Soporta activity, deployment, sequence, architecture. Guias y scripts python incluidos.</p>
+    </div>
+
+    <div class="card">
+      <h4>hyperframes <span class="tag agent">video</span></h4>
+      <p>Crea composiciones de video en HTML: animaciones, title cards, capturas sincronizadas con audio, voz en off TTS, transiciones.</p>
+    </div>
+
+    <div class="card">
+      <h4>logo-generator <span class="tag agent">branding</span></h4>
+      <p>Genera logos SVG profesionales y showcase images. Patrones geometricos, dot matrix, line systems. Exporta SVG/PNG.</p>
+    </div>
+
+    <div class="card">
+      <h4>brand-designer <span class="tag agent">branding</span></h4>
+      <p>Experto en identidad de marca, diseno de logos y sistemas visuales de marca. Complementa logo-generator.</p>
+    </div>
+
+  </div>
+
+  <!-- B3: PATTERN SKILLS -->
+  <div class="section-header">
+    <h2>B3. Pattern Libraries <span class="badge-count">25</span></h2>
+  </div>
+  <p>Skills pasivas en <code>~/.config/opencode/skills/</code>. Se activan automaticamente segun contexto. No requieren triggers del usuario.</p>
+
+  <h3>Formularios y Datos <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">6</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>form-patterns</h4><p>Validacion, disposicion, errores inline, wizards multi-paso.</p></div>
+    <div class="card"><h4>list-page-patterns</h4><p>Filtros, ordenacion, paginacion, vistas grid/table, estados vacio.</p></div>
+    <div class="card"><h4>detail-page-patterns</h4><p>Headers, tabs, multi-columna, breadcrumbs, datos relacionados.</p></div>
+    <div class="card"><h4>data-density-patterns</h4><p>Scroll optimizado, z-index, responsive condensing, jerarquia visual.</p></div>
+    <div class="card"><h4>info-card-patterns</h4><p>Tarjetas informativas, displays de entidades, bloques de stats.</p></div>
+    <div class="card"><h4>status-visualization-patterns</h4><p>Indicadores en vivo, health bars, badges con color y animacion.</p></div>
+  </div>
+
+  <h3>Navegacion y Layout <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">4</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>navigation-patterns</h4><p>Sidebar, drawers, breadcrumbs, app shell, tabs, navegacion anidada.</p></div>
+    <div class="card"><h4>page-structure-patterns</h4><p>Estados (cargando, vacio, error, exito), layout estandar, headers.</p></div>
+    <div class="card"><h4>split-panel-patterns</h4><p>Divisores redimensionables, multi-panel, sincronizacion scroll.</p></div>
+    <div class="card"><h4>comparison-patterns</h4><p>Comparaciones lado a lado, diff highlighting, vistas multi-item.</p></div>
+  </div>
+
+  <h3>Interaccion <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">5</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>interaction-patterns</h4><p>Micro-interacciones, loading states, feedback visual, hover effects.</p></div>
+    <div class="card"><h4>drag-drop-patterns</h4><p>Drag & drop, feedback visual, zonas de drop, reordenacion.</p></div>
+    <div class="card"><h4>keyboard-shortcuts-patterns</h4><p>Atajos, paleta Cmd+K, teclas de acceso rapido, discoverability.</p></div>
+    <div class="card"><h4>toast-notification-patterns</h4><p>Toast, snackbars, posicionamiento, duracion, tipos, apilamiento.</p></div>
+    <div class="card"><h4>editor-workspace-patterns</h4><p>Multi-tab, workspace, dirty state, undo/redo, validacion tiempo real.</p></div>
+  </div>
+
+  <h3>Modales y Feedback <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">3</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>modal-patterns</h4><p>Dialogos modales, confirmacion, foco, z-index, cierre con Escape.</p></div>
+    <div class="card"><h4>playback-replay-patterns</h4><p>Controles play/pause, timeline, velocidad, barra de progreso.</p></div>
+    <div class="card"><h4>event-timeline-patterns</h4><p>Lineas de tiempo, chronological feed, agrupacion, scroll infinito.</p></div>
+  </div>
+
+  <h3>Mobile y Accesibilidad <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">4</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>mobile-responsive-ux</h4><p>Touch targets 44px+, gestos, bottom sheets, viewport management.</p></div>
+    <div class="card"><h4>wcag-accessibility</h4><p>Checklist WCAG 2.2: contraste AA/AAA, roles ARIA, screen readers.</p></div>
+    <div class="card"><h4>ux-heuristics</h4><p>10 heuristicas de Nielsen: visibilidad, consistencia, prevencion errores.</p></div>
+    <div class="card"><h4>turn-based-ui-patterns</h4><p>Tableros/canvas, indicador de turno, historial de movimientos.</p></div>
+  </div>
+
+  <h3>Visual <span style="font-size:0.7rem;font-weight:400;color:var(--text3)">3</span></h3>
+  <div class="grid4">
+    <div class="card"><h4>visual-design-system</h4><p>Layout grid, jerarquia tipografica, teoria del color, espaciado 8px.</p></div>
+    <div class="card"><h4>canvas-grid-patterns</h4><p>Cuadriculas interactivas, zoom, pan, seleccion multiple, snapping.</p></div>
+    <div class="card"><h4>react-ux-patterns</h4><p>Patrones React/Next.js: state management, data fetching. Legacy.</p></div>
+  </div>
+
+  <!-- B4: SUPERPOWERS SKILLS -->
+  <div class="section-header">
+    <h2>B4. Superpowers Skills <span class="badge-count">14</span></h2>
+  </div>
+  <p>Instaladas via plugin en <code>~/.config/opencode/node_modules/superpowers/skills/</code>. Proporcionan procesos de ingenieria de software disciplinados.</p>
+  <div class="grid3">
+
+    <div class="card">
+      <h4>brainstorming <span class="tag super">proceso</span></h4>
+      <p>Explora intencion del usuario, requisitos y diseno antes de implementar. Obligatorio antes de cualquier trabajo creativo.</p>
+    </div>
+
+    <div class="card">
+      <h4>using-superpowers <span class="tag super">core</span></h4>
+      <p>Skill de entrada: establece como encontrar y usar skills. Requiere invocar Skill tool antes de responder.</p>
+    </div>
+
+    <div class="card">
+      <h4>writing-plans <span class="tag super">proceso</span></h4>
+      <p>Genera planes de implementacion multi-paso a partir de specs o requisitos. Descompone trabajo en tareas ejecutables.</p>
+    </div>
+
+    <div class="card">
+      <h4>executing-plans <span class="tag super">proceso</span></h4>
+      <p>Ejecuta planes de implementacion escritos con writing-plans. Sesiones separadas con checkpoints de revision.</p>
+    </div>
+
+    <div class="card">
+      <h4>subagent-driven-development <span class="tag super">proceso</span></h4>
+      <p>Desarrollo con subagentes independientes. Para tareas paralelas sin dependencias secuenciales. Usa implementer + reviewer.</p>
+    </div>
+
+    <div class="card">
+      <h4>dispatching-parallel-agents <span class="tag super">proceso</span></h4>
+      <p>Despacha 2+ tareas independientes a subagentes en paralelo. Para trabajos sin estado compartido ni dependencias secuenciales.</p>
+    </div>
+
+    <div class="card">
+      <h4>test-driven-development <span class="tag super">proceso</span></h4>
+      <p>TDD riguroso: red &rarr; green &rarr; refactor. Escribir test antes que implementacion. Anti-patrones incluidos.</p>
+    </div>
+
+    <div class="card">
+      <h4>systematic-debugging <span class="tag super">proceso</span></h4>
+      <p>Debugging sistematico: 1) reproducir, 2) hipotesis, 3) experimento, 4) causa raiz, 5) fix + test. Guias de root-cause tracing, defense-in-depth.</p>
+    </div>
+
+    <div class="card">
+      <h4>writing-skills <span class="tag super">meta</span></h4>
+      <p>Crea, edita y verifica skills. Testing con subagentes, principios de persuasion, mejores practicas Anthropic.</p>
+    </div>
+
+    <div class="card">
+      <h4>verification-before-completion <span class="tag super">proceso</span></h4>
+      <p>Verifica que el trabajo esta completo antes de afirmar "listo". Ejecuta comandos de verificacion y confirma output antes de claims.</p>
+    </div>
+
+    <div class="card">
+      <h4>finishing-a-development-branch <span class="tag super">proceso</span></h4>
+      <p>Completa el trabajo de desarrollo: opciones estructuradas para merge, PR o cleanup cuando todo pasa.</p>
+    </div>
+
+    <div class="card">
+      <h4>requesting-code-review <span class="tag super">proceso</span></h4>
+      <p>Solicita revision de codigo al completar tareas o antes de mergear. Verifica que el trabajo cumple requisitos.</p>
+    </div>
+
+    <div class="card">
+      <h4>receiving-code-review <span class="tag super">proceso</span></h4>
+      <p>Maneja feedback de code review: rigor tecnico, verificacion, no implementacion ciega. Para cuando el feedback no es claro.</p>
+    </div>
+
+    <div class="card">
+      <h4>using-git-worktrees <span class="tag super">proceso</span></h4>
+      <p>Crea workspaces aislados via git worktree para trabajar en features sin afectar el workspace principal.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== C. PIPELINE ===== -->
+<section id="pipeline">
+  <h1>C. Pipeline</h1>
+
+  <h2>Clasico (/new) &mdash; 5 fases</h2>
+  <div class="flow">
+    <span class="flow-step">prompt-inicial</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">setup-init</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">spec-creator</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">design-ux-intelligence</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">code-generator + compliance</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">validation-offline</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">deployment-jigue</span>
+  </div>
+  <p style="margin-top:0.3rem; color: var(--warning); font-size:0.85rem;">PAUSA tras cada fase. No generar todo de una vez (OpenCode pierde contexto &gt;15k tokens).</p>
+
+  <h2>Supercharged (/pro) &mdash; 7 fases</h2>
+  <div class="flow">
+    <span class="flow-step">brainstorming</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">spec</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">writing-plans</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">subagents</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">dual review</span><span class="flow-arrow">&rarr;</span>
+    <span class="flow-step">deploy</span>
+  </div>
+  <p style="margin-top:0.3rem; font-size:0.85rem;">Requiere Superpowers instalado. Fallback automatico a clasico si no esta disponible.</p>
+
+  <h2>Orden de Comandos</h2>
+  <div class="example">
+    <span class="c">/ Pipeline clasico completo</span><br>
+    <span class="p">Tu:</span> <span class="cmd">nuevo proyecto</span><br>
+    <span class="p">Tu:</span> <span class="cmd">iniciar setup</span><br>
+    <span class="p">Tu:</span> <span class="cmd">definir spec app</span><br>
+    <span class="p">Tu:</span> <span class="cmd">generar codigo</span><br>
+    <span class="p">Tu:</span> <span class="cmd">validar app</span><br>
+    <span class="p">Tu:</span> <span class="cmd">publicar</span>
+  </div>
+</section>
+
+<!-- ===== D. MCPS ===== -->
+<section id="mcps">
+  <h1>D. Servidores MCP <span class="badge-count">12</span></h1>
+  <p>Configurados en <code>opencode.json</code>. Algunos remotos, otros locales.</p>
+  <div class="grid2">
+
+    <div class="card">
+      <h4>context7 <span class="badge badge-remote">remote</span></h4>
+      <p>Documentacion actualizada de librerias. URL: <code>https://mcp.context7.com/mcp</code>. Consumido por: setup-init, spec-creator, ux-ui-universal.</p>
+    </div>
+
+    <div class="card">
+      <h4>chrome-devtools <span class="badge badge-local">local</span></h4>
+      <p>Controla Chrome DevTools. Captura consola, screenshots, Lighthouse, heap snapshots, performance traces. Consumido por: validation-offline.</p>
+    </div>
+
+    <div class="card">
+      <h4>github <span class="badge badge-local">local</span></h4>
+      <p>Operaciones sobre repos: push, pull, issues, PRs, Actions, Pages. Consumido por: github-page-publish, deployment-jigue.</p>
+    </div>
+
+    <div class="card">
+      <h4>filesystem <span class="badge badge-local">local</span></h4>
+      <p>Acceso a archivos del proyecto. Directorios permitidos: Desktop, Documents, Temp/opencode. Consumido por: TODAS las skills.</p>
+    </div>
+
+    <div class="card">
+      <h4>refero-styles <span class="badge badge-local">local</span></h4>
+      <p>Obtiene design.md de marcas reales (Linear, Stripe, Vercel). Node en <code>mcp-servers/refero-styles/</code>. Consumido por: design-ux-intelligence, ux-refactor.</p>
+    </div>
+
+    <div class="card">
+      <h4>a11y <span class="badge badge-local">local</span></h4>
+      <p>Audita accesibilidad WCAG 2.2. Usa Chrome con Puppeteer. Consumido por: validation-offline, design-ux, ux-refactor.</p>
+    </div>
+
+    <div class="card">
+      <h4>daisyui-gitmcp <span class="badge badge-remote">remote</span></h4>
+      <p>Documentacion oficial DaisyUI 5 via GitMCP. URL: <code>https://gitmcp.io/saadeghi/daisyui</code>. Consumido por: daisyui-patterns, code-generator, design-ux.</p>
+    </div>
+
+    <div class="card">
+      <h4>web-search <span class="badge badge-local">local</span></h4>
+      <p>Busqueda web via DuckDuckGo. Timeout 60s. Consumido por: setup-init (fallback cuando context7 no encuentra libreria).</p>
+    </div>
+
+    <div class="card">
+      <h4>supabase <span class="badge badge-local">local</span> <span class="tag" style="background:#e11d48;color:#fff">externo</span></h4>
+      <p>Backend Supabase: Postgres, Auth, Edge Functions, Storage, Realtime. Proyecto ref: <code>uwvjqjeijvjxuhrhvqfr</code>. NO es parte del stack offline-first; es una herramienta externa disponible para proyectos que requieran backend.</p>
+    </div>
+
+    <div class="card">
+      <h4>shadcn-ui <span class="badge badge-local">local</span></h4>
+      <p>Componentes UI y bloques shadcn/ui v4 para React/Next.js. Consumido por: ux-ui-universal (solo apps React).</p>
+    </div>
+
+    <div class="card">
+      <h4>memory <span class="badge badge-local">local</span></h4>
+      <p>Grafo de conocimiento persistente (@modelcontextprotocol/server-memory). Datos en JSONL local. Consumido por: llm-wiki (search_nodes, create_entities, create_relations, read_graph).</p>
+    </div>
+
+    <div class="card">
+      <h4>stocky <span class="badge badge-local">local</span></h4>
+      <p>Busca y descarga imagenes gratuitas desde Pexels y Unsplash. Python en <code>mcp-servers/stocky/</code>. Consumido por: docx, pptx, pdf.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== E. COMANDOS SLASH ===== -->
+<section id="commands">
+  <h1>E. Comandos Slash</h1>
+  <p>9 comandos registrados en <code>.opencode/commands/</code>. Se invocan con <code>/comando</code> en el chat.</p>
+  <table>
+    <thead><tr><th>Comando</th><th>Trigger</th><th>Que hace</th><th>Skill que activa</th></tr></thead>
+    <tbody>
+      <tr><td><code>/new</code></td><td><code>nuevo proyecto</code></td><td>Pipeline clasico 5 fases</td><td>prompt-inicial</td></tr>
+      <tr><td><code>/setup</code></td><td><code>iniciar setup</code></td><td>Crea estructura + instala librerias</td><td>setup-init</td></tr>
+      <tr><td><code>/spec</code></td><td><code>definir spec app</code></td><td>Spec interactiva con refinamiento</td><td>spec-creator</td></tr>
+      <tr><td><code>/build</code></td><td><code>generar codigo</code></td><td>Fase A (core) + Fase B (modulos)</td><td>code-generator</td></tr>
+      <tr><td><code>/test</code></td><td><code>validar app</code></td><td>Estatico + DevTools + Playwright + reporte</td><td>validation-offline</td></tr>
+      <tr><td><code>/compliance</code></td><td><code>validar stack</code></td><td>Ejecuta compliance guard manualmente</td><td>stack-compliance-guard</td></tr>
+      <tr><td><code>/status</code></td><td><code>/status</code></td><td>Lee pipeline state (specs, project.config.js, docs)</td><td>ninguna (lectura)</td></tr>
+      <tr><td><code>/archive</code></td><td><code>/archive</code></td><td>Mueve spec + reporte a specs/archive/</td><td>ninguna (filesystem)</td></tr>
+      <tr><td><code>/docs</code></td><td><code>/docs</code></td><td>Abre guia-skills-mcps.html</td><td>ninguna (indicacion)</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:1rem;">Triggers Adicionales (sin comando slash)</h2>
+  <div class="grid2">
+    <div class="card"><h4>/pro</h4><p>Pipeline supercharged 7 fases. Activa supercharged-pipeline skill.</p></div>
+    <div class="card"><h4>/ia</h4><p>Activa ia-jutia. Pregunta perfil Lite/Full/No.</p></div>
+    <div class="card"><h4>/deploy</h4><p>Publica cambios. Activa deployment-jigue.</p></div>
+    <div class="card"><h4>mejorar UI</h4><p>Activa ux-refactor (4 fases).</p></div>
+    <div class="card"><h4>refactorizar UI de</h4><p>Activa ux-ui-universal (multi-stack).</p></div>
+    <div class="card"><h4>guarda esto</h4><p>Activa llm-wiki mode ingest.</p></div>
+  </div>
+</section>
+
+<!-- ===== F. AGENTES ===== -->
+<section id="agents">
+  <h1>F. Agentes Registrados</h1>
+  <p>Configurados en <code>opencode.json</code>. El orquestador es primary, los demas son subagentes.</p>
+  <table>
+    <thead><tr><th>Agente</th><th>Modo</th><th>Edit</th><th>Bash</th><th>Descripcion</th></tr></thead>
+    <tbody>
+      <tr><td>orchestrator</td><td><span class="tag cat">primary</span></td><td>ask</td><td>ask</td><td>Orquestador del pipeline. /new (clasico) o /pro (supercharged). Decide flujo segun comando.</td></tr>
+      <tr><td>spec-agent</td><td><span class="tag sub">subagent</span></td><td>deny</td><td>deny</td><td>Crea specs tecnicas desde historias de usuario usando spec-creator. Solo lectura.</td></tr>
+      <tr><td>build-agent</td><td><span class="tag sub">subagent</span></td><td>allow</td><td>ask</td><td>Genera codigo desde specs usando code-generator + compliance. Lee, escribe, pregunta bash.</td></tr>
+      <tr><td>test-agent</td><td><span class="tag sub">subagent</span></td><td>ask</td><td>ask</td><td>Valida apps con validation-offline: estatico, DevTools, a11y, Playwright.</td></tr>
+      <tr><td>design-agent</td><td><span class="tag sub">subagent</span></td><td>deny</td><td>deny</td><td>Aplica diseno y UX con design-ux-intelligence + refero-styles MCP. Solo recomendaciones.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:1rem;">Subagentes Adicionales (Task tool)</h2>
+  <p>Disponibles para usar con la herramienta Task. Incluyen reviewers especializados y agentes de exploracion/auditoria.</p>
+  <div class="grid3">
+    <div class="card"><h4>explore</h4><p>Exploracion rapida de codebase. Busca archivos, patrones, responde preguntas. Niveles: quick, medium, very thorough.</p></div>
+    <div class="card"><h4>general</h4><p>Proposito general. Tareas complejas multi-paso, investigacion, ejecucion. Multiple unidades de trabajo en paralelo.</p></div>
+    <div class="card"><h4>accessibility-auditor</h4><p>Auditoria WCAG 2.2 solo lectura. Remediation guidance sin modificar codigo.</p></div>
+    <div class="card"><h4>accessibility-engineer</h4><p>Audita y corrige issues WCAG. Modifica codigo para mejorar accesibilidad.</p></div>
+    <div class="card"><h4>ux-auditor</h4><p>Auditoria UX completa contra heuristicas y patrones. Solo lectura.</p></div>
+    <div class="card"><h4>ux-engineer</h4><p>Analisis UX + implementa correcciones identificadas.</p></div>
+    <div class="card"><h4>visual-reviewer</h4><p>Revisa consistencia de diseno: spacing, tipografia, color. Solo analisis.</p></div>
+    <div class="card"><h4>design-agent</h4><p>Aplica diseno y UX con design-ux-intelligence + refero-styles.</p></div>
+    <div class="card"><h4>spec-agent</h4><p>Crea specs tecnicas desde historias de usuario con spec-creator.</p></div>
+    <div class="card"><h4>build-agent</h4><p>Genera codigo desde specs con code-generator + compliance.</p></div>
+    <div class="card"><h4>test-agent</h4><p>Valida apps con validation-offline: estatico, DevTools, a11y, Playwright.</p></div>
+    <div class="card"><h4>reviewers (10)</h4><p>card-reviewer, comparison-reviewer, density-reviewer, detail-page-reviewer, editor-reviewer, form-reviewer, game-ui-reviewer, interaction-reviewer, list-page-reviewer, navigation-reviewer, panel-reviewer, replay-reviewer, settings-reviewer.</p></div>
+  </div>
+</section>
+
+<!-- ===== G. PERFILES ===== -->
+<section id="profiles">
+  <h1>G. Perfiles Lite / Full</h1>
+  <table>
+    <thead><tr><th>Caracteristica</th><th>Lite</th><th>Full</th></tr></thead>
+    <tbody>
+      <tr><td>Apertura</td><td>Doble clic <code>index.html</code></td><td><code>bun --compile .exe</code></td></tr>
+      <tr><td>DB</td><td>Dexie (IndexedDB)</td><td>Dexie + SQLite (opcional)</td></tr>
+      <tr><td>Cifrado</td><td>CryptoJS</td><td>CryptoJS</td></tr>
+      <tr><td>Imports ES6</td><td>PROHIBIDO (CORS file://)</td><td>Permitido en <code>src/</code>, PROHIBIDO en <code>public/</code></td></tr>
+      <tr><td>CDNs</td><td>PROHIBIDO (todo local)</td><td>PROHIBIDO (mismo frontend que Lite)</td></tr>
+      <tr><td>Fetch externo</td><td>PROHIBIDO (solo Dexie)</td><td>Permitido en backend <code>src/</code></td></tr>
+      <tr><td>Dependencias</td><td>curl a <code>assets/js/libs/</code></td><td><code>bun add</code> (npm)</td></tr>
+      <tr><td>Empaquetado</td><td>ZIP + GitHub Pages</td><td>.exe + Pages + Release</td></tr>
+      <tr><td>Sync</td><td>Ninguno (offline puro)</td><td>Ninguno (offline puro)</td></tr>
+      <tr><td>Frontend</td><td colspan="2" style="text-align:center;">~95% identico (Alpine + DaisyUI 5 + modulos)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== H. REGLAS NO NEGOCIABLES ===== -->
+<section id="rules">
+  <h1>H. Reglas No Negociables</h1>
+  <div class="grid2">
+    <div class="card">
+      <h4><span style="color:var(--error)">&#10060;</span> Prohibiciones</h4>
+      <ul style="font-size:0.82rem;">
+        <li><code>import</code> / <code>export</code> / <code>type="module"</code> (CORS en file://)</li>
+        <li><code>fetch</code> / <code>axios</code> para datos (usar Dexie)</li>
+        <li>CDNs en runtime (todo local en <code>assets/</code>)</li>
+        <li>Build steps (la app se abre con doble clic)</li>
+        <li>Datos sin cifrar en campos sensibles</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4><span style="color:var(--success)">&#10004;</span> Obligaciones</h4>
+      <ul style="font-size:0.82rem;">
+        <li>Variables globales: <code>Alpine</code>, <code>Dexie</code>, <code>CryptoJS</code></li>
+        <li><code>cryptoHelpers.encrypt()</code> en campos sensibles</li>
+        <li>UI: DaisyUI + Bootstrap Icons + Animate.css</li>
+        <li>Todo en espanol (UI, comentarios, docs)</li>
+        <li>Stack compliance post-generacion automatico</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== I. CONTRATOS ENTRE SKILLS ===== -->
+<section id="contracts">
+  <h1>I. Contratos entre Skills</h1>
+  <p>Artefactos que cada skill produce y consume. Garantizan que el pipeline fluya sin romperse.</p>
+  <table>
+    <thead><tr><th>Skill Output</th><th>Lo Consume</th><th>Artefacto</th></tr></thead>
+    <tbody>
+      <tr><td>prompt-inicial</td><td>setup-init, spec-creator</td><td>Nombre + tipo + descripcion + perfil (lite/full)</td></tr>
+      <tr><td>setup-init</td><td>code-generator</td><td>Estructura + librerias segun perfil</td></tr>
+      <tr><td>spec-creator</td><td>code-generator, design-ux, llm-wiki</td><td><code>specs/[app].md</code> v4 con modelo datos + journeys + testing</td></tr>
+      <tr><td>design-ux-intelligence</td><td>code-generator, ux-refactor</td><td>Tono visual + paleta + estilo + tipografia</td></tr>
+      <tr><td>code-generator</td><td>compliance, validation, llm-wiki, ux-refactor, ia-jutia</td><td><code>modules/*</code>, <code>core/*</code>, <code>index.html</code></td></tr>
+      <tr><td>stack-compliance-guard</td><td>code-generator</td><td>Validacion automatica post-generacion</td></tr>
+      <tr><td>ia-jutia</td><td>code-generator, setup-init</td><td><code>modules/ia-jutia/</code> + <code>core/ia.js</code></td></tr>
+      <tr><td>validation-offline</td><td>llm-wiki</td><td><code>docs/validacion-[app].md</code></td></tr>
+      <tr><td>deployment-jigue</td><td>&mdash;</td><td>Commit + Push + Pages + ZIP / .exe</td></tr>
+      <tr><td>llm-wiki</td><td>&mdash;</td><td><code>wiki/</code> (markdown) + MCP memory (grafo)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== J. DIRECTORIOS GENERADOS ===== -->
+<section id="generated">
+  <h1>J. Archivos Generados (No Versionar)</h1>
+  <div class="highlight-box">
+    <ul>
+      <li><code>docs/validacion-[app].md</code>, <code>docs/test_results.json</code>, <code>docs/screenshot_test.png</code></li>
+      <li><code>dist/[app].zip</code> (Lite) o <code>dist/[app].exe</code> (Full)</li>
+      <li><code>skills.rar</code></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function() {
+  var toggle = document.getElementById('theme-toggle');
+  var html = document.documentElement;
+  var saved = localStorage.getItem('ref-theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  toggle.textContent = saved === 'dark' ? 'Claro' : 'Oscuro';
+  toggle.addEventListener('click', function() {
+    var cur = html.getAttribute('data-theme');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('ref-theme', next);
+    toggle.textContent = next === 'dark' ? 'Claro' : 'Oscuro';
+  });
+
+  var search = document.getElementById('search');
+  var cards = document.querySelectorAll('.card');
+  search.addEventListener('input', function(e) {
+    var q = e.target.value.toLowerCase().trim();
+    cards.forEach(function(c) {
+      c.style.display = !q || c.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+
+  var links = document.querySelectorAll('.nav-link');
+  var sections = document.querySelectorAll('section[id]');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        links.forEach(function(l) { l.classList.remove('active'); });
+        var t = document.querySelector('.nav-link[href="#' + e.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' });
+  sections.forEach(function(s) { obs.observe(s); });
+})();
+</script>
+
+</body>
+</html>

@@ -1,6 +1,9 @@
 ---
+# @deprecated — Fusionado en pipeline-engine (modo Design)
+# Motivo: Unificación prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator en pipeline-engine
+# Migración: Usar `/pro` que activa pipeline-engine en modo Design (10 fases)
 name: supercharged-pipeline
-description: Pipeline completo potenciado por Superpowers + SKILLS-AHAGUILERA. Orquesta brainstorming => spec => writing-plans => subagents => dual review => deploy. Comando: /pro
+description: [DEPRECATED] Fusionado en pipeline-engine (modo Design). Pipeline completo potenciado por Superpowers + SKILLS-AHAGUILERA. Orquesta brainstorming => spec => writing-plans => subagents => dual review => deploy. Comando: /pro
 ---
 
 # SKILL: supercharged-pipeline (Pipeline Potenciado)

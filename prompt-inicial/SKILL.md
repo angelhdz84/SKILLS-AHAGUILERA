@@ -1,6 +1,9 @@
 ---
+# @deprecated — Reemplazado por pipeline-engine
+# Motivo: Fusión prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator en pipeline-engine
+# Migración: Usar `/new` o `/pro` que activan pipeline-engine
 name: prompt-inicial
-description: Prompt maestro para iniciar un nuevo proyecto offline-first. Orquesta automáticamente: setup → spec (con detección de librerías externas) → generación de código → validación. Solo requiere nombre, tipo y descripción de la app.
+description: [DEPRECATED] Reemplazado por pipeline-engine. Prompt maestro para iniciar un nuevo proyecto offline-first. Orquesta automáticamente: setup → spec (con detección de librerías externas) → generación de código → validación. Solo requiere nombre, tipo y descripción de la app.
 license: MIT
 compatibility: Requiere @AGENTS.md y las 7 SKILLs base instaladas en ~/.opencode/skills/. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:

@@ -1,6 +1,9 @@
 ---
+# @deprecated — Reemplazado por validation-engine
+# Motivo: Fusión validation-offline + ux-refactor + omd:designer-review + omd:final-qa en validation-engine
+# Migración: Usar `/test` o `/validate` que activan validation-engine
 name: validation-offline
-description: Valida que la app offline-first cumple estrictamente con @AGENTS.md, specs y reglas del stack. Verificación estática + guía DevTools + tests automatizados con Playwright + reporte técnico en docs/validacion-[app].md.
+description: [DEPRECATED] Reemplazado por validation-engine. Valida que la app offline-first cumple estrictamente con @AGENTS.md, specs y reglas del stack. Verificación estática + guía DevTools + tests automatizados con Playwright + reporte técnico en docs/validacion-[app].md.
 license: MIT
 compatibility: Requiere @AGENTS.md, @project.config.js y specs/[app].md presentes. Playwright opcional (Python). Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:

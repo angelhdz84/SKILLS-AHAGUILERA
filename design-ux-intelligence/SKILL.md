@@ -1,6 +1,9 @@
 ---
+# @deprecated — Absorbido por design-engine
+# Motivo: Unificación design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember/learn en design-engine
+# Migración: design-engine integra todo el diseño + captura de preferencias + catálogo OmD
 name: design-ux-intelligence
-description: Aplica principios de diseño distintivo y UX profesional (extraídos de frontend-design, ui-ux-pro-max, interface-design y awesome-design-md) adaptados estrictamente al stack offline-first: Alpine.js, Dexie, CryptoJS, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css.
+description: [DEPRECATED] Absorbido por design-engine. Aplica principios de diseño distintivo y UX profesional (extraídos de frontend-design, ui-ux-pro-max, interface-design y awesome-design-md) adaptados estrictamente al stack offline-first: Alpine.js, Dexie, CryptoJS, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css.
 license: MIT
 compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con file://, sin imports ES6, sin CDNs en runtime.
 meta:

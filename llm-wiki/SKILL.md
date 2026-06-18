@@ -1,6 +1,9 @@
 ---
+# @deprecated — Reemplazado por wiki-engine
+# Motivo: Fusión llm-wiki + omd:remember + omd:learn en wiki-engine con preferencias de diseño + auto-ingesta
+# Migración: wiki-engine unifica wiki pages + preferencias de diseño + memory graph
 name: llm-wiki
-description: Mantiene un wiki persistente de conocimiento (wiki/) con paginas markdown generadas por LLM + grafo en MCP memory. Se activa automaticamente tras spec-creator, code-generator y validation-offline para ingestar sus outputs. Tambien responde a "guarda esto", "recuerda que...", "documenta esta decision", "crea wiki", "resume esta fuente". Opera en 3 modos: ingest (procesar fuentes), query (responder desde el wiki), lint (revisar salud del wiki). Usa doble capa: markdown versionado para humanos + MCP memory server para busqueda rapida del LLM.
+description: [DEPRECATED] Reemplazado por wiki-engine. Mantiene un wiki persistente de conocimiento (wiki/) con paginas markdown generadas por LLM + grafo en MCP memory. Se activa automaticamente tras spec-creator, code-generator y validation-offline para ingestar sus outputs. Tambien responde a "guarda esto", "recuerda que...", "documenta esta decision", "crea wiki", "resume esta fuente". Opera en 3 modos: ingest (procesar fuentes), query (responder desde el wiki), lint (revisar salud del wiki). Usa doble capa: markdown versionado para humanos + MCP memory server para busqueda rapida del LLM.
 license: MIT
 compatibility: Requiere @AGENTS.md. Usa @modelcontextprotocol/server-memory como backend de grafo (ya configurado en opencode.json). 100% markdown, sin scripts, sin imports.
 meta:
