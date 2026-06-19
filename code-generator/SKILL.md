@@ -66,10 +66,21 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 [Contenido completo con orden: CSS → Libs base → Libs adicionales → Core → Main, x-cloak, sin type="module"]
 
 ### `core/db.js`
-[Iniciación Dexie según spec. Variables globales. window.db expuesto]
+[Iniciación Dexie según spec. Variables globales. window.db expuesto. Todas las tablas usan `id` (UUID string, no ++id) + `createdBy` + `createdAt` + `updatedAt`]
 
 ### `core/crypto.js`
-[encrypt/decrypt + gestión de clave localStorage. window.cryptoHelpers expuesto]
+[encrypt/decrypt + gestión de clave localStorage + uuid(). window.cryptoHelpers expuesto. window.uuid generador UUID v4 compatible file://]
+
+Añadir al final del archivo:
+```javascript
+// Generador UUID v4 (compatible con file:// — no requiere crypto.randomUUID)
+window.uuid = function() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+};
+```
 
 ### `core/ui.js`
 [toast, confirm, loading, format.currency/date. window.UI expuesto]
@@ -252,15 +263,30 @@ const [NombreModulo] = {
   // Métodos privados
   async guardar(datos) {
     const registro = {
+      id: uuid(),
       // Campos sensibles → cifrar
       nombre: cryptoHelpers.encrypt(datos.nombre),
       email: cryptoHelpers.encrypt(datos.email),
       // No sensibles → directos
       telefono: datos.telefono,
-      createdAt: new Date()
+      createdBy: APP_CONFIG?.usuarioActual || 'anon',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     await db.[tabla].put(registro);
     UI.toast('Guardado correctamente', 'success');
+  },
+
+  async actualizar(id, datos) {
+    const existente = await db.[tabla].get(id);
+    if (!existente) { UI.toast('Registro no encontrado', 'error'); return; }
+    await db.[tabla].put({
+      ...existente,
+      ...datos,
+      id, // preservar UUID original
+      updatedAt: new Date()
+    });
+    UI.toast('Actualizado correctamente', 'success');
   }
 };
 
@@ -526,20 +552,31 @@ window.SyncEngine = {
       const tableCount = Object.keys(backup.tables).length;
       const recordCount = Object.values(backup.tables).reduce((a, t) => a + t.length, 0);
       const ok = await UI.confirm(
-        `Restaurar ${recordCount} registros en ${tableCount} tablas?` +
-        '\nLos datos actuales serán reemplazados.'
+        `Importar ${recordCount} registros en ${tableCount} tablas?` +
+        '\nRegistros nuevos se añaden. Existentes se actualizan si el backup es más reciente.'
       );
       if (!ok) return;
 
-      // Restaurar tabla por tabla (clear + bulkPut)
+      // Merge por UUID + updatedAt (nunca borra datos locales)
+      let insertados = 0, actualizados = 0, saltados = 0;
       for (const [name, records] of Object.entries(backup.tables)) {
-        if (db[name]) {
-          await db[name].clear();
-          if (records.length) await db[name].bulkPut(records);
+        if (!db[name]) continue;
+        for (const record of records) {
+          const existing = await db[name].get(record.id);
+          if (!existing) {
+            await db[name].put(record);
+            insertados++;
+          } else if (new Date(record.updatedAt) > new Date(existing.updatedAt)) {
+            record.createdAt = existing.createdAt;
+            await db[name].put(record);
+            actualizados++;
+          } else {
+            saltados++;
+          }
         }
       }
 
-      UI.toast(`Respaldo restaurado: ${recordCount} registros en ${tableCount} tablas`, 'success');
+      UI.toast(`Importado: ${insertados} nuevos, ${actualizados} actualizados, ${saltados} saltados`, 'success');
     } catch (err) {
       if (err.message.includes('MAC')) {
         UI.toast('Contraseña incorrecta', 'error');
@@ -605,9 +642,11 @@ window.SyncEngine = {
 **Reglas:**
 - El archivo `.ateje-backup` se puede transferir por cualquier medio (USB, Drive, WhatsApp, Near Share, etc.)
 - Si se usa contraseña, debe ser la misma al exportar e importar
-- La importación **reemplaza** los datos actuales (clear + bulkPut)
+- La importación **fusiona** datos por UUID + `updatedAt` (nunca borra datos locales)
+- Registros nuevos (UUID no existente) se insertan. Existentes se actualizan solo si el backup es más reciente
 - Compatible entre perfiles: Lite, Full y Mobile usan el mismo `core/sync.js`
 - Sin contraseña = solo compresión (más rápido), con contraseña = cifrado AES
+- Todos los registros incluyen `createdBy`, `createdAt` y `updatedAt` para trazabilidad multi-dispositivo
 
 ### Error Handling Patterns (De error-handling-patterns)
 ```javascript
