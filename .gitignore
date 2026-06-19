@@ -11,3 +11,6 @@ mcp-servers/*/dist/
 
 # Backup zip
 opencode-backup-*.zip
+
+# Backup de config local (contiene tokens)
+_backup-config/
