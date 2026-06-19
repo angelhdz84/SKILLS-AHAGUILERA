@@ -1,6 +1,6 @@
-# Guía del Stack — Skill-Layer Architecture
+# Guía del Stack — Ateje Stack (Skill-Layer Architecture)
 
-> Cómo usar los 5 engines + 5 standalone + 16 OmD skills para crear apps offline-first.
+> Cómo usar los 5 engines + 6 standalone + 16 OmD skills del **Ateje Stack** para crear apps offline-first.
 > Versión: 1.0 | Perfiles: Lite / Full
 
 ---
@@ -19,18 +19,18 @@
 
 ---
 
-## 1. ¿Qué es Skill-Layer Architecture?
+## 1. ¿Qué es Ateje Stack?
 
-Skill-Layer Architecture organiza las 31 skills originales (17 repo + 14 oh-my-design) en **3 capas** con responsabilidades claras:
+El **Ateje Stack** organiza las 31 skills originales (17 repo + 14 oh-my-design) en **3 capas** con responsabilidades claras (Skill-Layer Architecture):
 
 ```
 ┌─────────────────────────────────────────────┐
 │  ENGINES (5) — Orquestación y coordinación   │
 │  pipeline · spec · design · validation · wiki │
 ├─────────────────────────────────────────────┤
-│  STANDALONE (5) — Ejecución pura             │
+│  STANDALONE (6) — Ejecución pura             │
 │  setup-init · code-generator · compliance    │
-│  deployment-jigue · ia-jutia                 │
+│  alpine-ui-patterns · deployment-jigue · ia  │
 ├─────────────────────────────────────────────┤
 │  OmD (16) — Catálogo de diseño externo       │
 │  omd-init · omd-apply · omd-taste · ...      │
@@ -85,6 +85,7 @@ Skill-Layer Architecture organiza las 31 skills originales (17 repo + 14 oh-my-d
 | `setup-init` | Valida entorno, crea estructura, instala librerías | lite, full |
 | `code-generator` | Genera código por fases desde specs, un módulo por turno | lite, full |
 | `stack-compliance-guard` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
+| `alpine-ui-patterns` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 | `deployment-jigue` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `ia-jutia` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
 
@@ -927,7 +928,8 @@ Las librerías adicionales deben especificarse en la spec:
 | `pipeline-engine` | `setup-init`, `spec-engine` | Nombre + tipo + descripción + perfil + modo |
 | `setup-init` | `code-generator` | Estructura + librerías según perfil |
 | `spec-engine` | `design-engine`, `code-generator`, `wiki-engine` | `specs/[app].md` + `specs/DESIGN.md` |
-| `design-engine` | `code-generator` | Preferencias de diseño en `.omd/preferences.md` |
+| `design-engine` | `code-generator`, `alpine-ui-patterns` | Preferencias de diseño en `.omd/preferences.md` (incluye `component_library`) |
+| `alpine-ui-patterns` | `design-engine`, `code-generator` | Catálogo de ~100 componentes Pines/Penguin/Pinemix con fallback chain |
 | `code-generator` | `stack-compliance-guard`, `validation-engine`, `wiki-engine` | `modules/*`, `core/*`, `index.html` |
 | `stack-compliance-guard` | `code-generator` | Validación automática post-generación |
 | `validation-engine` | `wiki-engine` | `docs/validacion-[app].md` + brand audit |
@@ -991,5 +993,5 @@ Las librerías adicionales deben especificarse en la spec:
 
 ---
 
-*Documento generado para SKILLS-AHAGUILERA — Skill-Layer Architecture v1.0*
-*Última actualización: 2026-06-18*
+*Documento generado para **Ateje Stack** — Skill-Layer Architecture v1.0*
+*Última actualización: 2026-06-19*

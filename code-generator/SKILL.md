@@ -9,7 +9,7 @@ meta:
   perfiles: [lite, full]
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
-  stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
+  stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "alpine-ui-patterns", "bootstrap-icons", "animate.css"]
   language: es
   inputSpec: "specs/[app].md"
   autoValidate: true
@@ -36,14 +36,16 @@ meta:
    - **Librerías adicionales** (sección `## 📚 Librerías Adicionales` o bloque `libreriasAdicionales`)
    - **Perfil** (`project.config.js` → `APP_CONFIG.perfil`: lite/full)
    - **IA Jutia** (`APP_CONFIG.iaJutia.perfil`: lite/full/no)
-2. Si detecta librerías adicionales o IA, las incluye en el plan:
+   - **component_library** (`.omd/preferences.md` o `APP_CONFIG.componentLibrary`): `auto` | `daisyui` | `pines` | `penguin` | `pinemix`
+ 2. Si detecta librerías adicionales o IA, las incluye en el plan:
    ```
    📋 PLAN DE GENERACIÓN
    • Perfil: [lite|full]
    • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html (compartido 95%)
    • Módulos: [lista de módulos desde spec] (compartidos)
-   • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
-   • Librerías adicionales: [lista] (desde spec)
+    • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
+    • Librería UI: [daisyui|pines|penguin|pinemix] (desde preferencia o auto)
+    • Librerías adicionales: [lista] (desde spec)
    • Full extra: src/index.js (Bun server entry point)
    • Validación: stack-compliance-guard auto-aplicado
    • Entregable: Código por bloques con ruta exacta
@@ -158,10 +160,10 @@ Para cada módulo en la spec:
    ### `modules/[nombre-id]/module.js`
    [Lógica CRUD, cifrado automático en campos sensibles, registro en window.MODULES, validación UI, feedback con UI.toast()]
 
-   ### `modules/[nombre-id]/module.html`
-   [HTML puro + Alpine x-data/x-init, DaisyUI componentes, Bootstrap Icons en botones, Animate.css en entradas, responsive mobile-first]
+### `modules/[nombre-id]/module.html`
+    [HTML puro + Alpine x-data/x-init, componentes según `component_library` (DaisyUI / Pines / Penguin / Pinemix), Bootstrap Icons en botones, Animate.css en entradas, responsive mobile-first]
 
-   🛡️ Stack Compliance: ✅ Validado automáticamente (sin imports, rutas relativas, cifrado aplicado, UI consistente)
+    🛡️ Stack Compliance: ✅ Validado automáticamente (sin imports, rutas relativas, cifrado aplicado, UI consistente)
    ⏸️ PAUSA. Responde "✅ [nombre-id] OK" para el siguiente módulo.
    ```
 3. Repite hasta completar todos los módulos de la spec.
@@ -523,14 +525,67 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 | `ia-jutia` | Si se incluye, genera módulo IA + core/ia.js según perfil Lite/Full |
 | `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque |
 | `design-ux-intelligence` | Aplica tono visual, contrastes, espaciado y animaciones según spec |
+| `alpine-ui-patterns` | Catálogo de ~100 patrones Pines/Penguin/Pinemix con fallback chain. Se consulta cuando `component_library` ≠ daisyui o cuando DaisyUI no tiene el componente |
 | `validation-offline` | Ejecuta `validar app` tras completar FASE 4 |
 | `deployment-jigue` | Empaqueta (Lite: ZIP / Full: .exe) y despliega a Pages |
 
 ---
 
+## 🧩 SELECCIÓN DE LIBRERÍA UI (por preferencia)
+
+En FASE 3, para cada módulo, determinar la librería de componentes según `component_library`:
+
+1. **Leer preferencia**: `APP_CONFIG.componentLibrary` en `project.config.js` o `.omd/preferences.md`
+2. **Resolver fallback**: Usar `alpine-ui-patterns/SKILL.md` para consultar disponibilidad del componente en cada librería
+3. **Generar con la librería ganadora**: El módulo HTML debe ser coherente — no mezclar 2 implementaciones del mismo componente en una pantalla
+
+**Mapeo de componentes por librería** (resumen de `alpine-ui-patterns`):
+
+| Componente | DaisyUI | Pines | Penguin | Pinemix |
+|-----------|---------|-------|---------|---------|
+| btn/button | `btn btn-primary` | Clases Tailwind | Clases Tailwind | — |
+| card | `card bg-base-100 shadow-xl` | Tailwind border | Tailwind border | — |
+| modal | `dialog` + `modal-box` | `x-show` + teleport | `x-show` básico | `x-show` + backdrop blur |
+| dropdown | `dropdown` + `dropdown-content` | `x-data` + `@click.outside` | `x-data` básico | `x-data` + `@keydown.esc` |
+| tabs | `tabs` + `tab` | `x-data` nav | `x-data` básico | `x-data` + `@keydown` + ARIA |
+| accordion | `collapse` | `<details>` | `<details>` | `<details>` + animación |
+| toast | — | `x-data` stack | alert | `x-data` stackable |
+| tooltip | `tooltip` | `x-data` hover | Clases CSS | `x-data` + `@mouseenter` |
+| skeleton | `skeleton` | `animate-pulse` | Clases | `animate-pulse` |
+| progress | `progress` | `div` width-based | `div` width-based | `div` width-based |
+| badge | `badge` | Tailwind pill | Tailwind pill | — |
+| table | `table` | `table` + sort | `table` Tailwind | `table` + sort |
+| alert | `alert` | Variantes color | Variantes color | — |
+| pagination | `join` + `btn` | Page numbers | Page numbers | — |
+| switch/toggle | `toggle` | `x-data` checkbox | `x-data` checkbox | — |
+| select | `select` | Custom dropdown | `select` Tailwind | `select-menu` custom |
+| breadcrumb | `breadcrumbs` | Tailwind flex | Tailwind flex | Array-driven |
+| range slider | `range` | `input[type=range]` | `input[type=range]` | `input[type=range]` |
+| rating | `rating` | Star buttons | Star buttons | Star buttons |
+| navbar | `navbar` | — | Flexbox | — |
+| sidebar | `drawer` | — | Flexbox | — |
+| command palette | — | `Cmd+K` + `x-teleport` | — | `Cmd+K` + `x-data` |
+| date picker | — | Custom calendar | — | — |
+| image gallery | — | Grid + lightbox | — | Grid + lightbox |
+| marquee | — | `animate-scroll` | — | CSS animation |
+| skeleton loader | `skeleton` | Shimmer | CSS | Shimmer |
+| color picker | — | — | — | Palette grid |
+| tag input | — | — | — | Keyboard enter + remove |
+| tree view | — | — | — | Expandable hierarchy |
+| steps | `steps` | — | Progress steps | — |
+| carousel | `carousel` | — | Image slider | Image slider |
+| chat bubble | — | — | Flexbox Bubble | — |
+| file input | `file-input` | — | Custom input | — |
+| spinner/loading | `loading` | — | SVG spinner | — |
+| offcanvas | `drawer` | `slide-over` | — | `slide-over` |
+| two factor | — | — | — | 6-digit input |
+| countdown | — | — | — | Timer component |
+
+**Regla de coherencia**: Si el módulo usa DaisyUI para botones (btn), también debe usar DaisyUI para cards, tabs y inputs. No mezclar en la misma vista.
+
 ## 🧩 PLANTILLAS DE COMPONENTES PINES
 
-Cuando la spec requiera UX avanzada, inyectar estos patrones de Pines (en `components/pines/`). Tailwind nativo, no DaisyUI.
+Cuando la spec requiera UX avanzada o `component_library=pines`, inyectar estos patrones de Pines (en `components/pines/`). Tailwind nativo, no DaisyUI.
 
 ### Command Palette (Cmd+K)
 ```html
@@ -673,6 +728,7 @@ Cuando la spec requiera UX avanzada, inyectar estos patrones de Pines (en `compo
 - **No asumas que la librería adicional existe**. Siempre carga desde `assets/js/libs/[nombre]`, nunca desde CDN.
 - **Idioma**: Todo el output, nombres de variables y comentarios en español.
 - **Componentes Pines en `components/pines/`**: Command Palette, Slide-over, Date Picker, Context Menu, Toast, Modal, Tabs, Accordion, etc. Tailwind nativo. Ver `design-ux-intelligence` Paso 5.
+- **Componentes alpine-ui-patterns**: ~100 patrones de Pines/Penguin/Pinemix en `alpine-ui-patterns/SKILL.md`. Consultar por categoría A (mejor)/B (alternativa)/C (exclusivo). Si `component_library=auto`, usar DaisyUI y solo recurrir a alpine-ui-patterns para componentes que DaisyUI no tiene (toast, command palette, date picker, text animation, etc.)
 
 ✨ **SKILL ready. Trigger: `generar codigo` para iniciar.**
 ```

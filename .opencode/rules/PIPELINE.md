@@ -16,7 +16,8 @@
 | pipeline-engine | setup-init, spec-engine | Nombre + tipo + descripción + perfil + modo (classic/design) |
 | setup-init | code-generator | Estructura + librerías según perfil (curl o bun add) |
 | spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` (con modelo datos + journeys + testing) + `specs/DESIGN.md` (brand layer) |
-| design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` (tokens, paleta, tipografía) |
+| design-engine | code-generator, alpine-ui-patterns | Preferencias de diseño en `.omd/preferences.md` (tokens, paleta, tipografía, `component_library`) |
+| alpine-ui-patterns | design-engine, code-generator | `alpine-ui-patterns/SKILL.md` — catálogo de ~100 componentes con categorías A/B/C y fallback chain |
 | code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` (+ src/ en Full) |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |

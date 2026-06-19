@@ -1,4 +1,4 @@
-# SKILLS-AHAGUILERA — Instrucciones para OpenCode
+# 🏗️ Ateje Stack — Instrucciones para OpenCode
 
 {file:.opencode/rules/STACK.md}
 {file:.opencode/rules/PIPELINE.md}
@@ -7,7 +7,7 @@
 
 ## Identidad
 
-Meta-repo de 16 skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). No es una app. Skills generan apps en directorios externos, no dentro del repo.
+Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 6 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
 
 ## Perfiles
 
@@ -18,7 +18,7 @@ Meta-repo de 16 skills OpenCode (SKILL.md autónomos en directorios raíz) para 
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
-## Skills — Skill-Layer Architecture (5 Engines + 5 Standalone)
+## Skills — Ateje Stack (5 Engines + 6 Standalone)
 
 ### Motores (engines) — Skills de orquestación que reemplazan funcionalidad previa
 
@@ -26,7 +26,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 |-----------|-----------|-------------|----------|
 | `pipeline-engine/` | Orquestador maestro dual: Classic (5 fases, /new) y Design (10 fases, /pro) | prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator | lite, full |
 | `spec-engine/` | Spec funcional + DESIGN.md brand layer con 286 referencias oh-my-design | spec-creator + omd:init + omd:taste | lite, full |
-| `design-engine/` | Brand context injection + tokens DaisyUI + captura de preferencias persistentes | design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn | lite, full |
+| `design-engine/` | Brand context injection + tokens DaisyUI/alpine-ui-patterns + captura de preferencias persistentes + decision tree component_library | design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn | lite, full |
 | `validation-engine/` | 4 fases: compliance → brand audit → DevTools/Playwright → QA rubric + modo refactor | validation-offline + ux-refactor + omd:designer-review + omd:final-qa | lite, full |
 | `wiki-engine/` | Wiki persistente + preferencias de diseño .omd/preferences.md + MCP memory | llm-wiki + omd:remember + omd:learn | lite, full |
 
@@ -35,10 +35,11 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
 | `setup-init/` | Valida entorno, crea estructura, instala librerías | lite, full |
-| `code-generator/` | Genera código por fases desde specs, un módulo por turno | lite, full |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix) | lite, full |
 | `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
+| `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 
 ### Skills externas (oh-my-design, 16 skills en `~/.opencode/skills/omd-*`)
 

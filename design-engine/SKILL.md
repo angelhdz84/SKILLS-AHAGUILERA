@@ -1,14 +1,14 @@
 ---
 name: design-engine
-description: Aplica diseño visual y UX profesional a apps offline-first. Absorbe design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn. Lee DESIGN.md como autoridad de marca, aplica tokens a componentes DaisyUI, captura correcciones como preferencias persistentes.
+description: Aplica diseño visual y UX profesional a apps offline-first. Absorbe design-ux-intelligence + daisyui-patterns + alpine-ui-patterns + omd:apply + omd:sync + omd:remember + omd:learn. Lee DESIGN.md como autoridad de marca, aplica tokens a componentes DaisyUI o alpine-ui-patterns (Pines/Penguin/Pinemix) según preferencia, captura correcciones como preferencias persistentes.
 license: MIT
-compatibility: Requiere specs/[app].md con DESIGN.md (secciones 10-15). Funciona con Alpine.js + DaisyUI 5 + Tailwind CSS.
+compatibility: Requiere specs/[app].md con DESIGN.md (secciones 10-15). Funciona con Alpine.js + DaisyUI 5 + Tailwind CSS + alpine-ui-patterns (Pines/Penguin/Pinemix alternativa).
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
   perfiles: [lite, full]
   triggers: ["generar codigo", "/build", "disenar", "aplicar diseno", "ui", "interfaz", "modulo", "componente", "make it warmer", "make it cooler", "mas formal", "mas moderno"]
-  stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "daisyui", "bootstrap-icons", "animate.css"]
+  stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "daisyui", "alpine-ui-patterns", "bootstrap-icons", "animate.css"]
   language: es
   requires: [spec-engine]
 ---
@@ -39,6 +39,8 @@ Antes de cualquier acción, determinar el modo:
 1. Leer `specs/[app].md` completo. Si tiene secciones 10-15 (DESIGN.md), esas son la autoridad.
 2. Si no existe spec pero hay `DESIGN.md` en la raíz del proyecto, leer ese.
 3. Si existe `.omd/preferences.md`, leerlo — las entradas `status: pending` tienen PRIORIDAD sobre DESIGN.md (son correcciones del usuario aún no integradas).
+   - **`component_library`**: Leer preferencia de librería de componentes: `auto` | `daisyui` | `pines` | `penguin` | `pinemix`. Default: `auto`.
+   - Este valor determina la **selección de librería** en Phase 2.
 4. Si existe `assets/_reference/<id>/` (captura live de omd:reference-capture):
    - `tokens.json` → `live_overrides` tienen prioridad sobre DESIGN.md para tokens visuales
    - `fonts.json` → fuentes observadas en vivo
@@ -52,24 +54,61 @@ Antes de cualquier acción, determinar el modo:
   > defaults de DaisyUI 5                                (fallback)
 ```
 
-### Phase 2 — Aplicar tokens a componentes DaisyUI
+### Phase 2 — Seleccionar librería de componentes + aplicar tokens
 
 Para cada módulo que code-generator produzca:
 
-1. **Mapa de tokens**: Traducir DESIGN.md → clases/atributos DaisyUI 5:
-   - `primary` / `secondary` / `accent` → data-theme + clases semánticas
-   - `border-radius` → rounded-[token]
-   - `spacing` → gap/padding/margin según escala
-   - `font-family` → tipografía del tema
-   - `motion` → duraciones y easings de Animate.css
+#### Step 2.0 — Decision tree de librería de componentes
 
-2. **Componentes**: Usar componentes DaisyUI 5 reales (btn, card, input, modal, drawer, dropdown, tab, badge, table, etc.) — no HTML genérico.
+Leer `component_library` de `.omd/preferences.md`. Si no existe, usar `auto`.
 
-3. **Microcopy**: Aplicar la voz de marca (sección 10) a textos de UI.
+| Valor | Estrategia | Descripción |
+|-------|-----------|-------------|
+| `auto` | DaisyUI → fallback | Usar DaisyUI 5 para todo. Si el componente no existe en DaisyUI, mirar `alpine-ui-patterns` categoría A → B → C |
+| `daisyui` | DaisyUI → fallback a alpine-ui-patterns | Igual que `auto` (DaisyUI es default) |
+| `pines` | Pines → fallback | Usar Pines UI primero (vía `alpine-ui-patterns/SKILL.md`). Fallback Penguin → Pinemix → DaisyUI |
+| `penguin` | Penguin → fallback | Usar Penguin UI primero. Fallback Pines → Pinemix → DaisyUI |
+| `pinemix` | Pinemix → fallback | Usar Pinemix primero. Fallback Pines → Penguin → DaisyUI |
 
-4. **Estados**: Cada componente interactivo debe tener: default, hover, focus, active, disabled.
+**Regla**: Si la librería preferida tiene el componente en categoría A o B de `alpine-ui-patterns`, usarla. Si no, cascada según la fila.
 
-5. **Responsive**: Verificar en 768px y 375px. Mínimo hit area 44x44.
+**Excepción**: Componentes de sistema (layout, sidebar, navbar, drawer) siempre DaisyUI por compatibilidad con Alpine + `x-show` + `$persist`.
+
+#### Step 2.1 — Mapa de tokens
+
+Traducir DESIGN.md → clases/atributos de la librería seleccionada:
+
+| Design token | DaisyUI 5 | Pines/Penguin/Pinemix |
+|-------------|-----------|----------------------|
+| `primary` | `btn-primary`, `bg-primary`, `text-primary` | `bg-blue-600`, `text-blue-600` (mapear al color brand) |
+| `border-radius` | `rounded-box`, `rounded-btn` | `rounded-lg` |
+| `spacing` | `gap-*`, `p-*`, `m-*` DaisyUI scale | `gap-*`, `p-*`, `m-*` Tailwind estándar |
+| `font-family` | `font-sans` (theme) | `font-sans` (Tailwind) |
+| `shadow` | `shadow-sm`, `shadow-xl` | Mismos valores Tailwind |
+| `motion` | Transiciones DaisyUI | `transition ease-out duration-*` de Alpine |
+
+#### Step 2.2 — Componentes
+
+Usar componentes de la librería seleccionada en Step 2.0.
+
+- Si `daisyui` o `auto`: btn, card, input, modal, drawer, dropdown, tab, badge, table, etc.
+- Si `pines`: patrones de `alpine-ui-patterns/SKILL.md` categoría Pines (categoría A para dropdown, modal, toast, command, tooltip, etc.)
+- Si `penguin`: patrones Penguin UI (para avatar, steps, carousel, chat-bubble, spinner, etc.)
+- Si `pinemix`: patrones Pinemix (para accordion, tabs, range-slider, tag-input, etc.)
+
+**Compatibilidad**: Las clases DaisyUI (`btn`, `card`, `alert`, `badge`, `kbd`, `table`, `input`) son compatibles con los 3 Alpine libs. No es necesario reemplazarlas. Mezclar libremente.
+
+#### Step 2.3 — Microcopy
+
+Aplicar la voz de marca (sección 10) a textos de UI — independiente de la librería.
+
+#### Step 2.4 — Estados
+
+Cada componente interactivo debe tener: default, hover, focus, active, disabled. Verificar que los patrones de `alpine-ui-patterns` incluyan estos estados.
+
+#### Step 2.5 — Responsive
+
+Verificar en 768px y 375px. Mínimo hit area 44x44.
 
 ### Phase 3 — Aplicar checklist UX crítico
 
@@ -109,6 +148,21 @@ Si se modificó DESIGN.md o preferencias, actualizar shims necesarios para que o
 - Dropdowns con `x-data="{ open: false }"` + `@click.outside`.
 - Tabs con `x-data="{ tab: '1' }"`.
 - Tablas responsivas con overflow-x-auto.
+
+### alpine-ui-patterns — Catálogo unificado Pines/Penguin/Pinemix
+
+Skill en `alpine-ui-patterns/SKILL.md`. Catálogo de ~100 componentes de 3 librerías Alpine.js + Tailwind.
+
+- **Pines UI** (devdojo.com/pines): 40+ componentes avanzados (command palette, context menu, date picker, text animation)
+- **Penguin UI** (penguinui.com): 30+ componentes con 6 temas (Arctic, Modern, Minimal, Neo Brutalism, etc.)
+- **Pinemix** (pinemix.com): 30 componentes (accordion, tabs, range-slider, tag input, tree view)
+
+**Prioridad por categoría** en `alpine-ui-patterns/SKILL.md`:
+- **A** — Mejor implementación (referencia de calidad)
+- **B** — Alternativa sólida
+- **C** — Exclusivo de una fuente (sin fallback)
+
+**Fallback chain**: `preferida → siguiente → ... → DaisyUI`
 
 ### Referencias de marca (286 catálogo OmD)
 
