@@ -27,9 +27,9 @@
     <body for="html-export">
       <div class="crossnote markdown-preview  ">
       
-<h1 id="guía-del-stack--skill-layer-architecture">Guía del Stack — Skill-Layer Architecture </h1>
+<h1 id="guía-del-stack--ateje-stack-skill-layer-architecture">Guía del Stack — Ateje Stack (Skill-Layer Architecture) </h1>
 <blockquote>
-<p>Cómo usar los 5 engines + 5 standalone + 16 OmD skills para crear apps offline-first.<br>
+<p>Cómo usar los 5 engines + 6 standalone + 16 OmD skills del <strong>Ateje Stack</strong> para crear apps offline-first.<br>
 Versión: 1.0 | Perfiles: Lite / Full</p>
 </blockquote>
 <hr>
@@ -46,15 +46,15 @@ Versión: 1.0 | Perfiles: Lite / Full</p>
 <li><a href="#9-referencia-r%C3%A1pida">Referencia rápida</a></li>
 </ol>
 <hr>
-<h2 id="1-qué-es-skill-layer-architecture">1. ¿Qué es Skill-Layer Architecture? </h2>
-<p>Skill-Layer Architecture organiza las 31 skills originales (17 repo + 14 oh-my-design) en <strong>3 capas</strong> con responsabilidades claras:</p>
+<h2 id="1-qué-es-ateje-stack">1. ¿Qué es Ateje Stack? </h2>
+<p>El <strong>Ateje Stack</strong> organiza las 31 skills originales (17 repo + 14 oh-my-design) en <strong>3 capas</strong> con responsabilidades claras (Skill-Layer Architecture):</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>┌─────────────────────────────────────────────┐
 │  ENGINES (5) — Orquestación y coordinación   │
 │  pipeline · spec · design · validation · wiki │
 ├─────────────────────────────────────────────┤
-│  STANDALONE (5) — Ejecución pura             │
+│  STANDALONE (6) — Ejecución pura             │
 │  setup-init · code-generator · compliance    │
-│  deployment-jigue · ia-jutia                 │
+│  alpine-ui-patterns · deployment-jigue · ia  │
 ├─────────────────────────────────────────────┤
 │  OmD (16) — Catálogo de diseño externo       │
 │  omd-init · omd-apply · omd-taste · ...      │
@@ -217,6 +217,11 @@ Versión: 1.0 | Perfiles: Lite / Full</p>
 <tr>
 <td><code>stack-compliance-guard</code></td>
 <td>Guarda automática: bloquea imports, CDNs, fetch, crypto faltante</td>
+<td>lite, full</td>
+</tr>
+<tr>
+<td><code>alpine-ui-patterns</code></td>
+<td>Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad</td>
 <td>lite, full</td>
 </tr>
 <tr>
@@ -1169,8 +1174,13 @@ Las librerías adicionales deben especificarse en la spec:
 </tr>
 <tr>
 <td><code>design-engine</code></td>
-<td><code>code-generator</code></td>
-<td>Preferencias de diseño en <code>.omd/preferences.md</code></td>
+<td><code>code-generator</code>, <code>alpine-ui-patterns</code></td>
+<td>Preferencias de diseño en <code>.omd/preferences.md</code> (incluye <code>component_library</code>)</td>
+</tr>
+<tr>
+<td><code>alpine-ui-patterns</code></td>
+<td><code>design-engine</code>, <code>code-generator</code></td>
+<td>Catálogo de ~100 componentes Pines/Penguin/Pinemix con fallback chain</td>
 </tr>
 <tr>
 <td><code>code-generator</code></td>
@@ -1337,8 +1347,8 @@ Las librerías adicionales deben especificarse en la spec:
 │   /ia → solo añadir mini IA                    │
 └───────────────────────────────────────────────┘
 </code></pre><hr>
-<p><em>Documento generado para SKILLS-AHAGUILERA — Skill-Layer Architecture v1.0</em><br>
-<em>Última actualización: 2026-06-18</em></p>
+<p><em>Documento generado para <strong>Ateje Stack</strong> — Skill-Layer Architecture v1.0</em><br>
+<em>Última actualización: 2026-06-19</em></p>
 
       </div>
       

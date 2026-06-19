@@ -83,7 +83,7 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | setup-init | code-generator | Estructura + librerías según perfil |
 | spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` + `specs/DESIGN.md` |
 | design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` |
-| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` (+ src/ en Full) |
+| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*` (incl. `core/sync.js`), `index.html` (+ src/ en Full) |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
 | deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + Release (Full) |

@@ -86,6 +86,9 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 ### `core/network.js` (si la app requiere monitoreo de conexión)
 [Monitoreo navigator.onLine, eventos online/offline, Alpine store]
 
+### `core/sync.js` (siempre incluido — export/import .ateje-backup)
+[Motor de respaldo: exporta todas las tablas Dexie a archivo cifrado/comprimido y restaura en cualquier perfil]
+
 ### `sw.js` (si la app requiere PWA/instalabilidad)
 [Service Worker con cache-first, skipWaiting, clientsClaim]
 
@@ -202,6 +205,9 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿`sw.js` generado pero no registrado en index.html? → AGREGAR registro
 - [ ] ¿`manifest.json` generado pero no enlazado? → AGREGAR `<link rel="manifest">`
 - [ ] ¿Falta `core/network.js` en apps que monitorean conexión? → AGREGAR
+- [ ] **Sync**: ¿Falta `core/sync.js`? → AGREGAR (siempre se incluye por defecto)
+- [ ] **Sync**: ¿Operaciones Dexie en sync.js sin try/catch? → AGREGAR manejo de errores
+- [ ] **Sync**: ¿Export/import sin feedback visual (UI.toast)? → AGREGAR notificaciones
 - [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
 - [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
@@ -408,6 +414,200 @@ window.network.init();
   <span x-text="$store.network.online ? 'En línea' : 'Sin conexión'"></span>
 </span>
 ```
+
+### Sync Engine (core/sync.js — export/import .ateje-backup)
+
+Motor universal de respaldo para el stack offline-first. Exporta TODAS las tablas Dexie a un archivo `.ateje-backup` cifrado (CryptoJS AES) y comprimido (pako), y lo restaura en cualquier perfil (Lite/Full/Mobile). Mismo código, mismo formato.
+
+```javascript
+// core/sync.js — Export/Import de datos offline-first
+// Formato .ateje-backup: JSON → pako.deflate → CryptoJS.AES
+window.SyncEngine = {
+  _password: '',
+
+  setPassword(pwd) {
+    this._password = pwd || '';
+  },
+
+  async exportar(password) {
+    const pwd = password || this._password;
+    try {
+      UI.toast('Preparando respaldo...', 'info');
+      const tables = {};
+      const appName = APP_CONFIG?.nombreApp || 'app';
+
+      // Recolectar datos de todas las tablas Dexie
+      for (const table of db.tables) {
+        const records = await table.toArray();
+        if (records.length) tables[table.name] = records;
+      }
+
+      if (!Object.keys(tables).length) {
+        UI.toast('No hay datos para exportar', 'warning');
+        return;
+      }
+
+      // Armar payload
+      const payload = JSON.stringify({
+        version: 1,
+        app: appName,
+        exportedAt: new Date().toISOString(),
+        tables
+      });
+
+      // Comprimir con pako
+      const compressed = pako.deflate(payload, { level: 9 });
+      let blob;
+
+      if (pwd) {
+        // Cifrar con CryptoJS AES
+        const encrypted = CryptoJS.AES.encrypt(
+          CryptoJS.lib.WordArray.create(compressed),
+          pwd
+        ).toString();
+        blob = new Blob([encrypted], { type: 'application/octet-stream' });
+      } else {
+        blob = new Blob([compressed], { type: 'application/octet-stream' });
+      }
+
+      // Descargar archivo
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${appName}-${new Date().toISOString().slice(0, 10)}.ateje-backup`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      UI.toast(`Respaldo exportado (${(blob.size / 1024).toFixed(1)} KB)`, 'success');
+    } catch (err) {
+      UI.toast('Error al exportar: ' + err.message, 'error');
+    }
+  },
+
+  async importar(file, password) {
+    const pwd = password || this._password;
+    try {
+      UI.toast('Leyendo respaldo...', 'info');
+
+      let data;
+      if (file instanceof File) {
+        data = await file.arrayBuffer();
+      } else {
+        data = file;
+      }
+
+      let decompressed;
+
+      if (pwd) {
+        // Descifrar
+        const encrypted = new TextDecoder().decode(data);
+        const decrypted = CryptoJS.AES.decrypt(encrypted, pwd);
+        const words = decrypted;
+        const bytes = new Uint8Array(words.sigBytes);
+        for (let i = 0; i < words.sigBytes; i++) {
+          bytes[i] = (words.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+        }
+        decompressed = pako.inflate(bytes, { to: 'string' });
+      } else {
+        decompressed = pako.inflate(data, { to: 'string' });
+      }
+
+      const backup = JSON.parse(decompressed);
+
+      // Validar estructura
+      if (!backup.version || !backup.tables) {
+        UI.toast('Archivo de respaldo inválido', 'error');
+        return;
+      }
+
+      // Confirmar restauración
+      const tableCount = Object.keys(backup.tables).length;
+      const recordCount = Object.values(backup.tables).reduce((a, t) => a + t.length, 0);
+      const ok = await UI.confirm(
+        `Restaurar ${recordCount} registros en ${tableCount} tablas?` +
+        '\nLos datos actuales serán reemplazados.'
+      );
+      if (!ok) return;
+
+      // Restaurar tabla por tabla (clear + bulkPut)
+      for (const [name, records] of Object.entries(backup.tables)) {
+        if (db[name]) {
+          await db[name].clear();
+          if (records.length) await db[name].bulkPut(records);
+        }
+      }
+
+      UI.toast(`Respaldo restaurado: ${recordCount} registros en ${tableCount} tablas`, 'success');
+    } catch (err) {
+      if (err.message.includes('MAC')) {
+        UI.toast('Contraseña incorrecta', 'error');
+      } else {
+        UI.toast('Error al importar: ' + err.message, 'error');
+      }
+    }
+  },
+
+  async preview(file) {
+    // Lee metadatos del archivo sin importar
+    const data = await file.arrayBuffer();
+    try {
+      const decompressed = pako.inflate(data, { to: 'string' });
+      const backup = JSON.parse(decompressed);
+      return backup;
+    } catch {
+      try {
+        const encrypted = new TextDecoder().decode(data);
+        const decrypted = CryptoJS.AES.decrypt(encrypted, '');
+        const words = decrypted;
+        const bytes = new Uint8Array(words.sigBytes);
+        for (let i = 0; i < words.sigBytes; i++) {
+          bytes[i] = (words.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+        }
+        const decompressed = pako.inflate(bytes, { to: 'string' });
+        return JSON.parse(decompressed);
+      } catch {
+        return null;
+      }
+    }
+  }
+};
+```
+
+**Uso en módulo de configuración:**
+```html
+<div x-data="{ password: '' }" class="space-y-4">
+  <h3 class="text-lg font-semibold flex items-center gap-2">
+    <i class="bi bi-cloud-arrow-down"></i> Respaldo de datos
+  </h3>
+  <p class="text-sm text-base-content/60">
+    Exporta toda la información a un archivo .ateje-backup para usarla en otro dispositivo.
+  </p>
+  <div class="flex flex-wrap gap-2">
+    <button class="btn btn-primary" @click="SyncEngine.exportar(password)">
+      <i class="bi bi-download"></i> Exportar respaldo
+    </button>
+    <button class="btn btn-outline" @click="$refs.fileInput.click()">
+      <i class="bi bi-upload"></i> Importar respaldo
+    </button>
+    <input type="file" accept=".ateje-backup" x-ref="fileInput"
+           class="hidden" @change="SyncEngine.importar($event.target.files[0], password)">
+  </div>
+  <label class="form-control w-full max-w-xs">
+    <span class="label-text">Contraseña opcional</span>
+    <input type="password" x-model="password" class="input input-bordered input-sm"
+           placeholder="Proteger con contraseña">
+  </label>
+</div>
+```
+
+**Reglas:**
+- El archivo `.ateje-backup` se puede transferir por cualquier medio (USB, Drive, WhatsApp, Near Share, etc.)
+- Si se usa contraseña, debe ser la misma al exportar e importar
+- La importación **reemplaza** los datos actuales (clear + bulkPut)
+- Compatible entre perfiles: Lite, Full y Mobile usan el mismo `core/sync.js`
+- Sin contraseña = solo compresión (más rápido), con contraseña = cifrado AES
 
 ### Error Handling Patterns (De error-handling-patterns)
 ```javascript
