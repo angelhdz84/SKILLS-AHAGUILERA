@@ -200,10 +200,12 @@ La landing actual https://angelhdz84.github.io/Identidad_AHA/ ya tiene la estruc
 
 ### Añadir un nuevo producto/vertical
 
-1. En el HTML, localizar la sección de productos (buscar `APPS LISTAS PARA LLEVAR`)
-2. Duplicar un bloque `article` de producto existente
-3. Cambiar: título, descripción, categoría, enlace WhatsApp
-4. Si hay screenshot: añadir `<img>` dentro del card
+1. Revisar si existe template en `apps/` (ver `apps/README.md`)
+2. Si no existe, crear nuevo template en `apps/[AppName]/template.md`
+3. En el HTML de la landing, localizar la sección de productos (buscar `APPS LISTAS PARA LLEVAR`)
+4. Duplicar un bloque `article` de producto existente
+5. Cambiar: título, descripción, categoría, enlace WhatsApp
+6. Si hay screenshot: añadir `<img>` dentro del card
 
 ### Actualizar precios
 
