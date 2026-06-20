@@ -450,6 +450,7 @@ Motor universal de respaldo para el stack offline-first. Exporta TODAS las tabla
 // Formato .ateje-backup: JSON → pako.deflate → CryptoJS.AES
 window.SyncEngine = {
   _password: '',
+  _excludeTables: ['modelos_cache'], // tablas que no se incluyen en backup
 
   setPassword(pwd) {
     this._password = pwd || '';
@@ -462,8 +463,9 @@ window.SyncEngine = {
       const tables = {};
       const appName = APP_CONFIG?.nombreApp || 'app';
 
-      // Recolectar datos de todas las tablas Dexie
+      // Recolectar datos de todas las tablas Dexie (excepto excluidas)
       for (const table of db.tables) {
+        if (this._excludeTables.includes(table.name)) continue;
         const records = await table.toArray();
         if (records.length) tables[table.name] = records;
       }
@@ -647,6 +649,7 @@ window.SyncEngine = {
 - Compatible entre perfiles: Lite, Full y Mobile usan el mismo `core/sync.js`
 - Sin contraseña = solo compresión (más rápido), con contraseña = cifrado AES
 - Todos los registros incluyen `createdBy`, `createdAt` y `updatedAt` para trazabilidad multi-dispositivo
+- Tablas excluidas del backup: `modelos_cache` (son pesos ONNX ~230MB, se redescargan solos)
 
 ### Error Handling Patterns (De error-handling-patterns)
 ```javascript

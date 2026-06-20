@@ -156,9 +156,10 @@ APP_CONFIG: {
 const db = new Dexie('AppDB');
 db.version(1).stores({
   // ...tablas existentes...
-  _ia_docs: '++id, nombre, tipo, fecha',
-  _ia_chunks: '++id, docId, texto',
-  _ia_index: '&consulta'
+  _ia_docs: 'id, nombre, tipo, *createdBy, createdAt, updatedAt',
+  _ia_chunks: 'id, docId, *texto, createdAt',
+  _ia_index: '&consulta',
+  modelos_cache: '&ruta'
 });
 ```
 
