@@ -14,14 +14,19 @@ Catálogo de plantillas de apps listas para construir y vender con el Ateje Stac
 
 | App | Vertical | Precio base | IA | Estado |
 |-----|----------|------------|----|--------|
-| [AHA Inventario](AHA-Inventario/template.md) | Retail / Comercio | $99 | ✅ Lite | 🟢 En spec |
+| [AHA Inventario](AHA-Inventario/template.md) | Retail / Comercio | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Comanda](AHA-Comanda/template.md) | Restaurantes / Bares | $99 | ✅ Lite | 🟢 Listo |
-| [AHA CRM](AHA-CRM/template.md) | Ventas / Freelancers | $99 | ✅ Lite | 🟢 En spec |
+| [AHA CRM](AHA-CRM/template.md) | Ventas / Freelancers | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Checklist](AHA-Checklist/template.md) | Mantenimiento / Inspecciones | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Asistencia](AHA-Asistencia/template.md) | RRHH / Pequeñas empresas | $49 | ✅ Lite | 🟢 Listo |
 | [AHA Citas](AHA-Citas/template.md) | Salud / Belleza / Servicios | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Creador](AHA-Creador/template.md) | Creadores de contenido | $49 | ✅ Lite | 🟢 Listo |
 | [AHA Campo](AHA-Campo/template.md) | Agricultura / Ganadería | $99 | ✅ Lite | 🟢 Listo |
+| [AHA POS](AHA-POS/template.md) | Punto de venta offline | $99 | ✅ Lite | 🟢 Listo |
+| [AHA Rx](AHA-Rx/template.md) | Recetas médicas offline | $99 | ✅ Lite | 🟢 Listo |
+| [AHA Flota](AHA-Flota/template.md) | Control de flota/vehículos | $99 | ✅ Lite | 🟢 Listo |
+| [AHA Obra](AHA-Obra/template.md) | Construcción / avance de obra | $99 | ✅ Lite | 🟢 Listo |
+| [AHA PreFactura](AHA-PreFactura/template.md) | Prefacturación offline | $49 | ✅ Lite | 🟢 Listo |
 
 ## Cómo usar un template
 
@@ -55,10 +60,4 @@ Cada template incluye:
 
 ## Próximos templates (en backlog)
 
-| App | Vertical | Prioridad |
-|-----|----------|-----------|
-| AHA POS | Punto de venta offline | Alta |
-| AHA Rx | Recetas médicas offline | Media |
-| AHA Flota | Control de flota/vehículos | Media |
-| AHA Obra | Construcción / avance de obra | Media |
-| AHA PreFactura | Prefacturación offline | Baja |
+*(ninguno — las 13 apps del roadmap ya están completadas)*
