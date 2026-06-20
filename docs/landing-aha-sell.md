@@ -96,6 +96,11 @@ No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su
 | **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49–$199 |
 | **AHA Creador** | YouTubers, streamers, podcasters | Banco ideas, calendario, producción, patrocinios | Predice productividad semanal y sugiere ajustes | $49–$199 |
 | **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $49–$199 |
+| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte caja, devoluciones, ticket | Predice productos más vendidos por hora/día | $49–$199 |
+| **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $49–$149 |
+| **AHA Flota** | Transporte, flotillas, logística | Vehículos, combustible km/l, mantenimiento, incidentes | Predice próximo mantenimiento + alerta consumo anómalo | $49–$199 |
+| **AHA Obra** | Construcción, arquitectura, obra | Etapas, materiales, gastos, fotos avance, reporte PDF | Predice desviación de presupuesto + alerta materiales | $49–$199 |
+| **AHA PreFactura** | Freelancers, pequeños negocios | Clientes RFC, facturas XML+PDF, historial | Búsqueda por RFC, total facturado por período | $29–$99 |
 
 ---
 
@@ -282,5 +287,5 @@ Antes de poner una app nueva en venta:
 | WhatsApp API | `https://wa.me/521NUMERO?text=...` |
 | Ateje Stack (meta-repo) | `https://github.com/angelhdz84/SKILLS-AHAGUILERA` |
 | Docs Ateje Stack | `D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html` |
-| Catálogo de apps | `apps/README.md` (8 plantillas AHA) |
+| Catálogo de apps | `apps/README.md` (13 plantillas AHA) |
 | Specs code-generator | `Plantilla_AHA_*.md` (raíz del repo) |

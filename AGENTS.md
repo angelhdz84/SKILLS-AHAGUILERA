@@ -94,6 +94,28 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 - `mcp-servers/stocky/` — Python. Busca imágenes Pexels + Unsplash. Setup: `pip install -e .`
 - `mcp-servers/refero-styles/` — TypeScript. Busca sistemas de diseño en refero.design. Setup: `npm install && npm run build`
 
+## Catálogo de apps AHA
+
+El repo incluye **13 plantillas de apps** listas para generar con el pipeline. Dos formatos por app:
+
+| App | Template comercial | Spec técnica |
+|-----|-------------------|-------------|
+| **AHA Inventario** | `apps/AHA-Inventario/template.md` | `Plantilla_AHA_Inventario.md` |
+| **AHA Comanda** | `apps/AHA-Comanda/template.md` | `Plantilla_AHA_Comanda.md` |
+| **AHA CRM** | `apps/AHA-CRM/template.md` | `Plantilla_AHA_CRM.md` |
+| **AHA Checklist** | `apps/AHA-Checklist/template.md` | `Plantilla_AHA_Checklist.md` |
+| **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | `Plantilla_AHA_Asistencia.md` |
+| **AHA Citas** | `apps/AHA-Citas/template.md` | `Plantilla_AHA_Citas.md` |
+| **AHA Creador** | `apps/AHA-Creador/template.md` | `Plantilla_AHA_Creador.md` |
+| **AHA Campo** | `apps/AHA-Campo/template.md` | `Plantilla_AHA_Campo.md` |
+| **AHA POS** | `apps/AHA-POS/template.md` | `Plantilla_AHA_POS.md` |
+| **AHA Rx** | `apps/AHA-Rx/template.md` | `Plantilla_AHA_Rx.md` |
+| **AHA Flota** | `apps/AHA-Flota/template.md` | `Plantilla_AHA_Flota.md` |
+| **AHA Obra** | `apps/AHA-Obra/template.md` | `Plantilla_AHA_Obra.md` |
+| **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | `Plantilla_AHA_PreFactura.md` |
+
+Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejecutar pipeline.
+
 ## Comandos slash
 
 | Comando | Trigger | Efecto |
