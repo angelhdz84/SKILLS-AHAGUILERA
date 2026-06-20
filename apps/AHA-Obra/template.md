@@ -1,49 +1,49 @@
-# AHA Obra — Control de construcción y avance de obra offline
+﻿# AHA Obra â€” Control de construcciÃ³n y avance de obra offline
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
-Sistema de control de obra offline para constructores y contratistas. Gestión de obras, etapas de construcción, materiales, gastos, fotos de avance y reportes PDF. Sin internet, sin mensualidades.
+Sistema de control de obra offline para constructores y contratistas. GestiÃ³n de obras, etapas de construcciÃ³n, materiales, gastos, fotos de avance y reportes PDF. Sin internet, sin mensualidades.
 
 **Target:** Constructores, arquitectos, maestros de obra, contratistas, ingenieros civiles.
 
 **Dolor que resuelve:** "Los gastos de obra se me disparan y no tengo control del avance ni de los materiales."
 
-## Perfiles compatibles
+## Niveles comerciales
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | Búsqueda de obras + alertas de presupuesto |
-| Standard | .exe + .apk | + Predicción desviación presupuesto + alerta materiales |
-| Custom | .exe + .apk + código fuente | Todo + UI con logo de la constructora |
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## Módulos
+## MÃ³dulos
 
-### 🏗️ Módulo Obras
-- CRUD: nombre, dirección, tipo (casa, edificio, local comercial), presupuesto total
+### ðŸ—ï¸ MÃ³dulo Obras
+- CRUD: nombre, direcciÃ³n, tipo (casa, edificio, local comercial), presupuesto total
 - Fecha inicio, fecha estimada fin, estado (planeada/en progreso/completada/en pausa)
-- Búsqueda instantánea por nombre o dirección
+- BÃºsqueda instantÃ¡nea por nombre o direcciÃ³n
 
-### 📋 Módulo Etapas
-- Etapas predefinidas: cimentación, estructura, instalaciones, acabados, entrega
+### ðŸ“‹ MÃ³dulo Etapas
+- Etapas predefinidas: cimentaciÃ³n, estructura, instalaciones, acabados, entrega
 - Avance porcentual por etapa, fecha inicio y fin real
 - Estado por etapa (pendiente/en progreso/completada)
 
-### 🧱 Módulo Materiales
+### ðŸ§± MÃ³dulo Materiales
 - Registro de materiales: nombre, unidad (kg, m, pieza, litro), cantidad, precio unitario
-- Asignación a obra y etapa
-- Alertas de materiales agotados (stock mínimo)
+- AsignaciÃ³n a obra y etapa
+- Alertas de materiales agotados (stock mÃ­nimo)
 
-### 💰 Módulo Gastos
-- Registro de gastos: concepto, monto, categoría (material, mano de obra, renta, otros)
-- Asignación a obra y etapa
+### ðŸ’° MÃ³dulo Gastos
+- Registro de gastos: concepto, monto, categorÃ­a (material, mano de obra, renta, otros)
+- AsignaciÃ³n a obra y etapa
 - Comparativa presupuesto vs gasto real
 
-### 📸 Módulo Fotos de Avance
-- Captura de fotos desde cámara o galería (.apk)
-- Asignación a obra y etapa con fecha
-- Vista antes/después línea de tiempo
+### ðŸ“¸ MÃ³dulo Fotos de Avance
+- Captura de fotos desde cÃ¡mara o galerÃ­a (.apk)
+- AsignaciÃ³n a obra y etapa con fecha
+- Vista antes/despuÃ©s lÃ­nea de tiempo
 
-### 📊 Módulo Reportes
+### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: obras activas, presupuesto total vs ejercido, avance general
 - Reporte PDF por obra con fotos y desglose de gastos
 - Export a CSV
@@ -72,4 +72,6 @@ db.version(1).stores({
 
 ```
 Hola Angel, necesito controlar los gastos y avance de mis obras
-sin pagar mensualidades. ¿AHA Obra plan Standard con .exe y .apk?
+sin pagar mensualidades. Â¿AHA Obra plan Standard con .exe y .apk?
+
+

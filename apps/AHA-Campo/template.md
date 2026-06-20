@@ -8,13 +8,14 @@ Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos â€
 
 **Dolor que resuelve:** "En el campo no hay internet. Llevo todo en libreta y luego paso a Excel. Pierdo tiempo y datos."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda de registros + reportes bÃ¡sicos |
-| Standard | .exe + .apk | + PredicciÃ³n de rendimiento + alertas de insumos + fotos offline |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + UI personalizada + reportes PDF con marca |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -107,3 +108,5 @@ desde el celular. Plan Standard con .apk.
 - [ ] Probar gasto por lote
 - [ ] Probar fotos desde cÃ¡mara (.apk)
 - [ ] Probar en .exe y .apk
+
+

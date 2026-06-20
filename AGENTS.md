@@ -18,7 +18,7 @@ Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para cre
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
-## Skills — Ateje Stack (5 Engines + 6 Standalone)
+## Skills — Ateje Stack (5 Engines + 6 Standalone + 1 Writer Skill)
 
 ### Motores (engines) — Skills de orquestación que reemplazan funcionalidad previa
 
@@ -35,30 +35,24 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
 | `setup-init/` | Valida entorno, crea estructura, instala librerías | lite, full |
-| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix) | lite, full |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` | lite, full |
 | `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 
-### Skills externas (oh-my-design, 16 skills en `~/.opencode/skills/omd-*`)
+### Skills externas (oh-my-design + es-writer, en `~/.opencode/skills/`)
 
-Catálogo de 286 referencias de diseño reales (DESIGN.md de Stripe, Linear, Vercel, etc.). Consumidas por los engines, ejecución delegada a sub-agentes OpenCode.
+| Skill | Propósito | Perfiles |
+|-------|-----------|----------|
+| `omd:init` a `omd:learn` (16 skills) | Catálogo de 286 referencias de diseño reales (DESIGN.md de Stripe, Linear, Vercel, etc.). Consumidas por los engines, ejecución delegada a sub-agentes OpenCode. | lite, full |
+| `omd:es-writer` | Microcopy profesional en español latino. 6 presets de voz. Integrado en pipeline-engine Fase 6 (modo Design). | lite, full |
 
-### Skills deprecadas (mantenidas por compatibilidad, redirigen a engines)
+### Skills archivadas (movidas a `archived/`)
 
-| Directorio | Estado | Reemplazo |
-|-----------|--------|-----------|
-| `prompt-inicial/` | @deprecated | pipeline-engine (/new) |
-| `spec-creator/` | @deprecated | spec-engine (/spec) |
-| `design-ux-intelligence/` | @deprecated | design-engine |
-| `validation-offline/` | @deprecated | validation-engine (/test) |
-| `ux-refactor/` | @deprecated | validation-engine (modo refactor) |
-| `llm-wiki/` | @deprecated | wiki-engine |
-| `supercharged-pipeline/` | @deprecated | pipeline-engine (/pro) |
-| `daisyui-patterns/` | @deprecated | design-engine |
-| `ux-ui-universal/` | eliminado | OmD multi-stack |
-| `github-page-publish/` | deprecado previamente | deployment-jigue |
+Las siguientes skills fueron reemplazadas por engines y movidas a `archived/` para evitar confusión:
+
+`prompt-inicial/`, `supercharged-pipeline/`, `spec-creator/`, `design-ux-intelligence/`, `validation-offline/`, `ux-refactor/`, `llm-wiki/`, `daisyui-patterns/`, `github-page-publish/`
 
 ## Agente Orchestrator
 
@@ -94,25 +88,29 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 - `mcp-servers/stocky/` — Python. Busca imágenes Pexels + Unsplash. Setup: `pip install -e .`
 - `mcp-servers/refero-styles/` — TypeScript. Busca sistemas de diseño en refero.design. Setup: `npm install && npm run build`
 
+Configurados en `opencode.json` en la raíz del repo. Incluye memory, github, stocky y refero-styles.
+
 ## Catálogo de apps AHA
 
-El repo incluye **13 plantillas de apps** listas para generar con el pipeline. Dos formatos por app:
+El repo incluye **13 plantillas de apps** listas para generar con el pipeline. Tres formatos por app:
 
-| App | Template comercial | Spec técnica |
-|-----|-------------------|-------------|
-| **AHA Inventario** | `apps/AHA-Inventario/template.md` | `Plantilla_AHA_Inventario.md` |
-| **AHA Comanda** | `apps/AHA-Comanda/template.md` | `Plantilla_AHA_Comanda.md` |
-| **AHA CRM** | `apps/AHA-CRM/template.md` | `Plantilla_AHA_CRM.md` |
-| **AHA Checklist** | `apps/AHA-Checklist/template.md` | `Plantilla_AHA_Checklist.md` |
-| **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | `Plantilla_AHA_Asistencia.md` |
-| **AHA Citas** | `apps/AHA-Citas/template.md` | `Plantilla_AHA_Citas.md` |
-| **AHA Creador** | `apps/AHA-Creador/template.md` | `Plantilla_AHA_Creador.md` |
-| **AHA Campo** | `apps/AHA-Campo/template.md` | `Plantilla_AHA_Campo.md` |
-| **AHA POS** | `apps/AHA-POS/template.md` | `Plantilla_AHA_POS.md` |
-| **AHA Rx** | `apps/AHA-Rx/template.md` | `Plantilla_AHA_Rx.md` |
-| **AHA Flota** | `apps/AHA-Flota/template.md` | `Plantilla_AHA_Flota.md` |
-| **AHA Obra** | `apps/AHA-Obra/template.md` | `Plantilla_AHA_Obra.md` |
-| **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | `Plantilla_AHA_PreFactura.md` |
+| App | Template comercial | Niveles comerciales | Spec técnica |
+|-----|-------------------|-------------------|-------------|
+| **AHA Inventario** | `apps/AHA-Inventario/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Inventario.md` |
+| **AHA Comanda** | `apps/AHA-Comanda/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Comanda.md` |
+| **AHA CRM** | `apps/AHA-CRM/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_CRM.md` |
+| **AHA Checklist** | `apps/AHA-Checklist/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Checklist.md` |
+| **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Asistencia.md` |
+| **AHA Citas** | `apps/AHA-Citas/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Citas.md` |
+| **AHA Creador** | `apps/AHA-Creador/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Creador.md` |
+| **AHA Campo** | `apps/AHA-Campo/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Campo.md` |
+| **AHA POS** | `apps/AHA-POS/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_POS.md` |
+| **AHA Rx** | `apps/AHA-Rx/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Rx.md` |
+| **AHA Flota** | `apps/AHA-Flota/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Flota.md` |
+| **AHA Obra** | `apps/AHA-Obra/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Obra.md` |
+| **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_PreFactura.md` |
+
+Cada nivel mapea a un perfil técnico: **Inicio** (Lite, ZIP+Pages), **Profesional** (Full, .exe+Pages+Release), **Enterprise** (Full+custom, código fuente+UI personalizada).
 
 Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejecutar pipeline.
 

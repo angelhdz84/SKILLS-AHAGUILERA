@@ -1,50 +1,50 @@
-# AHA PreFactura — Prefacturación offline para freelancers
+﻿# AHA PreFactura â€” PrefacturaciÃ³n offline para freelancers
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
-Sistema de prefacturación offline para freelancers y pequeños negocios. Genera facturas con folio automático, exporta XML y PDF, lleva el control de clientes con RFC y productos/servicios. Sin internet, sin mensualidades.
+Sistema de prefacturaciÃ³n offline para freelancers y pequeÃ±os negocios. Genera facturas con folio automÃ¡tico, exporta XML y PDF, lleva el control de clientes con RFC y productos/servicios. Sin internet, sin mensualidades.
 
-> **Nota importante:** AHA PreFactura genera el comprobante fiscal offline (XML+PDF). No envía al SAT/SUNAT automáticamente. El cliente descarga el XML y lo sube manualmente al portal fiscal cuando tenga internet.
+> **Nota importante:** AHA PreFactura genera el comprobante fiscal offline (XML+PDF). No envÃ­a al SAT/SUNAT automÃ¡ticamente. El cliente descarga el XML y lo sube manualmente al portal fiscal cuando tenga internet.
 
-**Target:** Freelancers, profesionistas independientes, pequeños negocios que facturan ocasionalmente.
+**Target:** Freelancers, profesionistas independientes, pequeÃ±os negocios que facturan ocasionalmente.
 
-**Dolor que resuelve:** "Necesito facturar pero no siempre tengo internet y no quiero pagar suscripción mensual solo para hacer 5 facturas al mes."
+**Dolor que resuelve:** "Necesito facturar pero no siempre tengo internet y no quiero pagar suscripciÃ³n mensual solo para hacer 5 facturas al mes."
 
-## Perfiles compatibles
+## Niveles comerciales
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | Búsqueda de clientes por RFC + historial |
-| Standard | .exe + .apk | + Cálculo automático de impuestos + estadísticas |
-| Custom | .exe + .apk + código fuente | Todo + UI con logo del negocio |
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## Módulos
+## MÃ³dulos
 
-### 🏢 Módulo Clientes Fiscales
-- CRUD: nombre/razón social, RFC, régimen fiscal, dirección fiscal, email, teléfono
-- Búsqueda instantánea por nombre o RFC
-- Validación básica de RFC (formato)
+### ðŸ¢ MÃ³dulo Clientes Fiscales
+- CRUD: nombre/razÃ³n social, RFC, rÃ©gimen fiscal, direcciÃ³n fiscal, email, telÃ©fono
+- BÃºsqueda instantÃ¡nea por nombre o RFC
+- ValidaciÃ³n bÃ¡sica de RFC (formato)
 
-### 📦 Módulo Productos/Servicios
+### ðŸ“¦ MÃ³dulo Productos/Servicios
 - CRUD: clave (similar a SAT), nombre, precio unitario, IVA aplicable
-- Clasificación por categoría fiscal
-- Búsqueda por clave o nombre
+- ClasificaciÃ³n por categorÃ­a fiscal
+- BÃºsqueda por clave o nombre
 
-### 🧾 Módulo Facturas
+### ðŸ§¾ MÃ³dulo Facturas
 - Crear factura: seleccionar cliente, agregar productos/servicios
-- Folio automático por serie (ej: F-001, F-002...)
-- Cálculo automático: subtotal, IVA, total
-- Generación PDF con formato fiscal
-- Generación XML descargable
+- Folio automÃ¡tico por serie (ej: F-001, F-002...)
+- CÃ¡lculo automÃ¡tico: subtotal, IVA, total
+- GeneraciÃ³n PDF con formato fiscal
+- GeneraciÃ³n XML descargable
 
-### 📜 Módulo Historial
+### ðŸ“œ MÃ³dulo Historial
 - Lista de facturas emitidas con filtros por fecha, cliente, folio
 - Vista detalle con opciones: ver PDF, descargar XML, reimprimir
-- Estadísticas: total facturado por mes, por cliente
+- EstadÃ­sticas: total facturado por mes, por cliente
 
-### 📊 Módulo Reportes
+### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: total facturado mes, facturas emitidas, clientes registrados
-- Gráfico de ingresos por mes (ApexCharts)
+- GrÃ¡fico de ingresos por mes (ApexCharts)
 - Export a CSV
 
 ## Tablas Dexie
@@ -70,4 +70,6 @@ db.version(1).stores({
 
 ```
 Hola Angel, necesito facturar sin pagar mensualidades ni tener
-internet todo el tiempo. ¿AHA PreFactura plan Standard?
+internet todo el tiempo. Â¿AHA PreFactura plan Standard?
+
+

@@ -1,39 +1,47 @@
-# AHA CRM — Gestión de clientes y ventas offline
+﻿# AHA CRM â€” GestiÃ³n de clientes y ventas offline
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
-CRM minimalista offline para freelancers y pequeños negocios. Gestión de clientes, pipeline de ventas Kanban, cotizaciones, recordatorios y facturación básica. Sin la complejidad de Salesforce, sin mensualidades.
+CRM minimalista offline para freelancers y pequeÃ±os negocios. GestiÃ³n de clientes, pipeline de ventas Kanban, cotizaciones, recordatorios y facturaciÃ³n bÃ¡sica. Sin la complejidad de Salesforce, sin mensualidades.
 
-**Target:** Freelancers, consultores, agentes de seguros, agencias pequeñas, negocios de servicios profesionales.
+**Target:** Freelancers, consultores, agentes de seguros, agencias pequeÃ±as, negocios de servicios profesionales.
 
 **Dolor que resuelve:** "Uso Excel para clientes, WhatsApp para cotizaciones y una libreta para seguimiento. Necesito todo en un solo lugar."
 
-## Módulos
+## Niveles comerciales
 
-### 👤 Módulo Contactos
-- CRUD: nombre, empresa, teléfono, email, dirección, notas
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
+
+## MÃ³dulos
+
+### ðŸ‘¤ MÃ³dulo Contactos
+- CRUD: nombre, empresa, telÃ©fono, email, direcciÃ³n, notas
 - Historial de interacciones por contacto
-- Búsqueda instantánea IA
+- BÃºsqueda instantÃ¡nea IA
 
-### 📋 Módulo Pipeline (Kanban)
-- Etapas: prospecto, contactado, propuesta, negociación, cerrado
+### ðŸ“‹ MÃ³dulo Pipeline (Kanban)
+- Etapas: prospecto, contactado, propuesta, negociaciÃ³n, cerrado
 - Arrastrar deals entre etapas
 - Deal: nombre, contacto, monto, probabilidad, fecha cierre
 
-### 📄 Módulo Cotizaciones
-- Crear cotización desde un deal
+### ðŸ“„ MÃ³dulo Cotizaciones
+- Crear cotizaciÃ³n desde un deal
 - Items: servicio, cantidad, precio
-- Generar PDF de cotización
+- Generar PDF de cotizaciÃ³n
 - Enviar por WhatsApp (compartir archivo)
 
-### 💰 Módulo Facturación
+### ðŸ’° MÃ³dulo FacturaciÃ³n
 - Generar factura desde deal cerrado
-- Número de factura automático
+- NÃºmero de factura automÃ¡tico
 - Estado: pagada / pendiente / vencida
 - Export PDF
 
-### 📊 Módulo Reportes
-- Tasa de conversión por etapa
+### ðŸ“Š MÃ³dulo Reportes
+- Tasa de conversiÃ³n por etapa
 - Ingresos del mes por cliente
 - Export CSV
 
@@ -56,3 +64,5 @@ db.version(1).stores({
 | Lite | $49 |
 | Standard | $99 |
 | Custom | $199+ |
+
+

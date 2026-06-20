@@ -1,0 +1,70 @@
+{
+  "agents": [
+    {
+      "name": "orchestrator",
+      "type": "primary",
+      "prompt": ".opencode/prompts/orchestrator.md",
+      "description": "Orquestador maestro del pipeline offline-first"
+    },
+    {
+      "name": "build-agent",
+      "type": "subagent",
+      "prompt": ".opencode/prompts/build-agent.md",
+      "description": "Genera codigo desde specs usando code-generator + compliance guard"
+    },
+    {
+      "name": "design-agent",
+      "type": "subagent",
+      "prompt": ".opencode/prompts/design-agent.md",
+      "description": "Aplica brand context injection con design-engine"
+    },
+    {
+      "name": "spec-agent",
+      "type": "subagent",
+      "prompt": ".opencode/prompts/spec-agent.md",
+      "description": "Crea specs tecnicas + DESIGN.md usando spec-engine"
+    },
+    {
+      "name": "test-agent",
+      "type": "subagent",
+      "prompt": ".opencode/prompts/test-agent.md",
+      "description": "Valida apps con validation-engine 4 fases + refactor"
+    }
+  ],
+  "skills": [
+    { "name": "pipeline-engine", "path": "pipeline-engine/SKILL.md" },
+    { "name": "spec-engine", "path": "spec-engine/SKILL.md" },
+    { "name": "design-engine", "path": "design-engine/SKILL.md" },
+    { "name": "validation-engine", "path": "validation-engine/SKILL.md" },
+    { "name": "wiki-engine", "path": "wiki-engine/SKILL.md" },
+    { "name": "code-generator", "path": "code-generator/SKILL.md" },
+    { "name": "stack-compliance-guard", "path": "stack-compliance-guard/SKILL.md" },
+    { "name": "setup-init", "path": "setup-init/SKILL.md" },
+    { "name": "deployment-jigue", "path": "deployment-jigue/SKILL.md" },
+    { "name": "ia-jutia", "path": "ia-jutia/SKILL.md" },
+    { "name": "alpine-ui-patterns", "path": "alpine-ui-patterns/SKILL.md" }
+  ],
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "stocky": {
+      "command": "python",
+      "args": ["-m", "mcp-servers.stocky.stocky_mcp"],
+      "env": {
+        "ENABLE_ATTRIBUTION_LINKS": "true"
+      }
+    },
+    "refero-styles": {
+      "command": "npx",
+      "args": ["tsx", "mcp-servers/refero-styles/src/index.ts"]
+    }
+  },
+  "commands": ".opencode/commands",
+  "rules": ".opencode/rules"
+}

@@ -8,13 +8,14 @@ Crea plantillas de inspecciÃ³n, asÃ­gnelas a equipos o ubicaciones, y captur
 
 **Dolor que resuelve:** "Los inspectores llenan papeles que luego hay que digitalizar. Perdemos datos y tiempo."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda de plantillas + historial |
-| Standard | .exe + .apk | + PredicciÃ³n de Ã¡reas con mÃ¡s fallas + fotos offline |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + UI con logo de la empresa |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -98,3 +99,5 @@ con .exe y .apk.
 - [ ] Verificar PDF incluye fotos y firma
 - [ ] Probar en .exe y .apk
 - [ ] Tomar screenshot de inspecciÃ³n en proceso y PDF generado
+
+

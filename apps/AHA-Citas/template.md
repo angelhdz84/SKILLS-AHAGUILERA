@@ -8,13 +8,14 @@ Agenda digital para negocios de servicios que manejan citas. GestiÃ³n de clien
 
 **Dolor que resuelve:** "Uso Google Calendar pero cuando no hay internet no veo mis citas del dÃ­a."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda de clientes + citas del dÃ­a |
-| Standard | .exe + .apk | + PredicciÃ³n de horarios disponibles + historial por cliente |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + UI con marca del negocio |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -102,3 +103,5 @@ profesionales. Plan Standard.
 - [ ] Probar cancelaciÃ³n con motivo
 - [ ] Probar corte del dÃ­a vs citas pagadas
 - [ ] Probar en .exe y .apk
+
+

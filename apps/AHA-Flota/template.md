@@ -1,47 +1,47 @@
-# AHA Flota — Control de vehículos y flotilla offline
+﻿# AHA Flota â€” Control de vehÃ­culos y flotilla offline
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
-Sistema de control de flota offline para transportistas y dueños de vehículos. Registro de combustible, mantenimiento programado, kilometraje, multas e incidentes. Reportes de costo por km. Sin internet, sin mensualidades.
+Sistema de control de flota offline para transportistas y dueÃ±os de vehÃ­culos. Registro de combustible, mantenimiento programado, kilometraje, multas e incidentes. Reportes de costo por km. Sin internet, sin mensualidades.
 
-**Target:** Transportistas, dueños de flotillas, repartidores, empresas de logística, taxis, camionetas de carga.
+**Target:** Transportistas, dueÃ±os de flotillas, repartidores, empresas de logÃ­stica, taxis, camionetas de carga.
 
-**Dolor que resuelve:** "No sé cuánto gasto en gasolina ni cuándo le toca mantenimiento a cada vehículo."
+**Dolor que resuelve:** "No sÃ© cuÃ¡nto gasto en gasolina ni cuÃ¡ndo le toca mantenimiento a cada vehÃ­culo."
 
-## Perfiles compatibles
+## Niveles comerciales
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | Búsqueda de vehículos + alertas de mantenimiento |
-| Standard | .exe + .apk | + Predicción próximo mantenimiento + alertas consumo anómalo |
-| Custom | .exe + .apk + código fuente | Todo + UI con logo de la empresa |
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## Módulos
+## MÃ³dulos
 
-### 🚗 Módulo Vehículos
-- CRUD: marca, modelo, año, placas, número económico, VIN
-- Foto del vehículo, tipo (moto, auto, camioneta, camión)
+### ðŸš— MÃ³dulo VehÃ­culos
+- CRUD: marca, modelo, aÃ±o, placas, nÃºmero econÃ³mico, VIN
+- Foto del vehÃ­culo, tipo (moto, auto, camioneta, camiÃ³n)
 - Estado: activo, en taller, dado de baja
-- Búsqueda instantánea por placas o número económico
+- BÃºsqueda instantÃ¡nea por placas o nÃºmero econÃ³mico
 
-### ⛽ Módulo Combustible
-- Registro de cargas: fecha, litros, importe, kilometraje actual, tipo (gasolina/diésel)
-- Cálculo automático de rendimiento (km/litro)
-- Historial de consumo por vehículo con gráfico ApexCharts
+### â›½ MÃ³dulo Combustible
+- Registro de cargas: fecha, litros, importe, kilometraje actual, tipo (gasolina/diÃ©sel)
+- CÃ¡lculo automÃ¡tico de rendimiento (km/litro)
+- Historial de consumo por vehÃ­culo con grÃ¡fico ApexCharts
 
-### 🔧 Módulo Mantenimiento
-- Registro de servicios: tipo (aceite, llantas, frenos, afinación, general), taller, costo, kilometraje
-- Programación: próximo servicio basado en km o fecha
-- Alerta visual cuando se acerca el próximo mantenimiento
+### ðŸ”§ MÃ³dulo Mantenimiento
+- Registro de servicios: tipo (aceite, llantas, frenos, afinaciÃ³n, general), taller, costo, kilometraje
+- ProgramaciÃ³n: prÃ³ximo servicio basado en km o fecha
+- Alerta visual cuando se acerca el prÃ³ximo mantenimiento
 
-### ⚠️ Módulo Incidentes
-- Registro de multas, accidentes, averías
-- Tipo, fecha, costo, descripción, vehículo
+### âš ï¸ MÃ³dulo Incidentes
+- Registro de multas, accidentes, averÃ­as
+- Tipo, fecha, costo, descripciÃ³n, vehÃ­culo
 - Reporte de costos totales por incidente
 
-### 📊 Módulo Reportes
-- Dashboard: flotilla total, gasto combustible mes, próximos mantenimientos
-- Costo por km por vehículo (gráfico)
+### ðŸ“Š MÃ³dulo Reportes
+- Dashboard: flotilla total, gasto combustible mes, prÃ³ximos mantenimientos
+- Costo por km por vehÃ­culo (grÃ¡fico)
 - Export a CSV
 
 ## Tablas Dexie
@@ -66,5 +66,7 @@ db.version(1).stores({
 ## WhatsApp para venta
 
 ```
-Hola Angel, necesito controlar los gastos de mis vehículos
-sin pagar mensualidades. ¿AHA Flota plan Standard con .exe y .apk?
+Hola Angel, necesito controlar los gastos de mis vehÃ­culos
+sin pagar mensualidades. Â¿AHA Flota plan Standard con .exe y .apk?
+
+

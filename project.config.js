@@ -1,16 +1,22 @@
-// project.config.js — Configuración white-label para apps offline-first
-// Las skills leen este archivo para determinar módulos activos, tema y metadatos.
+// project.config.js — Configuracion white-label para apps offline-first
+// NOTA: Metadata-only sample. Los modulos reales se definen en specs/[app].md.
+// Las skills leen este archivo para determinar perfil, tema y metadatos base.
 
 window.APP_CONFIG = {
   app: {
     nombre: 'MiAppOffline',
     version: '1.0.0',
-    tipo: 'Gestión',
+    tipo: 'Gestion',
     descripcion: 'App offline-first generada desde SKILLS-AHAGUILERA'
   },
+  perfil: 'lite',
+  iaJutia: 'lite',
   modulosActivos: [
     'dashboard',
-    'configuracion'
+    'configuracion',
+    'inventario',
+    'clientes',
+    'reportes'
   ],
   tema: {
     modo: 'claro',
@@ -38,6 +44,9 @@ window.APP_CONFIG = {
   },
   modulos: {
     dashboard: { titulo: 'Dashboard', icono: 'bi-speedometer2', activo: true },
-    configuracion: { titulo: 'Configuración', icono: 'bi-gear', activo: true }
+    configuracion: { titulo: 'Configuracion', icono: 'bi-gear', activo: true },
+    inventario: { titulo: 'Inventario', icono: 'bi-box', activo: true },
+    clientes: { titulo: 'Clientes', icono: 'bi-people', activo: true },
+    reportes: { titulo: 'Reportes', icono: 'bi-file-earmark-bar-graph', activo: true }
   }
 };

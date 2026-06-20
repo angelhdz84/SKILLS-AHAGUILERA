@@ -8,13 +8,14 @@ Planifica tus videos, gestiona patrocinios, organiza ideas y lleva el control de
 
 **Dolor que resuelve:** "Tengo las ideas en 5 notas distintas y los patrocinios en un Excel. Necesito todo en un solo lugar, sin pagar $30/mes."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda de ideas y videos + estadÃ­sticas |
-| Standard | .exe + .apk | + PredicciÃ³n de ingresos + calendario editorial inteligente |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + UI personalizada + informe automÃ¡tico |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -101,3 +102,5 @@ con .exe y .apk?
 - [ ] Probar grÃ¡fico de ingresos con datos de prueba
 - [ ] Probar export CSV
 - [ ] Probar en .exe y .apk
+
+

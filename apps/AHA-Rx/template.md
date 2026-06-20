@@ -1,47 +1,47 @@
-# AHA Rx — Recetas médicas offline para consultorios
+﻿# AHA Rx â€” Recetas mÃ©dicas offline para consultorios
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
-Sistema de recetas médicas offline para médicos generales y consultorios. Registro de pacientes, catálogo de medicamentos, generación de recetas en PDF e historial clínico completo. Sin internet, sin mensualidades.
+Sistema de recetas mÃ©dicas offline para mÃ©dicos generales y consultorios. Registro de pacientes, catÃ¡logo de medicamentos, generaciÃ³n de recetas en PDF e historial clÃ­nico completo. Sin internet, sin mensualidades.
 
-**Target:** Médicos generales, consultorios particulares, farmacias, pasantes de servicio social.
+**Target:** MÃ©dicos generales, consultorios particulares, farmacias, pasantes de servicio social.
 
-**Dolor que resuelve:** "Mis recetas se pierden y no tengo historial de lo que le receté a cada paciente."
+**Dolor que resuelve:** "Mis recetas se pierden y no tengo historial de lo que le recetÃ© a cada paciente."
 
-## Perfiles compatibles
+## Niveles comerciales
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | Búsqueda de pacientes + historial de recetas |
-| Standard | .exe + .apk | + Búsqueda por síntomas + diagnósticos frecuentes |
-| Custom | .exe + .apk + código fuente | Todo + UI con logo del consultorio |
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## Módulos
+## MÃ³dulos
 
-### 👤 Módulo Pacientes
-- CRUD: nombre, teléfono, dirección, fecha de nacimiento, alergias
-- Búsqueda instantánea por nombre o teléfono
+### ðŸ‘¤ MÃ³dulo Pacientes
+- CRUD: nombre, telÃ©fono, direcciÃ³n, fecha de nacimiento, alergias
+- BÃºsqueda instantÃ¡nea por nombre o telÃ©fono
 - Historial completo de recetas por paciente
 
-### 💊 Módulo Medicamentos
-- CRUD: nombre genérico, presentación, dosis comunes, laboratorio
-- Búsqueda por nombre con autocompletado
-- Catálogo precargado con medicamentos básicos
+### ðŸ’Š MÃ³dulo Medicamentos
+- CRUD: nombre genÃ©rico, presentaciÃ³n, dosis comunes, laboratorio
+- BÃºsqueda por nombre con autocompletado
+- CatÃ¡logo precargado con medicamentos bÃ¡sicos
 
-### 📋 Módulo Recetas
-- Seleccionar paciente, agregar medicamentos con dosis, frecuencia y duración
-- Diagnóstico, indicaciones adicionales, fecha de próxima cita
-- Generación de PDF con formato médico profesional
-- Firma digital del médico (texto)
+### ðŸ“‹ MÃ³dulo Recetas
+- Seleccionar paciente, agregar medicamentos con dosis, frecuencia y duraciÃ³n
+- DiagnÃ³stico, indicaciones adicionales, fecha de prÃ³xima cita
+- GeneraciÃ³n de PDF con formato mÃ©dico profesional
+- Firma digital del mÃ©dico (texto)
 
-### 📜 Módulo Historial
-- Recetas previas por paciente en orden cronológico
-- Búsqueda por diagnóstico, medicamento o fecha
-- Vista detalle de cada receta con opción de reimprimir PDF
+### ðŸ“œ MÃ³dulo Historial
+- Recetas previas por paciente en orden cronolÃ³gico
+- BÃºsqueda por diagnÃ³stico, medicamento o fecha
+- Vista detalle de cada receta con opciÃ³n de reimprimir PDF
 
-### 📊 Módulo Estadísticas
+### ðŸ“Š MÃ³dulo EstadÃ­sticas
 - Dashboard: total pacientes, recetas emitidas hoy
-- Diagnósticos más frecuentes (gráfico ApexCharts)
+- DiagnÃ³sticos mÃ¡s frecuentes (grÃ¡fico ApexCharts)
 - Export a CSV
 
 ## Tablas Dexie
@@ -66,5 +66,7 @@ db.version(1).stores({
 ## WhatsApp para venta
 
 ```
-Hola Angel, soy médico y necesito llevar mis recetas en digital
-sin pagar mensualidades. ¿AHA Rx plan Standard con .exe y .apk?
+Hola Angel, soy mÃ©dico y necesito llevar mis recetas en digital
+sin pagar mensualidades. Â¿AHA Rx plan Standard con .exe y .apk?
+
+

@@ -8,13 +8,14 @@ Registro de entrada y salida de empleados sin internet. Cada empleado marca desd
 
 **Dolor que resuelve:** "Pago $20/mes por cada empleado solo para que marquen entrada y salida."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda de registros + reporte bÃ¡sico |
-| Standard | .exe + .apk | + PredicciÃ³n de retardos + alertas inteligentes |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + personalizaciÃ³n + integraciÃ³n nÃ³mina |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -100,3 +101,5 @@ me sirve para 15 empleados?
 - [ ] Verificar que al cerrar app los datos persisten (Dexie)
 - [ ] Probar en .exe y .apk
 - [ ] Tomar screenshot del dashboard y reporte
+
+

@@ -1,46 +1,46 @@
-# AHA Inventario — Control de stock offline para pequeños negocios
+﻿# AHA Inventario â€” Control de stock offline para pequeÃ±os negocios
 
-## Descripción comercial
+## DescripciÃ³n comercial
 
 Sistema de inventario offline para tiendas, bodegas y almacenes. Registro de productos, control de stock, alertas de bajo inventario, escaneo QR y reportes. Sin internet, sin mensualidades.
 
-**Target:** Tiendas minoristas, bodegas, almacenes pequeños, emprendedores, ferreterías, abarrotes.
+**Target:** Tiendas minoristas, bodegas, almacenes pequeÃ±os, emprendedores, ferreterÃ­as, abarrotes.
 
-**Dolor que resuelve:** "Perdemos ventas porque no sabemos qué tenemos en existencia hasta que el cliente pregunta."
+**Dolor que resuelve:** "Perdemos ventas porque no sabemos quÃ© tenemos en existencia hasta que el cliente pregunta."
 
-## Perfiles compatibles
+## Niveles comerciales
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | Búsqueda de productos + alertas de stock |
-| Standard | .exe + .apk | + Predicción de salidas + reportes gráficos |
-| Custom | .exe + .apk + código fuente | Todo + UI con logo del negocio |
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## Módulos
+## MÃ³dulos
 
-### 📦 Módulo Productos
-- CRUD: nombre, SKU, categoría, precio, cantidad, imagen, umbral mínimo
-- Búsqueda instantánea por nombre/SKU
-- Código QR único por producto con opción de imprimir
-- Escaneo QR desde cámara (.apk)
+### ðŸ“¦ MÃ³dulo Productos
+- CRUD: nombre, SKU, categorÃ­a, precio, cantidad, imagen, umbral mÃ­nimo
+- BÃºsqueda instantÃ¡nea por nombre/SKU
+- CÃ³digo QR Ãºnico por producto con opciÃ³n de imprimir
+- Escaneo QR desde cÃ¡mara (.apk)
 
-### 🗂️ Módulo Categorías
-- CRUD de categorías con nombre y color
-- Productos por categoría en dashboard
+### ðŸ—‚ï¸ MÃ³dulo CategorÃ­as
+- CRUD de categorÃ­as con nombre y color
+- Productos por categorÃ­a en dashboard
 
-### 📥 Módulo Movimientos
+### ðŸ“¥ MÃ³dulo Movimientos
 - Entradas y salidas de stock: producto, cantidad, motivo, fecha
 - Historial completo de movimientos
 - Tipo: compra, venta, ajuste, merma, transferencia
 
-### ⚠️ Módulo Alertas
-- Umbral mínimo configurable por producto
-- Notificación visual en sidebar
-- Lista de productos por debajo del mínimo
+### âš ï¸ MÃ³dulo Alertas
+- Umbral mÃ­nimo configurable por producto
+- NotificaciÃ³n visual en sidebar
+- Lista de productos por debajo del mÃ­nimo
 
-### 📊 Módulo Reportes
+### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: total productos, valor stock, bajo stock, actividad reciente
-- Reportes con gráficos ApexCharts
+- Reportes con grÃ¡ficos ApexCharts
 - Export a CSV
 
 ## Tablas Dexie
@@ -66,6 +66,8 @@ db.version(1).stores({
 
 ```
 Hola Angel, necesito controlar el inventario de mi tienda
-sin pagar mensualidades. ¿AHA Inventario plan Standard
+sin pagar mensualidades. Â¿AHA Inventario plan Standard
 con .exe y .apk?
 ```
+
+

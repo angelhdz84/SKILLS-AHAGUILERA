@@ -8,13 +8,14 @@ Sistema de comandas offline para restaurantes, bares y cocinas. El mesero toma e
 
 **Dolor que resuelve:** "Se fue el internet y perdimos las comandas de toda la noche."
 
-## Perfiles compatibles
 
-| Perfil | Formato | IA |
-|--------|---------|----|
-| Lite | .exe | BÃºsqueda instantÃ¡nea de mesas y productos |
-| Standard | .exe + .apk | + PredicciÃ³n de platillos mÃ¡s pedidos + horarios pico |
-| Custom | .exe + .apk + cÃ³digo fuente | Todo + UI personalizada con logo del negocio |
+## Niveles comerciales
+
+| Nivel | Perfil tecnico | Formato | IA |
+|-------|---------------|---------|----|
+| Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
+| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## MÃ³dulos
 
@@ -101,3 +102,5 @@ Me interesa el plan Standard.
 - [ ] Probar en .apk (GitHub Actions)
 - [ ] Tomar screenshot del mapa de mesas y comanda activa
 - [ ] Redactar descripciÃ³n landing
+
+
