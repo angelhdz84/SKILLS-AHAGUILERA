@@ -14,21 +14,30 @@ Catálogo de plantillas de apps listas para construir y vender con el Ateje Stac
 
 | App | Vertical | Precio base | IA | Estado |
 |-----|----------|------------|----|--------|
-| [ComandaApp](ComandaApp/template.md) | Restaurantes / Bares | $99 | ✅ Lite | 🟢 Listo |
-| [ChecklistPRO](ChecklistPRO/template.md) | Mantenimiento / Inspecciones | $99 | ✅ Lite | 🟢 Listo |
-| [AsistenciaApp](AsistenciaApp/template.md) | RRHH / Pequeñas empresas | $49 | ✅ Lite | 🟢 Listo |
-| [CitasApp](CitasApp/template.md) | Salud / Belleza / Servicios | $99 | ✅ Lite | 🟢 Listo |
-| [CreadorApp](CreadorApp/template.md) | Creadores de contenido | $49 | ✅ Lite | 🟢 Listo |
-| [CampoApp](CampoApp/template.md) | Agricultura / Ganadería | $99 | ✅ Lite | 🟢 Listo |
-| [InventarioPRO](../docs/landing-aha-sell.md) | Retail / Comercio | $99 | ✅ Lite | 🟢 En landing |
-| [ClienteSeguro (CRM)](../docs/landing-aha-sell.md) | Ventas / Freelancers | $99 | ✅ Lite | 🟢 En landing |
+| [AHA Inventario](AHA-Inventario/template.md) | Retail / Comercio | $99 | ✅ Lite | 🟢 En spec |
+| [AHA Comanda](AHA-Comanda/template.md) | Restaurantes / Bares | $99 | ✅ Lite | 🟢 Listo |
+| [AHA CRM](AHA-CRM/template.md) | Ventas / Freelancers | $99 | ✅ Lite | 🟢 En spec |
+| [AHA Checklist](AHA-Checklist/template.md) | Mantenimiento / Inspecciones | $99 | ✅ Lite | 🟢 Listo |
+| [AHA Asistencia](AHA-Asistencia/template.md) | RRHH / Pequeñas empresas | $49 | ✅ Lite | 🟢 Listo |
+| [AHA Citas](AHA-Citas/template.md) | Salud / Belleza / Servicios | $99 | ✅ Lite | 🟢 Listo |
+| [AHA Creador](AHA-Creador/template.md) | Creadores de contenido | $49 | ✅ Lite | 🟢 Listo |
+| [AHA Campo](AHA-Campo/template.md) | Agricultura / Ganadería | $99 | ✅ Lite | 🟢 Listo |
 
 ## Cómo usar un template
 
+Cada app tiene dos formatos de documentación:
+
+1. **`apps/AHA-Nombre/template.md`** — template comercial con pricing, target, argumentos de venta
+2. **`Plantilla_AHA_Nombre.md`** (raíz del repo) — spec técnica lista para pasar al code-generador de OpenCode
+
+Para generar una app:
+
 ```bash
-# 1. Elegir app y perfil (lite/full)
-# 2. Ejecutar pipeline
-/crear [nombre-app] --template apps/[AppName]/template.md --perfil full
+# 1. Copiar la plantilla a specs/
+cp Plantilla_AHA_Nombre.md specs/[app].md
+
+# 2. Ejecutar el pipeline
+/nuevo [nombre-app] --perfil full --ia full
 
 # 3. El pipeline ejecuta:
 #    setup-init → code-generator → validation → deployment
@@ -48,8 +57,8 @@ Cada template incluye:
 
 | App | Vertical | Prioridad |
 |-----|----------|-----------|
-| POS Lite | Punto de venta offline | Alta |
-| RxApp | Recetas médicas offline | Media |
-| FlotaApp | Control de flota/vehículos | Media |
-| ObraApp | Construcción / avance de obra | Media |
-| PreFactura | Prefacturación offline | Baja |
+| AHA POS | Punto de venta offline | Alta |
+| AHA Rx | Recetas médicas offline | Media |
+| AHA Flota | Control de flota/vehículos | Media |
+| AHA Obra | Construcción / avance de obra | Media |
+| AHA PreFactura | Prefacturación offline | Baja |

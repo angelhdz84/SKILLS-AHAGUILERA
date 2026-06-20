@@ -86,18 +86,16 @@ Cada app que construyo incluye **IA Jutia**: una inteligencia artificial que cor
 
 No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su problema, tú eliges los módulos que necesita.
 
-| Vertical | Ejemplos de app | Módulos típicos | IA integrada |
-|----------|----------------|-----------------|--------------|
-| **Inventario** | Control de stock, almacén, bodega | Productos, movimientos, alertas, reportes PDF, escaneo | Predice cuándo se va a acabar un producto + alertas inteligentes |
-| **Facturación** | Facturación offline, POS, comandas | RFC/catálogo, PDF, histórico, corte de caja | Búsqueda instantánea de facturas + detección de montos anómalos |
-| **CRM** | Agenda clientes, seguros, cobranza | Fichas, historial, notas, recordatorios, export CSV | Busca clientes por descripción difusa: "el de la ferretería de la esquina" |
-| **Gastos** | Finanzas personales, negocio pequeño | Categorías, gráficos, Excel export, presupuestos | Predicción de gastos mensuales + anomalías en movimientos |
-| **Logística** | Rutas, entregas, checklists | Órdenes, firmas digitales, fotos offline, GPS | Búsqueda de órdenes por texto libre + análisis de rutas frecuentes |
-| **Salud** | Consultorio, pacientes, citas | Expedientes, recetas, agenda, historial clínico | QA sobre expedientes: "¿cuándo fue la última consulta del Sr. Pérez?" |
-| **Educación** | Cursos offline, quizzes, progreso | Lecciones, ejercicios, calificaciones, reportes | Búsqueda semántica de lecciones + quiz automático sobre el material |
-| **Campo** | Cosecha, ganado, insumos | Registro diario, lotes, alertas de stock | Predicción de rendimiento basada en registros históricos |
-| **Servicio** | Órdenes de trabajo, garantías | Clientes, equipos, diagnóstico, historial | Búsqueda de casos similares + diagnóstico sugerido por frecuencia |
-| **Construcción** | Presupuestos, materiales, avance | Obra, insumos, fotos de avance, reportes | QA sobre bitácora: "¿cuánto llevamos gastado en materiales?" |
+| App | Vertical | Módulos típicos | IA integrada | Precio base |
+|-----|----------|-----------------|--------------|-------------|
+| **AHA Inventario** | Control de stock, almacén, bodega, tienda | Productos, movimientos, alertas, QR, reportes PDF | Predice cuándo se va a acabar un producto + alertas inteligentes | $49–$199 |
+| **AHA Comanda** | Restaurantes, bares, cocinas | Mesas, comandas, platillos, cuentas split, corte caja | Predice platillo más pedido según hora y día | $49–$199 |
+| **AHA CRM** | Ventas, freelancers, agencias | Pipeline Kanban, contactos, cotizaciones PDF, facturas | Busca contactos por descripción difusa: "el de la ferretería de la esquina" | $49–$199 |
+| **AHA Checklist** | Mantenimiento, inspecciones, seguridad | Plantillas, inspecciones con foto/firma, PDF | Predice áreas con más fallas y frecuencia óptima | $49–$199 |
+| **AHA Asistencia** | RRHH, empleados, talleres | Marcaje QR, reporte horas, retardos, export nómina | Predice retardos probables basado en historial | $49–$199 |
+| **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49–$199 |
+| **AHA Creador** | YouTubers, streamers, podcasters | Banco ideas, calendario, producción, patrocinios | Predice productividad semanal y sugiere ajustes | $49–$199 |
+| **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $49–$199 |
 
 ---
 
@@ -198,13 +196,20 @@ La landing actual https://angelhdz84.github.io/Identidad_AHA/ ya tiene la estruc
 
 ## 8. Cómo mantener la landing
 
+### Generar una app desde plantilla
+
+1. Elegir app del catálogo `apps/README.md`
+2. Copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md`
+3. Ejecutar `pipeline-engine` con el perfil deseado
+4. El pipeline genera: setup → código → validación → deploy
+
 ### Añadir un nuevo producto/vertical
 
-1. Revisar si existe template en `apps/` (ver `apps/README.md`)
-2. Si no existe, crear nuevo template en `apps/[AppName]/template.md`
+1. Crear template comercial en `apps/AHA-Nombre/template.md`
+2. Crear spec técnica en `Plantilla_AHA_Nombre.md` (formato code-generator)
 3. En el HTML de la landing, localizar la sección de productos (buscar `APPS LISTAS PARA LLEVAR`)
-4. Duplicar un bloque `article` de producto existente
-5. Cambiar: título, descripción, categoría, enlace WhatsApp
+4. Duplicar un bloque `article` existente
+5. Cambiar: título (usar prefijo AHA), descripción, enlace WhatsApp
 6. Si hay screenshot: añadir `<img>` dentro del card
 
 ### Actualizar precios
@@ -277,3 +282,5 @@ Antes de poner una app nueva en venta:
 | WhatsApp API | `https://wa.me/521NUMERO?text=...` |
 | Ateje Stack (meta-repo) | `https://github.com/angelhdz84/SKILLS-AHAGUILERA` |
 | Docs Ateje Stack | `D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html` |
+| Catálogo de apps | `apps/README.md` (8 plantillas AHA) |
+| Specs code-generator | `Plantilla_AHA_*.md` (raíz del repo) |
