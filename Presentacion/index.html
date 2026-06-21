@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ateje Stack — Generacion de Ingresos</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body x-data="presentacion()" x-init="init()" :class="theme">
+  <!-- Theme toggle -->
+  <button class="theme-toggle" @click="toggleTheme()" :title="theme === 'light' ? 'Modo oscuro' : 'Modo claro'" x-html="theme === 'light' ? '&#9790;' : '&#9728;'"></button>
+
+  <!-- Nav dots -->
+  <nav class="nav-dots">
+    <template x-for="(s, i) in slides" :key="i">
+      <button class="nav-dot" :class="{ active: currentSlide === i }" @click="goTo(i)" :title="s">
+        <span class="nav-dot-label" x-text="s"></span>
+      </button>
+    </template>
+  </nav>
+
+  <!-- Slide number -->
+  <div class="slide-number" x-text="(currentSlide + 1) + ' / ' + totalSlides"></div>
+
+  <!-- Slides -->
+  <div class="slides-container" id="slidesContainer" x-on:scroll.throttle.100ms="onScroll()">
+    <!-- ===== SLIDE 1: HERO ===== -->
+    <section class="slide slide-1" id="slide-0">
+      <div class="gears">
+        <div class="gear gear-1"></div>
+        <div class="gear gear-2"></div>
+        <div class="gear gear-3"></div>
+      </div>
+      <div class="hero-content">
+        <div class="badge">Stack Offline-First v3.0</div>
+        <h1 class="hero-title">
+          Fabrica de Software<br>
+          <span class="accent">Offline-First</span>
+        </h1>
+        <p class="hero-desc">
+          13 productos listos para generar ingresos. Sin servidores, sin internet, sin mensualidades.
+          De la idea al ejecutable en horas.
+        </p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">13</div>
+            <div class="hero-stat-label">Productos Listos</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">2h</div>
+            <div class="hero-stat-label">Idea a .exe</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">0</div>
+            <div class="hero-stat-label">Servidores</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2: PROBLEMA ===== -->
+    <section class="slide slide-2" id="slide-1">
+      <div class="slide-title fade-in" :class="fade(1)">El <span class="accent2">Problema</span> Real</div>
+      <div class="slide-subtitle fade-in" :class="fade(1)">
+        Millones de negocios sin acceso a software por costos, internet o complejidad.
+      </div>
+      <div class="problem-stats-row fade-in" :class="fade(1)">
+        <div class="problem-stat">
+          <div class="problem-stat-val">5M+</div>
+          <div class="problem-stat-label">PyMEs en LATAM sin software de gestion</div>
+        </div>
+        <div class="problem-stat">
+          <div class="problem-stat-val" style="color: var(--accent)">77%</div>
+          <div class="problem-stat-label">Prefieren pago unico a suscripcion mensual</div>
+        </div>
+      </div>
+      <div class="problem-grid fade-in" :class="fade(1)">
+        <div class="problem-card">
+          <div class="problem-number" style="color:var(--accent2)">SaaS</div>
+          <div class="problem-text">
+            Suscripciones mensuales de $30-200 USD. Internet obligatorio. Datos en servidores ajenos.
+            El cliente no es dueno de su software.
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-number" style="color:var(--accent3)">Offline</div>
+          <div class="problem-text">
+            Sin internet, sin conexion. El 43% de las PyMEs en LATAM tiene internet irregular.
+            El software debe funcionar donde el internet no llega.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3: FILOSOFIA ===== -->
+    <section class="slide slide-3" id="slide-2">
+      <div class="slide-title fade-in" :class="fade(2)">La <span class="accent3">Filosofia</span> Ateje</div>
+      <div class="slide-subtitle fade-in" :class="fade(2)">
+        No es una app. Es una <strong>maquina de hacer apps.</strong>
+      </div>
+      <div class="philosophy-grid fade-in" :class="fade(2)">
+        <div class="phil-card">
+          <span class="phil-icon">&#9881;</span>
+          <div class="phil-title">Skill-Layer Architecture</div>
+          <div class="phil-text">
+            5 motores (engines) que orquestan todo el proceso. 6 skills standalone especializadas.
+            16 skills de diseno del catalogo Oh-My-Design. Cada pieza intercambiable y combinable.
+          </div>
+        </div>
+        <div class="phil-card">
+          <span class="phil-icon">&#9889;</span>
+          <div class="phil-title">Pipeline Automatico</div>
+          <div class="phil-text">
+            De la idea al producto final sin intervencion manual. Dos modos: Classic (5 fases, rapido)
+            y Design (10 fases, con capa de marca profesional). Tiempo total: horas, no meses.
+          </div>
+        </div>
+      </div>
+      <div class="profile-cards fade-in" :class="fade(2)">
+        <div class="profile-card lite">
+          <div class="profile-name">Lite</div>
+          <div class="profile-desc">Doble clic index.html<br>Dexie + CryptoJS<br>ZIP + GitHub Pages</div>
+        </div>
+        <div class="profile-card full">
+          <div class="profile-name">Full</div>
+          <div class="profile-desc">Bun --compile .exe<br>+ SQLite opcional<br>.exe + ZIP + Release</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4: LA MAQUINA ===== -->
+    <section class="slide slide-4" id="slide-3">
+      <div class="slide-title fade-in" :class="fade(3)">La <span class="accent">Maquina</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(3)">
+        5 engines + 6 standalone skills trabajando en sincronia
+      </div>
+      <div class="machine-diagram fade-in" :class="fade(3)">
+        <div class="machine-label">Input</div>
+        <div class="machine-row">
+          <div class="machine-box io">&#128161; Idea / Requisito</div>
+        </div>
+        <div class="machine-arrow v">&#8595;</div>
+        <div class="machine-label">5 Engines</div>
+        <div class="machine-row">
+          <div class="machine-box engine">Pipeline</div>
+          <div class="machine-arrow">&#8594;</div>
+          <div class="machine-box engine">Spec</div>
+          <div class="machine-arrow">&#8594;</div>
+          <div class="machine-box engine">Design</div>
+          <div class="machine-arrow">&#8594;</div>
+          <div class="machine-box engine">Code</div>
+          <div class="machine-arrow">&#8594;</div>
+          <div class="machine-box engine">Validate</div>
+        </div>
+        <div class="machine-arrow v">&#8595;</div>
+        <div class="machine-label">6 Standalone Skills</div>
+        <div class="machine-row">
+          <div class="machine-box skill">Setup</div>
+          <div class="machine-box skill">Code Gen</div>
+          <div class="machine-box skill">Compliance</div>
+          <div class="machine-box skill">Deploy</div>
+          <div class="machine-box skill">IA Jutia</div>
+          <div class="machine-box skill">Alpine UI</div>
+        </div>
+        <div class="machine-arrow v">&#8595;</div>
+        <div class="machine-label">Output</div>
+        <div class="machine-row">
+          <div class="machine-box output">&#128190; .exe (Windows)</div>
+          <div class="machine-box output">&#128241; .apk (Android)</div>
+          <div class="machine-box output">&#128230; .zip + Pages</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5: PIPELINE ===== -->
+    <section class="slide slide-5" id="slide-4">
+      <div class="slide-title fade-in" :class="fade(4)">Pipeline <span class="accent4">Automatico</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(4)">
+        Dos modos de operacion segun la necesidad del proyecto
+      </div>
+      <div class="pipeline-wrapper fade-in" :class="fade(4)">
+        <div class="pipeline-col classic">
+          <div class="pipeline-col-title classic">&#9889; Classic — 5 fases</div>
+          <div class="pipeline-step"><div class="pipeline-step-num">1</div><div><div class="pipeline-step-text">Setup Init</div><div class="pipeline-step-desc">Valida entorno y crea estructura</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">2</div><div><div class="pipeline-step-text">Spec Engine</div><div class="pipeline-step-desc">Spec funcional + DESIGN.md</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">3</div><div><div class="pipeline-step-text">Design Engine</div><div class="pipeline-step-desc">Brand context + tokens DaisyUI</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">4</div><div><div class="pipeline-step-text">Code Generator</div><div class="pipeline-step-desc">Modulos + core + index.html</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">5</div><div><div class="pipeline-step-text">Validate + Deploy</div><div class="pipeline-step-desc">Compliance, test, empaquetado</div></div></div>
+        </div>
+        <div class="pipeline-col design">
+          <div class="pipeline-col-title design">&#127912; Design — 10 fases</div>
+          <div class="pipeline-step"><div class="pipeline-step-num">1</div><div><div class="pipeline-step-text">Taste</div><div class="pipeline-step-desc">Preferencias de diseno del usuario</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">2</div><div><div class="pipeline-step-text">Init</div><div class="pipeline-step-desc">DESIGN.md con referencias reales</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">3</div><div><div class="pipeline-step-text">Design + Spec</div><div class="pipeline-step-desc">Brand + funcional completo</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">4</div><div><div class="pipeline-step-text">Code + Inject</div><div class="pipeline-step-desc">Modulos con diseno aplicado</div></div></div>
+          <div class="pipeline-step"><div class="pipeline-step-num">5</div><div><div class="pipeline-step-text">Review + QA + Pack + Deploy</div><div class="pipeline-step-desc">Auditoria, testing, empaquetado</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6: TECH FRONTEND ===== -->
+    <section class="slide slide-6" id="slide-5">
+      <div class="slide-title fade-in" :class="fade(5)">Stack <span class="accent">Frontend</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(5)">
+        Tecnologias que hacen posible apps offline-first rapidas y profesionales
+      </div>
+      <div class="tech-grid fade-in" :class="fade(5)">
+        <div class="tech-card">
+          <div class="tech-card-icon">&#9874;</div>
+          <div class="tech-card-name">Alpine.js</div>
+          <div class="tech-card-desc">Interactividad reactiva en el DOM. Sin build step, sin virtual DOM. Directivas en HTML para estados, eventos y data binding.</div>
+          <span class="tech-card-tag frontend">Framework UI</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128451;</div>
+          <div class="tech-card-name">Dexie.js</div>
+          <div class="tech-card-desc">Wrapper sobre IndexedDB. API simple tipo MongoDB para operaciones CRUD. Queries, indices y bulk operations offline.</div>
+          <span class="tech-card-tag frontend">Base de datos</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#127912;</div>
+          <div class="tech-card-name">Tailwind CSS</div>
+          <div class="tech-card-desc">Framework CSS utilitario. Diseno rapido con clases atomicas. Compilado localmente, sin CDN. Responsive por defecto.</div>
+          <span class="tech-card-tag frontend">Estilos</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#127800;</div>
+          <div class="tech-card-name">DaisyUI 5</div>
+          <div class="tech-card-desc">Componentes UI accesibles sobre Tailwind. Botones, modales, tabs, formularios. Temas claros y oscuros incluidos.</div>
+          <span class="tech-card-tag frontend">Componentes</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#127909;</div>
+          <div class="tech-card-name">Bootstrap Icons</div>
+          <div class="tech-card-desc">Libreria de 2000+ iconos vectoriales. Liviana, consistente y sin dependencias externas. Cargada desde assets locales.</div>
+          <span class="tech-card-tag frontend">Iconos</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#127912;</div>
+          <div class="tech-card-name">Animate.css</div>
+          <div class="tech-card-desc">Animaciones CSS declarativas. Fade-ins, slides, zooms para transiciones de pantalla y micro-interacciones.</div>
+          <span class="tech-card-tag frontend">Animaciones</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7: TECH DATA + IA ===== -->
+    <section class="slide slide-7" id="slide-6">
+      <div class="slide-title fade-in" :class="fade(6)">Stack <span class="accent4">Datos + IA</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(6)">
+        Seguridad, inteligencia y exportacion — todo sin conexion a internet
+      </div>
+      <div class="tech-grid fade-in" :class="fade(6)">
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128274;</div>
+          <div class="tech-card-name">CryptoJS</div>
+          <div class="tech-card-desc">Cifrado AES de datos locales. Toda la informacion se encripta antes de guardarse en IndexedDB. Privacidad total del cliente.</div>
+          <span class="tech-card-tag data">Seguridad</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128230;</div>
+          <div class="tech-card-name">pako</div>
+          <div class="tech-card-desc">Compresion ZIP en el navegador. Reduce el peso de datos exportados y backups. Sin servidor ni librerias del lado servidor.</div>
+          <span class="tech-card-tag data">Compresion</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128269;</div>
+          <div class="tech-card-name">FlexSearch</div>
+          <div class="tech-card-desc">Motor de busqueda full-text en el navegador. Resultados en milisegundos sobre miles de registros. Sin API externa.</div>
+          <span class="tech-card-tag ai">Busqueda</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#129504;</div>
+          <div class="tech-card-name">Transformers.js</div>
+          <div class="tech-card-desc">Modelos de IA en el navegador via ONNX. QA extractivo, analisis de sentimiento y clasificacion. 100% offline.</div>
+          <span class="tech-card-tag ai">IA</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128200;</div>
+          <div class="tech-card-name">ApexCharts</div>
+          <div class="tech-card-desc">Graficos interactivos y responsive. Lineas, barras, tortas. Ideales para dashboards de ventas, inventory y KPIs.</div>
+          <span class="tech-card-tag export">Graficos</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128196;</div>
+          <div class="tech-card-name">jsPDF + SheetJS</div>
+          <div class="tech-card-desc">Generacion de PDF y Excel directamente en el navegador. Facturas, reportes, exportacion de datos. Sin servidor.</div>
+          <span class="tech-card-tag export">Exportacion</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128640;</div>
+          <div class="tech-card-name">Bun</div>
+          <div class="tech-card-desc">Runtime all-in-one para el perfil Full. Empaqueta la app como .exe portable con Bun --compile. Sin Node.js ni dependencias.</div>
+          <span class="tech-card-tag runtime">Runtime</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8: 13 APPS ===== -->
+    <section class="slide slide-8" id="slide-7">
+      <div class="slide-title fade-in" :class="fade(7)">13 <span class="accent2">Apps</span> Listas para Vender</div>
+      <div class="slide-subtitle fade-in" :class="fade(7)">
+        Selecciona, genera y entrega. Cada app con 3 niveles comerciales.
+      </div>
+      <div class="app-grid fade-in" :class="fade(7)">
+        <template x-for="app in apps" :key="app.id">
+          <div class="app-card" @click="openApp(app)">
+            <div class="app-icon" x-html="app.icon"></div>
+            <div class="app-name" x-text="app.name"></div>
+            <div class="app-target" x-text="app.target"></div>
+            <div class="app-price" x-text="'Desde $' + app.prices.inicio"></div>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9: DEMO ===== -->
+    <section class="slide slide-9" id="slide-8">
+      <div class="slide-title fade-in" :class="fade(8)">Demo: Construir una <span class="accent3">App Completa</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(8)">
+        De la idea al ejecutable en 2 horas. Sin programar manualmente.
+      </div>
+      <div class="timeline fade-in" :class="fade(8)">
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">1. Idea: "App de inventario para ferreteria"</div>
+            <div class="timeline-step-time">5 min</div>
+          </div>
+          <div class="timeline-step-text">Describis la app. El pipeline pregunta solo lo necesario.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">2. Comando /new</div>
+            <div class="timeline-step-time">10 min</div>
+          </div>
+          <div class="timeline-step-text">Pipeline-engine arranca. Setup crea estructura, librerias locales.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">3. Spec Engine genera spec + DESIGN.md</div>
+            <div class="timeline-step-time">15 min</div>
+          </div>
+          <div class="timeline-step-text">Documento funcional + capa de marca con referencias reales.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">4. Code Generator produce todos los modulos</div>
+            <div class="timeline-step-time">45 min</div>
+          </div>
+          <div class="timeline-step-text">8 modulos, core/, index.html. Codigo offline-first listo.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">5. Validation Engine verifica todo</div>
+            <div class="timeline-step-time">15 min</div>
+          </div>
+          <div class="timeline-step-text">Compliance, brand audit, DevTools, QA rubric.</div>
+        </div>
+        <div class="timeline-step">
+          <div class="timeline-header">
+            <div class="timeline-step-title">6. Deployment empaqueta .exe + .apk</div>
+            <div class="timeline-step-time">10 min</div>
+          </div>
+          <div class="timeline-step-text">Ejecutable portable listo para entregar al cliente.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 10: IA JUTIA ===== -->
+    <section class="slide slide-10" id="slide-9">
+      <div class="slide-title fade-in" :class="fade(9)"><span class="accent4">IA Jutia</span> Integrada</div>
+      <div class="slide-subtitle fade-in" :class="fade(9)">
+        Inteligencia artificial que funciona sin internet. Busqueda, analisis y predicciones.
+      </div>
+      <div class="ia-grid fade-in" :class="fade(9)">
+        <div class="ia-card">
+          <div class="ia-card-icon">&#128269;</div>
+          <div class="ia-card-title">FlexSearch</div>
+          <div class="ia-card-text">Busqueda instantanea sobre los datos de la app. Sin servidor, sin API.</div>
+          <div class="ia-search-demo">
+            <div class="ia-search-input"><span>&#128270;</span> Buscar productos con bajo stock</div>
+            <div class="ia-search-results">
+              &#8226; Clavo 2" (12 unidades) <br>
+              &#8226; Cemento Gris (5 bolsas) <br>
+              &#8226; Tubo PVC 1/2 (8 metros)
+            </div>
+          </div>
+        </div>
+        <div class="ia-card">
+          <div class="ia-card-icon">&#128172;</div>
+          <div class="ia-card-title">QA Extractivo</div>
+          <div class="ia-card-text">Hace preguntas en lenguaje natural sobre tus datos. Transformers.js en el navegador.</div>
+          <div class="ia-qa-demo">
+            <div class="ia-qa-q">&#10067; Cuantas ventas tuvo el mes pasado?</div>
+            <div class="ia-qa-a">Se encontraron 147 ventas en Mayo 2026 por un total de $23,450</div>
+          </div>
+        </div>
+        <div class="ia-card">
+          <div class="ia-card-icon">&#128200;</div>
+          <div class="ia-card-title">Dashboard Predictivo</div>
+          <div class="ia-card-text">Alertas y predicciones basadas en datos historicos. Todo offline.</div>
+          <div class="ia-search-demo">
+            <div class="ia-search-input" style="color:var(--accent2)">&#9888; Alertas activas: 2</div>
+            <div class="ia-search-results" style="color:var(--accent2)">
+              &#8226; Producto "Cemento" se agotara en 3 semanas <br>
+              &#8226; Stock minimo en 5 categorias
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 11: ENTREGABLES ===== -->
+    <section class="slide slide-11" id="slide-10">
+      <div class="slide-title fade-in" :class="fade(10)">Lo que se <span class="accent">Entrega</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(10)">
+        Producto completo, no codigo fuente. El cliente compra un archivo, no una suscripcion.
+      </div>
+      <div class="deliverables-grid fade-in" :class="fade(10)">
+        <div class="deliverable-card">
+          <div class="deliverable-icon">&#128190;</div>
+          <div class="deliverable-name">.exe (Windows)</div>
+          <div class="deliverable-desc">Ejecutable portable. Doble clic y funciona. Sin instalacion.</div>
+          <div class="deliverable-check">&#10003; Perfil Full</div>
+        </div>
+        <div class="deliverable-card">
+          <div class="deliverable-icon">&#128241;</div>
+          <div class="deliverable-name">.apk (Android)</div>
+          <div class="deliverable-desc">App movil nativa. Funciona sin internet ni datos moviles.</div>
+          <div class="deliverable-check">&#10003; Todos los perfiles</div>
+        </div>
+        <div class="deliverable-card">
+          <div class="deliverable-icon">&#128230;</div>
+          <div class="deliverable-name">ZIP + GitHub Pages</div>
+          <div class="deliverable-desc">Version web progresiva. Hosteada gratis en GitHub.</div>
+          <div class="deliverable-check">&#10003; Perfil Lite</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 12: VENTAJA COMPETITIVA ===== -->
+    <section class="slide slide-12" id="slide-11">
+      <div class="slide-title fade-in" :class="fade(11)"><span class="accent3">Ventaja</span> Competitiva</div>
+      <div class="slide-subtitle fade-in" :class="fade(11)">
+        Ateje Stack vs el mercado tradicional de software
+      </div>
+      <div class="comparison-wrapper fade-in" :class="fade(11)">
+        <table class="comparison-table">
+          <thead>
+            <tr><th></th><th style="color:var(--accent)">&#9889; Ateje</th><th style="color:var(--text-dim)">SaaS</th><th style="color:var(--text-dim)">Outsourcing</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Costo inicial</td><td><span class="badge-check">$50-200 USD</span></td><td><span class="badge-cross">$30-200/mes</span></td><td><span class="badge-cross">$5K-50K USD</span></td></tr>
+            <tr><td>Tiempo de entrega</td><td><span class="badge-check">2-4 horas</span></td><td><span class="badge-partial">Inmediato (limitado)</span></td><td><span class="badge-cross">2-6 meses</span></td></tr>
+            <tr><td>El cliente es dueno</td><td><span class="badge-check">Si, pago unico</span></td><td><span class="badge-cross">No, suscripcion</span></td><td><span class="badge-partial">Depende del contrato</span></td></tr>
+            <tr><td>Funciona sin internet</td><td><span class="badge-check">Si, 100% offline</span></td><td><span class="badge-cross">No, requiere conexion</span></td><td><span class="badge-cross">Generalmente no</span></td></tr>
+            <tr><td>Personalizable</td><td><span class="badge-check">Si, en horas</span></td><td><span class="badge-partial">Limitado</span></td><td><span class="badge-check">Si, meses</span></td></tr>
+            <tr><td>IA integrada</td><td><span class="badge-check">Si, IA Jutia</span></td><td><span class="badge-partial">Depende del plan</span></td><td><span class="badge-partial">Costo adicional</span></td></tr>
+            <tr><td>Codigo fuente incluido</td><td><span class="badge-check">Opcional</span></td><td><span class="badge-cross">No</span></td><td><span class="badge-check">Si</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 13: INGRESOS ===== -->
+    <section class="slide slide-13" id="slide-12">
+      <div class="slide-title fade-in" :class="fade(12)">Modelo de <span class="accent2">Ingresos</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(12)">
+        2 canales de ingreso con margenes atractivos
+      </div>
+      <div class="revenue-grid fade-in" :class="fade(12)">
+        <div class="revenue-card">
+          <div class="revenue-card-title" style="color:var(--accent)">&#128176; Venta Directa</div>
+          <div class="revenue-item"><span class="revenue-item-name">Inicio (Lite)</span><span class="revenue-item-price">$50-100 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Profesional (Full)</span><span class="revenue-item-price">$150-300 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Enterprise (Full+custom)</span><span class="revenue-item-price">$500-2000 USD</span></div>
+          <div class="revenue-total"><span>Por app</span><span style="color:var(--accent)">$50 - $2,000 USD</span></div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-card-title" style="color:var(--accent2)">&#127912; Customizacion</div>
+          <div class="revenue-item"><span class="revenue-item-name">UI con marca del cliente</span><span class="revenue-item-price">+$100-300 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Modulos adicionales</span><span class="revenue-item-price">+$50-200 USD c/u</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Codigo fuente (Enterprise)</span><span class="revenue-item-price">+$500-1000 USD</span></div>
+          <div class="revenue-total"><span>Valor promedio por cliente</span><span style="color:var(--accent2)">$200 - $3,000 USD</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 14: PROYECCION ===== -->
+    <section class="slide slide-14" id="slide-13">
+      <div class="slide-title fade-in" :class="fade(13)">Proyeccion a <span class="accent">12 Meses</span></div>
+      <div class="slide-subtitle fade-in" :class="fade(13)">
+        Segun el ritmo de ventas, estos son los ingresos estimados
+      </div>
+      <div class="chart-wrapper fade-in" :class="fade(13)">
+        <div class="chart-container" id="revenueChart"></div>
+        <div class="chart-legend">
+          <div class="chart-legend-item">
+            <div class="chart-legend-dot" style="background:#06b6d4"></div>
+            <span>Conservador (2 apps/mes)</span>
+          </div>
+          <div class="chart-legend-item">
+            <div class="chart-legend-dot" style="background:#f59e0b"></div>
+            <span>Moderado (5 apps/mes)</span>
+          </div>
+          <div class="chart-legend-item">
+            <div class="chart-legend-dot" style="background:#10b981"></div>
+            <span>Agresivo (10 apps/mes)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 15: CTA ===== -->
+    <section class="slide slide-15" id="slide-14">
+      <div class="badge" style="margin-bottom:1.5rem">Proximo Paso</div>
+      <div class="cta-title">
+        El software no necesita internet<br>
+        para <span class="accent4">cambiar el mundo</span>
+      </div>
+      <div class="cta-sub">
+        Elegi una app piloto, genera tu primer producto y vendelo.
+        El pipeline hace el trabajo dificil.
+      </div>
+      <div class="cta-steps">
+        <div class="cta-step">
+          <div class="cta-step-num">1</div>
+          <div class="cta-step-text">Elegi una app del catalogo</div>
+        </div>
+        <div class="cta-step">
+          <div class="cta-step-num">2</div>
+          <div class="cta-step-text">Ejecuta /new en OpenCode</div>
+        </div>
+        <div class="cta-step">
+          <div class="cta-step-num">3</div>
+          <div class="cta-step-text">Entrega .exe + .apk al cliente</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- App Detail Modal -->
+  <div class="modal-overlay" x-show="modalOpen" x-cloak @click.self="modalOpen = false" x-transition.opacity>
+      <div class="modal-content">
+      <button class="modal-close" @click="modalOpen = false">&times;</button>
+      <div class="modal-icon" x-html="selectedApp?.icon"></div>
+      <div class="modal-title" x-text="selectedApp?.name"></div>
+      <div class="modal-desc" x-text="selectedApp?.description"></div>
+      <div class="modal-features">
+        <template x-for="f in selectedApp?.features || []" :key="f">
+          <span class="modal-tag" x-text="f"></span>
+        </template>
+      </div>
+      <div class="modal-pricing">
+        <div class="modal-price-row">
+          <span class="modal-price-label">Inicio (Lite)</span>
+          <span class="modal-price-val" x-text="'$' + selectedApp?.prices?.inicio"></span>
+        </div>
+        <div class="modal-price-row">
+          <span class="modal-price-label">Profesional (Full)</span>
+          <span class="modal-price-val" style="color:var(--accent2)" x-text="'$' + selectedApp?.prices?.profesional"></span>
+        </div>
+        <div class="modal-price-row">
+          <span class="modal-price-label">Enterprise (Full+custom)</span>
+          <span class="modal-price-val" style="color:var(--accent)" x-text="'$' + selectedApp?.prices?.enterprise"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/libs/apexcharts.min.js"></script>
+  <script src="assets/js/libs/alpine.min.js" defer></script>
+  <script>
+    const APPS = [
+      { id:1, icon:'&#128230;', name:'AHA Inventario', target:'Tiendas, bodegas, ferreterias', description:'Gestion de inventario completa con control de stock, entradas, salidas y alertas de bajo inventario. Ideal para negocios minoristas y mayoristas.', features:['Control stock','Entradas/salidas','Alertas','Reportes'], prices:{inicio:50, profesional:150, enterprise:500} },
+      { id:2, icon:'&#127860;', name:'AHA Comanda', target:'Restaurantes, bares, cafes', description:'Sistema de comandas digitales para restaurantes. Toma de pedidos, envio a cocina, cierre de cuenta. Sin internet ni POS caro.', features:['Toma pedidos','Envio cocina','Cuentas','Mesas'], prices:{inicio:50, profesional:150, enterprise:500} },
+      { id:3, icon:'&#128101;', name:'AHA CRM', target:'Pymes, comerciales, freelancers', description:'CRM ligero para gestion de clientes, seguimiento de ventas y pipeline. Ideal para equipos comerciales sin conexion.', features:['Clientes','Pipeline','Seguimiento','Reportes'], prices:{inicio:60, profesional:180, enterprise:600} },
+      { id:4, icon:'&#128203;', name:'AHA Checklist', target:'Auditores, supervisores, calidad', description:'Checklists digitales con firma, fotos y exportacion a PDF. Reemplaza planillas de papel en auditorias e inspecciones.', features:['Checklists','Firma digital','Fotos','Exportar PDF'], prices:{inicio:40, profesional:120, enterprise:400} },
+      { id:5, icon:'&#128197;', name:'AHA Asistencia', target:'RRHH, escuelas, talleres', description:'Control de asistencia de empleados o alumnos con registro de entrada/salida, reportes y exportacion.', features:['Registro','Reportes','Exportacion','Alertas'], prices:{inicio:40, profesional:120, enterprise:400} },
+      { id:6, icon:'&#128467;', name:'AHA Citas', target:'Salud, belleza, consultorios', description:'Agenda de citas con recordatorios, gestion de pacientes y calendario visual. Para consultorios, clinicas y spas.', features:['Agenda','Recordatorios','Pacientes','Calendario'], prices:{inicio:50, profesional:150, enterprise:500} },
+      { id:7, icon:'&#9997;&#65039;', name:'AHA Creador', target:'Creadores de contenido, freelancers', description:'Gestion de proyectos creativos, clientes, entregas y facturacion. Para disenadores, fotogarfos, copywriters.', features:['Proyectos','Clientes','Entregas','Facturacion'], prices:{inicio:50, profesional:150, enterprise:500} },
+      { id:8, icon:'&#127806;', name:'AHA Campo', target:'Agricultura, ganaderia, rural', description:'App de campo para relevamientos, censos y recoleccion de datos en zonas sin cobertura. Sincroniza cuando hay senal.', features:['Relevamientos','GPS','Fotos','Sincronizacion'], prices:{inicio:60, profesional:200, enterprise:700} },
+      { id:9, icon:'&#128179;', name:'AHA POS', target:'Comercios, ferias, emprendedores', description:'Punto de venta offline con catalogo, carrito, cobro y cierre de caja. Ideal para ferias, puestos y comercios chicos.', features:['Catalogo','Carrito','Cobro','Cierre caja'], prices:{inicio:50, profesional:150, enterprise:500} },
+      { id:10, icon:'&#128137;', name:'AHA Rx', target:'Farmacias, veterinarias, clinicas', description:'Gestion de recetas, medicamentos, stock de farmacia y control de vencimientos. Para farmacias y veterinarias.', features:['Recetas','Medicamentos','Stock','Vencimientos'], prices:{inicio:60, profesional:200, enterprise:700} },
+      { id:11, icon:'&#128666;', name:'AHA Flota', target:'Transporte, logistica, reparto', description:'Gestion de flota vehicular con control de rutas, mantenimiento, combustible y choferes. Logistica offline.', features:['Vehiculos','Rutas','Combustible','Mantenimiento'], prices:{inicio:80, profesional:250, enterprise:1000} },
+      { id:12, icon:'&#127963;', name:'AHA Obra', target:'Construccion, contratistas, arquitectos', description:'Gestion de obra con avance, materiales, equipos y trabajadores. Control de presupuesto y cronograma.', features:['Avance obra','Materiales','Equipos','Presupuesto'], prices:{inicio:80, profesional:250, enterprise:1000} },
+      { id:13, icon:'&#128196;', name:'AHA PreFactura', target:'Contadores, Pymes, freelancers', description:'Prefacturacion y presupuestos con calculo automatico de impuestos. Genera PDF y exporta a Excel.', features:['Prefacturas','Impuestos','PDF','Exportar XLS'], prices:{inicio:40, profesional:120, enterprise:400} }
+    ];
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('presentacion', () => ({
+        currentSlide: 0,
+        totalSlides: 15,
+        modalOpen: false,
+        selectedApp: null,
+        theme: localStorage.getItem('ateje-theme') || 'dark',
+        apps: APPS,
+        slides: [
+          'Hero','Problema','Filosofia','Maquina','Pipeline',
+          'Frontend','Datos+IA','Apps','Demo','IA Jutia',
+          'Entregables','Ventaja','Ingresos','Proyeccion','CTA'
+        ],
+        visibleSlides: new Set(),
+
+        init() {
+          this.applyTheme();
+          this.setupIntersectionObserver();
+          this.setupKeyboardNav();
+          this.initChart();
+        },
+
+        fade(slideIdx) {
+          return this.visibleSlides.has(slideIdx) ? 'visible' : '';
+        },
+
+        toggleTheme() {
+          this.theme = this.theme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('ateje-theme', this.theme);
+          this.applyTheme();
+          this.updateChartTheme();
+        },
+
+        applyTheme() {
+          document.body.className = this.theme === 'light' ? 'light' : '';
+        },
+
+        updateChartTheme() {
+          const chartEl = document.getElementById('revenueChart');
+          if (chartEl && chartEl.querySelector('svg')) {
+            const isLight = this.theme === 'light';
+            const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+            const labelColor = isLight ? '#64748b' : '#64748b';
+            chartEl.querySelectorAll('.apexcharts-grid line').forEach(l => l.setAttribute('stroke', gridColor));
+            chartEl.querySelectorAll('.apexcharts-xaxis-label, .apexcharts-yaxis-label').forEach(l => l.setAttribute('fill', labelColor));
+          }
+        },
+
+        setupIntersectionObserver() {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              const idx = parseInt(entry.target.id.replace('slide-',''));
+              if (entry.isIntersecting) {
+                this.visibleSlides.add(idx);
+                this.$nextTick(() => {});
+              }
+            });
+          }, { threshold: 0.1 });
+
+          document.querySelectorAll('.slide').forEach(el => observer.observe(el));
+        },
+
+        onScroll() {
+          const container = document.getElementById('slidesContainer');
+          const idx = Math.round(container.scrollTop / window.innerHeight);
+          if (idx !== this.currentSlide) {
+            this.currentSlide = idx;
+          }
+        },
+
+        setupKeyboardNav() {
+          const self = this;
+          document.addEventListener('keydown', function(e) {
+            if (self.modalOpen) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+              e.preventDefault();
+              self.next();
+            }
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              self.prev();
+            }
+          });
+        },
+
+        next() {
+          const container = document.getElementById('slidesContainer');
+          const idx = Math.min(this.currentSlide + 1, this.totalSlides - 1);
+          container.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+        },
+
+        prev() {
+          const container = document.getElementById('slidesContainer');
+          const idx = Math.max(this.currentSlide - 1, 0);
+          container.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+        },
+
+        goTo(n) {
+          const container = document.getElementById('slidesContainer');
+          container.scrollTo({ top: n * window.innerHeight, behavior: 'smooth' });
+        },
+
+        openApp(app) {
+          this.selectedApp = app;
+          this.modalOpen = true;
+        },
+
+        initChart() {
+          const months = ['Mes 1','Mes 2','Mes 3','Mes 4','Mes 5','Mes 6','Mes 7','Mes 8','Mes 9','Mes 10','Mes 11','Mes 12'];
+          const avgSale = 400;
+          const isLight = this.theme === 'light';
+          const chart = new ApexCharts(document.getElementById('revenueChart'), {
+            series: [
+              { name: 'Conservador (2/mes)', data: [2,4,6,9,11,13,16,18,20,23,25,28].map(v => v * avgSale * 0.6) },
+              { name: 'Moderado (5/mes)', data: [5,11,17,24,30,37,43,49,56,62,69,75].map(v => v * avgSale * 0.6) },
+              { name: 'Agresivo (10/mes)', data: [10,22,35,49,63,77,91,105,119,133,147,160].map(v => v * avgSale * 0.6) }
+            ],
+            chart: { type: 'line', height: 380, background: 'transparent', foreColor: isLight ? '#64748b' : '#94a3b8', toolbar: { show: false }, zoom: { enabled: false } },
+            stroke: { curve: 'smooth', width: 3 },
+            colors: ['#06b6d4', '#f59e0b', '#10b981'],
+            grid: { borderColor: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)', xaxis: { lines: { show: true } } },
+            xaxis: { categories: months, labels: { style: { colors: isLight ? '#64748b' : '#64748b' } } },
+            yaxis: { labels: { style: { colors: isLight ? '#64748b' : '#64748b' }, formatter: v => '$' + Math.round(v).toLocaleString() } },
+            tooltip: { theme: isLight ? 'light' : 'dark', y: { formatter: v => '$' + Math.round(v).toLocaleString() } },
+            legend: { show: false },
+            dataLabels: { enabled: false },
+            markers: { size: 4, hover: { size: 6 } }
+          });
+          chart.render();
+        }
+      }));
+    });
+  </script>
+  <style>[x-cloak] { display: none !important; }</style>
+</body>
+</html>
