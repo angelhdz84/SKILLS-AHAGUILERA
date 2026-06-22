@@ -50,9 +50,12 @@
 
     async initFull() {
       this.initLite();
-      await this._loadModelos();
+      await Promise.all([
+        this._loadModelos(),
+        window.sqliteDB?.init?.()
+      ]);
       await this._cargarDocumentosGuardados();
-      console.log('🧠 ia-jutia Full: modelos cargados');
+      console.log('🧠 ia-jutia Full: modelos + SQLite cargados');
     },
 
     async _loadModelos() {
@@ -61,12 +64,18 @@
         return;
       }
       try {
+        // WebGPU si disponible (WebView2 Edge Chromium 113+), fallback WASM automatico
+        const device = (typeof navigator !== 'undefined' && navigator.gpu) ? 'webgpu' : 'wasm';
         this._embedPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
           local: true,
+          dtype: 'q4',
+          device,
           modelPath: 'assets/models/minilm-embeddings.onnx'
         });
         this._qaPipeline = await pipeline('question-answering', 'Xenova/bert-base-multilingual-uncased-squad', {
           local: true,
+          dtype: 'q4',
+          device,
           modelPath: 'assets/models/bert-qa.onnx'
         });
         this._modelosCargados = true;
@@ -79,7 +88,7 @@
     async _cargarDocumentosGuardados() {
       if (!window.db || !window.db._ia_docs) return;
       try {
-        const docs = await window.db._ia_docs.toArray();
+        const docs = await window.db._ia_docs.reverse().limit(100).toArray();
         if (typeof Alpine !== 'undefined') {
           Alpine.store('ia').documentos = docs.map(d => ({
             id: d.id, nombre: d.nombre, tipo: d.tipo,
@@ -90,11 +99,13 @@
       } catch (e) { /* silent */ }
     },
 
-    registerTable(nombre, campos) {
+    async registerTable(nombre, campos) {
       if (!this._flex) return;
       if (!window.db || !window.db[nombre]) return;
-      const self = this;
-      window.db[nombre].toArray().then(rows => {
+      const total = await window.db[nombre].count();
+      const BATCH = 200;
+      for (let offset = 0; offset < total; offset += BATCH) {
+        const rows = await window.db[nombre].offset(offset).limit(BATCH).toArray();
         const docs = rows.map(r => ({
           id: `${nombre}-${r.id || r._id}`,
           nombre: r.nombre || r.titulo || r.name || '',
@@ -104,8 +115,27 @@
           tipo: r.tipo || nombre,
           tabla: nombre
         }));
-        docs.forEach(d => self._flex.add(d));
-      });
+        docs.forEach(d => this._flex.add(d));
+      }
+    },
+
+    indexRecord(tabla, record) {
+      if (!this._flex || !record) return;
+      const doc = {
+        id: `${tabla}-${record.id || record._id}`,
+        nombre: record.nombre || record.titulo || record.name || '',
+        descripcion: record.descripcion || record.desc || '',
+        notas: record.notas || record.observaciones || '',
+        texto: JSON.stringify(record).slice(0, 500),
+        tipo: record.tipo || tabla,
+        tabla: tabla
+      };
+      this._flex.add(doc);
+    },
+
+    removeRecord(tabla, id) {
+      if (!this._flex || !id) return;
+      this._flex.remove(`${tabla}-${id}`);
     },
 
     _registerDefaultTables() {
@@ -151,6 +181,9 @@
       if (!window.db) return;
       await window.db._ia_chunks.where('docId').equals(id).delete();
       await window.db._ia_docs.delete(id);
+      if (window.sqliteDB?.ready) {
+        await window.sqliteDB.removeChunks(id);
+      }
       const docs = await this.getDocumentos();
       if (typeof Alpine !== 'undefined') {
         Alpine.store('ia').documentos = docs;
@@ -195,14 +228,14 @@
       });
     },
 
-    statsAll() {
-      if (!window.db) return Promise.resolve([]);
-      const promises = this._tables.map(t => {
-        return window.db[t].toArray().then(rows => ({
-          tabla: t, registros: rows.length, campos: rows.length ? Object.keys(rows[0]).length : 0
-        }));
-      });
-      return Promise.all(promises);
+    async statsAll() {
+      if (!window.db) return [];
+      const results = await Promise.all(this._tables.map(async t => {
+        const registros = await window.db[t].count();
+        const sample = registros > 0 ? await window.db[t].limit(1).toArray() : [];
+        return { tabla: t, registros, campos: sample.length ? Object.keys(sample[0]).length : 0 };
+      }));
+      return results;
     },
 
     predict(tabla, campo, periodos = 3) {
@@ -251,14 +284,16 @@
       return resultado;
     },
 
-    exportResumen(tabla) {
-      if (!window.db || !window.db[tabla]) return Promise.resolve('');
-      return window.db[tabla].toArray().then(rows => {
-        let txt = `=== Resumen: ${tabla} ===\nRegistros: ${rows.length}\n`;
-        txt += `Ultima actualizacion: ${new Date().toLocaleDateString('es')}\n---\n`;
-        if (rows.length > 0) txt += `Campos: ${Object.keys(rows[0]).slice(0, 5).join(', ')}\n`;
-        return txt;
-      });
+    async exportResumen(tabla) {
+      if (!window.db || !window.db[tabla]) return '';
+      const registros = await window.db[tabla].count();
+      let txt = `=== Resumen: ${tabla} ===\nRegistros: ${registros}\n`;
+      txt += `Ultima actualizacion: ${new Date().toLocaleDateString('es')}\n---\n`;
+      if (registros > 0) {
+        const sample = await window.db[tabla].limit(1).toArray();
+        txt += `Campos: ${Object.keys(sample[0]).slice(0, 5).join(', ')}\n`;
+      }
+      return txt;
     },
 
     // ── Command Palette ───────────────────────────────────

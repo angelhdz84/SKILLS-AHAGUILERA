@@ -48,7 +48,7 @@
           </div>
           <div class="hero-stat">
             <div class="hero-stat-value">2h</div>
-            <div class="hero-stat-label">Idea a .exe</div>
+            <div class="hero-stat-label">Idea a Entrega</div>
           </div>
           <div class="hero-stat">
             <div class="hero-stat-value">0</div>
@@ -123,7 +123,7 @@
         </div>
         <div class="profile-card full">
           <div class="profile-name">Full</div>
-          <div class="profile-desc">Bun --compile .exe<br>+ SQLite opcional<br>.exe + ZIP + Release</div>
+          <div class="profile-desc">Neutralino .exe + Capacitor .apk<br>SQLite + IA Full<br>.exe + .apk + Release</div>
         </div>
       </div>
     </section>
@@ -159,6 +159,7 @@
           <div class="machine-box skill">Code Gen</div>
           <div class="machine-box skill">Compliance</div>
           <div class="machine-box skill">Deploy</div>
+          <div class="machine-box skill">Capacitor</div>
           <div class="machine-box skill">IA Jutia</div>
           <div class="machine-box skill">Alpine UI</div>
         </div>
@@ -288,10 +289,16 @@
           <span class="tech-card-tag export">Exportacion</span>
         </div>
         <div class="tech-card">
-          <div class="tech-card-icon">&#128640;</div>
-          <div class="tech-card-name">Bun</div>
-          <div class="tech-card-desc">Runtime all-in-one para el perfil Full. Empaqueta la app como .exe portable con Bun --compile. Sin Node.js ni dependencias.</div>
-          <span class="tech-card-tag runtime">Runtime</span>
+          <div class="tech-card-icon">&#128421;</div>
+          <div class="tech-card-name">NeutralinoJS</div>
+          <div class="tech-card-desc">Runtime nativo para el perfil Full. .exe portable (~2MB) con ventana nativa, bandeja de sistema y notificaciones locales.</div>
+          <span class="tech-card-tag runtime">Runtime .exe</span>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-icon">&#128241;</div>
+          <div class="tech-card-name">Capacitor</div>
+          <div class="tech-card-desc">Empaqueta la app como .apk Android nativo con SQLite, cámara, GPS, notificaciones locales y compartir. Sin Google Play Services.</div>
+          <span class="tech-card-tag runtime">Runtime .apk</span>
         </div>
       </div>
     </section>
@@ -308,7 +315,7 @@
             <div class="app-icon" x-html="app.icon"></div>
             <div class="app-name" x-text="app.name"></div>
             <div class="app-target" x-text="app.target"></div>
-            <div class="app-price" x-text="'Desde $' + app.prices.inicio"></div>
+             <div class="app-price" x-text="'$' + app.prices.inicio"></div>
           </div>
         </template>
       </div>
@@ -417,23 +424,23 @@
         Producto completo, no codigo fuente. El cliente compra un archivo, no una suscripcion.
       </div>
       <div class="deliverables-grid fade-in" :class="fade(10)">
-        <div class="deliverable-card">
-          <div class="deliverable-icon">&#128190;</div>
-          <div class="deliverable-name">.exe (Windows)</div>
-          <div class="deliverable-desc">Ejecutable portable. Doble clic y funciona. Sin instalacion.</div>
-          <div class="deliverable-check">&#10003; Perfil Full</div>
-        </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">&#128241;</div>
-          <div class="deliverable-name">.apk (Android)</div>
-          <div class="deliverable-desc">App movil nativa. Funciona sin internet ni datos moviles.</div>
-          <div class="deliverable-check">&#10003; Todos los perfiles</div>
-        </div>
-        <div class="deliverable-card">
+        <div class="deliverable-card" style="border-color:rgba(6,182,212,0.2)">
           <div class="deliverable-icon">&#128230;</div>
           <div class="deliverable-name">ZIP + GitHub Pages</div>
-          <div class="deliverable-desc">Version web progresiva. Hosteada gratis en GitHub.</div>
-          <div class="deliverable-check">&#10003; Perfil Lite</div>
+          <div class="deliverable-desc">Doble clic en index.html. Dexie + CryptoJS + IA Lite. Hosteado gratis en Pages.</div>
+          <div class="deliverable-check" style="color:var(--accent);background:rgba(6,182,212,0.1)">&#10003; Inicio (Lite) — $49</div>
+        </div>
+        <div class="deliverable-card" style="border-color:rgba(245,158,11,0.2)">
+          <div class="deliverable-icon">&#128190;</div>
+          <div class="deliverable-name">.exe + .apk</div>
+          <div class="deliverable-desc">Neutralino .exe (~2MB) + Capacitor .apk (~5MB). SQLite, IA Full, plugins nativos.</div>
+          <div class="deliverable-check" style="color:var(--accent2);background:rgba(245,158,11,0.1)">&#10003; Profesional (Full) — $99</div>
+        </div>
+        <div class="deliverable-card" style="border-color:rgba(139,92,246,0.2)">
+          <div class="deliverable-icon">&#127912;</div>
+          <div class="deliverable-name">White-label</div>
+          <div class="deliverable-desc">App con marca del cliente, docs personalizados, script brand.ps1 para re-brandeo.</div>
+          <div class="deliverable-check" style="color:var(--accent4);background:rgba(139,92,246,0.1)">&#10003; Enterprise — $199+</div>
         </div>
       </div>
     </section>
@@ -450,7 +457,7 @@
             <tr><th></th><th style="color:var(--accent)">&#9889; Ateje</th><th style="color:var(--text-dim)">SaaS</th><th style="color:var(--text-dim)">Outsourcing</th></tr>
           </thead>
           <tbody>
-            <tr><td>Costo inicial</td><td><span class="badge-check">$50-200 USD</span></td><td><span class="badge-cross">$30-200/mes</span></td><td><span class="badge-cross">$5K-50K USD</span></td></tr>
+            <tr><td>Costo inicial</td><td><span class="badge-check">$39-499 USD</span></td><td><span class="badge-cross">$30-200/mes</span></td><td><span class="badge-cross">$5K-50K USD</span></td></tr>
             <tr><td>Tiempo de entrega</td><td><span class="badge-check">2-4 horas</span></td><td><span class="badge-partial">Inmediato (limitado)</span></td><td><span class="badge-cross">2-6 meses</span></td></tr>
             <tr><td>El cliente es dueno</td><td><span class="badge-check">Si, pago unico</span></td><td><span class="badge-cross">No, suscripcion</span></td><td><span class="badge-partial">Depende del contrato</span></td></tr>
             <tr><td>Funciona sin internet</td><td><span class="badge-check">Si, 100% offline</span></td><td><span class="badge-cross">No, requiere conexion</span></td><td><span class="badge-cross">Generalmente no</span></td></tr>
@@ -471,17 +478,17 @@
       <div class="revenue-grid fade-in" :class="fade(12)">
         <div class="revenue-card">
           <div class="revenue-card-title" style="color:var(--accent)">&#128176; Venta Directa</div>
-          <div class="revenue-item"><span class="revenue-item-name">Inicio (Lite)</span><span class="revenue-item-price">$50-100 USD</span></div>
-          <div class="revenue-item"><span class="revenue-item-name">Profesional (Full)</span><span class="revenue-item-price">$150-300 USD</span></div>
-          <div class="revenue-item"><span class="revenue-item-name">Enterprise (Full+custom)</span><span class="revenue-item-price">$500-2000 USD</span></div>
-          <div class="revenue-total"><span>Por app</span><span style="color:var(--accent)">$50 - $2,000 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Inicio (Lite) — ZIP + Pages</span><span class="revenue-item-price">$39-79 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Profesional (Full) — .exe + .apk</span><span class="revenue-item-price">$79-199 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">Enterprise — White-label</span><span class="revenue-item-price">$199-499 USD</span></div>
+          <div class="revenue-total"><span>Por app</span><span style="color:var(--accent)">$39 - $499 USD</span></div>
         </div>
         <div class="revenue-card">
           <div class="revenue-card-title" style="color:var(--accent2)">&#127912; Customizacion</div>
-          <div class="revenue-item"><span class="revenue-item-name">UI con marca del cliente</span><span class="revenue-item-price">+$100-300 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">UI con marca del cliente (brand.ps1)</span><span class="revenue-item-price">+$100-300 USD</span></div>
           <div class="revenue-item"><span class="revenue-item-name">Modulos adicionales</span><span class="revenue-item-price">+$50-200 USD c/u</span></div>
-          <div class="revenue-item"><span class="revenue-item-name">Codigo fuente (Enterprise)</span><span class="revenue-item-price">+$500-1000 USD</span></div>
-          <div class="revenue-total"><span>Valor promedio por cliente</span><span style="color:var(--accent2)">$200 - $3,000 USD</span></div>
+          <div class="revenue-item"><span class="revenue-item-name">White-label completo + docs</span><span class="revenue-item-price">+$199-499 USD</span></div>
+          <div class="revenue-total"><span>Valor promedio por cliente</span><span style="color:var(--accent2)">$150 - $1,500 USD</span></div>
         </div>
       </div>
     </section>
@@ -573,19 +580,19 @@
   <script src="assets/js/libs/alpine.min.js" defer></script>
   <script>
     const APPS = [
-      { id:1, icon:'&#128230;', name:'AHA Inventario', target:'Tiendas, bodegas, ferreterias', description:'Gestion de inventario completa con control de stock, entradas, salidas y alertas de bajo inventario. Ideal para negocios minoristas y mayoristas.', features:['Control stock','Entradas/salidas','Alertas','Reportes'], prices:{inicio:50, profesional:150, enterprise:500} },
-      { id:2, icon:'&#127860;', name:'AHA Comanda', target:'Restaurantes, bares, cafes', description:'Sistema de comandas digitales para restaurantes. Toma de pedidos, envio a cocina, cierre de cuenta. Sin internet ni POS caro.', features:['Toma pedidos','Envio cocina','Cuentas','Mesas'], prices:{inicio:50, profesional:150, enterprise:500} },
-      { id:3, icon:'&#128101;', name:'AHA CRM', target:'Pymes, comerciales, freelancers', description:'CRM ligero para gestion de clientes, seguimiento de ventas y pipeline. Ideal para equipos comerciales sin conexion.', features:['Clientes','Pipeline','Seguimiento','Reportes'], prices:{inicio:60, profesional:180, enterprise:600} },
-      { id:4, icon:'&#128203;', name:'AHA Checklist', target:'Auditores, supervisores, calidad', description:'Checklists digitales con firma, fotos y exportacion a PDF. Reemplaza planillas de papel en auditorias e inspecciones.', features:['Checklists','Firma digital','Fotos','Exportar PDF'], prices:{inicio:40, profesional:120, enterprise:400} },
-      { id:5, icon:'&#128197;', name:'AHA Asistencia', target:'RRHH, escuelas, talleres', description:'Control de asistencia de empleados o alumnos con registro de entrada/salida, reportes y exportacion.', features:['Registro','Reportes','Exportacion','Alertas'], prices:{inicio:40, profesional:120, enterprise:400} },
-      { id:6, icon:'&#128467;', name:'AHA Citas', target:'Salud, belleza, consultorios', description:'Agenda de citas con recordatorios, gestion de pacientes y calendario visual. Para consultorios, clinicas y spas.', features:['Agenda','Recordatorios','Pacientes','Calendario'], prices:{inicio:50, profesional:150, enterprise:500} },
-      { id:7, icon:'&#9997;&#65039;', name:'AHA Creador', target:'Creadores de contenido, freelancers', description:'Gestion de proyectos creativos, clientes, entregas y facturacion. Para disenadores, fotogarfos, copywriters.', features:['Proyectos','Clientes','Entregas','Facturacion'], prices:{inicio:50, profesional:150, enterprise:500} },
-      { id:8, icon:'&#127806;', name:'AHA Campo', target:'Agricultura, ganaderia, rural', description:'App de campo para relevamientos, censos y recoleccion de datos en zonas sin cobertura. Sincroniza cuando hay senal.', features:['Relevamientos','GPS','Fotos','Sincronizacion'], prices:{inicio:60, profesional:200, enterprise:700} },
-      { id:9, icon:'&#128179;', name:'AHA POS', target:'Comercios, ferias, emprendedores', description:'Punto de venta offline con catalogo, carrito, cobro y cierre de caja. Ideal para ferias, puestos y comercios chicos.', features:['Catalogo','Carrito','Cobro','Cierre caja'], prices:{inicio:50, profesional:150, enterprise:500} },
-      { id:10, icon:'&#128137;', name:'AHA Rx', target:'Farmacias, veterinarias, clinicas', description:'Gestion de recetas, medicamentos, stock de farmacia y control de vencimientos. Para farmacias y veterinarias.', features:['Recetas','Medicamentos','Stock','Vencimientos'], prices:{inicio:60, profesional:200, enterprise:700} },
-      { id:11, icon:'&#128666;', name:'AHA Flota', target:'Transporte, logistica, reparto', description:'Gestion de flota vehicular con control de rutas, mantenimiento, combustible y choferes. Logistica offline.', features:['Vehiculos','Rutas','Combustible','Mantenimiento'], prices:{inicio:80, profesional:250, enterprise:1000} },
-      { id:12, icon:'&#127963;', name:'AHA Obra', target:'Construccion, contratistas, arquitectos', description:'Gestion de obra con avance, materiales, equipos y trabajadores. Control de presupuesto y cronograma.', features:['Avance obra','Materiales','Equipos','Presupuesto'], prices:{inicio:80, profesional:250, enterprise:1000} },
-      { id:13, icon:'&#128196;', name:'AHA PreFactura', target:'Contadores, Pymes, freelancers', description:'Prefacturacion y presupuestos con calculo automatico de impuestos. Genera PDF y exporta a Excel.', features:['Prefacturas','Impuestos','PDF','Exportar XLS'], prices:{inicio:40, profesional:120, enterprise:400} }
+      { id:1, icon:'&#128230;', name:'AHA Inventario', target:'Tiendas, bodegas, ferreterias', description:'Gestion de inventario completa con control de stock, entradas, salidas y alertas de bajo inventario. Ideal para negocios minoristas y mayoristas.', features:['Control stock','Entradas/salidas','Alertas','Reportes'], prices:{inicio:49, profesional:99, enterprise:299} },
+      { id:2, icon:'&#127860;', name:'AHA Comanda', target:'Restaurantes, bares, cafes', description:'Sistema de comandas digitales para restaurantes. Toma de pedidos, envio a cocina, cierre de cuenta. Sin internet ni POS caro.', features:['Toma pedidos','Envio cocina','Cuentas','Mesas'], prices:{inicio:49, profesional:99, enterprise:299} },
+      { id:3, icon:'&#128101;', name:'AHA CRM', target:'Pymes, comerciales, freelancers', description:'CRM ligero para gestion de clientes, seguimiento de ventas y pipeline. Ideal para equipos comerciales sin conexion.', features:['Clientes','Pipeline','Seguimiento','Reportes'], prices:{inicio:59, profesional:129, enterprise:399} },
+      { id:4, icon:'&#128203;', name:'AHA Checklist', target:'Auditores, supervisores, calidad', description:'Checklists digitales con firma, fotos y exportacion a PDF. Reemplaza planillas de papel en auditorias e inspecciones.', features:['Checklists','Firma digital','Fotos','Exportar PDF'], prices:{inicio:39, profesional:79, enterprise:199} },
+      { id:5, icon:'&#128197;', name:'AHA Asistencia', target:'RRHH, escuelas, talleres', description:'Control de asistencia de empleados o alumnos con registro de entrada/salida, reportes y exportacion.', features:['Registro','Reportes','Exportacion','Alertas'], prices:{inicio:39, profesional:79, enterprise:199} },
+      { id:6, icon:'&#128467;', name:'AHA Citas', target:'Salud, belleza, consultorios', description:'Agenda de citas con recordatorios, gestion de pacientes y calendario visual. Para consultorios, clinicas y spas.', features:['Agenda','Recordatorios','Pacientes','Calendario'], prices:{inicio:49, profesional:99, enterprise:299} },
+      { id:7, icon:'&#9997;&#65039;', name:'AHA Creador', target:'Creadores de contenido, freelancers', description:'Gestion de proyectos creativos, clientes, entregas y facturacion. Para disenadores, fotogarfos, copywriters.', features:['Proyectos','Clientes','Entregas','Facturacion'], prices:{inicio:49, profesional:99, enterprise:299} },
+      { id:8, icon:'&#127806;', name:'AHA Campo', target:'Agricultura, ganaderia, rural', description:'App de campo para relevamientos, censos y recoleccion de datos en zonas sin cobertura. Sincroniza cuando hay senal.', features:['Relevamientos','GPS','Fotos','Sincronizacion'], prices:{inicio:59, profesional:149, enterprise:399} },
+      { id:9, icon:'&#128179;', name:'AHA POS', target:'Comercios, ferias, emprendedores', description:'Punto de venta offline con catalogo, carrito, cobro y cierre de caja. Ideal para ferias, puestos y comercios chicos.', features:['Catalogo','Carrito','Cobro','Cierre caja'], prices:{inicio:49, profesional:99, enterprise:299} },
+      { id:10, icon:'&#128137;', name:'AHA Rx', target:'Farmacias, veterinarias, clinicas', description:'Gestion de recetas, medicamentos, stock de farmacia y control de vencimientos. Para farmacias y veterinarias.', features:['Recetas','Medicamentos','Stock','Vencimientos'], prices:{inicio:59, profesional:149, enterprise:399} },
+      { id:11, icon:'&#128666;', name:'AHA Flota', target:'Transporte, logistica, reparto', description:'Gestion de flota vehicular con control de rutas, mantenimiento, combustible y choferes. Logistica offline.', features:['Vehiculos','Rutas','Combustible','Mantenimiento'], prices:{inicio:79, profesional:199, enterprise:499} },
+      { id:12, icon:'&#127963;', name:'AHA Obra', target:'Construccion, contratistas, arquitectos', description:'Gestion de obra con avance, materiales, equipos y trabajadores. Control de presupuesto y cronograma.', features:['Avance obra','Materiales','Equipos','Presupuesto'], prices:{inicio:79, profesional:199, enterprise:499} },
+      { id:13, icon:'&#128196;', name:'AHA PreFactura', target:'Contadores, Pymes, freelancers', description:'Prefacturacion y presupuestos con calculo automatico de impuestos. Genera PDF y exporta a Excel.', features:['Prefacturas','Impuestos','PDF','Exportar XLS'], prices:{inicio:39, profesional:79, enterprise:199} }
     ];
 
     document.addEventListener('alpine:init', () => {
@@ -697,13 +704,13 @@
 
         initChart() {
           const months = ['Mes 1','Mes 2','Mes 3','Mes 4','Mes 5','Mes 6','Mes 7','Mes 8','Mes 9','Mes 10','Mes 11','Mes 12'];
-          const avgSale = 400;
+          const avgSale = 150;
           const isLight = this.theme === 'light';
           const chart = new ApexCharts(document.getElementById('revenueChart'), {
             series: [
-              { name: 'Conservador (2/mes)', data: [2,4,6,9,11,13,16,18,20,23,25,28].map(v => v * avgSale * 0.6) },
-              { name: 'Moderado (5/mes)', data: [5,11,17,24,30,37,43,49,56,62,69,75].map(v => v * avgSale * 0.6) },
-              { name: 'Agresivo (10/mes)', data: [10,22,35,49,63,77,91,105,119,133,147,160].map(v => v * avgSale * 0.6) }
+              { name: 'Conservador (2/mes)', data: [2,4,6,9,11,13,16,18,20,23,25,28].map(v => Math.round(v * avgSale)) },
+              { name: 'Moderado (5/mes)', data: [5,11,17,24,30,37,43,49,56,62,69,75].map(v => Math.round(v * avgSale)) },
+              { name: 'Agresivo (10/mes)', data: [10,22,35,49,63,77,91,105,119,133,147,160].map(v => Math.round(v * avgSale)) }
             ],
             chart: { type: 'line', height: 380, background: 'transparent', foreColor: isLight ? '#64748b' : '#94a3b8', toolbar: { show: false }, zoom: { enabled: false } },
             stroke: { curve: 'smooth', width: 3 },

@@ -162,14 +162,14 @@
       return chunks;
     },
 
-    // ── Indexar en Dexie + FlexSearch ─────────────────────
+    // ── Indexar en Dexie + FlexSearch + SQLite (FTS5) ─────
     async indexDocument(docId, chunks, docInfo, flexIndex) {
       if (!window.db) return;
 
       // Guardar metadata del documento
       await window.db._ia_docs.put(docInfo);
 
-      // Guardar chunks
+      // Guardar chunks en Dexie (fallback universal)
       const chunkRows = chunks.map((c, i) => ({
         docId,
         indice: i,
@@ -178,6 +178,11 @@
         tokens: c.tokens
       }));
       await window.db._ia_chunks.bulkPut(chunkRows);
+
+      // Guardar chunks en SQLite FTS5 (solo Full .exe)
+      if (window.sqliteDB?.ready) {
+        await window.sqliteDB.addChunks(chunks, docId);
+      }
 
       // Indexar en FlexSearch
       if (flexIndex) {
@@ -194,6 +199,22 @@
       }
     },
 
+    // ── Web Worker opcional ───────────────────────────────
+    _worker: null,
+
+    _getWorker() {
+      if (typeof Worker === 'undefined') return null;
+      if (!this._worker) {
+        try {
+          this._worker = new Worker('core/ia-worker.js');
+        } catch (e) {
+          console.warn('⚠️ ia-ingest: Worker no disponible, usando hilo principal');
+          return null;
+        }
+      }
+      return this._worker;
+    },
+
     // ── QA Extractivo ─────────────────────────────────────
     async qa(pregunta, qaPipeline, embedPipeline) {
       if (!qaPipeline) {
@@ -204,50 +225,29 @@
       }
 
       try {
-        const chunks = await window.db._ia_chunks.toArray();
-        if (chunks.length === 0) {
+        // Obtener chunks relevantes: FTS5 (sql.js) si disponible, si no muestreo paginado
+        let chunksFiltrados;
+        if (window.sqliteDB?.ready) {
+          chunksFiltrados = await window.sqliteDB.searchChunks(pregunta, 5);
+        } else {
+          chunksFiltrados = await this._muestrearChunks(pregunta, embedPipeline);
+        }
+        if (chunksFiltrados.length === 0) {
           return { respuesta: 'No hay documentos indexados. Sube un archivo primero.', fuente: null, score: 0 };
         }
 
-        // Si tenemos pipeline de embeddings, buscar chunks semanticamente
-        let chunksFiltrados = chunks;
-        if (embedPipeline) {
-          const queryEmbed = await embedPipeline(pregunta, { pooling: 'mean', normalize: true });
-          const queryVec = Array.from(queryEmbed.data);
-
-          // Calcular similitud coseno con cada chunk (muestreo max 50 chunks por performance)
-          const sample = chunks.slice(0, 50);
-          const scored = sample.map(chunk => {
-            const chunkEmbed = chunk.embedding ? this._cosineSimilarity(queryVec, chunk.embedding) : 0;
-            return { ...chunk, score: chunkEmbed };
-          });
-          scored.sort((a, b) => b.score - a.score);
-          chunksFiltrados = scored.slice(0, 5);
+        // QA: delegar a Worker si disponible, si no hilo principal
+        let mejorRespuesta;
+        if (this._getWorker()) {
+          mejorRespuesta = await this._qaWithWorker(pregunta, chunksFiltrados);
         } else {
-          chunksFiltrados = chunks.slice(0, 10);
-        }
-
-        // QA sobre los chunks mas relevantes
-        let mejorRespuesta = null;
-        for (const chunk of chunksFiltrados) {
-          try {
-            const result = await qaPipeline(pregunta, chunk.texto);
-            if (!mejorRespuesta || result.score > mejorRespuesta.score) {
-              mejorRespuesta = {
-                respuesta: result.answer,
-                score: result.score,
-                contexto: chunk.texto.slice(0, 300),
-                docId: chunk.docId
-              };
-            }
-          } catch (e) { /* skip chunk */ }
+          mejorRespuesta = await this._qaMainThread(pregunta, chunksFiltrados, qaPipeline);
         }
 
         if (!mejorRespuesta) {
           return { respuesta: 'No encontre una respuesta en los documentos disponibles.', fuente: null, score: 0 };
         }
 
-        // Buscar nombre del documento fuente
         let fuente = null;
         if (mejorRespuesta.docId && window.db._ia_docs) {
           const doc = await window.db._ia_docs.get(mejorRespuesta.docId);
@@ -264,6 +264,71 @@
         console.error('⚠️ ia-ingest: Error en QA:', err);
         return { respuesta: `Error al procesar la pregunta: ${err.message}`, fuente: null, score: 0 };
       }
+    },
+
+    async _muestrearChunks(pregunta, embedPipeline) {
+      const totalChunks = await window.db._ia_chunks.count();
+      if (totalChunks === 0) return [];
+
+      let chunksFiltrados = [];
+      if (embedPipeline) {
+        const queryEmbed = await embedPipeline(pregunta, { pooling: 'mean', normalize: true });
+        const queryVec = Array.from(queryEmbed.data);
+        const BATCH = 50;
+        const MAX_BATCHES = 3;
+        let topScores = [];
+
+        for (let offset = 0; offset < Math.min(totalChunks, BATCH * MAX_BATCHES); offset += BATCH) {
+          const batch = await window.db._ia_chunks.offset(offset).limit(BATCH).toArray();
+          for (const chunk of batch) {
+            const score = chunk.embedding ? this._cosineSimilarity(queryVec, chunk.embedding) : 0;
+            topScores.push({ ...chunk, score });
+          }
+          topScores.sort((a, b) => b.score - a.score);
+          topScores = topScores.slice(0, 10);
+        }
+        chunksFiltrados = topScores.slice(0, 5).map(c => ({ docId: c.docId, texto: c.texto }));
+      } else {
+        const randomOffset = totalChunks > 10 ? Math.floor(Math.random() * (totalChunks - 10)) : 0;
+        const batch = await window.db._ia_chunks.offset(randomOffset).limit(10).toArray();
+        chunksFiltrados = batch.map(c => ({ docId: c.docId, texto: c.texto }));
+      }
+      return chunksFiltrados;
+    },
+
+    _qaWithWorker(pregunta, chunks) {
+      return new Promise((resolve, reject) => {
+        const worker = this._getWorker();
+        if (!worker) return reject(new Error('Worker no disponible'));
+
+        const id = Date.now().toString(36);
+        const handler = (e) => {
+          if (e.data.id !== id) return;
+          worker.removeEventListener('message', handler);
+          if (e.data.type === 'qa-result') resolve(e.data.data);
+          else if (e.data.type === 'error') reject(new Error(e.data.error));
+        };
+        worker.addEventListener('message', handler);
+        worker.postMessage({ type: 'qa', id, data: { pregunta, chunks } });
+      });
+    },
+
+    async _qaMainThread(pregunta, chunks, qaPipeline) {
+      let mejorRespuesta = null;
+      for (const chunk of chunks) {
+        try {
+          const result = await qaPipeline(pregunta, chunk.texto);
+          if (!mejorRespuesta || result.score > mejorRespuesta.score) {
+            mejorRespuesta = {
+              respuesta: result.answer,
+              score: result.score,
+              contexto: chunk.texto.slice(0, 300),
+              docId: chunk.docId
+            };
+          }
+        } catch (e) { /* skip chunk */ }
+      }
+      return mejorRespuesta;
     },
 
     _cosineSimilarity(a, b) {

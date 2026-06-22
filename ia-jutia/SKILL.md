@@ -90,13 +90,27 @@ Segun perfil detectado, genera los archivos correspondientes:
 📁 CORE COMPARTIDO
 ### `core/ia.js`
 [FlexSearch + estadisticas + predicciones (identico a Lite)
- + metodos de orquestacion: ingest(), qa(), getDocumentos()]
+ + metodos de orquestacion: ingest(), qa(), getDocumentos()
+ + indexRecord(), removeRecord() para indexacion incremental]
 
 ### `core/ia-ingest.js`
 [Parsers: pdf(), docx(), xlsx(), csv(), md(), txt()
  + chunking con overlap
  + Transformers.js pipeline init (MiniLM + BERT)
- + QA extractivo con citacion de fuentes]
+ + QA extractivo con muestreo paginado de chunks
+ + soporte Web Worker para evitar bloqueo de UI]
+
+### `core/ia-worker.js`
+[Web Worker con Transformers.js + q4 quantization
+ + QA y embeddings en segundo plano (sin congelar UI)
+ + dtype: 'q4' reduce modelos 4x (230MB → 58MB)]
+
+### `core/ia-sqlite.js`
+[sql.js wrapper con FTS5 para chunks de IA Jutia
+ + persistencia cíclica (export → IndexedDB, restore en init)
+ + CREATE VIRTUAL TABLE chunks_fts USING fts5(texto, docId)
+ + SELECT MATCH para QA ~50-150ms vs 2-3s con Dexite
+ + Fallback automatico a Dexie si sql.js no disponible]
 
 📁 MODULO IA-JUTIA
 ### `modules/ia-jutia/module.js`
@@ -159,7 +173,11 @@ db.version(1).stores({
   _ia_docs: 'id, nombre, tipo, *createdBy, createdAt, updatedAt',
   _ia_chunks: 'id, docId, *texto, createdAt',
   _ia_index: '&consulta',
-  modelos_cache: '&ruta'
+  modelos_cache: '&ruta',
+});
+// La tabla _ia_sqlite se añade en version 2 si hay sql.js:
+db.version(2).stores({
+  _ia_sqlite: 'id'  // snapshot: { id: 'snapshot', data: Array, updatedAt: string }
 });
 ```
 
@@ -178,6 +196,8 @@ db.version(1).stores({
    - FlexSearch se carga ANTES de core/ia.js
    - core/ia.js se carga DESPUES de core/ui.js
    - (Full) core/ia-ingest.js despues de core/ia.js
+   - (Full) core/ia-sqlite.js despues de core/ia.js y antes de ia-ingest.js (si sql.js activo)
+   - (Full) sql.js WASM en assets/wasm/sql-wasm.wasm
    - (Full) Los modelos estan en assets/models/
 
 🚀 Siguiente paso: continuar con generacion de modulos o validar app
@@ -189,8 +209,17 @@ db.version(1).stores({
 
 - [ ] ¿FlexSearch cargado desde `assets/js/libs/flexsearch.min.js` (Lite) o `bun add flexsearch` (Full)? → RUTA LOCAL siempre
 - [ ] ¿Transformers.js (Full) carga modelos desde `assets/models/` con opcion `{local: true}`? → NO CDN en runtime
+- [ ] ¿Transformers.js (Full) usa `dtype: 'q4'` en pipeline? → Reduce modelos 230MB → 58MB
 - [ ] ¿Los chunks de documentos se guardan en `_ia_chunks` (IndexedDB)? → ✅
 - [ ] ¿El chat Q&A (Full) cita la fuente de cada respuesta? → ✅
+- [ ] ¿QA usa muestreo paginado (`offset().limit(BATCH)`) en vez de `toArray()` completo? → ✅
+- [ ] ¿`statsAll()` y `exportResumen()` usan `count()` en vez de `toArray()`? → ✅
+- [ ] ¿`registerTable()` pagina en lotes de 200 en vez de `toArray()` completo? → ✅
+- [ ] ¿Se carga `transformers.min.js` antes de crear el Worker? → `importScripts` dentro del Worker
+- [ ] ¿sql.js activo y `assets/wasm/sql-wasm.wasm` existe? → `locateFile` apunta a `assets/wasm/`
+- [ ] ¿Dexie tabla `_ia_sqlite`? → `db.version(2).stores({ _ia_sqlite: 'id' })` en core/db.js
+- [ ] ¿FTS5 disponible? → `CREATE VIRTUAL TABLE chunks_fts USING fts5(texto, docId)` en init
+- [ ] ¿Persistencia cíclica? → `db.export()` → `_ia_sqlite.put()` cada 2s tras cambios
 - [ ] ¿Cmd+K no interfiere con inputs nativos? → Usar `@keydown.window` no dentro de inputs
 - [ ] ¿Perfil Lite pero usa `Transformers`? → ❌ RECHAZAR
 - [ ] ¿Perfil Full pero no carga `ia-ingest.js`? → ❌ RECHAZAR
@@ -204,11 +233,15 @@ db.version(1).stores({
 window.ia = {
   // Busqueda full-text
   search(query, opts),              // FlexSearch sobre tablas registradas
-  registerTable(nombre, campos),    // Registrar tabla Dexie para indexado
+  registerTable(nombre, campos),    // Registrar tabla Dexie para indexado (pagina en lotes de 200)
+
+  // Indexacion incremental
+  indexRecord(tabla, record),       // Anadir 1 registro a FlexSearch sin recargar toda la tabla
+  removeRecord(tabla, id),          // Eliminar 1 registro de FlexSearch
 
   // Estadisticas
   stats(tabla, campo),              // media, mediana, moda, min, max, stddev, count
-  statsAll(),                       // estadisticas de todas las tablas registradas
+  statsAll(),                       // estadisticas de todas las tablas (usa count() no toArray())
 
   // Predicciones
   predict(tabla, campo, periodos),  // regresion lineal sobre datos historicos
@@ -216,7 +249,7 @@ window.ia = {
   movingAverage(valores, ventana),  // media movil para smooth
 
   // Export
-  exportResumen(tabla),             // texto plano con hallazgos
+  exportResumen(tabla),             // texto plano con hallazgos (usa count() no toArray())
 
   // UI state
   paletteOpen: false,               // control de command palette
@@ -228,7 +261,7 @@ window.ia = {
 
 ### Solo Full:
 ```javascript
-window.ia.ingest = {
+window.iaIngest = {
   file(blob),                       // detecta tipo, parsea, chunk, indexa
   parse: {
     pdf(blob),                      // pdf.js → text
@@ -242,8 +275,13 @@ window.ia.ingest = {
   indexDocument(id, chunks),        // guarda en Dexie + FlexSearch
   generateEmbeddings(chunks),       // MiniLM → vectors
   qa(pregunta),                     // BERT multilingual → {respuesta, fuente, score}
+                                    // usa muestreo paginado + Web Worker (si disponible)
   getDocumentos(),                  // lista docs indexados
-  deleteDocumento(id)               // eliminar doc + chunks + indices
+  deleteDocumento(id),              // eliminar doc + chunks + indices
+  _getWorker(),                     // Inicializa Web Worker para Transformers.js
+  _qaWithWorker(),                  // QA via Worker (no bloquea UI)
+  _qaMainThread(),                  // QA via hilo principal (fallback)
+  _muestrearChunks()                // Paginacion inteligente de chunks (max 150)
 };
 
 window.ia.initFull = function() {   // init lite + ingest + modelos
@@ -282,12 +320,16 @@ Los templates de codigo estan en:
 ## 📝 NOTAS PARA LA IA
 
 - **FlexSearch**: Usar `new FlexSearch.Document()` con opciones `{doc: {id: 'id', index: [...], store: [...]}}`. Indexar en `initLite()`.
+- **Indexacion incremental**: Usar `indexRecord(tabla, record)` para añadir 1 registro a FlexSearch sin recargar toda la tabla. Usar `removeRecord(tabla, id)` al eliminar.
+- **Paginar consultas Dexie**: `registerTable()` pagina en lotes de 200. `statsAll()` usa `count()` indexado. `exportResumen()` usa `count() + limit(1)`. QA usa `offset().limit(BATCH)` paginado.
 - **Predicciones**: Regresion lineal `y = mx + b`. Calcular m y b con minimos cuadrados. mediaMovil con ventana configurable (default 3).
-- **Transformers.js (Full)**: Usar `pipeline('feature-extraction', model, {local: true})` para embeddings. Usar `pipeline('question-answering', model, {local: true})` para QA. Los modelos se cargan desde `assets/models/`.
-- **Chunking (Full)**: 512 tokens por chunk, overlap de 64 tokens. Almacenar en `_ia_chunks` con referencia a `docId`.
-- **QA (Full)**: Buscar top-3 chunks por similitud coseno (embeddings), pasar a BERT QA que extrae la respuesta exacta del chunk mas relevante. Mostrar fuente (nombre documento + fragmento).
+- **Transformers.js (Full)**: Usar `pipeline('feature-extraction', model, {local: true, dtype: 'q4', device})` para embeddings. Usar `pipeline('question-answering', model, {local: true, dtype: 'q4', device})` para QA. `dtype: 'q4'` reduce modelos 4x (230MB → 58MB). `device` se detecta automaticamente: `'webgpu'` si `navigator.gpu` existe (WebView2 Edge 113+), `'wasm'` si no. WebGPU acelera QA de 200-500ms a 50-100ms.
+- **Web Worker (Full)**: `ia-worker.js` se carga con `new Worker('core/ia-worker.js')`. El Worker hace `importScripts('../assets/js/libs/transformers.min.js')` para cargar Transformers.js. QA via Worker no congela la UI. `ia-ingest.js` detecta si Worker esta disponible; si no, usa hilo principal como fallback.
+- **sql.js (Full .exe)**: Descargar a `assets/wasm/sql-wasm.wasm` + `sql-wasm.js` desde CDN. `ia-sqlite.js` inicializa con `initSqlJs({locateFile: f => 'assets/wasm/'+f})`. Crea tabla virtual FTS5 para chunks. Persistencia cíclica: export cíclico a `_ia_sqlite` en IndexedDB cada 2s tras cambios. En `initFull()` se restaura desde IndexedDB. Fallback automático a Dexie si sql.js no disponible.
+- **Chunking (Full)**: 512 tokens por chunk, overlap de 64 tokens. Almacenar en `_ia_chunks` (Dexie) + `chunks_fts` (SQLite FTS5 si disponible).
+- **QA (Full)**: Si sql.js con FTS5 disponible: `SELECT texto, docId FROM chunks_fts WHERE texto MATCH ? ORDER BY rank LIMIT 5` → ~50-150ms. Si no: muestreo inteligente paginado (Dexie, lotes de 50, max 150 chunks) + similitud coseno si hay embeddings. Pasar top-5 a BERT QA.
 - **Cmd+K**: El atajo global abre una command palette tipo "Pregunta a la IA". No interferir con inputs de formularios.
-- **Persistencia**: Los documentos subidos (Full) persisten en IndexedDB (`_ia_docs`, `_ia_chunks`). Al recargar, el chat muestra historial y los documentos siguen disponibles.
+- **Persistencia**: Los documentos subidos (Full) persisten en IndexedDB (`_ia_docs`, `_ia_chunks`). Al recargar, se cargan los ultimos 100 documentos (`reverse().limit(100)`).
 - **Idioma**: Todo en español. Labels, mensajes, respuestas del QA, tooltips.
 - **Si el perfil no esta definido**: Preguntar. No asumir default.
 

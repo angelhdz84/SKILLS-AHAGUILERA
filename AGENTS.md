@@ -7,18 +7,18 @@
 
 ## Identidad
 
-Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 6 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
+Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 7 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
 
 ## Perfiles
 
 | Perfil | Runtime | DB | Cifrado | Empaquetado |
 |--------|---------|----|---------|-------------|
 | Lite | Doble clic `index.html` | Dexie (IndexedDB) | CryptoJS | ZIP + GitHub Pages |
-| Full | Bun --compile .exe | Dexie + SQLite (opcional) | CryptoJS | .exe + Pages + Release |
+| Full | NeutralinoJS .exe + Capacitor .apk | Dexie + SQLite (FTS5) | CryptoJS | .exe + .apk + Pages + Release |
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
-## Skills — Ateje Stack (5 Engines + 6 Standalone + 1 Writer Skill)
+## Skills — Ateje Stack (5 Engines + 7 Standalone + 1 Writer Skill)
 
 ### Motores (engines) — Skills de orquestación que reemplazan funcionalidad previa
 
@@ -40,6 +40,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
+| `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | full |
 
 ### Skills externas (oh-my-design + es-writer, en `~/.opencode/skills/`)
 
@@ -80,7 +81,8 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*` (incl. `core/sync.js`), `index.html` (+ src/ en Full) |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
-| deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + Release (Full) |
+| deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + .apk + Release (Full) |
+| capacitor | deployment-jigue | `capacitor.config.json` + `android/` + |
 | wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
 
 ## MCP Servers
@@ -151,3 +153,10 @@ Playwright E2E sobre `test-app.html` (Alpine.js task manager). Requiere Chrome s
 Push a `main` → GitHub Actions (`deploy-pages.yml`) → GitHub Pages. Sin build step (`path: .`).
 
 Para empaquetado profesional: `publicar` → deployment-jigue segun perfil.
+
+Niveles de entrega:
+- **Inicio** (Lite): ZIP + GitHub Pages
+- **Profesional** (Full): .exe (Neutralino) + .apk (Capacitor) + Pages + Release
+- **Enterprise** (Full custom): .exe + .apk + código fuente completo + UI personalizada + docs + script brand.ps1 para re-brandeo
+
+Para white-label: ejecutar `brand.ps1` con parámetros del cliente antes de empaquetar.

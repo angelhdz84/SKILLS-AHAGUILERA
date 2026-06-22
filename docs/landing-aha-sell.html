@@ -52,7 +52,7 @@ Autor: Angel Hernández Aguilera</p>
 </tr>
 <tr>
 <td>Formatos</td>
-<td>.exe (Windows) + .apk (Android)</td>
+<td>.exe (Windows) + .apk (Android) + ZIP (GitHub Pages)</td>
 </tr>
 <tr>
 <td>Internet</td>
@@ -85,10 +85,10 @@ Autor: Angel Hernández Aguilera</p>
 <tbody>
 <tr>
 <td>Un solo código fuente</td>
-<td>Una app que pesa ~5MB</td>
+<td>Una app que pesa ~2-5MB</td>
 </tr>
 <tr>
-<td>Tres builds: .exe + .apk + ZIP web</td>
+<td>Tres builds: ZIP (Lite) / .exe (Neutralino) + .apk (Capacitor) (Full)</td>
 <td>No necesita instalar nada más</td>
 </tr>
 <tr>
@@ -127,8 +127,12 @@ Autor: Angel Hernández Aguilera</p>
 <td>"Ni yo puedo ver tus datos. Están cifrados localmente"</td>
 </tr>
 <tr>
-<td><strong>Bun --compile</strong></td>
-<td>"Un solo archivo .exe. Lo abres y funciona. No necesitas instalar Java, Node, ni nada"</td>
+<td><strong>NeutralinoJS</strong></td>
+<td>"Un solo archivo .exe (~2MB). Ventana nativa, bandeja de sistema, notificaciones. No necesitas Java, Node, ni nada"</td>
+</tr>
+<tr>
+<td><strong>Capacitor</strong></td>
+<td>"La misma app la convierto en .apk nativo para Android con SQLite, cámara, GPS y notificaciones. Sin Google Play Services"</td>
 </tr>
 <tr>
 <td><strong>Bootstrap Icons</strong></td>
@@ -190,72 +194,104 @@ Autor: Angel Hernández Aguilera</p>
 <table>
 <thead>
 <tr>
+<th>App</th>
 <th>Vertical</th>
-<th>Ejemplos de app</th>
 <th>Módulos típicos</th>
 <th>IA integrada</th>
+<th>Precios por perfil</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Inventario</strong></td>
-<td>Control de stock, almacén, bodega</td>
-<td>Productos, movimientos, alertas, reportes PDF, escaneo</td>
+<td><strong>AHA Inventario</strong></td>
+<td>Control de stock, almacén, bodega, tienda</td>
+<td>Productos, movimientos, alertas, QR, reportes PDF</td>
 <td>Predice cuándo se va a acabar un producto + alertas inteligentes</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>49</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">49 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">49/</span></span></span></span>99 / $299</td>
 </tr>
 <tr>
-<td><strong>Facturación</strong></td>
-<td>Facturación offline, POS, comandas</td>
-<td>RFC/catálogo, PDF, histórico, corte de caja</td>
-<td>Búsqueda instantánea de facturas + detección de montos anómalos</td>
+<td><strong>AHA Comanda</strong></td>
+<td>Restaurantes, bares, cocinas</td>
+<td>Mesas, comandas, platillos, cuentas split, corte caja</td>
+<td>Predice platillo más pedido según hora y día</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>49</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">49 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">49/</span></span></span></span>99 / $299</td>
 </tr>
 <tr>
-<td><strong>CRM</strong></td>
-<td>Agenda clientes, seguros, cobranza</td>
-<td>Fichas, historial, notas, recordatorios, export CSV</td>
-<td>Busca clientes por descripción difusa: "el de la ferretería de la esquina"</td>
+<td><strong>AHA CRM</strong></td>
+<td>Ventas, freelancers, agencias</td>
+<td>Pipeline Kanban, contactos, cotizaciones PDF, facturas</td>
+<td>Busca contactos por descripción difusa: "el de la ferretería de la esquina"</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>59</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">59 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">59/</span></span></span></span>129 / $399</td>
 </tr>
 <tr>
-<td><strong>Gastos</strong></td>
-<td>Finanzas personales, negocio pequeño</td>
-<td>Categorías, gráficos, Excel export, presupuestos</td>
-<td>Predicción de gastos mensuales + anomalías en movimientos</td>
+<td><strong>AHA Checklist</strong></td>
+<td>Mantenimiento, inspecciones, seguridad</td>
+<td>Plantillas, inspecciones con foto/firma, PDF</td>
+<td>Predice áreas con más fallas y frecuencia óptima</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>39</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">39 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">39/</span></span></span></span>79 / $199</td>
 </tr>
 <tr>
-<td><strong>Logística</strong></td>
-<td>Rutas, entregas, checklists</td>
-<td>Órdenes, firmas digitales, fotos offline, GPS</td>
-<td>Búsqueda de órdenes por texto libre + análisis de rutas frecuentes</td>
+<td><strong>AHA Asistencia</strong></td>
+<td>RRHH, empleados, talleres</td>
+<td>Marcaje QR, reporte horas, retardos, export nómina</td>
+<td>Predice retardos probables basado en historial</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>39</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">39 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">39/</span></span></span></span>79 / $199</td>
 </tr>
 <tr>
-<td><strong>Salud</strong></td>
-<td>Consultorio, pacientes, citas</td>
-<td>Expedientes, recetas, agenda, historial clínico</td>
-<td>QA sobre expedientes: "¿cuándo fue la última consulta del Sr. Pérez?"</td>
+<td><strong>AHA Citas</strong></td>
+<td>Barberías, salud, belleza, servicios</td>
+<td>Agenda por profesional, clientes, servicios, corte día</td>
+<td>Predice horarios más solicitados y clientes frecuentes</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>49</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">49 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">49/</span></span></span></span>99 / $299</td>
 </tr>
 <tr>
-<td><strong>Educación</strong></td>
-<td>Cursos offline, quizzes, progreso</td>
-<td>Lecciones, ejercicios, calificaciones, reportes</td>
-<td>Búsqueda semántica de lecciones + quiz automático sobre el material</td>
+<td><strong>AHA Creador</strong></td>
+<td>YouTubers, streamers, podcasters</td>
+<td>Banco ideas, calendario, producción, patrocinios</td>
+<td>Predice productividad semanal y sugiere ajustes</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>49</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">49 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">49/</span></span></span></span>99 / $299</td>
 </tr>
 <tr>
-<td><strong>Campo</strong></td>
-<td>Cosecha, ganado, insumos</td>
-<td>Registro diario, lotes, alertas de stock</td>
-<td>Predicción de rendimiento basada en registros históricos</td>
+<td><strong>AHA Campo</strong></td>
+<td>Agricultura, ganadería, ranchos</td>
+<td>Lotes, cultivos, ganado, insumos, gastos</td>
+<td>Predice rendimiento por hectárea y alerta de insumos</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>59</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">59 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">59/</span></span></span></span>149 / $399</td>
 </tr>
 <tr>
-<td><strong>Servicio</strong></td>
-<td>Órdenes de trabajo, garantías</td>
-<td>Clientes, equipos, diagnóstico, historial</td>
-<td>Búsqueda de casos similares + diagnóstico sugerido por frecuencia</td>
+<td><strong>AHA POS</strong></td>
+<td>Punto de venta, tiendas, ferias</td>
+<td>Carrito, código barras, corte caja, devoluciones, ticket</td>
+<td>Predice productos más vendidos por hora/día</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>49</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">49 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">49/</span></span></span></span>99 / $299</td>
 </tr>
 <tr>
-<td><strong>Construcción</strong></td>
-<td>Presupuestos, materiales, avance</td>
-<td>Obra, insumos, fotos de avance, reportes</td>
-<td>QA sobre bitácora: "¿cuánto llevamos gastado en materiales?"</td>
+<td><strong>AHA Rx</strong></td>
+<td>Consultorios, médicos, farmacias</td>
+<td>Pacientes, recetas PDF, medicamentos, historial clínico</td>
+<td>Búsqueda de pacientes por síntoma, diagnósticos frecuentes</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>59</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">59 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">59/</span></span></span></span>149 / $399</td>
+</tr>
+<tr>
+<td><strong>AHA Flota</strong></td>
+<td>Transporte, flotillas, logística</td>
+<td>Vehículos, combustible km/l, mantenimiento, incidentes</td>
+<td>Predice próximo mantenimiento + alerta consumo anómalo</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>79</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">79 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">79/</span></span></span></span>199 / $499</td>
+</tr>
+<tr>
+<td><strong>AHA Obra</strong></td>
+<td>Construcción, arquitectura, obra</td>
+<td>Etapas, materiales, gastos, fotos avance, reporte PDF</td>
+<td>Predice desviación de presupuesto + alerta materiales</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>79</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">79 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">79/</span></span></span></span>199 / $499</td>
+</tr>
+<tr>
+<td><strong>AHA PreFactura</strong></td>
+<td>Freelancers, pequeños negocios</td>
+<td>Clientes RFC, facturas XML+PDF, historial</td>
+<td>Búsqueda por RFC, total facturado por período</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>39</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">39 /</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">39/</span></span></span></span>79 / $199</td>
 </tr>
 </tbody>
 </table>
@@ -266,24 +302,28 @@ Autor: Angel Hernández Aguilera</p>
 <tr>
 <th>Nivel</th>
 <th>Precio USD</th>
+<th>Perfil técnico</th>
 <th>Incluye</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Lite</strong></td>
-<td>$49</td>
-<td>1 módulo, solo .exe, datos sin cifrar</td>
+<td><strong>Inicio (Lite)</strong></td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>39</mn><mtext>–</mtext></mrow><annotation encoding="application/x-tex">39–</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">39–</span></span></span></span>79</td>
+<td>ZIP + GitHub Pages</td>
+<td>Doble clic en index.html. Dexie + CryptoJS + IA Lite (búsqueda + predicciones). Sin servidores, sin builds</td>
 </tr>
 <tr>
-<td><strong>Standard</strong></td>
-<td>$99</td>
-<td>Hasta 3 módulos, .exe + .apk, cifrado AES-256, IA Full incluida, gráficos + exportación PDF</td>
+<td><strong>Profesional (Full)</strong></td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>79</mn><mtext>–</mtext></mrow><annotation encoding="application/x-tex">79–</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">79–</span></span></span></span>199</td>
+<td>Neutralino .exe + Capacitor .apk</td>
+<td>.exe (~2MB) + .apk (~5MB). SQLite, IA Full (QA + ingesta documentos), plugins nativos (cámara, GPS, notifs)</td>
 </tr>
 <tr>
-<td><strong>Custom</strong></td>
-<td>$199+</td>
-<td>Todo lo anterior + UI personalizada + código fuente + empaquetado white-label</td>
+<td><strong>Enterprise</strong></td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>199</mn><mtext>–</mtext></mrow><annotation encoding="application/x-tex">199–</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">199–</span></span></span></span>499</td>
+<td>White-label completo</td>
+<td>Todo Profesional + UI con marca del cliente + script brand.ps1 para re-brandeo + docs personalizados + código fuente</td>
 </tr>
 </tbody>
 </table>
@@ -291,9 +331,9 @@ Autor: Angel Hernández Aguilera</p>
 <ul>
 <li>Precio base. Complejidad adicional (API externa, integración hardware scanner, etc.) = proporcional</li>
 <li>Sin regateo. Sin descuentos. Precio justo, una vez.</li>
-<li>El código fuente se entrega solo en Custom — es parte del valor.</li>
-<li>El .exe + .apk de Lite y Standard son funcionales completos, pero sin acceso al source.</li>
-<li>IA Jutia: Lite incluye búsqueda+predicciones. Standard y Custom incluyen QA + ingesta de documentos. Todo en ambos formatos.</li>
+<li>El código fuente se entrega solo en Enterprise — es parte del valor.</li>
+<li>Los tres niveles son funcionales completos; Inicio y Profesional son sin acceso al source.</li>
+<li>IA Jutia: Inicio incluye búsqueda+predicciones. Profesional y Enterprise incluyen QA + ingesta de documentos. Todo en todos los formatos.</li>
 </ul>
 <hr>
 <h2 id="6-estructura-de-la-landing">6. Estructura de la landing </h2>
@@ -441,11 +481,20 @@ Autor: Angel Hernández Aguilera</p>
 </table>
 <hr>
 <h2 id="8-cómo-mantener-la-landing">8. Cómo mantener la landing </h2>
+<h3 id="generar-una-app-desde-plantilla">Generar una app desde plantilla </h3>
+<ol>
+<li>Elegir app del catálogo <code>apps/README.md</code></li>
+<li>Copiar <code>Plantilla_AHA_Nombre.md</code> a <code>specs/[app].md</code></li>
+<li>Ejecutar <code>pipeline-engine</code> con el perfil deseado</li>
+<li>El pipeline genera: setup → código → validación → deploy</li>
+</ol>
 <h3 id="añadir-un-nuevo-productovertical">Añadir un nuevo producto/vertical </h3>
 <ol>
-<li>En el HTML, localizar la sección de productos (buscar <code>APPS LISTAS PARA LLEVAR</code>)</li>
-<li>Duplicar un bloque <code>article</code> de producto existente</li>
-<li>Cambiar: título, descripción, categoría, enlace WhatsApp</li>
+<li>Crear template comercial en <code>apps/AHA-Nombre/template.md</code></li>
+<li>Crear spec técnica en <code>Plantilla_AHA_Nombre.md</code> (formato code-generator)</li>
+<li>En el HTML de la landing, localizar la sección de productos (buscar <code>APPS LISTAS PARA LLEVAR</code>)</li>
+<li>Duplicar un bloque <code>article</code> existente</li>
+<li>Cambiar: título (usar prefijo AHA), descripción, enlace WhatsApp</li>
 <li>Si hay screenshot: añadir <code>&lt;img&gt;</code> dentro del card</li>
 </ol>
 <h3 id="actualizar-precios">Actualizar precios </h3>
@@ -532,8 +581,8 @@ Autor: Angel Hernández Aguilera</p>
 <p>Antes de poner una app nueva en venta:</p>
 <ul>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar en modo file:// (doble clic en index.html)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar build .exe (Bun --compile)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar build .apk (push a GitHub → Actions)</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar build .exe (NeutralinoJS — <code>neu build --release</code>)</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar build .apk (Capacitor — <code>cd android &amp;&amp; gradlew assembleRelease</code>)</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Verificar cifrado funcional en datos sensibles</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Verificar export backup (.ateje-backup) funcional</li>
 <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Probar import backup en otro dispositivo</li>
@@ -566,11 +615,19 @@ Autor: Angel Hernández Aguilera</p>
 </tr>
 <tr>
 <td>Ateje Stack (meta-repo)</td>
-<td><code>https://github.com/angelhdz84/SKILLS-AHAGUILERA</code></td>
+<td><code>https://github.com/angelhdz84/Ateje</code></td>
 </tr>
 <tr>
 <td>Docs Ateje Stack</td>
 <td><code>D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html</code></td>
+</tr>
+<tr>
+<td>Catálogo de apps</td>
+<td><code>apps/README.md</code> (13 plantillas AHA)</td>
+</tr>
+<tr>
+<td>Specs code-generator</td>
+<td><code>Plantilla_AHA_*.md</code> (raíz del repo)</td>
 </tr>
 </tbody>
 </table>

@@ -53,12 +53,14 @@
       this._tables = tables;
     },
 
-    registerTable(nombre, campos) {
+    async registerTable(nombre, campos) {
       if (!this._flex) return;
       if (!window.db || !window.db[nombre]) return;
 
-      const self = this;
-      window.db[nombre].toArray().then(rows => {
+      const total = await window.db[nombre].count();
+      const BATCH = 200;
+      for (let offset = 0; offset < total; offset += BATCH) {
+        const rows = await window.db[nombre].offset(offset).limit(BATCH).toArray();
         const docs = rows.map(r => ({
           id: `${nombre}-${r.id || r._id}`,
           nombre: r.nombre || r.titulo || r.name || '',
@@ -68,8 +70,27 @@
           tipo: r.tipo || nombre,
           tabla: nombre
         }));
-        docs.forEach(d => self._flex.add(d));
-      });
+        docs.forEach(d => this._flex.add(d));
+      }
+    },
+
+    indexRecord(tabla, record) {
+      if (!this._flex || !record) return;
+      const doc = {
+        id: `${tabla}-${record.id || record._id}`,
+        nombre: record.nombre || record.titulo || record.name || '',
+        descripcion: record.descripcion || record.desc || '',
+        notas: record.notas || record.observaciones || '',
+        texto: JSON.stringify(record).slice(0, 500),
+        tipo: record.tipo || tabla,
+        tabla: tabla
+      };
+      this._flex.add(doc);
+    },
+
+    removeRecord(tabla, id) {
+      if (!this._flex || !id) return;
+      this._flex.remove(`${tabla}-${id}`);
     },
 
     // ── Búsqueda ──────────────────────────────────────────
@@ -136,17 +157,15 @@
       });
     },
 
-    statsAll() {
-      if (!window.db) return Promise.resolve([]);
+    async statsAll() {
+      if (!window.db) return [];
       const tablas = this._tables.length ? this._tables : Object.keys(window.db).filter(k => !k.startsWith('_'));
-      const promises = tablas.map(t => {
-        return window.db[t].toArray().then(rows => ({
-          tabla: t,
-          registros: rows.length,
-          campos: rows.length ? Object.keys(rows[0]).length : 0
-        }));
-      });
-      return Promise.all(promises);
+      const results = await Promise.all(tablas.map(async t => {
+        const registros = await window.db[t].count();
+        const sample = registros > 0 ? await window.db[t].limit(1).toArray() : [];
+        return { tabla: t, registros, campos: sample.length ? Object.keys(sample[0]).length : 0 };
+      }));
+      return results;
     },
 
     _calcularModa(valores) {
@@ -222,19 +241,19 @@
     },
 
     // ── Utilidades ────────────────────────────────────────
-    exportResumen(tabla) {
-      if (!window.db || !window.db[tabla]) return Promise.resolve('');
-      return window.db[tabla].toArray().then(rows => {
-        let txt = `=== Resumen: ${tabla} ===\n`;
-        txt += `Registros: ${rows.length}\n`;
-        txt += `Ultima actualizacion: ${new Date().toLocaleDateString('es')}\n`;
-        txt += `---\n`;
-        if (rows.length > 0) {
-          const keys = Object.keys(rows[0]).slice(0, 5);
-          txt += `Campos: ${keys.join(', ')}\n`;
-        }
-        return txt;
-      });
+    async exportResumen(tabla) {
+      if (!window.db || !window.db[tabla]) return '';
+      const registros = await window.db[tabla].count();
+      let txt = `=== Resumen: ${tabla} ===\n`;
+      txt += `Registros: ${registros}\n`;
+      txt += `Ultima actualizacion: ${new Date().toLocaleDateString('es')}\n`;
+      txt += `---\n`;
+      if (registros > 0) {
+        const sample = await window.db[tabla].limit(1).toArray();
+        const keys = Object.keys(sample[0]).slice(0, 5);
+        txt += `Campos: ${keys.join(', ')}\n`;
+      }
+      return txt;
     },
 
     // ── Command Palette ───────────────────────────────────

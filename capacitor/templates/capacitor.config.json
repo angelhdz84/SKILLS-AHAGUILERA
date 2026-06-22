@@ -1,0 +1,31 @@
+{
+  "appId": "com.empresa.app",
+  "appName": "AppName",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "plugins": {
+    "CapacitorSQLite": {
+      "androidIsEncrypted": false,
+      "iosIsEncrypted": false
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#1e3a5f",
+      "sound": "beep.wav"
+    }
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "minSdkVersion": 26,
+    "targetSdkVersion": 34,
+    "compileSdkVersion": 34,
+    "gradleVersion": "8.2.1",
+    "agpVersion": "8.2.0"
+  }
+}

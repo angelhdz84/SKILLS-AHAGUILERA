@@ -109,23 +109,68 @@ window.uuid = function() {
 ### `project.config.js`
 [Config white-label completa según spec, incluyendo APP_CONFIG.perfil y APP_CONFIG.iaJutia]
 
-**Si perfil=Full, añadir archivo extra:**
-### `src/index.js`
-[Entry point para Bun --compile. Servidor estático que sirve public/]
-```javascript
-import { serve } from 'bun';
-import { join } from 'path';
-const port = process.env.PORT || 3000;
-serve({
-  port,
-  async fetch(req) {
-    const url = new URL(req.url);
-    let path = url.pathname === '/' ? '/index.html' : url.pathname;
-    try { return new Response(Bun.file(join(import.meta.dir, '../public', path))); }
-    catch { return new Response('Not Found', { status: 404 }); }
+**Si perfil=Full, añadir archivos extra:**
+### `neutralino.config.json`
+[Configuracion de NeutralinoJS para app de escritorio nativa. Ver deployment-jigue/templates/neutralino.config.json]
+```json
+{
+  "applicationId": "com.empresa.app",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "documentRoot": "/public",
+  "url": "/",
+  "port": 0,
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeWindow": {
+    "title": "AppName",
+    "icon": "public/favicon.ico",
+    "width": 1200,
+    "height": 800,
+    "minWidth": 800,
+    "minHeight": 600,
+    "resizable": true,
+    "center": true
+  },
+  "cli": {
+    "binaryName": "app-name",
+    "resourcesPath": "/public/",
+    "clientLibrary": "public/core/neutralino.js",
+    "binaryVersion": "6.0.0",
+    "clientVersion": "6.0.0"
   }
-});
+}
 ```
+
+**Durante el setup (`/setup`), descargar `neutralino.js`:**
+```bash
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "public/core/neutralino.js"
+```
+
+**Si perfil=Full y se requiere .apk, añadir tambien:**
+### `capacitor.config.json`
+[Configuracion de Capacitor para APK Android nativo. Ver capacitor/templates/capacitor.config.json]
+```json
+{
+  "appId": "com.empresa.app",
+  "appName": "AppName",
+  "webDir": "public",
+  "plugins": {
+    "CapacitorSQLite": { "androidIsEncrypted": false },
+    "LocalNotifications": { "smallIcon": "ic_stat_icon_config_sample", "iconColor": "#1e3a5f" }
+  },
+  "android": {
+    "minSdkVersion": 26,
+    "targetSdkVersion": 34,
+    "compileSdkVersion": 34
+  }
+}
+```
+
+### Inyectar `capacitor-detect.js` en `core/app.js` (si aplica)
+Al final de `core/app.js` (antes de `Alpine.start()`), añadir el bloque de deteccion
+de Capacitor desde `capacitor/templates/capacitor-detect.js`. Esto permite que
+todos los plugins nativos funcionen con fallback web automatico.
 
 ⏸️ PAUSA. Revisa estructura. Responde "✅ FASE 2 OK" para continuar.
 ```
@@ -185,10 +230,15 @@ Para cada módulo en la spec:
 ### 🟣 FASE 4: Ensamblaje Final y Handoff
 1. Confirma que todos los módulos están generados.
 2. Entrega snippet final de `project.config.js` con `modulosActivos` actualizado.
-3. Si perfil=Full, sugiere compilar:
+3. Si perfil=Full, sugiere opciones de compilacion:
 ```bash
-bun build --compile ./src/index.js --outfile dist/[app].exe
+# .exe (NeutralinoJS)
+cd proyecto && neu build --release
+# .apk (Capacitor, si aplica)
+cd proyecto && npx cap sync android && cd android && ./gradlew assembleRelease
 ```
+   El .exe se genera en `dist/[app-name]-win_x64.zip` (~2MB runtime + public/).
+   El .apk se genera en `android/app/build/outputs/apk/release/app-release.apk`.
 4. Mensaje de cierre:
 ```
 ✅ GENERACIÓN COMPLETADA

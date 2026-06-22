@@ -29,7 +29,7 @@ meta:
 ```
 📋 ¿Qué perfil de proyecto?
 [1] Lite — file:// + doble clic en index.html
-[2] Full — Bun + .exe profesional
+[2] Full — Escritorio (.exe NeutralinoJS) + Móvil (.apk Capacitor)
 ```
 
 ### 🟢 FASE 2: Validación de Entorno (según perfil)
@@ -42,18 +42,28 @@ meta:
 
 **Perfil Full:**
 1. Verifica:
-   - `bun --version` >= 1.2
+   - `node --version` >= 18
+   - `npm --version` (viene con Node)
    - Permisos de escritura
-2. Si no tiene Bun:
+2. Si no tiene Node.js:
 ```
-❌ Bun no está instalado.
-Instalación:
-  PowerShell: powershell -c "irm bun.sh/install.ps1 | iex"
-  macOS/Linux: curl -fsSL https://bun.sh/install | bash
+❌ Node.js no está instalado.
+Instalación: https://nodejs.org (versión LTS recomendada)
 ```
-3. Verifica `bun --version` y confirma.
+3. Pregunta destino móvil:
+```
+📋 ¿Incluir empaquetado Android (.apk)?
+[1] No, solo escritorio
+[2] Si, con Capacitor (requiere Android SDK + JDK 17+)
+```
+Si [2], verifica:
+  - `java --version` >= 17
+  - Android SDK: instalado (ANDROID_HOME definido)
 
-3. Si todo está listo, confirma: `✅ Entorno validado. Procedo a crear estructura.`
+4. Verifica Neutralino CLI (opcional, se usa en deploy):
+   - `neu --version` (npm install -g @neutralinojs/neu)
+
+5. Si todo está listo, confirma: `✅ Entorno validado. Procedo a crear estructura.`
 
 ### 🟡 FASE 3: Generación de Estructura y Archivos Base (según perfil)
 
@@ -73,25 +83,26 @@ Instalación:
 2. Muestra `project.config.js` mínimo (white-label listo) y `index.html` shell.
 
 **Perfil Full:**
-1. Inicializa proyecto Bun:
-```
-bun init -y
-```
-2. Genera estructura:
+1. Genera estructura:
 ```
 ├── public/
 │   ├── index.html
 │   └── assets/{css,js/libs,fonts}
-├── src/
-│   ├── index.js (entry point para Bun serve)
-│   └── core/
+├── core/ (en public/ se sirve via Neutralino)
 ├── modules/
 ├── docs/
+├── neutralino.config.json
 ├── package.json
 ├── project.config.js
 └── dist/ (output de compilación)
 ```
-3. Muestra `src/index.js` básico (servidor de archivos estáticos).
+2. Copia `neutralino.config.json` desde `deployment-jigue/templates/neutralino.config.json`
+   y adapta: `applicationId`, `nativeWindow.title`, `cli.binaryName` según la app.
+3. Si incluye .apk (Capacitor), añadir:
+   - `capacitor.config.json` (desde `capacitor/templates/capacitor.config.json`)
+   - Directorio `android/` (se genera con `npx cap add android`)
+4. Muestra `neutralino.config.json` básico (configuración Neutralino).
+5. Si .apk, muestra `capacitor.config.json` (configuración Capacitor).
 
 3. Pide confirmación: `📁 Estructura lista. ¿Continuar con descarga de librerías? (S/N)`
 
@@ -107,19 +118,38 @@ bun init -y
 
 **Perfil Full:**
 1. Busca si existe `specs/[app].md` con `## 📚 Librerías Adicionales`.
-2. Instala dependencias npm base:
+2. Inicializa npm e instala dependencias base:
 ```bash
-bun add alpinejs dexie cryptojs pako apexcharts jspdf xlsx
+npm init -y
+npm install alpinejs dexie cryptojs pako apexcharts jspdf xlsx
 ```
 3. Si hay librerías adicionales en spec:
 ```bash
-bun add [lib1] [lib2]
+npm install [lib1] [lib2]
 ```
-4. Si se incluyó IA Jutia Full:
+4. Si incluye .apk (Capacitor):
 ```bash
-bun add @xenova/transformers pdfjs-dist mammoth marked
+npm install @capacitor/core @capacitor/cli @capacitor/android
+npm install @capacitor-community/sqlite @capacitor/camera @capacitor/geolocation
+npm install @capacitor/local-notifications @capacitor/share
+npx cap init "AppName" "com.empresa.app" --web-dir "public"
+npx cap add android
 ```
-5. Descarga modelos Transformers.js a `public/assets/models/`:
+5. Si se incluyó IA Jutia Full:
+```bash
+npm install @xenova/transformers pdfjs-dist mammoth marked
+```
+6. Descarga `neutralino.js` (cliente Neutralino para frontend):
+```bash
+curl -o public/core/neutralino.js https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js
+```
+7. Si la spec incluye sql.js (IA Jutia Full con SQLite), descargar WASM:
+```bash
+mkdir -p public/assets/wasm
+curl -o public/assets/wasm/sql-wasm.wasm https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.wasm
+curl -o public/assets/wasm/sql-wasm.js https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.js
+```
+8. Descarga modelos Transformers.js a `public/assets/models/`:
 ```bash
 mkdir -p public/assets/models
 curl -f -L -# -o public/assets/models/minilm-embeddings.onnx "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/model.onnx"
@@ -127,7 +157,7 @@ curl -f -L -# -o public/assets/models/minilm-tokenizer.json "https://huggingface
 curl -f -L -# -o public/assets/models/bert-qa.onnx "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/model.onnx"
 curl -f -L -# -o public/assets/models/bert-qa-tokenizer.json "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/tokenizer.json"
 ```
-6. Muestra mensaje: `✅ Dependencias instaladas.`
+9. Muestra mensaje: `✅ Dependencias instaladas.`
 
 ### 🟠 FASE 4.5: Librerías Adicionales desde Spec (si aplica)
 Si la spec contiene `libreriasAdicionales`, muestra este paso antes de la verificación:
@@ -195,8 +225,13 @@ Antes de mostrar cualquier bloque, verifica:
 - [ ] ¿Las librerías adicionales tienen URL de descarga válida? → VERIFICAR con Context7 MCP
 ### Perfil Full:
 - [ ] ¿Falta `src/index.js` (Bun entry point)? → CREAR
-- [ ] ¿`package.json` sin script de compile? → AGREGAR `"compile": "bun build --compile"`
+- [ ] ¿Perfil Full sin `neutralino.config.json`? → CREAR desde template en `deployment-jigue/templates/`
+- [ ] ¿Perfil Full sin `public/core/neutralino.js`? → DESCARGAR desde CDN de NeutralinoJS
+- [ ] ¿sql.js activo pero `assets/wasm/sql-wasm.wasm` no existe? → DESCARGAR desde jsDelivr
 - [ ] ¿Modelos IA Full no se descargan a `public/assets/models/`? → AGREGAR comandos curl
+- [ ] ¿Perfil Full con .apk pero sin `capacitor.config.json`? → CREAR desde `capacitor/templates/capacitor.config.json`
+- [ ] ¿Perfil Full con .apk pero sin `android/`? → `npx cap add android`
+- [ ] ¿Perfil Full con .apk pero sin plugins Capacitor? → `npm install @capacitor/...`
 Si falla, corrige silenciosamente antes de output.
 
 ---
@@ -267,7 +302,7 @@ pause >nul
 | `ia-jutia` | Si perfil IA Full, descarga modelos Transformers.js | `🧠 IA incluida` |
 | `validation-offline` | Valida resultado final antes de entrega | `🚀 App lista → validar app` |
 | `stack-compliance-guard` | Verifica libs desde `assets/` no CDN | Auto-activada |
-| `deployment-jigue` | Empaqueta segun perfil (ZIP / .exe) | `📦 App lista → publicar` |
+| `deployment-jigue` | Empaqueta segun perfil (ZIP / Neutralino .exe) | `📦 App lista → publicar` |
 
 ---
 

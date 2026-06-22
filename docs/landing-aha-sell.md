@@ -17,7 +17,7 @@
 | Concepto | Lo que ofreces |
 |----------|---------------|
 | Pago | **Único.** Nunca mensualidad |
-| Formatos | .exe (Windows) + .apk (Android) |
+| Formatos | .exe (Windows) + .apk (Android) + ZIP (GitHub Pages) |
 | Internet | Cero necesario |
 | Datos | 100% locales, cifrados con AES-256 |
 | Soporte | Tú tienes el código, la app es tuya |
@@ -31,8 +31,8 @@ Cada app que vendes usa la misma base probada. No reinventas nada, solo construy
 
 | Para ti (desarrollador) | Para tu cliente |
 |------------------------|-----------------|
-| Un solo código fuente | Una app que pesa ~5MB |
-| Tres builds: .exe + .apk + ZIP web | No necesita instalar nada más |
+| Un solo código fuente | Una app que pesa ~2-5MB |
+| Tres builds: ZIP (Lite) / .exe (Neutralino) + .apk (Capacitor) (Full) | No necesita instalar nada más |
 | Librerías locales, sin CDNs | No depende de internet jamás |
 | Misma UI en todos los formatos | Misma experiencia en PC y móvil |
 | Cifrado por defecto | Sus datos son solo suyos |
@@ -44,7 +44,8 @@ Cada app que vendes usa la misma base probada. No reinventas nada, solo construy
 | **Alpine.js** | "La app responde al instante, como una app nativa" |
 | **Dexie.js (IndexedDB)** | "Tus datos nunca suben a ningún servidor. Están en tu PC" |
 | **CryptoJS AES-256** | "Ni yo puedo ver tus datos. Están cifrados localmente" |
-| **Bun --compile** | "Un solo archivo .exe. Lo abres y funciona. No necesitas instalar Java, Node, ni nada" |
+| **NeutralinoJS** | "Un solo archivo .exe (~2MB). Ventana nativa, bandeja de sistema, notificaciones. No necesitas Java, Node, ni nada" |
+| **Capacitor** | "La misma app la convierto en .apk nativo para Android con SQLite, cámara, GPS y notificaciones. Sin Google Play Services" |
 | **Bootstrap Icons** | "Interfaz moderna con iconos claros, sin depender de internet para cargarlos" |
 | **IA Jutia (FlexSearch + Transformers.js)** | "Tu app tiene inteligencia propia. Busca datos al instante, predice tendencias y responde preguntas en español. Funciona igual en Windows y Android, sin internet, sin enviar datos a nadie" |
 
@@ -86,38 +87,38 @@ Cada app que construyo incluye **IA Jutia**: una inteligencia artificial que cor
 
 No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su problema, tú eliges los módulos que necesita.
 
-| App | Vertical | Módulos típicos | IA integrada | Precio base |
-|-----|----------|-----------------|--------------|-------------|
-| **AHA Inventario** | Control de stock, almacén, bodega, tienda | Productos, movimientos, alertas, QR, reportes PDF | Predice cuándo se va a acabar un producto + alertas inteligentes | $49–$199 |
-| **AHA Comanda** | Restaurantes, bares, cocinas | Mesas, comandas, platillos, cuentas split, corte caja | Predice platillo más pedido según hora y día | $49–$199 |
-| **AHA CRM** | Ventas, freelancers, agencias | Pipeline Kanban, contactos, cotizaciones PDF, facturas | Busca contactos por descripción difusa: "el de la ferretería de la esquina" | $49–$199 |
-| **AHA Checklist** | Mantenimiento, inspecciones, seguridad | Plantillas, inspecciones con foto/firma, PDF | Predice áreas con más fallas y frecuencia óptima | $49–$199 |
-| **AHA Asistencia** | RRHH, empleados, talleres | Marcaje QR, reporte horas, retardos, export nómina | Predice retardos probables basado en historial | $49–$199 |
-| **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49–$199 |
-| **AHA Creador** | YouTubers, streamers, podcasters | Banco ideas, calendario, producción, patrocinios | Predice productividad semanal y sugiere ajustes | $49–$199 |
-| **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $49–$199 |
-| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte caja, devoluciones, ticket | Predice productos más vendidos por hora/día | $49–$199 |
-| **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $49–$149 |
-| **AHA Flota** | Transporte, flotillas, logística | Vehículos, combustible km/l, mantenimiento, incidentes | Predice próximo mantenimiento + alerta consumo anómalo | $49–$199 |
-| **AHA Obra** | Construcción, arquitectura, obra | Etapas, materiales, gastos, fotos avance, reporte PDF | Predice desviación de presupuesto + alerta materiales | $49–$199 |
-| **AHA PreFactura** | Freelancers, pequeños negocios | Clientes RFC, facturas XML+PDF, historial | Búsqueda por RFC, total facturado por período | $29–$99 |
+| App | Vertical | Módulos típicos | IA integrada | Precios por perfil |
+|-----|----------|-----------------|--------------|-------------------|
+| **AHA Inventario** | Control de stock, almacén, bodega, tienda | Productos, movimientos, alertas, QR, reportes PDF | Predice cuándo se va a acabar un producto + alertas inteligentes | $49 / $99 / $299 |
+| **AHA Comanda** | Restaurantes, bares, cocinas | Mesas, comandas, platillos, cuentas split, corte caja | Predice platillo más pedido según hora y día | $49 / $99 / $299 |
+| **AHA CRM** | Ventas, freelancers, agencias | Pipeline Kanban, contactos, cotizaciones PDF, facturas | Busca contactos por descripción difusa: "el de la ferretería de la esquina" | $59 / $129 / $399 |
+| **AHA Checklist** | Mantenimiento, inspecciones, seguridad | Plantillas, inspecciones con foto/firma, PDF | Predice áreas con más fallas y frecuencia óptima | $39 / $79 / $199 |
+| **AHA Asistencia** | RRHH, empleados, talleres | Marcaje QR, reporte horas, retardos, export nómina | Predice retardos probables basado en historial | $39 / $79 / $199 |
+| **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49 / $99 / $299 |
+| **AHA Creador** | YouTubers, streamers, podcasters | Banco ideas, calendario, producción, patrocinios | Predice productividad semanal y sugiere ajustes | $49 / $99 / $299 |
+| **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $59 / $149 / $399 |
+| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte caja, devoluciones, ticket | Predice productos más vendidos por hora/día | $49 / $99 / $299 |
+| **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $59 / $149 / $399 |
+| **AHA Flota** | Transporte, flotillas, logística | Vehículos, combustible km/l, mantenimiento, incidentes | Predice próximo mantenimiento + alerta consumo anómalo | $79 / $199 / $499 |
+| **AHA Obra** | Construcción, arquitectura, obra | Etapas, materiales, gastos, fotos avance, reporte PDF | Predice desviación de presupuesto + alerta materiales | $79 / $199 / $499 |
+| **AHA PreFactura** | Freelancers, pequeños negocios | Clientes RFC, facturas XML+PDF, historial | Búsqueda por RFC, total facturado por período | $39 / $79 / $199 |
 
 ---
 
 ## 5. Modelo de precios
 
-| Nivel | Precio USD | Incluye |
-|-------|-----------|---------|
-| **Lite** | $49 | 1 módulo, solo .exe, datos sin cifrar |
-| **Standard** | $99 | Hasta 3 módulos, .exe + .apk, cifrado AES-256, IA Full incluida, gráficos + exportación PDF |
-| **Custom** | $199+ | Todo lo anterior + UI personalizada + código fuente + empaquetado white-label |
+| Nivel | Precio USD | Perfil técnico | Incluye |
+|-------|-----------|----------------|---------|
+| **Inicio (Lite)** | $39–$79 | ZIP + GitHub Pages | Doble clic en index.html. Dexie + CryptoJS + IA Lite (búsqueda + predicciones). Sin servidores, sin builds |
+| **Profesional (Full)** | $79–$199 | Neutralino .exe + Capacitor .apk | .exe (~2MB) + .apk (~5MB). SQLite, IA Full (QA + ingesta documentos), plugins nativos (cámara, GPS, notifs) |
+| **Enterprise** | $199–$499 | White-label completo | Todo Profesional + UI con marca del cliente + script brand.ps1 para re-brandeo + docs personalizados + código fuente |
 
 Reglas:
 - Precio base. Complejidad adicional (API externa, integración hardware scanner, etc.) = proporcional
 - Sin regateo. Sin descuentos. Precio justo, una vez.
-- El código fuente se entrega solo en Custom — es parte del valor.
-- El .exe + .apk de Lite y Standard son funcionales completos, pero sin acceso al source.
-- IA Jutia: Lite incluye búsqueda+predicciones. Standard y Custom incluyen QA + ingesta de documentos. Todo en ambos formatos.
+- El código fuente se entrega solo en Enterprise — es parte del valor.
+- Los tres niveles son funcionales completos; Inicio y Profesional son sin acceso al source.
+- IA Jutia: Inicio incluye búsqueda+predicciones. Profesional y Enterprise incluyen QA + ingesta de documentos. Todo en todos los formatos.
 
 ---
 
@@ -266,8 +267,8 @@ git push origin main
 Antes de poner una app nueva en venta:
 
 - [ ] Probar en modo file:// (doble clic en index.html)
-- [ ] Probar build .exe (Bun --compile)
-- [ ] Probar build .apk (push a GitHub → Actions)
+- [ ] Probar build .exe (NeutralinoJS — `neu build --release`)
+- [ ] Probar build .apk (Capacitor — `cd android && gradlew assembleRelease`)
 - [ ] Verificar cifrado funcional en datos sensibles
 - [ ] Verificar export backup (.ateje-backup) funcional
 - [ ] Probar import backup en otro dispositivo
@@ -285,7 +286,7 @@ Antes de poner una app nueva en venta:
 | Landing actual | https://angelhdz84.github.io/Identidad_AHA/ |
 | Repo landing | `https://github.com/angelhdz84/Identidad_AHA` |
 | WhatsApp API | `https://wa.me/521NUMERO?text=...` |
-| Ateje Stack (meta-repo) | `https://github.com/angelhdz84/SKILLS-AHAGUILERA` |
+| Ateje Stack (meta-repo) | `https://github.com/angelhdz84/Ateje` |
 | Docs Ateje Stack | `D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html` |
 | Catálogo de apps | `apps/README.md` (13 plantillas AHA) |
 | Specs code-generator | `Plantilla_AHA_*.md` (raíz del repo) |

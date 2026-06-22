@@ -1,0 +1,37 @@
+{
+  "applicationId": "com.empresa.app",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "documentRoot": "/public",
+  "url": "/",
+  "port": 0,
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeWindow": {
+    "title": "AppName",
+    "icon": "public/favicon.ico",
+    "width": 1200,
+    "height": 800,
+    "minWidth": 800,
+    "minHeight": 600,
+    "fullScreen": false,
+    "resizable": true,
+    "center": true
+  },
+  "globalVariables": {
+    "APP_NAME": "AppName"
+  },
+  "modes": {
+    "window": {
+      "title": "AppName",
+      "icon": "public/favicon.ico"
+    }
+  },
+  "cli": {
+    "binaryName": "app-name",
+    "resourcesPath": "/public/",
+    "clientLibrary": "public/core/neutralino.js",
+    "binaryVersion": "6.0.0",
+    "clientVersion": "6.0.0"
+  }
+}
