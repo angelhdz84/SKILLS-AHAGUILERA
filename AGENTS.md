@@ -7,7 +7,7 @@
 
 ## Identidad
 
-Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 7 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
+Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 8 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
 
 ## Perfiles
 
@@ -79,11 +79,12 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | setup-init | code-generator | Estructura + librerías según perfil |
 | spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` + `specs/DESIGN.md` |
 | design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` |
-| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*` (incl. `core/sync.js`), `index.html` (+ src/ en Full) |
+| code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
 | deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + .apk + Release (Full) |
 | capacitor | deployment-jigue | `capacitor.config.json` + `android/` + |
+| upgrade-engine | — | project.config.js actualizado + infraestructura nueva según perfil destino. Invocación directa `/upgrade` |
 | wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
 
 ## MCP Servers
