@@ -139,6 +139,20 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
 | `/upgrade` | `actualizar perfil` | upgrade-engine: diagnostico → migra Lite→Full y/o IA Lite→Full. Sin modificar modulos ni datos |
 
+## Instalación Global
+
+Para usar el Ateje Stack desde cualquier proyecto (no solo dentro de este repo):
+
+```powershell
+# Sin administrador — crea directory junctions + configura OpenCode global
+.\install-global.ps1
+```
+
+Esto hace que los 13 skills estén disponibles globalmente:
+- `/new`, `/pro`, `/build`, `/deploy`, etc. desde cualquier directorio
+- Las skills se actualizan solas al hacer `git pull` en este repo (son junctions)
+- Para remover: `.\uninstall-global.ps1` (elimina junctions + limpia config)
+
 ## Directorios generados (no versionar)
 
 `docs/` (incl. `docs/comercial/`), `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
