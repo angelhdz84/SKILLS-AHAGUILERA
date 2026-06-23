@@ -11,7 +11,7 @@
 
 Ateje Stack es un **meta-repo de skills OpenCode** que genera aplicaciones
 offline-first completas. No es una app en si misma — es un taller que construye
-apps en directorios externos usando 5 engines orquestadores, 7 skills standalone
+apps en directorios externos usando 5 engines orquestadores, 8 skills standalone
 y 16 skills externas de diseño (oh-my-design).
 
 Cada app generada comparte ~95% del frontend (Alpine + Dexie + DaisyUI),
@@ -127,6 +127,7 @@ index.html
 | **ia-jutia** | Mini IA offline. Lite: FlexSearch + estadisticas + predicciones. Full: +ingesta documentos (PDF/DOCX/XLSX) + QA extractivo con Transformers.js + sql.js FTS5. | lite, full |
 | **alpine-ui-patterns** | Catalogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain (categorias A/B/C) y prioridad por calidad. | lite, full |
 | **capacitor** | Empaquetado .apk Android nativo con Capacitor. Incluye plugins: SQLite FTS5 nativo, camara, GPS, notificaciones, compartir. | full |
+| **upgrade-engine** | Migra app existente entre perfiles Lite/Full e IA Lite/Full. No modifica modulos ni datos, solo agrega/remueve archivos de infraestructura segun destino. | lite, full |
 
 ### 4.3 Contratos entre skills
 
@@ -145,8 +146,9 @@ pipeline-engine
   │    └─→ wiki-engine (ingesta)
   ├─→ validation-engine
   │    └─→ wiki-engine (reporte)
-  └─→ deployment-jigue
-       └─→ capacitor (.apk si aplica)
+  ├─→ deployment-jigue
+  │    └─→ capacitor (.apk si aplica)
+  └─→ upgrade-engine (migracion de perfil, invocacion directa /upgrade)
 ```
 
 ---
@@ -469,6 +471,7 @@ RESULTADO:
 | `/wiki` | Gestionar wiki + preferencias |
 | `/status` | Ver estado actual del pipeline |
 | `/archive` | Archivar spec + reporte |
+| `/upgrade` | Migrar perfil Lite→Full y/o IA Jutia |
 
 ---
 
@@ -587,29 +590,39 @@ pytest test_app.py --headed
 
 ---
 
-## 14. Roadmap de Migracion (Fases 0-4)
+## 14. Roadmap de Migracion (Fases 0-5)
 
 ```
-FASE 0 (Sem 1-2):   Dexie optimizado (paginacion, count() en vez de toArray())
-                    └─ Web Worker para Transformers.js
-                    └─ q4 quantization (modelos 230MB → 58MB)
+FASE 0 ✅ (Completada): Estructura raiz unificada (public/ → root)
+                    └─ NeutralinoJS como unico runtime Full
+                    └─ Bun --compile eliminado
+                    └─ Todos los skills actualizados
 
-FASE 1 (Sem 3-4):   NeutralinoJS .exe (Bun → Neutralino, 50MB → 2MB)
-                    └─ Ventana nativa, bandeja, notificaciones
-                    └─ WebGPU acceleration
+FASE 0B ✅ (Completada): upgrade-engine skill operativo
+                    └─ Migracion Lite→Full automatica
+                    └─ Migracion IA Jutia independiente
+                    └─ Zero impacto en modulos/datos
 
-FASE 2 (Sem 5-6):   sql.js FTS5 (QA 2-3s → 50-150ms)
+FASE 1 (Sem 3-4):   sql.js FTS5 (QA 2-3s → 50-150ms)
                     └─ Persistencia ciclica cada 2s
                     └─ Fallback automatico a Dexie
 
-FASE 3 (Sem 7-10):  Capacitor .apk (SQLite FTS5 nativo)
+FASE 2 (Sem 5-7):   Capacitor .apk (SQLite FTS5 nativo)
                     └─ Plugins: camara, GPS, notificaciones, compartir
                     └─ Runtime detection: window.CAPACITOR + window.native.*
 
-FASE 4 (Sem 11-12): White-label + Enterprise
+FASE 3 (Sem 8-10):  White-label + Enterprise
                     └─ brand.ps1 (reemplaza nombre, colores, logo)
                     └─ Enterprise checklist + docs personalizados
                     └─ Entrega: .exe + .apk + fuente + docs + brand.ps1
+
+FASE 4 (Sem 11-12): Dexie optimizado (paginacion, count() en vez de toArray())
+                    └─ Web Worker para Transformers.js
+                    └─ q4 quantization (modelos 230MB → 58MB)
+
+FASE 5 (Sem 13-14): WebGPU acceleration + WebWorker IA
+                    └─ Ventana nativa, bandeja, notificaciones
+                    └─ NeutralinoJS con aceleracion GPU
 ```
 
 ---
