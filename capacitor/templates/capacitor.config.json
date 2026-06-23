@@ -1,7 +1,7 @@
 {
   "appId": "com.empresa.app",
   "appName": "AppName",
-  "webDir": "public",
+  "webDir": ".",
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https",

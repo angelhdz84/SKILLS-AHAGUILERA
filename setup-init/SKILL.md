@@ -83,12 +83,11 @@ Si [2], verifica:
 2. Muestra `project.config.js` mínimo (white-label listo) y `index.html` shell.
 
 **Perfil Full:**
-1. Genera estructura:
+1. Genera estructura (misma raíz que Lite):
 ```
-├── public/
-│   ├── index.html
-│   └── assets/{css,js/libs,fonts}
-├── core/ (en public/ se sirve via Neutralino)
+├── index.html
+├── assets/{css,js/libs,fonts}
+├── core/
 ├── modules/
 ├── docs/
 ├── neutralino.config.json
@@ -132,7 +131,7 @@ npm install [lib1] [lib2]
 npm install @capacitor/core @capacitor/cli @capacitor/android
 npm install @capacitor-community/sqlite @capacitor/camera @capacitor/geolocation
 npm install @capacitor/local-notifications @capacitor/share
-npx cap init "AppName" "com.empresa.app" --web-dir "public"
+npx cap init "AppName" "com.empresa.app" --web-dir "."
 npx cap add android
 ```
 5. Si se incluyó IA Jutia Full:
@@ -141,21 +140,21 @@ npm install @xenova/transformers pdfjs-dist mammoth marked
 ```
 6. Descarga `neutralino.js` (cliente Neutralino para frontend):
 ```bash
-curl -o public/core/neutralino.js https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js
+curl -o core/neutralino.js https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js
 ```
 7. Si la spec incluye sql.js (IA Jutia Full con SQLite), descargar WASM:
 ```bash
-mkdir -p public/assets/wasm
-curl -o public/assets/wasm/sql-wasm.wasm https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.wasm
-curl -o public/assets/wasm/sql-wasm.js https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.js
+mkdir -p assets/wasm
+curl -o assets/wasm/sql-wasm.wasm https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.wasm
+curl -o assets/wasm/sql-wasm.js https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.js
 ```
-8. Descarga modelos Transformers.js a `public/assets/models/`:
+8. Descarga modelos Transformers.js a `assets/models/`:
 ```bash
-mkdir -p public/assets/models
-curl -f -L -# -o public/assets/models/minilm-embeddings.onnx "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/model.onnx"
-curl -f -L -# -o public/assets/models/minilm-tokenizer.json "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/tokenizer.json"
-curl -f -L -# -o public/assets/models/bert-qa.onnx "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/model.onnx"
-curl -f -L -# -o public/assets/models/bert-qa-tokenizer.json "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/tokenizer.json"
+mkdir -p assets/models
+curl -f -L -# -o assets/models/minilm-embeddings.onnx "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/model.onnx"
+curl -f -L -# -o assets/models/minilm-tokenizer.json "https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/tokenizer.json"
+curl -f -L -# -o assets/models/bert-qa.onnx "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/model.onnx"
+curl -f -L -# -o assets/models/bert-qa-tokenizer.json "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/tokenizer.json"
 ```
 9. Muestra mensaje: `✅ Dependencias instaladas.`
 
@@ -196,7 +195,7 @@ Si el usuario prefiere scripts separados, genera `scripts/descargar-libs-adicion
 1. Verifica `package.json` con dependencias correctas.
 2. Verifica `src/index.js` existe.
 3. Verifica que `bun run src/index.js` no da error.
-4. Si IA Full: verifica modelos en `public/assets/models/`.
+4. Si IA Full: verifica modelos en `assets/models/`.
 
 ### 🔴 FASE 6: Handoff
 ```
@@ -224,11 +223,10 @@ Antes de mostrar cualquier bloque, verifica:
 - [ ] ¿Existe `specs/[app].md` con `libreriasAdicionales`? → INYECTAR URLs en el script de descarga
 - [ ] ¿Las librerías adicionales tienen URL de descarga válida? → VERIFICAR con Context7 MCP
 ### Perfil Full:
-- [ ] ¿Falta `src/index.js` (Bun entry point)? → CREAR
 - [ ] ¿Perfil Full sin `neutralino.config.json`? → CREAR desde template en `deployment-jigue/templates/`
-- [ ] ¿Perfil Full sin `public/core/neutralino.js`? → DESCARGAR desde CDN de NeutralinoJS
+- [ ] ¿Perfil Full sin `core/neutralino.js`? → DESCARGAR desde CDN de NeutralinoJS
 - [ ] ¿sql.js activo pero `assets/wasm/sql-wasm.wasm` no existe? → DESCARGAR desde jsDelivr
-- [ ] ¿Modelos IA Full no se descargan a `public/assets/models/`? → AGREGAR comandos curl
+- [ ] ¿Modelos IA Full no se descargan a `assets/models/`? → AGREGAR comandos curl
 - [ ] ¿Perfil Full con .apk pero sin `capacitor.config.json`? → CREAR desde `capacitor/templates/capacitor.config.json`
 - [ ] ¿Perfil Full con .apk pero sin `android/`? → `npx cap add android`
 - [ ] ¿Perfil Full con .apk pero sin plugins Capacitor? → `npm install @capacitor/...`

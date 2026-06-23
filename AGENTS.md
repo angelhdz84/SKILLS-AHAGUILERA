@@ -18,7 +18,7 @@ Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para cre
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
-## Skills — Ateje Stack (5 Engines + 7 Standalone + 1 Writer Skill)
+## Skills — Ateje Stack (5 Engines + 8 Standalone + 1 Writer Skill)
 
 ### Motores (engines) — Skills de orquestación que reemplazan funcionalidad previa
 
@@ -41,6 +41,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 | `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | full |
+| `upgrade-engine/` | Migra app entre perfiles Lite/Full e IA Lite/Full. No modifica módulos ni datos, solo infraestructura | lite, full |
 
 ### Skills externas (oh-my-design + es-writer, en `~/.opencode/skills/`)
 
@@ -135,6 +136,7 @@ Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejec
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
+| `/upgrade` | `actualizar perfil` | upgrade-engine: diagnostico → migra Lite→Full y/o IA Lite→Full. Sin modificar modulos ni datos |
 
 ## Directorios generados (no versionar)
 

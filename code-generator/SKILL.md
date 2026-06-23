@@ -117,14 +117,14 @@ window.uuid = function() {
   "applicationId": "com.empresa.app",
   "version": "1.0.0",
   "defaultMode": "window",
-  "documentRoot": "/public",
+  "documentRoot": "/",
   "url": "/",
   "port": 0,
   "enableServer": true,
   "enableNativeAPI": true,
   "nativeWindow": {
     "title": "AppName",
-    "icon": "public/favicon.ico",
+    "icon": "favicon.ico",
     "width": 1200,
     "height": 800,
     "minWidth": 800,
@@ -134,8 +134,8 @@ window.uuid = function() {
   },
   "cli": {
     "binaryName": "app-name",
-    "resourcesPath": "/public/",
-    "clientLibrary": "public/core/neutralino.js",
+    "resourcesPath": "/",
+    "clientLibrary": "core/neutralino.js",
     "binaryVersion": "6.0.0",
     "clientVersion": "6.0.0"
   }
@@ -144,7 +144,7 @@ window.uuid = function() {
 
 **Durante el setup (`/setup`), descargar `neutralino.js`:**
 ```bash
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "public/core/neutralino.js"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "core/neutralino.js"
 ```
 
 **Si perfil=Full y se requiere .apk, añadir tambien:**
@@ -237,7 +237,7 @@ cd proyecto && neu build --release
 # .apk (Capacitor, si aplica)
 cd proyecto && npx cap sync android && cd android && ./gradlew assembleRelease
 ```
-   El .exe se genera en `dist/[app-name]-win_x64.zip` (~2MB runtime + public/).
+   El .exe se genera en `dist/[app-name]-win_x64.zip` (~2MB runtime).
    El .apk se genera en `android/app/build/outputs/apk/release/app-release.apk`.
 4. Mensaje de cierre:
 ```
@@ -272,9 +272,8 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
 - [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
-- [ ] **Perfil**: ¿perfil=Lite pero genera `src/index.js`? → ❌ RECHAZAR (solo Full)
-- [ ] **Perfil**: ¿perfil=Full pero no genera `src/index.js`? → ❌ RECHAZAR
-- [ ] **Perfil**: ¿perfil=Full y usa `import` en `public/` JS? → ❌ RECHAZAR (import solo en src/)
+- [ ] **Perfil**: ¿perfil=Full sin `neutralino.config.json`? → ❌ RECHAZAR (Neutralino requiere config)
+- [ ] **Perfil**: ¿perfil=Full y usa `import`/`export`? → ❌ RECHAZAR (Neutralino sirve HTML directo, sin bundler)
 
 === OUTPUT ENFORCEMENT (De taste-skill/output-skill) ===
 - [ ] ¿`// ...` / `// TODO` / `// rest of code` en output? → ❌ COMPLETAR código real

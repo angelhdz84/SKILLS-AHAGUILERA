@@ -256,14 +256,14 @@ else { "Generando neutralino.config.json desde template..." }
   "applicationId": "com.empresa.app",
   "version": "1.0.0",
   "defaultMode": "window",
-  "documentRoot": "/public",
+  "documentRoot": "/",
   "url": "/",
   "port": 0,
   "enableServer": true,
   "enableNativeAPI": true,
   "nativeWindow": {
     "title": "AppName",
-    "icon": "public/favicon.ico",
+    "icon": "favicon.ico",
     "width": 1200,
     "height": 800,
     "minWidth": 800,
@@ -276,25 +276,25 @@ else { "Generando neutralino.config.json desde template..." }
     "APP_NAME": "AppName"
   },
   "modes": {
-    "window": { "title": "AppName", "icon": "public/favicon.ico" }
+    "window": { "title": "AppName", "icon": "favicon.ico" }
   },
   "cli": {
     "binaryName": "app-name",
-    "resourcesPath": "/public/",
-    "clientLibrary": "public/core/neutralino.js",
+    "resourcesPath": "/",
+    "clientLibrary": "core/neutralino.js",
     "binaryVersion": "6.0.0",
     "clientVersion": "6.0.0"
   }
 }
 ```
 
-3. Verificar que `public/core/neutralino.js` existe (cliente Neutralino para el frontend):
+3. Verificar que `core/neutralino.js` existe (cliente Neutralino para el frontend):
    Si no, descargar:
 ```bash
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "public/core/neutralino.js"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "core/neutralino.js"
 ```
 
-4. Si el proyecto usa icons personalizados, verificar que `public/favicon.ico`
+4. Si el proyecto usa icons personalizados, verificar que `favicon.ico`
    existe. Si no, usar icono por defecto de Neutralino.
 
 5. Compilar:
@@ -314,7 +314,7 @@ Expand-Archive -Path "dist/[app-name]-win_x64.zip" -DestinationPath "dist/neutra
 
 8. Confirmar:
 ```
-✅ Compilado: dist/[app-name]-win_x64.zip (~2MB runtime + public/)
+✅ Compilado: dist/[app-name]-win_x64.zip (~2MB runtime)
   El .exe contiene Neutralino runtime (~2MB) + la app completa.
   Ventana nativa, bandeja, notificaciones — sin terminal.
 
@@ -367,7 +367,7 @@ if (Test-Path "android/app/build/outputs/apk/release/app-release.apk") {
 ```
 
 **sql.js (IA Jutia con FTS5):**
-Si la app incluye IA Jutia Full con sql.js, verificar que `public/assets/wasm/` contiene:
+Si la app incluye IA Jutia Full con sql.js, verificar que `assets/wasm/` contiene:
 - `sql-wasm.wasm` — motor SQLite compilado a WASM (~1.3MB)
 - `sql-wasm.js` — loader JS para sql.js
 
@@ -480,13 +480,13 @@ El script busca y reemplaza automaticamente en estos archivos:
 | Archivo | Que reemplaza |
 |---------|--------------|
 | `project.config.js` | `nombreApp`, colores |
-| `index.html` / `public/index.html` | `<title>`, meta tags, h1 |
+| `index.html` | `<title>`, meta tags, h1 |
 | `neutralino.config.json` | `applicationId`, `nativeWindow.title` |
 | `capacitor.config.json` | `appId`, `appName` |
 | `package.json` | `name` |
-| `manifest.json` / `public/manifest.json` | `name`, `short_name` |
-| `core/theme.js` / `public/core/theme.js` | Colores CSS |
-| `core/app.js` / `public/core/app.js` | Nombre app en UI |
+| `manifest.json` | `name`, `short_name` |
+| `core/theme.js` | Colores CSS |
+| `core/app.js` | Nombre app en UI |
 
 ### Paso 6.3 — Logo personalizado
 

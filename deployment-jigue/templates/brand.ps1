@@ -99,16 +99,12 @@ Write-Host "  Colores: $PrimaryColor / $SecondaryColor"
 $files = @(
   @{ Path = "project.config.js"; Label = "Config" }
   @{ Path = "index.html"; Label = "Index HTML" }
-  @{ Path = "public/index.html"; Label = "Public index" }
   @{ Path = "neutralino.config.json"; Label = "Neutralino config" }
   @{ Path = "capacitor.config.json"; Label = "Capacitor config" }
   @{ Path = "package.json"; Label = "Package.json" }
   @{ Path = "manifest.json"; Label = "PWA manifest" }
-  @{ Path = "public/manifest.json"; Label = "Public manifest" }
-  @{ Path = "public/core/theme.js"; Label = "Theme JS" }
-  @{ Path = "core/theme.js"; Label = "Theme JS (root)" }
-  @{ Path = "public/core/app.js"; Label = "App JS" }
-  @{ Path = "core/app.js"; Label = "App JS (root)" }
+  @{ Path = "core/theme.js"; Label = "Theme JS" }
+  @{ Path = "core/app.js"; Label = "App JS" }
 )
 
 # ---------- 4. Aplicar reemplazos ----------
@@ -155,9 +151,7 @@ if ($LogoPath -and (Test-Path $LogoPath)) {
   $ext = [System.IO.Path]::GetExtension($LogoPath)
   $destinations = @(
     "assets/logo$ext",
-    "public/assets/logo$ext",
-    "favicon.ico",
-    "public/favicon.ico"
+    "favicon.ico"
   )
   $extNoIco = $ext -ne '.ico'
   foreach ($dest in $destinations) {
@@ -229,7 +223,7 @@ if (-not $DryRun) {
   if (Test-Path "manifest.json") { $include += "manifest.json" }
   if (Test-Path "sw.js") { $include += "sw.js" }
   # Neutralino: incluir dist/ neutralino.js
-  if (Test-Path "public/core/neutralino.js") { $include += "public" }
+  if (Test-Path "core/neutralino.js") { $include += "core" }
   if (Test-Path "package.json") { $include += "package.json" }
 
   $compressItems = $include | Where-Object { Test-Path $_ } | ForEach-Object {
