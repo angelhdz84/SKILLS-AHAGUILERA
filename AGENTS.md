@@ -83,7 +83,7 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
 | deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + .apk + Release (Full) |
-| capacitor | deployment-jigue | `capacitor.config.json` + `android/` + |
+| capacitor | deployment-jigue | `capacitor.config.json` + `android/` |
 | upgrade-engine | — | project.config.js actualizado + infraestructura nueva según perfil destino. Invocación directa `/upgrade` |
 | wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
 
