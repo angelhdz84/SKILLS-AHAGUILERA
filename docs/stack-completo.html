@@ -38,7 +38,7 @@
 <h2 id="1-que-es-ateje-stack">1. Que es Ateje Stack </h2>
 <p>Ateje Stack es un <strong>meta-repo de skills OpenCode</strong> que genera aplicaciones<br>
 offline-first completas. No es una app en si misma — es un taller que construye<br>
-apps en directorios externos usando 5 engines orquestadores, 7 skills standalone<br>
+apps en directorios externos usando 5 engines orquestadores, 8 skills standalone<br>
 y 16 skills externas de diseño (oh-my-design).</p>
 <p>Cada app generada comparte ~95% del frontend (Alpine + Dexie + DaisyUI),<br>
 diferenciandose solo en setup, empaquetado y perfil de entrega.</p>
@@ -342,6 +342,11 @@ diferenciandose solo en setup, empaquetado y perfil de entrega.</p>
 <td>Empaquetado .apk Android nativo con Capacitor. Incluye plugins: SQLite FTS5 nativo, camara, GPS, notificaciones, compartir.</td>
 <td>full</td>
 </tr>
+<tr>
+<td><strong>upgrade-engine</strong></td>
+<td>Migra app existente entre perfiles Lite/Full e IA Lite/Full. No modifica modulos ni datos, solo agrega/remueve archivos de infraestructura segun destino.</td>
+<td>lite, full</td>
+</tr>
 </tbody>
 </table>
 <h3 id="43-contratos-entre-skills">4.3 Contratos entre skills </h3>
@@ -359,8 +364,9 @@ diferenciandose solo en setup, empaquetado y perfil de entrega.</p>
   │    └─→ wiki-engine (ingesta)
   ├─→ validation-engine
   │    └─→ wiki-engine (reporte)
-  └─→ deployment-jigue
-       └─→ capacitor (.apk si aplica)
+  ├─→ deployment-jigue
+  │    └─→ capacitor (.apk si aplica)
+  └─→ upgrade-engine (migracion de perfil, invocacion directa /upgrade)
 </code></pre><hr>
 <h2 id="5-pipeline-completo">5. Pipeline Completo </h2>
 <h3 id="51-modo-classic-new--5-fases">5.1 Modo Classic (<code>/new</code>) — 5 fases </h3>
@@ -684,6 +690,10 @@ RESULTADO:
 <td><code>/archive</code></td>
 <td>Archivar spec + reporte</td>
 </tr>
+<tr>
+<td><code>/upgrade</code></td>
+<td>Migrar perfil Lite→Full y/o IA Jutia</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -831,27 +841,37 @@ pytest test_app<span class="token punctuation">.</span>py <span class="token ope
 <span class="token comment"># Stack compliance (automatico tras cada codigo)</span>
 <span class="token comment"># Se ejecuta solo, sin trigger</span>
 </code></pre><hr>
-<h2 id="14-roadmap-de-migracion-fases-0-4">14. Roadmap de Migracion (Fases 0-4) </h2>
-<pre data-role="codeBlock" data-info="" class="language-text"><code>FASE 0 (Sem 1-2):   Dexie optimizado (paginacion, count() en vez de toArray())
-                    └─ Web Worker para Transformers.js
-                    └─ q4 quantization (modelos 230MB → 58MB)
+<h2 id="14-roadmap-de-migracion-fases-0-5">14. Roadmap de Migracion (Fases 0-5) </h2>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>FASE 0 ✅ (Completada): Estructura raiz unificada (public/ → root)
+                    └─ NeutralinoJS como unico runtime Full
+                    └─ Bun --compile eliminado
+                    └─ Todos los skills actualizados
 
-FASE 1 (Sem 3-4):   NeutralinoJS .exe (Bun → Neutralino, 50MB → 2MB)
-                    └─ Ventana nativa, bandeja, notificaciones
-                    └─ WebGPU acceleration
+FASE 0B ✅ (Completada): upgrade-engine skill operativo
+                    └─ Migracion Lite→Full automatica
+                    └─ Migracion IA Jutia independiente
+                    └─ Zero impacto en modulos/datos
 
-FASE 2 (Sem 5-6):   sql.js FTS5 (QA 2-3s → 50-150ms)
+FASE 1 (Sem 3-4):   sql.js FTS5 (QA 2-3s → 50-150ms)
                     └─ Persistencia ciclica cada 2s
                     └─ Fallback automatico a Dexie
 
-FASE 3 (Sem 7-10):  Capacitor .apk (SQLite FTS5 nativo)
+FASE 2 (Sem 5-7):   Capacitor .apk (SQLite FTS5 nativo)
                     └─ Plugins: camara, GPS, notificaciones, compartir
                     └─ Runtime detection: window.CAPACITOR + window.native.*
 
-FASE 4 (Sem 11-12): White-label + Enterprise
+FASE 3 (Sem 8-10):  White-label + Enterprise
                     └─ brand.ps1 (reemplaza nombre, colores, logo)
                     └─ Enterprise checklist + docs personalizados
                     └─ Entrega: .exe + .apk + fuente + docs + brand.ps1
+
+FASE 4 (Sem 11-12): Dexie optimizado (paginacion, count() en vez de toArray())
+                    └─ Web Worker para Transformers.js
+                    └─ q4 quantization (modelos 230MB → 58MB)
+
+FASE 5 (Sem 13-14): WebGPU acceleration + WebWorker IA
+                    └─ Ventana nativa, bandeja, notificaciones
+                    └─ NeutralinoJS con aceleracion GPU
 </code></pre><hr>
 <h2 id="15-diagrama-de-arquitectura">15. Diagrama de Arquitectura </h2>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>┌─────────────────────────────────────────────────────────────┐

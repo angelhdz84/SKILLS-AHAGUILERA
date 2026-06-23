@@ -484,14 +484,14 @@ Autor: Angel Hernández Aguilera</p>
 <h3 id="generar-una-app-desde-plantilla">Generar una app desde plantilla </h3>
 <ol>
 <li>Elegir app del catálogo <code>apps/README.md</code></li>
-<li>Copiar <code>Plantilla_AHA_Nombre.md</code> a <code>specs/[app].md</code></li>
+<li>Copiar <code>apps/AHA-Nombre/template.md</code> a <code>specs/[app].md</code></li>
 <li>Ejecutar <code>pipeline-engine</code> con el perfil deseado</li>
 <li>El pipeline genera: setup → código → validación → deploy</li>
 </ol>
 <h3 id="añadir-un-nuevo-productovertical">Añadir un nuevo producto/vertical </h3>
 <ol>
 <li>Crear template comercial en <code>apps/AHA-Nombre/template.md</code></li>
-<li>Crear spec técnica en <code>Plantilla_AHA_Nombre.md</code> (formato code-generator)</li>
+<li>Crear spec técnica en <code>apps/AHA-Nombre/template.md</code> (formato code-generator)</li>
 <li>En el HTML de la landing, localizar la sección de productos (buscar <code>APPS LISTAS PARA LLEVAR</code>)</li>
 <li>Duplicar un bloque <code>article</code> existente</li>
 <li>Cambiar: título (usar prefijo AHA), descripción, enlace WhatsApp</li>
@@ -619,7 +619,7 @@ Autor: Angel Hernández Aguilera</p>
 </tr>
 <tr>
 <td>Docs Ateje Stack</td>
-<td><code>D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html</code></td>
+<td><code>docs/guia-skills-mcps.html</code></td>
 </tr>
 <tr>
 <td>Catálogo de apps</td>
@@ -627,7 +627,7 @@ Autor: Angel Hernández Aguilera</p>
 </tr>
 <tr>
 <td>Specs code-generator</td>
-<td><code>Plantilla_AHA_*.md</code> (raíz del repo)</td>
+<td><code>apps/AHA-*/template.md</code></td>
 </tr>
 </tbody>
 </table>

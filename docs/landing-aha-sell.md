@@ -205,14 +205,14 @@ La landing actual https://angelhdz84.github.io/Identidad_AHA/ ya tiene la estruc
 ### Generar una app desde plantilla
 
 1. Elegir app del catálogo `apps/README.md`
-2. Copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md`
+2. Copiar `apps/AHA-Nombre/template.md` a `specs/[app].md`
 3. Ejecutar `pipeline-engine` con el perfil deseado
 4. El pipeline genera: setup → código → validación → deploy
 
 ### Añadir un nuevo producto/vertical
 
 1. Crear template comercial en `apps/AHA-Nombre/template.md`
-2. Crear spec técnica en `Plantilla_AHA_Nombre.md` (formato code-generator)
+2. Crear spec técnica en `apps/AHA-Nombre/template.md` (formato code-generator)
 3. En el HTML de la landing, localizar la sección de productos (buscar `APPS LISTAS PARA LLEVAR`)
 4. Duplicar un bloque `article` existente
 5. Cambiar: título (usar prefijo AHA), descripción, enlace WhatsApp
@@ -287,6 +287,6 @@ Antes de poner una app nueva en venta:
 | Repo landing | `https://github.com/angelhdz84/Identidad_AHA` |
 | WhatsApp API | `https://wa.me/521NUMERO?text=...` |
 | Ateje Stack (meta-repo) | `https://github.com/angelhdz84/Ateje` |
-| Docs Ateje Stack | `D:\REPOSITORIOS GitHUB\Ateje\docs\guia-skills-mcps.html` |
+| Docs Ateje Stack | `docs/guia-skills-mcps.html` |
 | Catálogo de apps | `apps/README.md` (13 plantillas AHA) |
-| Specs code-generator | `Plantilla_AHA_*.md` (raíz del repo) |
+| Specs code-generator | `apps/AHA-*/template.md` |

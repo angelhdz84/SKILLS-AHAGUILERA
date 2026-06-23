@@ -194,7 +194,7 @@ Paso 2: /setup (automático tras /new)
   └─ Genera scripts/descargar-libs.bat (12 librerías base)
   └─ USUARIO: Ejecuta doble clic en scripts/descargar-libs.bat
 
-Paso 3: Copiar Plantilla_AHA_Citas.md a specs/aha-citas.md
+Paso 3: Copiar apps/AHA-Citas/template.md a specs/aha-citas.md
   └─ La plantilla ya tiene módulos, tablas, UI, reglas
 
 Paso 4: /spec (automático tras setup)
@@ -245,7 +245,7 @@ Paso 2: /setup
   └─ npm install @xenova/transformers pdfjs-dist mammoth marked (si IA Full)
   └─ Descarga neutralino.js + sql-wasm.wasm + modelos q4
 
-Paso 3: Copiar Plantilla_AHA_Citas.md a specs/aha-citas.md
+Paso 3: Copiar apps/AHA-Citas/template.md a specs/aha-citas.md
 
 Paso 4: /spec
   └─ Igual que Lite + DESIGN.md con marca (si modo Design)
@@ -377,4 +377,4 @@ profesionales. Plan Profesional.
 ---
 
 *Documento generado para estudio del stack Ateje v3.0*
-*Basado en `apps/AHA-Citas/template.md` y `Plantilla_AHA_Citas.md`*
+*Basado en `apps/AHA-Citas/template.md`*

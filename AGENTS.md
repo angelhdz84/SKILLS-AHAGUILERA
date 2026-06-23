@@ -100,23 +100,23 @@ El repo incluye **13 plantillas de apps** listas para generar con el pipeline. T
 
 | App | Template comercial | Niveles comerciales | Spec técnica |
 |-----|-------------------|-------------------|-------------|
-| **AHA Inventario** | `apps/AHA-Inventario/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Inventario.md` |
-| **AHA Comanda** | `apps/AHA-Comanda/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Comanda.md` |
-| **AHA CRM** | `apps/AHA-CRM/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_CRM.md` |
-| **AHA Checklist** | `apps/AHA-Checklist/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Checklist.md` |
-| **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Asistencia.md` |
-| **AHA Citas** | `apps/AHA-Citas/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Citas.md` |
-| **AHA Creador** | `apps/AHA-Creador/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Creador.md` |
-| **AHA Campo** | `apps/AHA-Campo/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Campo.md` |
-| **AHA POS** | `apps/AHA-POS/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_POS.md` |
-| **AHA Rx** | `apps/AHA-Rx/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Rx.md` |
-| **AHA Flota** | `apps/AHA-Flota/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Flota.md` |
-| **AHA Obra** | `apps/AHA-Obra/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_Obra.md` |
-| **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | Inicio / Profesional / Enterprise | `Plantilla_AHA_PreFactura.md` |
+| **AHA Inventario** | `apps/AHA-Inventario/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Inventario/template.md` |
+| **AHA Comanda** | `apps/AHA-Comanda/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Comanda/template.md` |
+| **AHA CRM** | `apps/AHA-CRM/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-CRM/template.md` |
+| **AHA Checklist** | `apps/AHA-Checklist/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Checklist/template.md` |
+| **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Asistencia/template.md` |
+| **AHA Citas** | `apps/AHA-Citas/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Citas/template.md` |
+| **AHA Creador** | `apps/AHA-Creador/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Creador/template.md` |
+| **AHA Campo** | `apps/AHA-Campo/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Campo/template.md` |
+| **AHA POS** | `apps/AHA-POS/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-POS/template.md` |
+| **AHA Rx** | `apps/AHA-Rx/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Rx/template.md` |
+| **AHA Flota** | `apps/AHA-Flota/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Flota/template.md` |
+| **AHA Obra** | `apps/AHA-Obra/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Obra/template.md` |
+| **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-PreFactura/template.md` |
 
 Cada nivel mapea a un perfil técnico: **Inicio** (Lite, ZIP+Pages), **Profesional** (Full, .exe+Pages+Release), **Enterprise** (Full+custom, código fuente+UI personalizada).
 
-Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejecutar pipeline.
+Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y ejecutar pipeline.
 
 ## Comandos slash
 
@@ -133,7 +133,7 @@ Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejec
 | `/compliance` | — | stack-compliance-guard manual |
 | `/status` | — | Lee pipeline state (specs/, project.config.js, docs/) |
 | `/archive` | — | Mueve spec + reporte a specs/archive/ |
-| `/docs` | — | Abre guia-skills-mcps.html |
+| `/docs` | — | Abre docs/guia-skills-mcps.html |
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
@@ -141,7 +141,7 @@ Para generar una app: copiar `Plantilla_AHA_Nombre.md` a `specs/[app].md` y ejec
 
 ## Directorios generados (no versionar)
 
-`docs/`, `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
+`docs/` (incl. `docs/comercial/`), `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
 
 ## Tests
 

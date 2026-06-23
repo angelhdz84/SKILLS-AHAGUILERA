@@ -147,7 +147,7 @@ El **Ateje Stack** organiza las 31 skills originales (17 repo + 14 oh-my-design)
 | `/deploy` | Publicar app | deployment-jigue según perfil |
 | `/wiki` | Gestionar wiki + preferencias | wiki-engine: ingest / query / lint |
 | `/ia` | Activar mini IA | ia-jutia (pregunta perfil Lite/Full/No) |
-| `/docs` | Abrir guía visual de skills + MCP | Abre guia-skills-mcps.html |
+| `/docs` | Abrir guía visual de skills + MCP | Abre docs/guia-skills-mcps.html |
 
 ---
 

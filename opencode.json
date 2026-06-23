@@ -43,7 +43,8 @@
     { "name": "deployment-jigue", "path": "deployment-jigue/SKILL.md" },
     { "name": "ia-jutia", "path": "ia-jutia/SKILL.md" },
     { "name": "alpine-ui-patterns", "path": "alpine-ui-patterns/SKILL.md" },
-    { "name": "upgrade-engine", "path": "upgrade-engine/SKILL.md" }
+    { "name": "upgrade-engine", "path": "upgrade-engine/SKILL.md" },
+    { "name": "capacitor", "path": "capacitor/SKILL.md" }
   ],
   "mcpServers": {
     "memory": {
