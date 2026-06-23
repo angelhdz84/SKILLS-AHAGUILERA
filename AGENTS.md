@@ -144,14 +144,19 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 Para usar el Ateje Stack desde cualquier proyecto (no solo dentro de este repo):
 
 ```powershell
-# Sin administrador — crea directory junctions + configura OpenCode global
+# Sin administrador — crea 13 directory junctions + configura OpenCode global
 .\install-global.ps1
+
+# Para remover completamente
+.\uninstall-global.ps1
 ```
 
-Esto hace que los 13 skills estén disponibles globalmente:
-- `/new`, `/pro`, `/build`, `/deploy`, etc. desde cualquier directorio
-- Las skills se actualizan solas al hacer `git pull` en este repo (son junctions)
-- Para remover: `.\uninstall-global.ps1` (elimina junctions + limpia config)
+`install-global.ps1` crea junctions en `~/.opencode/skills/` apuntando a cada skill del repo y agrega `skills.paths` al config global (`~/.config/opencode/opencode.json`). `uninstall-global.ps1` revierte ambas operaciones sin dejar rastro.
+
+Efecto:
+- `/new`, `/pro`, `/build`, `/deploy`, etc. disponibles desde cualquier directorio
+- Skills se actualizan solas al hacer `git pull` (son junctions, no copias)
+- Sin interferencia con otros proyectos (config sandboxeado en `skills.paths`)
 
 ## Directorios generados (no versionar)
 

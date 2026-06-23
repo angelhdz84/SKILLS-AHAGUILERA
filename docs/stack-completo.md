@@ -590,7 +590,31 @@ pytest test_app.py --headed
 
 ---
 
-## 14. Roadmap de Migracion (Fases 0-5)
+## 14. Instalacion Global
+
+El Ateje Stack puede instalarse globalmente para usarse desde cualquier proyecto:
+
+```powershell
+# Desde la raiz del repo
+.\install-global.ps1
+```
+
+**Que hace:**
+1. Crea 13 directory junctions en `~/.opencode/skills/` → cada skill del repo
+2. Agrega `"skills": { "paths": ["~/.opencode/skills/"] }` al config global (`~/.config/opencode/opencode.json`)
+3. Skills disponibles desde cualquier `opencode .` — `/new`, `/build`, `/deploy`, etc.
+
+**Ventajas:**
+- Sin administrador (junctions funcionan en Windows sin elevation)
+- `git pull` en el repo actualiza todas las skills al instante (son junctions, no copias)
+- Sandboxeado: solo escanea `~/.opencode/skills/`, no interfiere con otros proyectos
+- Reversible: `.\uninstall-global.ps1` elimina junctions + limpia config
+
+**Efecto:** El orquestador principal se activa desde cualquier directorio con ruta absoluta al repo.
+
+---
+
+## 15. Roadmap de Migracion (Fases 0-5)
 
 ```
 FASE 0 ✅ (Completada): Estructura raiz unificada (public/ → root)
@@ -627,7 +651,7 @@ FASE 5 (Sem 13-14): WebGPU acceleration + WebWorker IA
 
 ---
 
-## 15. Diagrama de Arquitectura
+## 16. Diagrama de Arquitectura
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -682,7 +706,7 @@ FASE 5 (Sem 13-14): WebGPU acceleration + WebWorker IA
 
 ---
 
-## 16. Resumen: De 0 a App en 6 Pasos
+## 17. Resumen: De 0 a App en 6 Pasos
 
 ```
 ┌──────────────────────────────────────────────────────────┐
