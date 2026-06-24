@@ -26,7 +26,7 @@ Tiendas minoristas, bodegas, almacenes pequeños, ferreterías, abarrotes, empre
 - Entradas y salidas de stock con historial completo
 - Alertas visuales de bajo inventario
 - Dashboard con totales, valor del stock, actividad reciente
-- Reportes con gráficos ApexCharts
+- Reportes con gráficos Chart.js
 - Exportación a CSV
 
 **Beneficios:**

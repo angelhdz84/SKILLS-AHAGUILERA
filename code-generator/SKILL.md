@@ -188,7 +188,7 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="assets/js/libs/dexie.js"></script>
 <script src="assets/js/libs/crypto-js.js"></script>
 <script src="assets/js/libs/pako.js"></script>
-<script src="assets/js/libs/apexcharts.js"></script>
+<script src="assets/js/libs/chart.js"></script>
 <script src="assets/js/libs/jspdf.js"></script>
 <script src="assets/js/libs/xlsx.js"></script>
 

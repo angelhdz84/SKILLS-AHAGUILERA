@@ -44,7 +44,7 @@ Sistema de prefacturaciÃ³n offline para freelancers y pequeÃ±os negocios. Ge
 
 ### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: total facturado mes, facturas emitidas, clientes registrados
-- GrÃ¡fico de ingresos por mes (ApexCharts)
+- GrÃ¡fico de ingresos por mes (Chart.js)
 - Export a CSV
 
 ## Tablas Dexie

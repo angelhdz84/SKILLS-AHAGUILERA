@@ -1,6 +1,6 @@
 ---
 name: setup-init
-description: Preparar un proyecto offline-first desde cero: valida entorno, crea estructura exacta, descarga librerías base (Tailwind, DaisyUI, Alpine, Dexie, CryptoJS, pako, ApexCharts, jsPDF, SheetJS, Bootstrap Icons, Animate.css) + librerías adicionales detectadas en la spec.
+description: Preparar un proyecto offline-first desde cero: valida entorno, crea estructura exacta, descarga librerías base (Tailwind, DaisyUI, Alpine, Dexie, CryptoJS, pako, Chart.js, jsPDF, SheetJS, Bootstrap Icons, Animate.css) + librerías adicionales detectadas en la spec.
 license: MIT
 compatibility: Requiere curl (Windows/macOS/Linux) y permisos de escritura. Node.js opcional para Electron. Lee specs/[app].md para detectar librerías adicionales.
 meta:
@@ -120,7 +120,7 @@ Si [2], verifica:
 2. Inicializa npm e instala dependencias base:
 ```bash
 npm init -y
-npm install alpinejs dexie cryptojs pako apexcharts jspdf xlsx
+npm install alpinejs dexie cryptojs pako chart.js jspdf xlsx
 ```
 3. Si hay librerías adicionales en spec:
 ```bash
@@ -278,7 +278,7 @@ echo --- Base: JavaScript ---
 %CURL% "assets/js/libs/dexie.js" "https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"
 %CURL% "assets/js/libs/crypto-js.js" "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
 %CURL% "assets/js/libs/pako.js" "https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
-%CURL% "assets/js/libs/apexcharts.js" "https://cdn.jsdelivr.net/npm/apexcharts@3.49.1/dist/apexcharts.min.js"
+%CURL% "assets/js/libs/chart.js" "https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"
 %CURL% "assets/js/libs/jspdf.js" "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
 %CURL% "assets/js/libs/xlsx.js" "https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"
 

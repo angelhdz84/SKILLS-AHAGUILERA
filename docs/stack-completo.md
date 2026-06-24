@@ -48,7 +48,7 @@ diferenciandose solo en setup, empaquetado y perfil de entrega.
 | **Bootstrap Icons** | 1.11+ | Iconos vectoriales (local, sin CDN) |
 | **Animate.css** | 4.1+ | Animaciones de entrada (fadeIn, slideIn, bounceIn) |
 | **pako** | 2.1+ | Compresion/decompresion de datos binarios |
-| **ApexCharts** | 3.49+ | Graficos interactivos (stats, predicciones, dashboards) |
+| **Chart.js** | 4.4+ | Graficos interactivos (Canvas, stats, dashboards) |
 | **jsPDF** | 2.5+ | Exportacion a PDF offline |
 | **SheetJS (xlsx)** | 0.20+ | Exportacion/importacion Excel offline |
 
@@ -76,7 +76,7 @@ index.html
 │   └── animate.min.css
 ├── JS Libs (assets/js/libs/)
 │   ├── alpine.js / dexie.js / crypto-js.js / pako.js
-│   └── apexcharts.js / jspdf.js / xlsx.js
+│   └── chart.js / jspdf.js / xlsx.js
 ├── Core (core/)
 │   ├── db.js          — Dexie init (tablas, indices, versiones)
 │   ├── crypto.js       — encrypt/decrypt + uuid

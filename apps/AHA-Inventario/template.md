@@ -40,7 +40,7 @@ Sistema de inventario offline para tiendas, bodegas y almacenes. Registro de pro
 
 ### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: total productos, valor stock, bajo stock, actividad reciente
-- Reportes con grÃ¡ficos ApexCharts
+- Reportes con grÃ¡ficos Chart.js
 - Export a CSV
 
 ## Tablas Dexie

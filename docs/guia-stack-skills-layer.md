@@ -645,7 +645,7 @@ Usuario: "✅ CONTINUAR"
 │ [🟩🟩🟩🟩🟩] Los gastos se registran   │
 │     manualmente (no bancos)          │
 │ [🟩🟩🟩🟩⬜] Reportes mensuales        │
-│     con gráficos ApexCharts          │
+│     con gráficos Chart.js            │
 │ [🟩🟩🟩🟩🟩] Cifrado en campo "monto"  │
 │ [🟩🟩🟩⬜⬜] Exportar a CSV            │
 │     → ¿Quieres exportar a CSV?       │
@@ -732,7 +732,7 @@ Usuario: "✅ CONTINUAR"
 │ ── Módulo extra: Reportes ──         │
 │ ✅ modules/reportes/module.html       │
 │ ✅ modules/reportes/module.js         │
-│ (ApexCharts mensual + CSV export)     │
+│ (Chart.js mensual + CSV export)       │
 │ → compliance: ✅                      │
 │                                       │
 │ 📦 Todos los módulos generados       │

@@ -41,7 +41,7 @@ Sistema POS (punto de venta) offline para tiendas, ferias, puestos y pequeÃ±os
 
 ### ðŸ“Š MÃ³dulo Reportes
 - Dashboard: ventas hoy, productos top, corte de caja activo
-- Ventas por dÃ­a/semana/mes con grÃ¡ficos ApexCharts
+- Ventas por dÃ­a/semana/mes con grÃ¡ficos Chart.js
 - Export a CSV
 
 ## Tablas Dexie

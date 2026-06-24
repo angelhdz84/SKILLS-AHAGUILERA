@@ -41,7 +41,7 @@ Sistema de recetas mÃ©dicas offline para mÃ©dicos generales y consultorios. 
 
 ### ðŸ“Š MÃ³dulo EstadÃ­sticas
 - Dashboard: total pacientes, recetas emitidas hoy
-- DiagnÃ³sticos mÃ¡s frecuentes (grÃ¡fico ApexCharts)
+- DiagnÃ³sticos mÃ¡s frecuentes (grÃ¡fico Chart.js)
 - Export a CSV
 
 ## Tablas Dexie

@@ -27,7 +27,7 @@ Sistema de control de flota offline para transportistas y dueÃ±os de vehÃ­cu
 ### â›½ MÃ³dulo Combustible
 - Registro de cargas: fecha, litros, importe, kilometraje actual, tipo (gasolina/diÃ©sel)
 - CÃ¡lculo automÃ¡tico de rendimiento (km/litro)
-- Historial de consumo por vehÃ­culo con grÃ¡fico ApexCharts
+- Historial de consumo por vehÃ­culo con grÃ¡fico Chart.js
 
 ### ðŸ”§ MÃ³dulo Mantenimiento
 - Registro de servicios: tipo (aceite, llantas, frenos, afinaciÃ³n, general), taller, costo, kilometraje

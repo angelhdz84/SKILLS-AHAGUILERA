@@ -119,7 +119,7 @@ Si no existe, crear desde template:
     "alpinejs": "^3.14.0",
     "dexie": "^4.0.0",
     "cryptojs": "^4.2.0",
-    "apexcharts": "^4.0.0",
+    "chart.js": "^4.4.0",
     "jspdf": "^2.5.0",
     "sheetjs": "^0.20.0",
     "pako": "^2.1.0"
