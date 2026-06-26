@@ -83,6 +83,7 @@ index.html
 │   ├── ui.js           — toast, confirm, loading, formatos
 │   ├── theme.js        — CSS variables desde project.config.js
 │   ├── network.js      — Monitoreo de conectividad offline
+│   ├── file-store.js   — Gestión de archivos (avatars, fotos, docs)
 │   ├── sync.js         — Export/import .ateje-backup cifrado
 │   ├── app.js          — Router hash-based, carga de modulos
 │   ├── ia.js           — IA Jutia (FlexSearch + stats + QA)
@@ -94,6 +95,13 @@ index.html
 │   ├── wasm/           — sql-wasm.wasm (Full sql.js)
 │   ├── models/         — Modelos Transformers.js q4 (Full IA)
 │   └── fonts/          — Fuentes locales
+├── Data (data/)
+│   ├── avatars/        — Fotos de perfil
+│   ├── fotos/          — Imagenes de productos/registros
+│   ├── docs/           — Documentos de ingesta IA
+│   ├── defaults/       — Placeholders (avatar.png por defecto)
+│   ├── exports/        — Exportaciones temporales
+│   └── backups/        — Backups .ateje-backup
 ├── project.config.js   — Config white-label completa
 ├── neutralino.config.json — (Full) Config NeutralinoJS
 ├── capacitor.config.json  — (Full .apk) Config Capacitor
@@ -485,6 +493,8 @@ db.version(1).stores({
   pacientes:  'id, nombre, email, *createdBy, createdAt, updatedAt',
   citas:      'id, pacienteId, fecha, estado, *createdBy, createdAt, updatedAt',
   // ...tablas especificas de cada modulo
+  _files:     '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _file_blobs: '&path',
   _ia_docs:   'id, nombre, tipo, *createdBy, createdAt, updatedAt',
   _ia_chunks: 'id, docId, *texto, createdAt',
   _ia_index:  '&consulta',

@@ -66,7 +66,18 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 [Contenido completo con orden: CSS → Libs base → Libs adicionales → Core → Main, x-cloak, sin type="module"]
 
 ### `core/db.js`
-[Iniciación Dexie según spec. Variables globales. window.db expuesto. Todas las tablas usan `id` (UUID string, no ++id) + `createdBy` + `createdAt` + `updatedAt`]
+[Iniciación Dexie según spec. Variables globales. window.db expuesto. Todas las tablas de negocio usan `id` (UUID string, no ++id) + `createdBy` + `createdAt` + `updatedAt`.
+
+**Tablas de sistema (siempre incluidas):**
+- `_files`: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt'
+  - path: ruta relativa a APP_DATA_DIR, ej: "avatars/uuid-user.jpg"
+  - tipo: 'avatar' | 'foto' | 'doc' | 'logo' | 'backup'
+  - hash: SHA-256 hex del archivo (para dedup en import)
+  - refCount: contador de referencias desde registros de negocio
+
+**Tablas de sistema (Lite only, si perfil=lite):**
+- `_file_blobs`: '&path'
+  - Almacena los blobs binarios cuando no hay acceso a disco (file://)
 
 ### `core/crypto.js`
 [encrypt/decrypt + gestión de clave localStorage + uuid(). window.cryptoHelpers expuesto. window.uuid generador UUID v4 compatible file://]
@@ -97,6 +108,26 @@ window.uuid = function() {
 ### `core/network.js` (si la app requiere monitoreo de conexión)
 [Monitoreo navigator.onLine, eventos online/offline, Alpine store]
 
+### `core/file-store.js` (siempre incluido — gestión de archivos en APP_DATA_DIR)
+[Gestión unificada de archivos (avatares, fotos, documentos) con dos backends según perfil:
+
+**Lite (file://):** almacena blobs en tabla Dexie `_file_blobs`. `getURL()` retorna ObjectURL.
+
+**Full (NeutralinoJS / Capacitor):** escribe a disco en `APP_DATA_DIR`. `getURL()` retorna ruta real.
+
+API:
+```javascript
+window.FileStore = {
+  APP_DATA_DIR: string,        // resuelve según perfil
+  async save(file, tipo, nombre) → path,
+  async getURL(path) → string,  // URL para <img> o <a>
+  async read(path) → Blob,
+  async delete(path),
+  async cleanOrphans(),         // elimina archivos con refCount === 0
+  async meta(path) → object     // metadata desde db._files
+}
+```]
+
 ### `core/sync.js` (siempre incluido — export/import .ateje-backup)
 [Motor de respaldo: exporta todas las tablas Dexie a archivo cifrado/comprimido y restaura en cualquier perfil]
 
@@ -107,7 +138,48 @@ window.uuid = function() {
 [Manifest con name, icons, display standalone, theme_color]
 
 ### `project.config.js`
-[Config white-label completa según spec, incluyendo APP_CONFIG.perfil y APP_CONFIG.iaJutia]
+[Config white-label completa según spec, incluyendo:
+
+**Secciones estándar (siempre):**
+- `app`: nombre, version, tipo, descripcion
+- `perfil`: lite | full
+- `iaJutia`: lite | full | no
+- `modulosActivos`: array de IDs de módulos
+- `tema`: modo (claro|oscuro), colores (DaisyUI palette), tipografia
+- `cifrado`: camposSensibles[], storageKey
+- `modulos`: objeto clave-valor con titulo, icono, activo por módulo
+
+**Sección `data` (siempre):**
+```javascript
+data: {
+  dir: 'data/',
+  maxFileSize: 10 * 1024 * 1024,
+  tipos: ['avatar', 'foto', 'doc', 'logo', 'backup'],
+  avatars: { default: 'data/defaults/avatar.png', size: 200, calidad: 0.8 }
+}
+```
+
+**Sección `sync` (siempre):**
+```javascript
+sync: {
+  primaryFormat: 'json',
+  secondaryFormats: APP_CONFIG.perfil === 'full' ? ['sqlite'] : [],
+  includeFiles: true,
+  encrypt: true,
+  maxExportSize: 50 * 1024 * 1024
+}
+```
+
+**Sección `ui` (siempre):**
+```javascript
+ui: {
+  formsMode: 'modal',
+  alerts: 'toast',
+  confirmDelete: true,
+  avatars: true,
+  avatarDefault: 'data/defaults/avatar.png'
+}
+```]
 
 **Si perfil=Full, añadir archivos extra:**
 ### `neutralino.config.json`
@@ -492,14 +564,16 @@ window.network.init();
 
 ### Sync Engine (core/sync.js — export/import .ateje-backup)
 
-Motor universal de respaldo para el stack offline-first. Exporta TODAS las tablas Dexie a un archivo `.ateje-backup` cifrado (CryptoJS AES) y comprimido (pako), y lo restaura en cualquier perfil (Lite/Full/Mobile). Mismo código, mismo formato.
+Motor universal de respaldo para el stack offline-first. Exporta TODAS las tablas Dexie (incluyendo `_files` y opcionalmente `_file_blobs`) a un archivo `.ateje-backup` cifrado (CryptoJS AES) y comprimido (pako), y lo restaura en cualquier perfil (Lite/Full/Mobile). Mismo código, mismo formato.
+
+**Soporte de archivos:** La exportación incluye los metadatos de `_files` y los blobs de `_file_blobs` (perfil Lite) para que fotos, avatares y documentos viajen completos en el backup. En importación, restaura primero los archivos y luego los datos de negocio.
 
 ```javascript
-// core/sync.js — Export/Import de datos offline-first
+// core/sync.js — Export/Import de datos offline-first con soporte de archivos
 // Formato .ateje-backup: JSON → pako.deflate → CryptoJS.AES
 window.SyncEngine = {
   _password: '',
-  _excludeTables: ['modelos_cache'], // tablas que no se incluyen en backup
+  _excludeTables: ['modelos_cache', '_ia_sqlite'], // tablas que no se incluyen
 
   setPassword(pwd) {
     this._password = pwd || '';
@@ -510,26 +584,39 @@ window.SyncEngine = {
     try {
       UI.toast('Preparando respaldo...', 'info');
       const tables = {};
-      const appName = APP_CONFIG?.nombreApp || 'app';
+      let files, blobs;
+      const appName = APP_CONFIG?.app?.nombre || 'app';
 
-      // Recolectar datos de todas las tablas Dexie (excepto excluidas)
+      // 1. Recolectar archivos primero (si existe _files)
+      if (db._files) {
+        files = await db._files.toArray();
+        // 2. En perfil Lite, incluir blobs
+        if (db._file_blobs && APP_CONFIG.perfil === 'lite') {
+          blobs = await db._file_blobs.toArray();
+        }
+      }
+
+      // 3. Recolectar datos de tablas de negocio (excepto excluidas)
       for (const table of db.tables) {
         if (this._excludeTables.includes(table.name)) continue;
+        if (table.name === '_files' || table.name === '_file_blobs') continue;
         const records = await table.toArray();
         if (records.length) tables[table.name] = records;
       }
 
-      if (!Object.keys(tables).length) {
+      if (!Object.keys(tables).length && !files?.length) {
         UI.toast('No hay datos para exportar', 'warning');
         return;
       }
 
-      // Armar payload
+      // 4. Armar payload completo
       const payload = JSON.stringify({
-        version: 1,
+        version: 2,
         app: appName,
         exportedAt: new Date().toISOString(),
-        tables
+        tables,
+        files,      // metadatos de _files
+        blobs       // blobs Lite (solo si perfil=lite)
       });
 
       // Comprimir con pako
@@ -537,7 +624,6 @@ window.SyncEngine = {
       let blob;
 
       if (pwd) {
-        // Cifrar con CryptoJS AES
         const encrypted = CryptoJS.AES.encrypt(
           CryptoJS.lib.WordArray.create(compressed),
           pwd
@@ -557,7 +643,8 @@ window.SyncEngine = {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      UI.toast(`Respaldo exportado (${(blob.size / 1024).toFixed(1)} KB)`, 'success');
+      const fileInfo = files?.length ? ` + ${files.length} archivos` : '';
+      UI.toast(`Respaldo exportado (${(blob.size / 1024).toFixed(1)} KB${fileInfo})`, 'success');
     } catch (err) {
       UI.toast('Error al exportar: ' + err.message, 'error');
     }
@@ -578,7 +665,6 @@ window.SyncEngine = {
       let decompressed;
 
       if (pwd) {
-        // Descifrar
         const encrypted = new TextDecoder().decode(data);
         const decrypted = CryptoJS.AES.decrypt(encrypted, pwd);
         const words = decrypted;
@@ -593,22 +679,37 @@ window.SyncEngine = {
 
       const backup = JSON.parse(decompressed);
 
-      // Validar estructura
       if (!backup.version || !backup.tables) {
         UI.toast('Archivo de respaldo inválido', 'error');
         return;
       }
 
-      // Confirmar restauración
       const tableCount = Object.keys(backup.tables).length;
       const recordCount = Object.values(backup.tables).reduce((a, t) => a + t.length, 0);
-      const ok = await UI.confirm(
-        `Importar ${recordCount} registros en ${tableCount} tablas?` +
-        '\nRegistros nuevos se añaden. Existentes se actualizan si el backup es más reciente.'
-      );
+      const fileCount = backup.files?.length || 0;
+      const msg = `Importar ${recordCount} registros en ${tableCount} tablas` +
+        (fileCount ? ` + ${fileCount} archivos` : '') + '?';
+      const ok = await UI.confirm(msg);
       if (!ok) return;
 
-      // Merge por UUID + updatedAt (nunca borra datos locales)
+      // 1. Restaurar archivos primero (necesarios para referencias)
+      if (backup.files?.length && db._files) {
+        for (const f of backup.files) {
+          const existing = await db._files.get(f.path);
+          if (!existing || new Date(f.updatedAt) > new Date(existing.updatedAt)) {
+            await db._files.put(f);
+          }
+        }
+        // Restaurar blobs (perfil Lite)
+        if (backup.blobs?.length && db._file_blobs) {
+          for (const b of backup.blobs) {
+            await db._file_blobs.put(b);
+          }
+        }
+        UI.toast(`${backup.files.length} archivos restaurados`, 'info');
+      }
+
+      // 2. Merge datos de negocio por UUID + updatedAt
       let insertados = 0, actualizados = 0, saltados = 0;
       for (const [name, records] of Object.entries(backup.tables)) {
         if (!db[name]) continue;
@@ -627,37 +728,10 @@ window.SyncEngine = {
         }
       }
 
-      UI.toast(`Importado: ${insertados} nuevos, ${actualizados} actualizados, ${saltados} saltados`, 'success');
+      const fileMsg = fileCount ? `, ${fileCount} archivos` : '';
+      UI.toast(`Importación: ${insertados} nuevos, ${actualizados} actualizados, ${saltados} saltados${fileMsg}`, 'success');
     } catch (err) {
-      if (err.message.includes('MAC')) {
-        UI.toast('Contraseña incorrecta', 'error');
-      } else {
-        UI.toast('Error al importar: ' + err.message, 'error');
-      }
-    }
-  },
-
-  async preview(file) {
-    // Lee metadatos del archivo sin importar
-    const data = await file.arrayBuffer();
-    try {
-      const decompressed = pako.inflate(data, { to: 'string' });
-      const backup = JSON.parse(decompressed);
-      return backup;
-    } catch {
-      try {
-        const encrypted = new TextDecoder().decode(data);
-        const decrypted = CryptoJS.AES.decrypt(encrypted, '');
-        const words = decrypted;
-        const bytes = new Uint8Array(words.sigBytes);
-        for (let i = 0; i < words.sigBytes; i++) {
-          bytes[i] = (words.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
-        }
-        const decompressed = pako.inflate(bytes, { to: 'string' });
-        return JSON.parse(decompressed);
-      } catch {
-        return null;
-      }
+      UI.toast('Error al importar: ' + err.message, 'error');
     }
   }
 };

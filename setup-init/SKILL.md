@@ -76,6 +76,7 @@ Si [2], verifica:
 ├── core/
 ├── modules/_template/
 ├── assets/{css,js/libs,fonts}
+├── data/{avatars,fotos,docs,defaults,exports,backups}
 ├── docs/
 ├── electron/
 └── scripts/
@@ -88,6 +89,7 @@ Si [2], verifica:
 ├── index.html
 ├── assets/{css,js/libs,fonts}
 ├── core/
+├── data/{avatars,fotos,docs,defaults,exports,backups}
 ├── modules/
 ├── docs/
 ├── neutralino.config.json

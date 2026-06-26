@@ -42,6 +42,26 @@ window.APP_CONFIG = {
     camposSensibles: ['nombre', 'email', 'telefono', 'direccion'],
     storageKey: 'app_llave_cifrado'
   },
+  data: {
+    dir: 'data/',
+    maxFileSize: 10 * 1024 * 1024,
+    tipos: ['avatar', 'foto', 'doc', 'logo', 'backup'],
+    avatars: { default: 'data/defaults/avatar.png', size: 200, calidad: 0.8 }
+  },
+  sync: {
+    primaryFormat: 'json',
+    secondaryFormats: [],
+    includeFiles: true,
+    encrypt: true,
+    maxExportSize: 50 * 1024 * 1024
+  },
+  ui: {
+    formsMode: 'modal',
+    alerts: 'toast',
+    confirmDelete: true,
+    avatars: true,
+    avatarDefault: 'data/defaults/avatar.png'
+  },
   modulos: {
     dashboard: { titulo: 'Dashboard', icono: 'bi-speedometer2', activo: true },
     configuracion: { titulo: 'Configuracion', icono: 'bi-gear', activo: true },
