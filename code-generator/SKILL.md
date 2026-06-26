@@ -156,7 +156,7 @@ window.UI = {
 <div x-data="searchPalette"
      @keydown.window.cmd.k.prevent="openPalette()"
      @keydown.window.ctrl.k.prevent="openPalette()"
-     @keydown="onKeydown">
+     @keydown.window="onKeydown">
   <template x-teleport="body">
     <div x-show="open" x-cloak class="fixed inset-0 z-[60] flex items-start justify-center pt-[12vh]"
          @click.away="closePalette">
@@ -185,20 +185,25 @@ window.UI = {
             <template x-if="!query">
               <div class="px-3 py-2 text-xs font-semibold text-base-content/40 uppercase tracking-wider">Módulos</div>
             </template>
-            <template x-for="(item, i) in filtered" :key="item.id">
-              <div @click="selectItem(item)"
-                   :class="{'bg-primary/10 text-primary': keyboardNav && i === selectedIdx, 'hover:bg-base-200': !(keyboardNav && i === selectedIdx)}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors">
-                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-base-200 text-base-content/60 shrink-0">
-                  <i :class="'bi ' + item.icon" class="text-sm"></i>
+            <template x-for="(item, i) in filtered" :key="i">
+              <template x-if="item.type === 'separator'">
+                <div class="px-3 py-1.5 text-xs font-semibold text-base-content/30 uppercase tracking-wider">Registros</div>
+              </template>
+              <template x-if="item.type !== 'separator'">
+                <div @click="selectItem(item)" @mouseenter="keyboardNav = false"
+                     :class="{'bg-primary/10 text-primary': keyboardNav && item._kIdx === selectedIdx, 'hover:bg-base-200': !(keyboardNav && item._kIdx === selectedIdx)}"
+                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors">
+                  <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-base-200 text-base-content/60 shrink-0">
+                    <i :class="'bi ' + item.icon" class="text-sm"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium truncate" x-text="item.title"></div>
+                    <div x-show="item.subtitle" class="text-xs text-base-content/40 truncate" x-text="item.subtitle"></div>
+                  </div>
+                  <span x-show="item.type === 'module'" class="badge badge-ghost badge-sm">módulo</span>
+                  <span x-show="item.type === 'record'" class="badge badge-ghost badge-sm">registro</span>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium truncate" x-text="item.title"></div>
-                  <div x-show="item.subtitle" class="text-xs text-base-content/40 truncate" x-text="item.subtitle"></div>
-                </div>
-                <span x-show="item.type === 'module'" class="badge badge-ghost badge-sm">módulo</span>
-                <span x-show="item.type === 'record'" class="badge badge-ghost badge-sm">registro</span>
-              </div>
+              </template>
             </template>
           </div>
           <!-- Footer -->
