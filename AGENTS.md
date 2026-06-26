@@ -162,6 +162,20 @@ Efecto:
 
 `docs/` (incl. `docs/comercial/`), `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
 
+## Config (`opencode.json`)
+
+Keys validas del schema actual (`$schema: https://opencode.ai/config.json`):
+
+| Key antigua | Key actual | Formato |
+|---|---|---|
+| `agents` (array) | `agent` | objeto keyeado por nombre, `mode` en vez de `type`, `permission` opcional |
+| `mcpServers` | `mcp` | objeto con `type` (local/remote) y `command` como array unico |
+| `commands` (string path) | auto-descubierto | opencode escanea `.opencode/commands/` automaticamente |
+| `rules` | `instructions` | array de paths a archivos markdown |
+| `skills` (array) | `skills.paths` | objeto con `paths: [".opencode/skills"]` para escaneo recursivo de SKILL.md |
+
+Usar `{file:ruta}` inline para prompts de agentes. Ver `opencode.json` en raiz como referencia.
+
 ## Tests
 
 ```powershell
