@@ -81,7 +81,44 @@ Si [2], verifica:
 ├── electron/
 └── scripts/
 ```
-2. Muestra `project.config.js` mínimo (white-label listo) y `index.html` shell.
+2. **Generar archivos predeterminados en `data/defaults/`**:
+```bash
+mkdir -p data/defaults
+```
+   - **Default avatar SVG** (`data/defaults/avatar.svg`): SVG minimalista con inicial de la app.
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect width="100" height="100" rx="20" fill="#e2e8f0"/>
+  <text x="50" y="54" text-anchor="middle" font-family="system-ui" font-weight="600" font-size="36" fill="#64748b">A</text>
+</svg>
+```
+   - **Placeholder imagen** (`data/defaults/placeholder.svg`): para fotos/documentos sin imagen.
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <path d="M160 130l40 50 30-20 50 60H120z" fill="#cbd5e1"/>
+  <circle cx="140" cy="110" r="20" fill="#cbd5e1"/>
+  <text x="200" y="200" text-anchor="middle" font-family="system-ui" font-size="14" fill="#94a3b8">Sin imagen</text>
+</svg>
+```
+   - **Archivo readme** (`data/defaults/README.md`): documenta propósito de cada subdirectorio.
+```markdown
+# Directorio data/
+
+Almacenamiento local de archivos de la aplicación.
+
+- `avatars/` — Imágenes de perfil de usuarios
+- `fotos/` — Fotos de registros (productos, clientes, etc.)
+- `docs/` — Documentos adjuntos (PDF, DOCX, XLSX)
+- `defaults/` — Archivos predeterminados (avatar, placeholder, etc.)
+- `exports/` — Exportaciones (backups, reportes, CSVs)
+- `backups/` — Copias de seguridad automáticas (.ateje-backup)
+
+> ⚠️ No modificar ni eliminar este directorio manualmente.
+> Los archivos se gestionan a través de FileStore API.
+```
+
+3. Muestra `project.config.js` mínimo (white-label listo) y `index.html` shell.
 
 **Perfil Full:**
 1. Genera estructura (misma raíz que Lite):

@@ -86,6 +86,7 @@ index.html
 │   ├── file-store.js   — Gestión de archivos (avatars, fotos, docs)
 │   ├── sync.js         — Export/import .ateje-backup cifrado
 │   ├── app.js          — Router hash-based, carga de modulos
+│   ├── search-palette.js — Command Palette (Cmd+K) global
 │   ├── ia.js           — IA Jutia (FlexSearch + stats + QA)
 │   └── ia-ingest.js    — (Full) Parsers + Transformers.js
 ├── Modules (modules/)

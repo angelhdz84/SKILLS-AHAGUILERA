@@ -129,6 +129,93 @@ window.UI = {
 ### `core/theme.js`
 [Inyección de CSS variables desde APP_CONFIG.tema.colores. window.themeStore]
 
+### `core/search-palette.js`
+[Command Palette (Cmd+K) global con navegación de módulos + búsqueda IA integrada.
+
+- Atajo: `Ctrl+K` / `Cmd+K` (global, no interfiere con inputs)
+- Navegación por teclado: flechas arriba/abajo + Enter
+- Escape o click fuera para cerrar
+- Si `window.ia` existe (IA Jutía activa), añade resultados de búsqueda FlexSearch
+- Renderiza vía Alpine `x-teleport` desde markup en index.html
+
+```javascript
+// core/search-palette.js — se carga después de core/app.js
+// Ver template en code-generator/templates/search-palette.js
+```
+
+![Busca módulos al instante: escribe "inven" y muestra acceso directo a Inventario]
+
+**Reglas:**
+- ✅ `@keydown.window.cmd.k.prevent` como único atajo
+- ✅ Si IA Jutía está activa, su palette se unifica aquí (no duplicar atajos)
+- ✅ Navegación por teclado con índice seleccionado resaltado
+- ✅ Cerrar siempre con Escape
+
+**Markup en index.html (x-teleport a body):**
+```html
+<div x-data="searchPalette"
+     @keydown.window.cmd.k.prevent="openPalette()"
+     @keydown.window.ctrl.k.prevent="openPalette()"
+     @keydown="onKeydown">
+  <template x-teleport="body">
+    <div x-show="open" x-cloak class="fixed inset-0 z-[60] flex items-start justify-center pt-[12vh]"
+         @click.away="closePalette">
+      <div class="absolute inset-0 bg-base-300/60 backdrop-blur-sm"></div>
+      <div class="relative w-full max-w-xl">
+        <div class="bg-base-100 rounded-2xl shadow-2xl border border-base-300 overflow-hidden">
+          <!-- Input -->
+          <div class="flex items-center gap-3 px-5 py-4 border-b border-base-200">
+            <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input x-model="query" type="text" class="sp-search-input flex-1 bg-transparent border-0 outline-none text-base placeholder:text-base-content/30"
+                   placeholder="Buscar módulos o registros...">
+            <kbd class="hidden sm:inline-flex px-2 py-0.5 text-xs rounded bg-base-200 text-base-content/50">ESC</kbd>
+          </div>
+          <!-- Results -->
+          <div class="max-h-80 overflow-y-auto p-2">
+            <template x-if="!hasResults && query.length >= 2">
+              <div class="px-3 py-8 text-center text-sm text-base-content/40">
+                <svg class="w-8 h-8 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Sin resultados para "<span x-text="query"></span>"
+              </div>
+            </template>
+            <template x-if="!query">
+              <div class="px-3 py-2 text-xs font-semibold text-base-content/40 uppercase tracking-wider">Módulos</div>
+            </template>
+            <template x-for="(item, i) in filtered" :key="item.id">
+              <div @click="selectItem(item)"
+                   :class="{'bg-primary/10 text-primary': keyboardNav && i === selectedIdx, 'hover:bg-base-200': !(keyboardNav && i === selectedIdx)}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-base-200 text-base-content/60 shrink-0">
+                  <i :class="'bi ' + item.icon" class="text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium truncate" x-text="item.title"></div>
+                  <div x-show="item.subtitle" class="text-xs text-base-content/40 truncate" x-text="item.subtitle"></div>
+                </div>
+                <span x-show="item.type === 'module'" class="badge badge-ghost badge-sm">módulo</span>
+                <span x-show="item.type === 'record'" class="badge badge-ghost badge-sm">registro</span>
+              </div>
+            </template>
+          </div>
+          <!-- Footer -->
+          <div class="flex items-center gap-4 px-5 py-2.5 border-t border-base-200 text-xs text-base-content/40">
+            <span class="flex items-center gap-1"><kbd class="kbd kbd-xs">↑↓</kbd> Navegar</span>
+            <span class="flex items-center gap-1"><kbd class="kbd kbd-xs">↵</kbd> Abrir</span>
+            <span class="flex items-center gap-1"><kbd class="kbd kbd-xs">Esc</kbd> Cerrar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+```
+
+**Si IA Jutía está activa**, la búsqueda de registros se integra automáticamente a través de `window.ia.search()`.]
+
 ### `core/app.js`
 [Router hash-based, carga de módulos, init global. window.appRouter]
 
@@ -149,13 +236,18 @@ API:
 ```javascript
 window.FileStore = {
   APP_DATA_DIR: string,        // resuelve según perfil
-  async save(file, tipo, nombre) → path,
+  async save(tipo, nombre, blob) → { path, hash, url },
   async getURL(path) → string,  // URL para <img> o <a>
   async read(path) → Blob,
   async delete(path),
   async cleanOrphans(),         // elimina archivos con refCount === 0
-  async meta(path) → object     // metadata desde db._files
+  async meta(path) → object,    // metadata desde db._files
+  avatarDefault() → string      // ruta al avatar default
 }
+```
+
+```javascript
+// Ver template completo en code-generator/templates/file-store.js
 ```]
 
 ### `core/sync.js` (siempre incluido — export/import .ateje-backup)
@@ -305,6 +397,9 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="core/ui.js"></script>
 <script src="core/theme.js"></script>
 <script src="core/app.js"></script>
+<script src="core/search-palette.js"></script>
+<script src="core/file-store.js"></script>
+<script src="core/sync.js"></script>
 
 <!-- Main -->
 <script src="main.js"></script>
@@ -639,7 +734,8 @@ const ASSETS = [
   'assets/js/libs/crypto-js.js',
   'core/db.js', 'core/crypto.js',
   'core/ui.js', 'core/theme.js',
-  'core/app.js', 'main.js'
+  'core/app.js', 'core/search-palette.js',
+  'core/file-store.js', 'core/sync.js', 'main.js'
 ];
 
 self.addEventListener('install', (e) => {
