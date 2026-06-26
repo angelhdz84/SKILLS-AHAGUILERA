@@ -94,7 +94,37 @@ window.uuid = function() {
 ```
 
 ### `core/ui.js`
-[toast, confirm, loading, format.currency/date. window.UI expuesto]
+[API estándar de UI expuesta en `window.UI`:
+
+```javascript
+window.UI = {
+  // Toast: feedback no bloqueante. tipos: 'success' | 'error' | 'warning' | 'info'
+  toast(msg, tipo = 'info', duracion = 4000),
+
+  // Confirm: modal de confirmación. Retorna Promise<boolean>
+  confirm(msg, titulo = 'Confirmar'),
+
+  // ModalForm: renderiza formulario dentro de <dialog> Alpine+DaisyUI
+  // html: template string con el formulario
+  // onSave: async(data) → se llama al submit, cierra modal si ok
+  modalForm(titulo, html, onSave),
+
+  // Loading: overlay de carga
+  loading(show = true),
+
+  // Formateo
+  formatDate(date),       // "24 jun 2026"
+  formatCurrency(n),      // "$1,234.00"
+  formatBytes(bytes),     // "1.5 MB"
+  formatRelative(date)    // "hace 2 horas"
+}
+```
+
+**Reglas de uso (padrones):**
+- ✅ Feedback siempre con `UI.toast()`, NUNCA `alert()` nativo
+- ✅ Antes de `db.delete()`, SIEMPRE `UI.confirm()`
+- ✅ Todos los formularios crear/editar vía `UI.modalForm()`
+- ✅ Operaciones largas (export, import, cálculo) con `UI.loading(true/false)`]
 
 ### `core/theme.js`
 [Inyección de CSS variables desde APP_CONFIG.tema.colores. window.themeStore]
@@ -344,6 +374,12 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Operaciones Dexie sin try/catch ni Result Type? → AGREGAR manejo de errores
 - [ ] ¿Botón sin loading state en operaciones async? → AÑADIR `loading-spinner` de DaisyUI
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
+- [ ] **Padrones UI**: ¿Form crear/editar fuera de modal? → REEMPLAZAR por `UI.modalForm()`
+- [ ] **Padrones UI**: ¿`alert()` nativo en vez de `UI.toast()`? → REEMPLAZAR
+- [ ] **Padrones UI**: ¿`db.delete()` sin `UI.confirm()` previo? → AGREGAR confirmación
+- [ ] **Padrones UI**: ¿Lista sin tabla responsive (`overflow-x-auto` + `table`)? → CORREGIR
+- [ ] **Padrones UI**: ¿Falta empty state cuando no hay datos? → AGREGAR
+- [ ] **Padrones UI**: ¿Lista usa spinner en vez de skeleton? → REEMPLAZAR por skeleton DaisyUI
 - [ ] **Perfil**: ¿perfil=Full sin `neutralino.config.json`? → ❌ RECHAZAR (Neutralino requiere config)
 - [ ] **Perfil**: ¿perfil=Full y usa `import`/`export`? → ❌ RECHAZAR (Neutralino sirve HTML directo, sin bundler)
 
@@ -359,7 +395,7 @@ Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-fi
 
 ## 📐 PATRONES DE CÓDIGO OBLIGATORIOS
 
-### `module.js` (Estructura Base)
+### `module.js` (Estructura Base + Padrones UI)
 ```javascript
 const [NombreModulo] = {
   id: '[id-lowercase]',
@@ -368,26 +404,61 @@ const [NombreModulo] = {
 
   async init() {
     console.log(`💡 [${this.id}] Inicializado`);
-    // Carga única de datos o listeners
+    this.cargarDatos();
   },
 
   async render(params = {}) {
-    // Retorna HTML o manipula #app-content
-    // Usa Alpine x-data, DaisyUI, Icons, Animate.css
-    return `...`;
+    // Retorna HTML según module.html template con:
+    // - Toolbar con botón Agregar + búsqueda
+    // - Lista en <table class="table">
+    // - Empty state si no hay datos
+    // - Loading skeleton
   },
 
   destroy() {
     // Limpieza de intervals/listeners
   },
 
-  // Métodos privados
+  // ─── CRUD con padrones UI ───
+
+  async abrirForm(item = null) {
+    const editando = !!item
+    if (editando) {
+      // Descifrar campos sensibles antes de mostrar
+      const descifrado = { ...item }
+      if (APP_CONFIG.cifrado.camposSensibles) {
+        for (const campo of APP_CONFIG.cifrado.camposSensibles) {
+          if (descifrado[campo]) descifrado[campo] = cryptoHelpers.decrypt(descifrado[campo])
+        }
+      }
+    }
+    const html = `
+      <div class="space-y-4">
+        <label class="form-control w-full">
+          <span class="label-text">Nombre</span>
+          <input type="text" x-model="form.nombre"
+                 class="input input-bordered" />
+        </label>
+      </div>`
+    await UI.modalForm(
+      editando ? 'Editar [Título]' : 'Nuevo [Título]',
+      html,
+      async (data) => {
+        if (editando) await this.actualizar(item.id, data)
+        else await this.guardar(data)
+        await this.cargarDatos()
+      }
+    )
+  },
+
   async guardar(datos) {
     const registro = {
       id: uuid(),
       // Campos sensibles → cifrar
-      nombre: cryptoHelpers.encrypt(datos.nombre),
-      email: cryptoHelpers.encrypt(datos.email),
+      nombre: APP_CONFIG.cifrado.camposSensibles.includes('nombre')
+        ? cryptoHelpers.encrypt(datos.nombre) : datos.nombre,
+      email: APP_CONFIG.cifrado.camposSensibles.includes('email')
+        ? cryptoHelpers.encrypt(datos.email) : datos.email,
       // No sensibles → directos
       telefono: datos.telefono,
       createdBy: APP_CONFIG?.usuarioActual || 'anon',
@@ -401,13 +472,27 @@ const [NombreModulo] = {
   async actualizar(id, datos) {
     const existente = await db.[tabla].get(id);
     if (!existente) { UI.toast('Registro no encontrado', 'error'); return; }
-    await db.[tabla].put({
-      ...existente,
-      ...datos,
-      id, // preservar UUID original
-      updatedAt: new Date()
-    });
+    const actualizado = { ...existente, ...datos, id, updatedAt: new Date() };
+    // Re-cifrar campos sensibles si vienen descifrados del form
+    for (const campo of APP_CONFIG.cifrado.camposSensibles) {
+      if (actualizado[campo] && !actualizado[campo].startsWith('U2FsdGVkX1')) {
+        actualizado[campo] = cryptoHelpers.encrypt(actualizado[campo])
+      }
+    }
+    await db.[tabla].put(actualizado);
     UI.toast('Actualizado correctamente', 'success');
+  },
+
+  async eliminar(item) {
+    const ok = await UI.confirm(`Eliminar ${item.nombre || 'este registro'}?`)
+    if (!ok) return
+    try {
+      await db.[tabla].delete(item.id)
+      UI.toast('Eliminado correctamente', 'success')
+      await this.cargarDatos()
+    } catch (e) {
+      UI.toast(e.message, 'error')
+    }
   }
 };
 
@@ -415,24 +500,119 @@ window.MODULES = window.MODULES || {};
 window.MODULES[[NombreModulo].id] = [NombreModulo];
 ```
 
-### `module.html` (Reglas UI)
+### `module.html` (Reglas UI + Padrones)
+
+**Reglas obligatorias (padrones):**
+1. ✅ **Forms crear/editar SIEMPRE en modal** vía `UI.modalForm()`. El botón "Agregar" abre el modal, no navega.
+2. ✅ **Feedback** con `UI.toast()`. NUNCA `alert()`.
+3. ✅ **Antes de borrar** mostrar `UI.confirm()`.
+4. ✅ **Toolbar** con botón "Agregar" (abre modal), búsqueda (input con debounce), y "PDF" si aplica.
+5. ✅ **Lista** en `<div class="overflow-x-auto">` con `<table class="table">`.
+6. ✅ **Avatar** en listas si el módulo tiene campo foto: `<div class="avatar"><div class="w-10 rounded-full">`.
+7. ✅ **Empty state** cuando no hay datos: icono grande + mensaje + botón "Agregar primero".
+8. ✅ **Loading state** con skeleton (clases de DaisyUI), no spinner genérico.
+
 ```html
+<!-- Vista principal: toolbar + lista + empty state -->
 <div x-data="[id]Data()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <!-- Título -->
   <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
     <i class="bi bi-[icon-name]"></i> [Título]
   </h2>
-  
-  <!-- Formulario/Tabla con DaisyUI -->
-  <div class="card bg-base-100 shadow-xl p-4">
-    <label class="form-control w-full">
-      <span class="label-text">Nombre</span>
-      <input type="text" x-model="form.nombre" class="input input-bordered focus:ring-2 focus:ring-primary" />
-    </label>
-    <button class="btn btn-primary mt-4" @click="guardar()">
-      <i class="bi bi-check-lg"></i> Guardar
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button class="btn btn-primary" @click="abrirForm()">
+      <i class="bi bi-plus-lg"></i> Agregar
+    </button>
+    <input type="search" x-model="busqueda" placeholder="Buscar..."
+           class="input input-bordered flex-1 min-w-[200px]" />
+    <button class="btn btn-ghost" @click="exportPDF()" x-show="items.length">
+      <i class="bi bi-file-earmark-pdf"></i> PDF
     </button>
   </div>
+
+  <!-- Lista -->
+  <template x-if="items.length">
+    <div class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead>
+          <tr>
+            <th x-show="APP_CONFIG.ui.avatars">Foto</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr x-for="item in items">
+            <!-- Avatar -->
+            <td x-show="APP_CONFIG.ui.avatars">
+              <div class="avatar">
+                <div class="w-10 rounded-full">
+                  <img :src="FileStore?.getURL(item.avatar) || APP_CONFIG.data.avatars.default"
+                       @error="$el.src=APP_CONFIG.ui.avatarDefault">
+                </div>
+              </div>
+            </td>
+            <td x-text="item.nombre"></td>
+            <td>
+              <button class="btn btn-sm btn-ghost" @click="abrirForm(item)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-ghost text-error" @click="eliminar(item)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </template>
+
+  <!-- Empty state -->
+  <template x-if="!items.length && !cargando">
+    <div class="flex flex-col items-center justify-center py-16 text-base-content/50">
+      <i class="bi bi-[icon-name] text-6xl mb-4"></i>
+      <p class="text-lg mb-4">No hay [título] aún</p>
+      <button class="btn btn-primary" @click="abrirForm()">
+        <i class="bi bi-plus-lg"></i> Agregar primero
+      </button>
+    </div>
+  </template>
+
+  <!-- Loading skeleton -->
+  <template x-if="cargando">
+    <div class="space-y-3">
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+    </div>
+  </template>
 </div>
+```
+
+**Uso de `UI.modalForm()` en `module.js`:**
+```javascript
+async abrirForm(item = null) {
+  const editando = !!item
+  const html = `
+    <div class="space-y-4">
+      <label class="form-control w-full">
+        <span class="label-text">Nombre</span>
+        <input type="text" x-model="form.nombre"
+               class="input input-bordered" />
+      </label>
+    </div>`
+  await UI.modalForm(
+    editando ? 'Editar [Título]' : 'Nuevo [Título]',
+    html,
+    async (data) => {
+      if (editando) await this.actualizar(item.id, data)
+      else await this.guardar(data)
+      await this.cargarLista()
+    }
+  )
+}
 ```
 
 ---
