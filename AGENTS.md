@@ -151,12 +151,14 @@ Para usar el Ateje Stack desde cualquier proyecto (no solo dentro de este repo):
 .\uninstall-global.ps1
 ```
 
-`install-global.ps1` crea junctions en `~/.opencode/skills/` apuntando a cada skill del repo y agrega `skills.paths` al config global (`~/.config/opencode/opencode.json`). `uninstall-global.ps1` revierte ambas operaciones sin dejar rastro.
+`install-global.ps1` crea junctions en `~/.opencode/skills/` apuntando a cada skill del repo y agrega `skills.paths` al config global (`~/.config/opencode/opencode.json`). Usa `ConvertFrom-Json`/`ConvertTo-Json` para manipulación robusta del JSON (no regex frágil). `uninstall-global.ps1` revierte ambas operaciones sin dejar rastro usando `PSObject.Properties.Remove()`.
 
 Efecto:
 - `/new`, `/pro`, `/build`, `/deploy`, etc. disponibles desde cualquier directorio
 - Skills se actualizan solas al hacer `git pull` (son junctions, no copias)
 - Sin interferencia con otros proyectos (config sandboxeado en `skills.paths`)
+- Agentes del stack registrados globalmente con rutas absolutas al repo
+- `{file:~/.opencode/skills/...}` resuelve correctamente desde cualquier proyecto
 
 ## Directorios generados (no versionar)
 
@@ -174,7 +176,7 @@ Keys validas del schema actual (`$schema: https://opencode.ai/config.json`):
 | `mcpServers` | `mcp` | objeto con `type` (local/remote) y `command` como array unico |
 | `commands` (string path) | auto-descubierto | opencode escanea `.opencode/commands/` automaticamente |
 | `rules` | `instructions` | array de paths a archivos markdown |
-| `skills` (array) | `skills.paths` | objeto con `paths: [".opencode/skills"]` para escaneo recursivo de SKILL.md |
+| `skills` (array) | `skills.paths` | objeto con `paths: ["."]` para escaneo recursivo de SKILL.md desde raíz |
 
 Usar `{file:ruta}` inline para prompts de agentes. Ver `opencode.json` en raiz como referencia.
 
