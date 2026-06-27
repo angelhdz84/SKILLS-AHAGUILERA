@@ -34,8 +34,8 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
-| `setup-init/` | Valida entorno, crea estructura, instala librerías | lite, full |
-| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` | lite, full |
+| `setup-init/` | Valida entorno, crea estructura, instala librerías. Genera defaults avatar/placeholder en `data/` | lite, full |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` (incl. `search-palette.js`, `file-store.js`, `delete.js`) | lite, full |
 | `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
 | `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
@@ -133,7 +133,7 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 | `/compliance` | — | stack-compliance-guard manual |
 | `/status` | — | Lee pipeline state (specs/, project.config.js, docs/) |
 | `/archive` | — | Mueve spec + reporte a specs/archive/ |
-| `/docs` | — | Abre docs/guia-skills-mcps.html |
+| `/docs` | — | Abre docs/guia-estudio-ateje.md (guía completa de estudio) |
 | `/ia` | `mini ia` | Activa ia-jutia (pregunta perfil Lite/Full/No) |
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
@@ -160,7 +160,9 @@ Efecto:
 
 ## Directorios generados (no versionar)
 
-`docs/` (incl. `docs/comercial/`), `specs/`, `wiki/`, `.omd/` son output de engines. `tests/` contiene app de prueba y resultados.
+`docs/` (incl. `docs/comercial/`) es output de engines. `specs/`, `wiki/`, `.omd/` también. `tests/` contiene app de prueba y resultados.
+
+**Excepciones versionadas:** `docs/guia-estudio-ateje.md`, `docs/stack-completo.md` y este `AGENTS.md` se mantienen en el repo como documentación viva del meta-repo.
 
 ## Config (`opencode.json`)
 
@@ -196,3 +198,9 @@ Niveles de entrega:
 - **Enterprise** (Full custom): .exe + .apk + código fuente completo + UI personalizada + docs + script brand.ps1 para re-brandeo
 
 Para white-label: ejecutar `brand.ps1` con parámetros del cliente antes de empaquetar.
+
+## Documentación de Estudio
+
+- `docs/guia-estudio-ateje.md` — Guía completa para estudiar y comprender el Stack Ateje (arquitectura, core, perfiles, 13 AHA Apps, módulos compartidos, pipeline, buenas prácticas)
+- `docs/stack-completo.md` — Referencia técnica del stack completo (versión detallada para desarrolladores)
+- `docs/guia-stack-skills-layer.md` — Guía de habilidades y capas del stack

@@ -746,3 +746,11 @@ Cada paso es interactivo — OpenCode pausa y espera confirmacion.
 
 *Documento generado por Ateje Stack v3.0*
 *Skills OpenCode en `D:\REPOSITORIOS GitHUB\Ateje`*
+
+---
+
+## 📚 Recursos de Estudio
+
+- **`docs/guia-estudio-ateje.md`** — Guía completa de estudio del Stack Ateje: visión general, core, perfiles, 13 AHA Apps, módulos compartidos, pipeline, buenas prácticas (981 líneas con tablas, schemas y ejemplos)
+- **`docs/stack-completo.md`** — Este documento: referencia técnica detallada del stack
+- **`docs/guia-stack-skills-layer.md`** — Guía de habilidades y capas del stack
