@@ -34,13 +34,17 @@ foreach ($skill in $ATEJE_SKILLS) {
 }
 
 Write-Host "`n  Actualizando config global..." -ForegroundColor Yellow
-$json = Get-Content -Raw $GLOBAL_CONFIG
-if ($json -notmatch [regex]::Escape('~/.opencode/skills/')) {
-    $insertAt = $json.IndexOf('"default_agent"')
-    $insertAt = $json.IndexOf(',', $insertAt) + 1
-    $section = "`n  `"skills`": {`n    `"paths`": [`"~/.opencode/skills/`"]`n  },"
-    $json = $json.Substring(0, $insertAt) + $section + $json.Substring($insertAt)
-    $json | Set-Content -Path $GLOBAL_CONFIG -Encoding UTF8
+$config = Get-Content -Raw $GLOBAL_CONFIG | ConvertFrom-Json
+$hasSkills = ($null -ne $config.skills) -and ($null -ne $config.skills.paths) -and ($config.skills.paths -contains "~/.opencode/skills/")
+if (-not $hasSkills) {
+    if ($null -eq $config.skills) {
+        $config = $config | Add-Member -NotePropertyName "skills" -NotePropertyValue @{ paths = @("~/.opencode/skills/") } -PassThru
+    } elseif ($null -eq $config.skills.paths) {
+        $config.skills = $config.skills | Add-Member -NotePropertyName "paths" -NotePropertyValue @("~/.opencode/skills/") -PassThru
+    } else {
+        $config.skills.paths = @($config.skills.paths) + @("~/.opencode/skills/")
+    }
+    $config | ConvertTo-Json -Depth 10 | Set-Content -Path $GLOBAL_CONFIG -Encoding UTF8
     Write-Host "  skills.paths agregado" -ForegroundColor Green
 } else {
     Write-Host "  skills.paths ya configurado" -ForegroundColor Yellow

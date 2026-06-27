@@ -24,11 +24,14 @@ foreach ($skill in $ATEJE_SKILLS) {
 if ($removed -eq 0) { Write-Host "  No se encontraron junctions" -ForegroundColor Yellow }
 
 Write-Host "`n  Limpiando config global..." -ForegroundColor Yellow
-$json = Get-Content -Raw $GLOBAL_CONFIG
-$escaped = [regex]::Escape('~/.opencode/skills/')
-if ($json -match $escaped) {
-    $json = $json -replace '"skills":\s*\{[^}]*\},\s*', "`n"
-    $json | Set-Content -Path $GLOBAL_CONFIG -Encoding UTF8
+$config = Get-Content -Raw $GLOBAL_CONFIG | ConvertFrom-Json
+$hadSkills = ($null -ne $config.skills) -and ($null -ne $config.skills.paths)
+if ($hadSkills) {
+    $config.skills.paths = @($config.skills.paths) | Where-Object { $_ -ne "~/.opencode/skills/" }
+    if ($config.skills.paths.Count -eq 0) {
+        $config.PSObject.Properties.Remove('skills')
+    }
+    $config | ConvertTo-Json -Depth 10 | Set-Content -Path $GLOBAL_CONFIG -Encoding UTF8
     Write-Host "  skills.paths eliminado del config" -ForegroundColor Green
 } else {
     Write-Host "  No hay skills.paths en el config" -ForegroundColor Yellow
