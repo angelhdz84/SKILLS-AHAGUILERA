@@ -6,7 +6,7 @@ compatibility: Requiere specs/[app].md + archivos generados por code-generator. 
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   triggers: ["validar app", "/test", "/validate", "/refactor", "ui review", "diseno revision", "final qa", "rubric"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "daisyui", "bootstrap-icons", "animate.css"]
   language: es
@@ -31,7 +31,7 @@ Verificar automáticamente tras cada output de código:
 - ❌ Sin `fetch`/`axios`
 - ✅ CryptoJS presente para campos sensibles
 - ✅ Variables globales (`Dexie`, `CryptoJS`, `Alpine`)
-- ✅ Librerías adicionales en `assets/js/libs/` (Lite) o `package.json` (Full)
+- ✅ Librerías adicionales en `assets/js/libs/` (Lite) o `package.json` (Professional/Business)
 
 Si hay violaciones → BLOCK. No mostrar código hasta corregir.
 
@@ -56,7 +56,7 @@ Comparar la UI generada contra DESIGN.md (o `specs/[app].md` secciones 10-15):
 - **Consola DevTools**: 0 errors, 0 warnings.
 - **Lighthouse**: accessibility score ≥ 90.
 - **Playwright E2E**: tests automatizados (si existen en `tests/`).
-- **Perfil Full**: verificar que Bun compila correctamente.
+- **Perfil Professional/Business**: verificar que `neu build --release` compila correctamente.
 - **Perfil Lite**: verificar que `index.html` abre sin errores en file://.
 
 ### Fase 4 — QA Rubric (hereda de omd:final-qa)

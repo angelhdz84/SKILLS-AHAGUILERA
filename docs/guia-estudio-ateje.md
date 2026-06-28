@@ -383,7 +383,7 @@ window.APP_CONFIG = {
   },
 
   // Perfil
-  perfil: 'lite',            // 'lite' | 'full'
+  perfil: 'lite',            // 'lite' | 'professional' | 'business'
   iaJutia: 'no',             // 'lite' | 'full' | 'no'
 
   // Módulos activos
@@ -426,7 +426,7 @@ window.APP_CONFIG = {
   // Sección sync (siempre)
   sync: {
     primaryFormat: 'json',
-    secondaryFormats: APP_CONFIG.perfil === 'full' ? ['sqlite'] : [],
+    secondaryFormats: APP_CONFIG.perfil === 'professional' || APP_CONFIG.perfil === 'business' ? ['sqlite'] : [],
     includeFiles: true,
     encrypt: true,
     maxExportSize: 50 * 1024 * 1024

@@ -6,7 +6,7 @@ compatibility: Requiere specs/[app].md con DESIGN.md (secciones 10-15). Funciona
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   triggers: ["generar codigo", "/build", "disenar", "aplicar diseno", "ui", "interfaz", "modulo", "componente", "make it warmer", "make it cooler", "mas formal", "mas moderno"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "daisyui", "alpine-ui-patterns", "bootstrap-icons", "animate.css"]
   language: es

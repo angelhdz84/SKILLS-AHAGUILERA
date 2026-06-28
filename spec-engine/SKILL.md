@@ -6,7 +6,7 @@ compatibility: Requiere @AGENTS.md. Invoca omd:init para selección de referenci
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   triggers: ["definir spec app", "especificacion", "historia de usuario", "definir app", "/spec", "design system", "set up our design system"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
   language: es
@@ -49,7 +49,7 @@ Recolectar:
 💡 Descripción breve (1-2 líneas): [Ej: App para recepcionistas. Todo offline.]
 🎨 Referencia de marca: [id o "ninguna"]
 🔑 Módulos requeridos: [Ej: dashboard, pacientes, citas, reportes, settings]
-📦 Perfil: [lite/full]
+📦 Perfil: [lite/professional/business]
 🧠 IA Jutia: [lite/full/no]
 ```
 
@@ -57,11 +57,11 @@ Recolectar:
 
 1. **Descripción general** — Propósito, audiencia, problema que resuelve.
 2. **Stack técnico** — Alpine.js, Dexie, CryptoJS, Tailwind + DaisyUI, Bootstrap Icons, Animate.css.
-3. **Modelo de datos** — Tablas Dexie con campos, índices, cifrado. Si Full: schema SQL adicional.
+3. **Modelo de datos** — Tablas Dexie con campos, índices, cifrado. Si Professional/Business: schema SQL adicional.
 4. **Módulos** — Lista de módulos con sus responsabilidades y relaciones.
 5. **Flujos de usuario** — Journeys principales por módulo.
 6. **Reglas de negocio** — Validaciones, cálculos, constraints.
-7. **Perfiles** — Lite vs Full: diferencias concretas.
+7. **Perfiles** — Lite vs Professional vs Business: diferencias concretas.
 8. **Pruebas** — Estrategia: Playwright E2E + pytest.
 9. **Librerías adicionales** — Detectadas de la descripción (setup-init las inyecta).
 
@@ -104,7 +104,7 @@ Ofrecer 4 opciones + "Otra", esperar respuesta una por una.
 ## 4. Módulos
 ## 5. Flujos de usuario
 ## 6. Reglas de negocio
-## 7. Perfiles (Lite/Full)
+## 7. Perfiles (Lite/Professional/Business)
 ## 8. Pruebas
 ## 9. Librerías Adicionales
 ## 10. Brand Voice          ← solo si hay referencia

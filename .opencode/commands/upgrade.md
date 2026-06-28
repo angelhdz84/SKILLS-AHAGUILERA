@@ -1,6 +1,6 @@
 # /upgrade
 
-Migra una app Ateje entre perfiles Lite/Full e IA Lite/Full.
+Migra una app Ateje entre perfiles Lite/Professional/Business e IA Lite/Full.
 
 No modifica módulos ni datos. Solo agrega/remueve archivos de infraestructura.
 
@@ -10,7 +10,7 @@ No modifica módulos ni datos. Solo agrega/remueve archivos de infraestructura.
 ```
 /usar upgrade-engine
 → Diagnóstico de perfil actual
-→ Seleccionar destino: Lite→Full, IA Lite→Full
-→ Upgrade completado: 6 archivos agregados
+→ Seleccionar destino: Lite→Professional, Professional→Business, IA Lite→Full
+→ Upgrade completado: archivos agregados
 → Siguiente paso: /deploy
 ```

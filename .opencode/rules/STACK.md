@@ -1,6 +1,6 @@
 # Stack offline-first (no negociable)
 
-## Reglas comunes (ambos perfiles)
+## Reglas comunes (todos los perfiles)
 
 - ✅ Variables globales (`Alpine`, `Dexie`, `CryptoJS`) para reactividad
 - ✅ `cryptoHelpers.encrypt()` en campos sensibles (CryptoJS en ambos)
@@ -9,27 +9,38 @@
 - ❌ Fetch/axios para datos — usar Dexie (IndexedDB local)
 - ✅ Todo en español (UI, comentarios, docs)
 
-## Perfil Lite (file://)
+## Perfil Lite (Essential — file://)
 
 - ❌ `import`/`export`/`type="module"` — CORS en `file://` bloquea ES6 modules
 - ❌ Build steps — la app se abre con doble clic en `index.html`
 - ✅ Librerías en `assets/js/libs/` vía curl
 - ✅ Service Worker para PWA opcional
+- **Nivel comercial:** Essential
+- **IA Jutía:** Lite (FlexSearch + estadísticas + predicciones)
+- **Entregable:** ZIP + GitHub Pages. HTML visible (demo online)
 
-## Perfil Full (NeutralinoJS .exe + Capacitor .apk)
+## Perfil Professional (Neutralino .exe + Fixed WebView2)
 
 - ✅ `import`/`export` NO permitido en `public/` (mismo que Lite, mismo código)
-- ✅ Build .exe: `neu build --release` → `dist/[app]-win_x64.zip` (~2MB runtime)
-- ✅ Build .apk: `npx cap sync android && cd android && ./gradlew assembleRelease`
+- ✅ Build .exe: `neu build --release` + `package-professional.ps1`
+- ✅ **Sin dependencia de WebView2 del sistema** — incluye Fixed Version embebida
+- ✅ Fixed WebView2 stripped: solo x64 + es-419.pak + swiftshader (WebGPU)
 - ✅ Ventana nativa, bandeja sistema, notificaciones (sin terminal)
-- ✅ .apk Android nativo con Capacitor (WebView Chrome, plugins nativos)
 - ✅ Neutralino API vía `window.Neutrino` en `public/core/neutralino.js`
-- ✅ Dependencias vía `npm install` (no Bun)
 - ✅ `neutralino.config.json` en raíz del proyecto
-- ✅ `capacitor.config.json` en raíz del proyecto (si se genera .apk)
-- ✅ `android/` directorio con proyecto Gradle (si se genera .apk)
-- ✅ Descargar `neutralino.js`: `curl -o public/core/neutralino.js https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js`
 - ✅ Mismo frontend que Lite en `public/` (Alpine + Dexie + CryptoJS + DaisyUI)
-- ✅ **Runtime detection**: `window.CAPACITOR` y `window.native.*` helpers con fallback web
-- ✅ **Plugins Capacitor**: SQLite FTS5 nativo, cámara, GPS, notificaciones, compartir
-- Opcional: WebGPU acceleration en WebView2 (Edge Chromium) / Android WebView para Transformers.js
+- ✅ **IA Jutía Full incluida**: FlexSearch + ingesta documentos + QA (WebGPU acelerado)
+- ✅ **Sin HTML visible para el cliente** (resources.neu ofuscado con terser)
+- ❌ No incluye .apk (solo .exe Windows)
+- 📦 Tamaño entregable: ~30MB ZIP (app ~3MB + WebView2 fixed stripped ~53MB → ~28MB comprimido)
+
+## Perfil Business (Professional + .apk + branding + docs)
+
+- Todo lo del perfil Professional, más:
+- ✅ Build .apk: `npx cap sync android && cd android && ./gradlew assembleRelease`
+- ✅ .apk Android nativo con Capacitor (SQLite FTS5, cámara, GPS, notificaciones, compartir)
+- ✅ `capacitor.config.json` en raíz del proyecto
+- ✅ `android/` directorio con proyecto Gradle
+- ✅ Branding personalizado: logo, colores, nombre del cliente aplicados en toda la UI
+- ✅ Documentación personalizada: `GUIA_USUARIO.md`, `GUIA_INSTALACION.md`
+- 📦 Tamaño entregable: ~35MB ZIP

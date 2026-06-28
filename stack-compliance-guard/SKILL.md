@@ -6,7 +6,7 @@ compatibility: Requiere @AGENTS.md presente. Funciona como capa de validación p
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "2.4"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "stack-compliance-guard skill"
   triggers: ["validar stack", "comprobar reglas", "corregir imports", "verificar cifrado", "file:// compatible"]
   stack: ["offline-first", "no-imports", "file-protocol", "global-variables", "cryptojs", "dexie", "alpine"]
@@ -361,9 +361,9 @@ Antes de mostrar código al usuario, verificar:
 === CHECKS DE PERFIL ===
 [ ] ¿Perfil Lite pero usa `import`/`export` en módulos? → ❌ RECHAZAR
 [ ] ¿Perfil Lite pero usa `fetch`/`axios`? → ❌ RECHAZAR (usar Dexie)
-[ ] ¿Perfil Full pero falta `src/index.js`? → ⚠️ AGREGAR entry point
-[ ] ¿Perfil Full y modelos IA se cargan vía CDN? → ❌ RECHAZAR (usar `assets/models/`)
-[ ] ¿Perfil Full pero `import` en `public/` JS? → ❌ RECHAZAR (solo en src/)
+[ ] ¿Perfil Professional/Business pero falta `neutralino.config.json`? → ❌ RECHAZAR (Neutralino requiere config)
+[ ] ¿Perfil Professional/Business y modelos IA se cargan vía CDN? → ❌ RECHAZAR (usar `assets/models/`)
+[ ] ¿Perfil Professional/Business pero usa `import`/`export`? → ❌ RECHAZAR (Neutralino sirve HTML directo, sin bundler)
 
 === CHECKS DE ACCESIBILIDAD ===
 [ ] ¿Botón con solo icono y sin `aria-label`? → ❌ AÑADIR aria-label

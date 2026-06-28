@@ -1,8 +1,8 @@
 ---
 name: deployment-jigue
-description: Publica cambios a GitHub, despliega GitHub Pages y empaqueta segun perfil. Lite: ZIP + Pages. Full: NeutralinoJS .exe / Capacitor .apk + Pages + Release.
+description: Publica cambios a GitHub, despliega GitHub Pages y empaqueta segun perfil. Lite: ZIP + Pages. Professional: Neutralino .exe + Fixed WV2. Business: .exe + .apk (Capacitor) + branding + docs.
 license: MIT
-compatibility: Requiere GitHub MCP configurado en opencode.json con GITHUB_TOKEN. Repositorio con GitHub Pages habilitado y action deploy-pages.yml existente. Perfil Full requiere @neutralinojs/neu CLI.
+compatibility: Requiere GitHub MCP configurado en opencode.json con GITHUB_TOKEN. Repositorio con GitHub Pages habilitado y action deploy-pages.yml existente. Perfil Professional/Business requiere @neutralinojs/neu CLI.
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "2.0"
@@ -22,7 +22,7 @@ meta:
     - "compilar"
     - "lanzar"
   stack: ["git", "github", "github-pages", "neutralinojs", "capacitor"]
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   language: es
   mcp:
     - "github"
@@ -30,10 +30,10 @@ meta:
 
 # SKILL: deployment-jigue (Publicacion + Deploy + Empaquetado)
 
-> **Proposito**: Publicar cambios locales a GitHub, desplegar a GitHub Pages y empaquetar segun el perfil del proyecto. Lite genera ZIP. Full genera .exe (NeutralinoJS) + .apk (Capacitor).
+> **Proposito**: Publicar cambios locales a GitHub, desplegar a GitHub Pages y empaquetar segun el perfil del proyecto. Lite genera ZIP+Pages. Professional genera .exe (Neutralino) + Fixed WV2. Business genera .exe + .apk (Capacitor) + branding + docs.
 > **Modo**: 5 fases secuenciales | **Idioma**: ES | **Contexto**: Repositorio git local con remoto en GitHub
 > **Input**: Directorio git local + confirmacion del usuario
-> **Output**: Commit + Push + Pages deploy + (Lite) ZIP / (Full) .exe + Release
+> **Output**: Commit + Push + Pages deploy + (Essential) ZIP+Pages / (Professional) .exe+FixedWV2 / (Business) .exe+.apk+branding+docs
 
 ---
 
@@ -52,51 +52,60 @@ meta:
 
 Antes de iniciar, detecta el perfil del proyecto:
 
-1. Revisa `project.config.js` → `APP_CONFIG.perfil` (lite/full)
+1. Revisa `project.config.js` → `APP_CONFIG.perfil` (lite/professional/business)
 2. Si no existe, pregunta:
 ```
 📋 ¿Que perfil de deploy usamos?
 
-[1] Lite — ZIP + GitHub Pages
-    Empaqueta la app en ZIP para distribucion manual.
+[1] Essential (Lite) — ZIP + GitHub Pages
+    Demo online, HTML visible, IA Lite (FlexSearch).
     Push a main → GitHub Pages automatico.
 
-[2] Full — NeutralinoJS .exe + Capacitor .apk + Pages + Release
-    Compila a ejecutable nativo (.exe, ~2MB) y empaqueta APK Android.
-    Ventana nativa + app movil con SQLite FTS5, camara, GPS, notificaciones.
-    Push a main → Pages + sube .exe/.apk como Release.
+[2] Professional — .exe + Fixed WebView2
+    Ejecutable nativo SIN WebView2 del sistema.
+    Incluye Fixed WebView2 (stripped, x64 + espanol).
+    IA Full (FlexSearch + QA con documentos).
+    Sin HTML visible para el cliente.
+    Tamaño: ~30MB ZIP. NO incluye .apk.
 
-[3] Solo commit + push (sin empaquetar)
-```
-3. Si perfil=Full, pregunta por el destino:
-```
-📋 ¿Destino de empaquetado?
+[3] Business — .exe + .apk + branding
+    Todo lo de Professional + .apk Android (Capacitor).
+    Branding personalizado (logo, colores, nombre cliente).
+    Documentacion personalizada (GUIA_USUARIO, GUIA_INSTALACION).
+    Tamaño: ~35MB ZIP.
 
-[1] .exe (NeutralinoJS) — ventana nativa Windows/Linux/Mac
-[2] .apk (Capacitor) — Android nativo (SQLite FTS5, camara, GPS)
-[3] Ambos (.exe + .apk)
+[4] Solo commit + push (sin empaquetar)
 ```
-Si se elige .apk o Ambos, verifica requisitos Capacitor:
+3. Si perfil=Professional, verifica:
 ```
-🔍 Verificando requisitos Capacitor...
+🔍 Verificando requisitos Professional...
+
+  neu --version: [X.Y.Z]
+  ¿neu CLI instalado? [Si/No]
+  Si no: "npm install -g @neutralinojs/neu"
+
+  ¿tools/WebView2-Fixed/ existe? [Si/No]
+  Si no: ".\.scripts\download-fixed-wv2.ps1"
+
+  neutralino.config.json: [Si/No]
+  Si no: se genera en FASE 4
+```
+4. Si perfil=Business, verifica todo lo de Professional + Capacitor:
+```
+🔍 Verificando requisitos Business...
+
+  neu --version: [X.Y.Z]
+  tools/WebView2-Fixed/: [Si/No]
+  neutralino.config.json: [Si/No]
+
   node --version: >= 18
   java --version: >= 17
   Android SDK: ¿instalado? [Si/No]
   Si no: "Necesitas Android Studio o command line tools"
-```
 
-4. Si perfil=Full y destino incluye .exe, verifica Neutralino CLI:
+  capacitor.config.json: [Si/No]
+  Si no: se genera en FASE 4
 ```
-🔍 Verificando Neutralino CLI...
-  neu --version: [X.Y.Z]
-  ¿neu CLI instalado? [Si/No]
-  Si no: "npm install -g @neutralinojs/neu"
-```
-5. Si perfil=Full y destino incluye .exe, verifica `neutralino.config.json` existe en la raiz del proyecto.
-   Si no existe, se genera automaticamente en FASE 4 (usar template).
-
-6. Si destino incluye .apk, verifica `capacitor.config.json` existe.
-   Si no existe, se genera automaticamente en FASE 4 (usar template de `capacitor/templates/capacitor.config.json`).
 
 ---
 
@@ -124,7 +133,7 @@ Usa `list_commits` con `owner/repo` del remoto para verificar ultimo commit.
 
 Repositorio: [owner/repo]
 Rama actual: [branch]
-Perfil: [lite|full]
+Perfil: [lite|professional|business]
 Estado: [limpio / cambios pendientes]
 Ultimo commit: [hash] — [mensaje]
 Workflow Pages: [detectado / ausente]
@@ -237,134 +246,71 @@ Tamaño: [X] MB
 [2] No, ya termine
 ```
 
-### Perfil Full: NeutralinoJS .exe
+### Perfil Professional: Neutralino .exe + Fixed WebView2 (stripped)
 
 ```
-[▓▓▓▓▓▓▓▓▓▓░░░░░░] 85% • Compilando .exe con NeutralinoJS...
+[▓▓▓▓▓▓▓▓▓▓░░░░░░] 85% • Empaquetando Professional...
 ```
 
 1. Verificar que existe `neutralino.config.json` en la raiz del proyecto:
-```bash
-if (Test-Path "neutralino.config.json" -PathType Leaf) { "neutralino.config.json encontrado" }
-else { "Generando neutralino.config.json desde template..." }
-```
+   Si no, generar desde `deployment-jigue/templates/neutralino.config.json`
 
-2. Si no existe `neutralino.config.json`, usar el template incluido en esta skill
-   y adaptarlo al proyecto:
-```json
-{
-  "applicationId": "com.empresa.app",
-  "version": "1.0.0",
-  "defaultMode": "window",
-  "documentRoot": "/",
-  "url": "/",
-  "port": 0,
-  "enableServer": true,
-  "enableNativeAPI": true,
-  "nativeWindow": {
-    "title": "AppName",
-    "icon": "favicon.ico",
-    "width": 1200,
-    "height": 800,
-    "minWidth": 800,
-    "minHeight": 600,
-    "fullScreen": false,
-    "resizable": true,
-    "center": true
-  },
-  "globalVariables": {
-    "APP_NAME": "AppName"
-  },
-  "modes": {
-    "window": { "title": "AppName", "icon": "favicon.ico" }
-  },
-  "cli": {
-    "binaryName": "app-name",
-    "resourcesPath": "/",
-    "clientLibrary": "core/neutralino.js",
-    "binaryVersion": "6.0.0",
-    "clientVersion": "6.0.0"
-  }
-}
-```
-
-3. Verificar que `core/neutralino.js` existe (cliente Neutralino para el frontend):
-   Si no, descargar:
+2. Verificar que `core/neutralino.js` existe. Si no, descargar:
 ```bash
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "core/neutralino.js"
 ```
 
-4. Si el proyecto usa icons personalizados, verificar que `favicon.ico`
-   existe. Si no, usar icono por defecto de Neutralino.
+3. Verificar que `tools/WebView2-Fixed/` existe:
+   Si no, ejecutar `.\scripts\download-fixed-wv2.ps1`
 
-5. Compilar:
+4. Ejecutar script de empaquetado:
 ```bash
-neu build --release
+.\deployment-jigue\templates\package-professional.ps1 -AppName "[nombre]" -Version "[version]"
 ```
 
-6. El binario compilado estara en:
-   - `dist/[app-name]-win_x64.zip` (Windows)
-   - `dist/[app-name]-linux_x64.zip` (Linux)
-   - `dist/[app-name]-mac_x64.zip` / `dist/[app-name]-mac_arm64.zip` (macOS)
+5. Output:
+```
+✅ dist/[AppName]-Professional-v1.0.0.zip (~30MB)
+  ├── [AppName].exe          ← Neutralino runtime (~2MB)
+  ├── resources.neu          ← App ofuscada (terser --mangle)
+  ├── WebView2/              ← Fixed Version stripped (~53MB)
+  │   └── EBWebView/x64/     ← Solo x64 + es-419.pak + swiftshader (WebGPU)
+  └── favicon.ico
 
-7. Extraer el .exe del ZIP para el Release:
+  Sin HTML visible, sin WebView2 del sistema, IA Full funcional.
+```
+
+### Perfil Business: .exe + .apk + branding + docs
+
+```
+[▓▓▓▓▓▓▓▓▓▓░░░░░░] 85% • Empaquetando Business...
+```
+
+1. Asegurar que branding esta definido en `project.config.js`:
+   - `whiteLabel.cliente`, `whiteLabel.colores`, `whiteLabel.logo`
+
+2. Ejecutar script de empaquetado Business:
 ```bash
-Expand-Archive -Path "dist/[app-name]-win_x64.zip" -DestinationPath "dist/neutralino-out"
+.\deployment-jigue\templates\package-business.ps1 -AppName "[nombre]" -Cliente "[cliente]" -Version "[version]"
 ```
 
-8. Confirmar:
+3. Output:
 ```
-✅ Compilado: dist/[app-name]-win_x64.zip (~2MB runtime)
-  El .exe contiene Neutralino runtime (~2MB) + la app completa.
-  Ventana nativa, bandeja, notificaciones — sin terminal.
+✅ dist/[AppName]-Business-v1.0.0.zip (~35MB)
+  ├── [AppName].exe          ← Neutralino runtime
+  ├── resources.neu          ← App ofuscada
+  ├── WebView2/              ← Fixed Version stripped
+  ├── [AppName].apk          ← Android nativo (Capacitor)
+  ├── docs/
+  │   ├── GUIA_USUARIO.md
+  │   └── GUIA_INSTALACION.md
+  ├── favicon.ico
+  └── LEEME.txt
 
-¿Procedo con deploy a Pages + Release?
-[1] Si, hacer deploy completo
-[2] Solo Pages (sin Release)
-[3] Solo .exe (sin deploy)
-```
-
-### Perfil Full: Capacitor .apk (si destino incluye .apk)
-
-```
-[▓▓▓▓▓▓▓▓▓▓░░░░░░] 88% • Compilando .apk con Capacitor...
+  Branding personalizado: colores, logo y nombre del cliente aplicados.
 ```
 
-1. Verificar que existe `capacitor.config.json` en la raiz del proyecto:
-```bash
-if (Test-Path "capacitor.config.json" -PathType Leaf) {
-  "capacitor.config.json encontrado"
-} else {
-  "Copiando desde template capacitor..."
-  Copy-Item "capacitor/templates/capacitor.config.json" "capacitor.config.json"
-}
-```
-
-2. Sincronizar codigo web con Android:
-```bash
-npx cap sync android
-```
-
-3. Compilar APK release:
-```bash
-cd android
-.\gradlew assembleRelease
-cd ..
-```
-
-4. Verificar APK generado:
-```bash
-if (Test-Path "android/app/build/outputs/apk/release/app-release.apk") {
-  "✅ APK generado: android/app/build/outputs/apk/release/app-release.apk"
-}
-```
-
-5. Reportar:
-```
-✅ APK generado: android/app/build/outputs/apk/release/app-release.apk
-  Plugins: SQLite FTS5 nativo, Camara, GPS, Notificaciones, Compartir
-  SDK min: 26 (Android 8), Target: 34 (Android 14)
-```
+**Nota:** El build de .apk requiere Android SDK + JDK 17+. Si no estan disponibles, el script salta el .apk y continua solo con .exe.
 
 **sql.js (IA Jutia con FTS5):**
 Si la app incluye IA Jutia Full con sql.js, verificar que `assets/wasm/` contiene:
@@ -399,51 +345,59 @@ const files = await Neutrino.filesystem.showOpenDialog({
 
 ---
 
-## FASE 5: DEPLOY PAGES
+## FASE 5: DEPLOY / ENTREGA
 
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░] 95% • Desplegando a GitHub Pages...
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░] 95% • Preparando entrega...
 ```
 
-### Paso 5.1 — Verificar Action
-Usa GitHub MCP para confirmar que el workflow existe:
+### Perfil Essential (Lite): Deploy a GitHub Pages
+
+1. Verificar Action con GitHub MCP:
 ```
 Action deploy-pages.yml detectado.
 El push activo el workflow automaticamente.
 ```
 
-### Paso 5.2 — Perfil Full: Crear Release (opcional)
-Si el usuario eligio Release:
-1. Si hay .exe, extraer del ZIP y subir:
+2. Reporte:
+```
+✅ DEPLOY COMPLETADO
+📎 Pages: https://[owner].github.io/[repo]
+📦 ZIP: dist/[app]-Essential-v[version].zip
+```
+
+### Perfil Professional: Entrega local
+
+La app se entrega al cliente como ZIP via USB/email/WhatsApp.
+NO se despliega a GitHub Pages (no hay HTML publico).
+
+```
+✅ ENTREGA PROFESIONAL COMPLETADA
+📦 dist/[AppName]-Professional-v[version].zip (~30MB)
+  Entregar al cliente por: USB | Email | WhatsApp | Link privado
+```
+
+### Perfil Business: Entrega local + Release (opcional)
+
+1. Si se desea, crear Release en GitHub:
 ```bash
-gh release create v[version] "dist/[app-name]-win_x64.zip#App_v[version]_win_x64.zip" --title "v[version]" --notes "Release [fecha]"
-```
-2. Si hay .apk, subir como asset adicional:
-```bash
-gh release upload v[version] "android/app/build/outputs/apk/release/app-release.apk#App_v[version].apk"
+gh release create v[version] "dist/[AppName]-Business-v[version].zip#App_v[version]_Business.zip" --title "v[version] - Business" --notes "Entrega $cliente"
 ```
 
-### Paso 5.3 — Reporte final
+2. Reporte:
 ```
-✅ DEPLOY COMPLETADO — deployment-jigue
-
-Resumen:
-- Repositorio: [owner/repo]
-- Rama: [branch]
-- Commit: [hash]
-- Push: ✅
-- Pages: https://[owner].github.io/[repo]
-- Paquete: [dist/[app].zip | dist/[app]-win_x64.zip | android/app/build/outputs/apk/release/app-release.apk]
-- Release: [URL del release | No aplica]
-
-📎 URL: https://[owner].github.io/[repo]
+✅ ENTREGA BUSINESS COMPLETADA
+📦 dist/[AppName]-Business-v[version].zip (~35MB)
+  Contiene: .exe + .apk + branding + docs
+  Cliente personalizado
+📎 Release: [URL del release | No aplica]
 ```
 
 ---
 
 ---
 
-## FASE 6: WHITE-LABEL BRANDING (Enterprise)
+## FASE 6: WHITE-LABEL BRANDING (Business)
 
 ```
 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░] 97% • Aplicando branding white-label...
@@ -527,63 +481,13 @@ cd ..
 
 ---
 
-## FASE 7: ENTREGA ENTERPRISE
+## FASE 7: BUSINESS — PERSONALIZACION Y ENTREGA
 
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 99% • Preparando entrega Enterprise...
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 99% • Preparando entrega Business...
 ```
 
-### Paso 7.1 — Seleccionar nivel de entrega
-
-```
-📋 NIVEL DE ENTREGA
-
-[1] Profesional — .exe + .apk + Pages
-    Compilados listos para distribuir.
-    Incluye: .exe (~2MB), .apk (~5MB), GitHub Pages URL.
-
-[2] Enterprise — .exe + .apk + codigo fuente + UI personalizada
-    Todo lo anterior MAS:
-    - Codigo fuente completo
-    - UI personalizada segun preferencias del cliente (DESIGN.md)
-    - Docs personalizados (manual usuario, instalacion, dev)
-    - Script brand.ps1 para que el cliente pueda re-brandear
-    - Repositorio privado (opcional)
-```
-
-### Paso 7.2 — Enterprise: Generar documentacion
-
-Si nivel Enterprise, generar docs personalizados:
-
-```
-📄 DOCUMENTACION ENTERPRISE
-
-### `docs/GUIA_USUARIO.md`
-[Manual de usuario con nombre del cliente, capturas, pasos]
-- Que es la app
-- Como instalarla (.exe / .apk)
-- Primeros pasos
-- Modulos disponibles
-- Respaldo de datos (.ateje-backup)
-
-### `docs/GUIA_INSTALACION.md`
-[Instrucciones tecnicas de instalacion]
-- Requisitos: Windows 10+, Android 8+, navegador moderno
-- Instalacion .exe: doble clic, sin permisos admin
-- Instalacion .apk: permitir orígenes desconocidos, abrir archivo
-- Web: abrir index.html en cualquier navegador
-
-### `docs/GUIA_DESARROLLO.md`
-[Para el equipo tecnico del cliente]
-- Estructura del proyecto
-- stack: Alpine + Dexie + DaisyUI + CryptoJS
-- Como agregar modulos
-- Como cambiar colores/tema
-- Como compilar .exe / .apk
-- Referencia de APIs
-```
-
-### Paso 7.3 — Enterprise: Personalizar UI
+### Paso 7.1 — Personalizar UI
 
 Si el cliente tiene preferencias de diseño registradas en `.omd/preferences.md`
 o `DESIGN.md`, el codigo generado ya deberia reflejarlas (se aplicaron en
@@ -600,92 +504,78 @@ fases previas por design-engine). Verificar:
 [ ] Componentes UI consistentes con DESIGN.md
 ```
 
-### Paso 7.4 — Enterprise: Empaquetar entrega
+### Paso 7.2 — Empaquetar entrega Business
+
+Ejecutar `package-business.ps1` con los parametros del cliente:
 
 ```powershell
-# 1. Ejecutar branding
-.\deployment-jigue\templates\brand.ps1 -AppName "ClienteApp" -AppId "com.cliente.app"
-
-# 2. Compilar
-neu build --release
-npx cap sync android
-cd android; .\gradlew assembleRelease; cd ..
-
-# 3. Generar paquete Enterprise
-New-Item -ItemType Directory -Path "dist/enterprise" -Force
-
-# .exe + .apk
-Copy-Item "dist/ClienteApp-win_x64.zip" "dist/enterprise/"
-Copy-Item "android/app/build/outputs/apk/release/app-release.apk" "dist/enterprise/ClienteApp.apk"
-
-# Branding script personalizado
-Copy-Item "deployment-jigue/templates/brand.ps1" "dist/enterprise/brand.ps1"
-
-# Docs
-Copy-Item "docs/" "dist/enterprise/docs/" -Recurse
-
-# Fuente completa (excluyendo node_modules, .git, dist)
-$exclude = @("node_modules", ".git", "dist", "android/.gradle", "android/build")
-$source = Get-ChildItem -Path "." -Exclude $exclude
-Compress-Archive -Path $source -DestinationPath "dist/enterprise/ClienteApp-source-v1.0.zip" -Force
+.\deployment-jigue\templates\package-business.ps1 `
+    -AppName "MiApp" `
+    -Cliente "Acme Corp" `
+    -Version "1.0.0" `
+    -PrimaryColor "#ff6600" `
+    -SecondaryColor "#003366" `
+    -LogoPath "C:\clientes\acme\logo.svg"
 ```
 
-### Paso 7.5 — Enterprise checklist
+Si no se requiere .apk, usar flag:
+```powershell
+    -SkipApk
+```
 
-Usar el template `enterprise-checklist.md` y verificar punto por punto:
+### Paso 7.3 — Business checklist
 
 ```markdown
-# Enterprise Delivery Checklist
+# Business Delivery Checklist
 
 ## 1. Branding aplicado
-[ ] Nombre de app reemplazado
-[ ] Colores aplicados
-[ ] Logo personalizado
+[ ] Nombre de app reemplazado en toda la UI
+[ ] Colores corporativos aplicados
+[ ] Logo personalizado visible
 [ ] favicon.ico personalizado
+[ ] neutralino.config.json con nombre correcto
 
 ## 2. Compilacion verificada
-[ ] .exe compila y funciona
-[ ] .apk compila y funciona
-[ ] Plugins nativos OK
+[ ] .exe compila con `package-professional.ps1`
+[ ] .apk compila con `npx cap sync android && gradlew assembleRelease`
+[ ] IA Jutia Full funcional (WebGPU + Workers)
+[ ] Plugins nativos OK (si aplica)
 
 ## 3. Documentacion generada
-[ ] docs/GUIA_USUARIO.md
+[ ] docs/GUIA_USUARIO.md (con nombre del cliente)
 [ ] docs/GUIA_INSTALACION.md
-[ ] docs/GUIA_DESARROLLO.md
 
 ## 4. Assets de entrega
-[ ] dist/enterprise/ClienteApp-win_x64.zip (.exe)
-[ ] dist/enterprise/ClienteApp.apk
-[ ] dist/enterprise/brand.ps1 (script personalizado)
-[ ] dist/enterprise/docs/ (documentacion)
-[ ] dist/enterprise/ClienteApp-source-v1.0.zip (fuente completa)
+[ ] dist/[AppName]-Business-v[version].zip
+[ ] .exe + Fixed WebView2 incluido
+[ ] .apk incluido (si aplica)
+[ ] Documentacion incluida
 ```
 
-### Paso 7.6 — Reporte final Enterprise
+### Paso 7.4 — Reporte final Business
 
 ```
-═══════════════════════════════════════════
-  ✅ ENTREGA ENTERPRISE COMPLETADA
-═══════════════════════════════════════════
+╔═══════════════════════════════════════════╗
+  ✅ ENTREGA BUSINESS COMPLETADA
+╚═══════════════════════════════════════════╝
   App:        [AppName]
   Cliente:    [Cliente]
-  Nivel:      [Profesional / Enterprise]
+  Version:    [version]
 
-  📦 Entregables:
-    • .exe:  dist/enterprise/[AppName]-win_x64.zip (~2MB)
-    • .apk:  dist/enterprise/[AppName].apk (~5MB)
-    • Docs:  dist/enterprise/docs/
-    • Brand: dist/enterprise/brand.ps1
-    • Source: dist/enterprise/[AppName]-source-v1.0.zip
+  📦 Entregable:
+    dist/[AppName]-Business-v[version].zip (~35MB)
+    • [AppName].exe + resources.neu (ofuscado)
+    • WebView2/ (fixed, stripped, con swiftshader)
+    • [AppName].apk (Android)
+    • docs/GUIA_USUARIO.md
+    • docs/GUIA_INSTALACION.md
 
-  🌐 Web:    https://[org].github.io/[repo]
-  📖 Guia:   docs/GUIA_USUARIO.md
-  ✅ Branding: verificado
-  🧪 QA:     verificado (validation-engine)
-═══════════════════════════════════════════
+  🎨 Branding: verificado (logo, colores, nombre)
+  🧪 QA: verificado (validation-engine)
+╚═══════════════════════════════════════════╝
 ```
 
-### Paso 7.7 — Archivar spec y reporte
+### Paso 7.5 — Archivar spec y reporte
 
 ```powershell
 # Archivar spec para referencia futura
@@ -701,13 +591,10 @@ Copy-Item "specs/[app].md" "specs/archive/[app]-$fecha.md"
 Si el usuario selecciona "Modo rapido" en Fase 1:
 ```
 ⚡ MODO RAPIDO ACTIVADO
-- Commit: auto-generado desde diff
-- Push: inmediato
-- Empaquetado: segun perfil (ZIP / .exe / .apk)
-- Branding: saltado (usar brand.ps1 despues)
-- Deploy: automatico
+- Essential: Commit + Push + Pages deploy
+- Professional: Commit + Push + package-professional.ps1
+- Business: Commit + Push + package-business.ps1 (branding desde config)
 ```
-Sin pausas ni confirmaciones intermedias.
 
 ---
 
@@ -720,7 +607,10 @@ Sin pausas ni confirmaciones intermedias.
 - Neutralino config: https://neutralino.js.org/docs/configuration/neutralino-config
 - Neutralino APIs: https://neutralino.js.org/docs/api/neu-overview
 - `deployment-jigue/templates/brand.ps1` — Script white-label branding
-- `deployment-jigue/templates/enterprise-checklist.md` — Enterprise delivery checklist
+- `deployment-jigue/templates/clean-webview2.ps1` — Reduce Fixed WebView2 a minimo
+- `deployment-jigue/templates/package-professional.ps1` — Empaquetado Professional
+- `deployment-jigue/templates/package-business.ps1` — Empaquetado Business
 - `deployment-jigue/templates/neutralino.config.json` — Neutralino config template
+- `scripts/download-fixed-wv2.ps1` — Descarga Fixed Version WebView2
 - Capacitor docs: https://capacitorjs.com/docs
 - Capacitor Android: https://capacitorjs.com/docs/android

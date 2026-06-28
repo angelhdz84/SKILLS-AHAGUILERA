@@ -6,7 +6,7 @@ compatibility: Requiere curl (Windows/macOS/Linux) y permisos de escritura. Node
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "3.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "setup-init skill"
   triggers: ["iniciar setup", "crear estructura", "descargar libs", "verificar entorno", "setup", "descargar adicionales"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -28,8 +28,9 @@ meta:
 1. Revisa `project.config.js` existente o pregunta:
 ```
 📋 ¿Qué perfil de proyecto?
-[1] Lite — file:// + doble clic en index.html
-[2] Full — Escritorio (.exe NeutralinoJS) + Móvil (.apk Capacitor)
+[1] Lite (Essential) — file:// + doble clic en index.html (ZIP + GitHub Pages)
+[2] Professional — Neutralino .exe + Fixed WebView2 (sin HTML visible)
+[3] Business — Neutralino .exe + Fixed WebView2 + .apk (Capacitor) + branding
 ```
 
 ### 🟢 FASE 2: Validación de Entorno (según perfil)
@@ -40,29 +41,31 @@ meta:
    - Permisos de escritura en carpeta actual
 2. Si falta algo, muestra comandos de instalación exactos por SO.
 
-**Perfil Full:**
+**Perfil Professional / Business:**
 1. Verifica:
    - `node --version` >= 18
    - `npm --version` (viene con Node)
    - Permisos de escritura
+   - `neu --version` (npm install -g @neutralinojs/neu)
 2. Si no tiene Node.js:
 ```
 ❌ Node.js no está instalado.
 Instalación: https://nodejs.org (versión LTS recomendada)
 ```
-3. Pregunta destino móvil:
+3. **Solo Business** — verifica herramientas Android:
 ```
-📋 ¿Incluir empaquetado Android (.apk)?
-[1] No, solo escritorio
-[2] Si, con Capacitor (requiere Android SDK + JDK 17+)
+📋 Android SDK disponible:
+[1] Si — compilara .apk nativo
+[2] No — solo escritorio (.exe)
 ```
-Si [2], verifica:
+Si [1], verifica:
   - `java --version` >= 17
-  - Android SDK: instalado (ANDROID_HOME definido)
+  - ANDROID_HOME definido
 
-4. Verifica Neutralino CLI (opcional, se usa en deploy):
-   - `neu --version` (npm install -g @neutralinojs/neu)
-
+4. Descarga Fixed WebView2 (si no existe en tools/):
+```powershell
+.\scripts\download-fixed-wv2.ps1
+```
 5. Si todo está listo, confirma: `✅ Entorno validado. Procedo a crear estructura.`
 
 ### 🟡 FASE 3: Generación de Estructura y Archivos Base (según perfil)
@@ -120,7 +123,7 @@ Almacenamiento local de archivos de la aplicación.
 
 3. Muestra `project.config.js` mínimo (white-label listo) y `index.html` shell.
 
-**Perfil Full:**
+**Perfil Professional / Business:**
 1. Genera estructura (misma raíz que Lite):
 ```
 ├── index.html
@@ -132,13 +135,17 @@ Almacenamiento local de archivos de la aplicación.
 ├── neutralino.config.json
 ├── package.json
 ├── project.config.js
+├── deployment-jigue/templates/clean-webview2.ps1
+├── deployment-jigue/templates/package-professional.ps1
+├── tools/WebView2-Fixed/ (descargado en FASE 2)
 └── dist/ (output de compilación)
 ```
 2. Copia `neutralino.config.json` desde `deployment-jigue/templates/neutralino.config.json`
    y adapta: `applicationId`, `nativeWindow.title`, `cli.binaryName` según la app.
-3. Si incluye .apk (Capacitor), añadir:
+3. **Solo Business:** si incluye .apk (Capacitor), añadir:
    - `capacitor.config.json` (desde `capacitor/templates/capacitor.config.json`)
    - Directorio `android/` (se genera con `npx cap add android`)
+   - `deployment-jigue/templates/package-business.ps1`
 4. Muestra `neutralino.config.json` básico (configuración Neutralino).
 5. Si .apk, muestra `capacitor.config.json` (configuración Capacitor).
 
@@ -154,7 +161,7 @@ Almacenamiento local de archivos de la aplicación.
    - Verificación final de archivos esperados
 3. Instrucciones: `💾 Guarda como scripts/descargar-libs.bat y ejecuta con doble clic.`
 
-**Perfil Full:**
+**Perfil Professional / Business:**
 1. Busca si existe `specs/[app].md` con `## 📚 Librerías Adicionales`.
 2. Inicializa npm e instala dependencias base:
 ```bash
@@ -165,7 +172,7 @@ npm install alpinejs dexie cryptojs pako chart.js jspdf xlsx
 ```bash
 npm install [lib1] [lib2]
 ```
-4. Si incluye .apk (Capacitor):
+4. **Solo Business** — si incluye .apk (Capacitor):
 ```bash
 npm install @capacitor/core @capacitor/cli @capacitor/android
 npm install @capacitor-community/sqlite @capacitor/camera @capacitor/geolocation
@@ -173,7 +180,7 @@ npm install @capacitor/local-notifications @capacitor/share
 npx cap init "AppName" "com.empresa.app" --web-dir "."
 npx cap add android
 ```
-5. Si se incluyó IA Jutia Full:
+5. IA Jutia Full (siempre incluida en Professional/Business):
 ```bash
 npm install @xenova/transformers pdfjs-dist mammoth marked
 ```
@@ -230,16 +237,18 @@ Si el usuario prefiere scripts separados, genera `scripts/descargar-libs-adicion
 ```
 4. Si falla: sugiere desactivar AV temporalmente o ejecutar como Admin.
 
-**Perfil Full:**
+**Perfil Professional / Business:**
 1. Verifica `package.json` con dependencias correctas.
-2. Verifica `src/index.js` existe.
-3. Verifica que `bun run src/index.js` no da error.
-4. Si IA Full: verifica modelos en `assets/models/`.
+2. Verifica `neutralino.config.json` existe.
+3. Verifica `core/neutralino.js` existe.
+4. Verifica `tools/WebView2-Fixed/` existe.
+5. Si IA Full: verifica modelos en `assets/models/`.
+6. **Solo Business:** si aplica, verifica `capacitor.config.json` y `android/`.
 
 ### 🔴 FASE 6: Handoff
 ```
 🚀 Setup completado.
-📦 Perfil: [lite|full]
+📦 Perfil: [lite|professional|business]
 📂 Estructura: lista
 📚 Librerías: instaladas
 ⚙️ project.config.js: activo
@@ -261,14 +270,15 @@ Antes de mostrar cualquier bloque, verifica:
 - [ ] ¿No genera `project.config.js` con `modulosActivos` y `tema.colores`? → AGREGAR
 - [ ] ¿Existe `specs/[app].md` con `libreriasAdicionales`? → INYECTAR URLs en el script de descarga
 - [ ] ¿Las librerías adicionales tienen URL de descarga válida? → VERIFICAR con Context7 MCP
-### Perfil Full:
-- [ ] ¿Perfil Full sin `neutralino.config.json`? → CREAR desde template en `deployment-jigue/templates/`
-- [ ] ¿Perfil Full sin `core/neutralino.js`? → DESCARGAR desde CDN de NeutralinoJS
+### Perfil Professional / Business:
+- [ ] ¿Perfil Professional/Business sin `neutralino.config.json`? → CREAR desde template en `deployment-jigue/templates/`
+- [ ] ¿Perfil Professional/Business sin `core/neutralino.js`? → DESCARGAR desde CDN de NeutralinoJS
+- [ ] ¿Perfil Professional/Business sin `tools/WebView2-Fixed/`? → EJECUTAR `scripts/download-fixed-wv2.ps1`
 - [ ] ¿sql.js activo pero `assets/wasm/sql-wasm.wasm` no existe? → DESCARGAR desde jsDelivr
 - [ ] ¿Modelos IA Full no se descargan a `assets/models/`? → AGREGAR comandos curl
-- [ ] ¿Perfil Full con .apk pero sin `capacitor.config.json`? → CREAR desde `capacitor/templates/capacitor.config.json`
-- [ ] ¿Perfil Full con .apk pero sin `android/`? → `npx cap add android`
-- [ ] ¿Perfil Full con .apk pero sin plugins Capacitor? → `npm install @capacitor/...`
+- [ ] **Solo Business:** ¿con .apk pero sin `capacitor.config.json`? → CREAR desde `capacitor/templates/capacitor.config.json`
+- [ ] **Solo Business:** ¿con .apk pero sin `android/`? → `npx cap add android`
+- [ ] **Solo Business:** ¿con .apk pero sin plugins Capacitor? → `npm install @capacitor/...`
 Si falla, corrige silenciosamente antes de output.
 
 ---
@@ -334,10 +344,10 @@ pause >nul
 ## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 | SKILL | Relación | Trigger de Handoff |
 |-------|----------|-------------------|
-| `spec-creator` | Consume estructura + detecta librerías adicionales en spec | `✅ Setup → definir spec app` |
+| `spec-engine` | Consume estructura + detecta librerías adicionales en spec | `✅ Setup → definir spec app` |
 | `code-generator` | Genera `core/` y `modules/` desde spec validada | `📄 Spec validada → generar código` |
 | `ia-jutia` | Si perfil IA Full, descarga modelos Transformers.js | `🧠 IA incluida` |
-| `validation-offline` | Valida resultado final antes de entrega | `🚀 App lista → validar app` |
+| `validation-engine` | Valida resultado final antes de entrega | `🚀 App lista → validar app` |
 | `stack-compliance-guard` | Verifica libs desde `assets/` no CDN | Auto-activada |
 | `deployment-jigue` | Empaqueta segun perfil (ZIP / Neutralino .exe) | `📦 App lista → publicar` |
 

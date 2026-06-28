@@ -6,7 +6,7 @@ compatibility: Requiere @AGENTS.md, specs/[app].md, project.config.js presentes.
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "3.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "code-generator skill"
   triggers: ["generar codigo", "crear módulos", "implementar spec", "build app", "escribir código", "code-generator"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "alpine-ui-patterns", "bootstrap-icons", "animate.css"]
@@ -17,7 +17,7 @@ meta:
 
 # 🛠️ SKILL: code-generator (Generación de Código Offline-First)
 
-> **Propósito**: Transformar `specs/[app].md` en código funcional, modular y 100% compatible con `file://`. Entrega por fases para evitar pérdida de contexto, aplica `stack-compliance-guard` automáticamente y respeta `design-ux-intelligence`.
+> **Propósito**: Transformar `specs/[app].md` en código funcional, modular y 100% compatible con `file://`. Entrega por fases para evitar pérdida de contexto, aplica `stack-compliance-guard` automáticamente y respeta `design-engine`.
 > **Modo**: Iterativo por fases | **Idioma**: ES | **Contexto**: Requiere spec validada + @AGENTS.md
 > **Output**: Archivos `.js` y `.html` listos para copiar/pegar o escribir directamente en el proyecto.
 
@@ -34,22 +34,23 @@ meta:
    - Reglas de UI/UX y animaciones
    - Configuración de `project.config.js`
    - **Librerías adicionales** (sección `## 📚 Librerías Adicionales` o bloque `libreriasAdicionales`)
-   - **Perfil** (`project.config.js` → `APP_CONFIG.perfil`: lite/full)
-   - **IA Jutia** (`APP_CONFIG.iaJutia.perfil`: lite/full/no)
+   - **Perfil** (`project.config.js` → `APP_CONFIG.perfil`: lite/professional/business)
+   - **IA Jutia** (`APP_CONFIG.iaJutia.perfil`: lite/full/no) — Professional/Business siempre Full
    - **component_library** (`.omd/preferences.md` o `APP_CONFIG.componentLibrary`): `auto` | `daisyui` | `pines` | `penguin` | `pinemix`
- 2. Si detecta librerías adicionales o IA, las incluye en el plan:
-   ```
-   📋 PLAN DE GENERACIÓN
-   • Perfil: [lite|full]
-   • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html (compartido 95%)
-   • Módulos: [lista de módulos desde spec] (compartidos)
-    • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
-    • Librería UI: [daisyui|pines|penguin|pinemix] (desde preferencia o auto)
-    • Librerías adicionales: [lista] (desde spec)
-   • Full extra: src/index.js (Bun server entry point)
-   • Validación: stack-compliance-guard auto-aplicado
-   • Entregable: Código por bloques con ruta exacta
-   ✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
+  2. Si detecta librerías adicionales o IA, las incluye en el plan:
+    ```
+    📋 PLAN DE GENERACIÓN
+    • Perfil: [lite|professional|business]
+    • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html (compartido 95%)
+    • Módulos: [lista de módulos desde spec] (compartidos)
+     • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
+     • Librería UI: [daisyui|pines|penguin|pinemix] (desde preferencia o auto)
+     • Librerías adicionales: [lista] (desde spec)
+    • Professional/Business extra: neutralino.config.json
+    • Business extra: capacitor.config.json + android/
+    • Validación: stack-compliance-guard auto-aplicado
+    • Entregable: Código por bloques con ruta exacta
+    ✅ ¿Procedo con FASE 2: Core y Shell? (Responde: SÍ)
    ```
 3. **ESPERA confirmación** antes de continuar.
 
@@ -269,7 +270,7 @@ window.FileStore = {
 
 **Secciones estándar (siempre):**
 - `app`: nombre, version, tipo, descripcion
-- `perfil`: lite | full
+- `perfil`: lite | professional | business
 - `iaJutia`: lite | full | no
 - `modulosActivos`: array de IDs de módulos
 - `tema`: modo (claro|oscuro), colores (DaisyUI palette), tipografia
@@ -290,7 +291,7 @@ data: {
 ```javascript
 sync: {
   primaryFormat: 'json',
-  secondaryFormats: APP_CONFIG.perfil === 'full' ? ['sqlite'] : [],
+  secondaryFormats: APP_CONFIG.perfil === 'professional' || APP_CONFIG.perfil === 'business' ? ['sqlite'] : [],
   includeFiles: true,
   encrypt: true,
   maxExportSize: 50 * 1024 * 1024
@@ -308,7 +309,7 @@ ui: {
 }
 ```]
 
-**Si perfil=Full, añadir archivos extra:**
+**Si perfil=Professional o Business, añadir archivos extra:**
 ### `neutralino.config.json`
 [Configuracion de NeutralinoJS para app de escritorio nativa. Ver deployment-jigue/templates/neutralino.config.json]
 ```json
@@ -346,7 +347,7 @@ ui: {
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "core/neutralino.js"
 ```
 
-**Si perfil=Full y se requiere .apk, añadir tambien:**
+**Si perfil=Business (requiere .apk), añadir tambien:**
 ### `capacitor.config.json`
 [Configuracion de Capacitor para APK Android nativo. Ver capacitor/templates/capacitor.config.json]
 ```json
@@ -432,19 +433,20 @@ Para cada módulo en la spec:
 ### 🟣 FASE 4: Ensamblaje Final y Handoff
 1. Confirma que todos los módulos están generados.
 2. Entrega snippet final de `project.config.js` con `modulosActivos` actualizado.
-3. Si perfil=Full, sugiere opciones de compilacion:
+3. Si perfil=Professional o Business, sugiere opciones de compilacion:
 ```bash
-# .exe (NeutralinoJS)
-cd proyecto && neu build --release
-# .apk (Capacitor, si aplica)
-cd proyecto && npx cap sync android && cd android && ./gradlew assembleRelease
+# Professional: .exe + Fixed WebView2
+cd proyecto && .\deployment-jigue\templates\package-professional.ps1 -AppName "[nombre]"
+
+# Business: .exe + .apk + branding
+cd proyecto && .\deployment-jigue\templates\package-business.ps1 -AppName "[nombre]" -Cliente "[cliente]"
 ```
-   El .exe se genera en `dist/[app-name]-win_x64.zip` (~2MB runtime).
-   El .apk se genera en `android/app/build/outputs/apk/release/app-release.apk`.
+   El .exe se empaqueta en `dist/[AppName]-Professional-v[version].zip` (~30MB).
+   Business adicionalmente incluye .apk en `android/app/build/outputs/apk/release/app-release.apk`.
 4. Mensaje de cierre:
 ```
 ✅ GENERACIÓN COMPLETADA
-📦 Perfil: [lite|full]
+📦 Perfil: [lite|professional|business]
 📂 Estructura: lista
 🧠 IA Jutia: [lite|full|no]
 🛡️ Compliance: 100% validado
@@ -480,8 +482,8 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] **Padrones UI**: ¿Lista sin tabla responsive (`overflow-x-auto` + `table`)? → CORREGIR
 - [ ] **Padrones UI**: ¿Falta empty state cuando no hay datos? → AGREGAR
 - [ ] **Padrones UI**: ¿Lista usa spinner en vez de skeleton? → REEMPLAZAR por skeleton DaisyUI
-- [ ] **Perfil**: ¿perfil=Full sin `neutralino.config.json`? → ❌ RECHAZAR (Neutralino requiere config)
-- [ ] **Perfil**: ¿perfil=Full y usa `import`/`export`? → ❌ RECHAZAR (Neutralino sirve HTML directo, sin bundler)
+- [ ] **Perfil**: ¿perfil=Professional/Business sin `neutralino.config.json`? → ❌ RECHAZAR (Neutralino requiere config)
+- [ ] **Perfil**: ¿perfil=Professional/Business y usa `import`/`export`? → ❌ RECHAZAR (Neutralino sirve HTML directo, sin bundler)
 
 === OUTPUT ENFORCEMENT (De taste-skill/output-skill) ===
 - [ ] ¿`// ...` / `// TODO` / `// rest of code` en output? → ❌ COMPLETAR código real
@@ -1166,14 +1168,14 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 
 | SKILL | Rol en este flujo |
 |-------|------------------|
-| `spec-creator` | Provee `specs/[app].md` con estructura, campos sensibles, reglas UI y `libreriasAdicionales` |
-| `setup-init` | Instala librerías (Lite: curl a assets/ / Full: bun add npm) |
+| `spec-engine` | Provee `specs/[app].md` con estructura, campos sensibles, reglas UI y `libreriasAdicionales` |
+| `setup-init` | Instala librerías según perfil (Lite: curl a assets/ / Professional/Business: npm) |
 | `ia-jutia` | Si se incluye, genera módulo IA + core/ia.js según perfil Lite/Full |
 | `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque |
-| `design-ux-intelligence` | Aplica tono visual, contrastes, espaciado y animaciones según spec |
+| `design-engine` | Aplica tono visual, contrastes, espaciado y animaciones según DESIGN.md |
 | `alpine-ui-patterns` | Catálogo de ~100 patrones Pines/Penguin/Pinemix con fallback chain. Se consulta cuando `component_library` ≠ daisyui o cuando DaisyUI no tiene el componente |
-| `validation-offline` | Ejecuta `validar app` tras completar FASE 4 |
-| `deployment-jigue` | Empaqueta (Lite: ZIP / Full: .exe) y despliega a Pages |
+| `validation-engine` | Ejecuta `validar app` tras completar FASE 4 |
+| `deployment-jigue` | Empaqueta según perfil (Essential: ZIP+Pages / Professional: .exe+FixedWV2 / Business: .exe+.apk+branding) |
 
 ---
 
@@ -1373,7 +1375,7 @@ Cuando la spec requiera UX avanzada o `component_library=pines`, inyectar estos 
 - **Librerías adicionales**: Si la spec tiene `libreriasAdicionales`, inyéctalas en `index.html` entre las libs base y los core files. El orden importa: CSS base → CSS adicional → JS libs base → JS libs adicionales → Core → Main.
 - **No asumas que la librería adicional existe**. Siempre carga desde `assets/js/libs/[nombre]`, nunca desde CDN.
 - **Idioma**: Todo el output, nombres de variables y comentarios en español.
-- **Componentes Pines en `components/pines/`**: Command Palette, Slide-over, Date Picker, Context Menu, Toast, Modal, Tabs, Accordion, etc. Tailwind nativo. Ver `design-ux-intelligence` Paso 5.
+- **Componentes Pines en `components/pines/`**: Command Palette, Slide-over, Date Picker, Context Menu, Toast, Modal, Tabs, Accordion, etc. Tailwind nativo. Ver `design-engine` Phase 2.
 - **Componentes alpine-ui-patterns**: ~100 patrones de Pines/Penguin/Pinemix en `alpine-ui-patterns/SKILL.md`. Consultar por categoría A (mejor)/B (alternativa)/C (exclusivo). Si `component_library=auto`, usar DaisyUI y solo recurrir a alpine-ui-patterns para componentes que DaisyUI no tiene (toast, command palette, date picker, text animation, etc.)
 
 ✨ **SKILL ready. Trigger: `generar codigo` para iniciar.**

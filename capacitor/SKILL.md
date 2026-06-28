@@ -16,7 +16,7 @@ meta:
     - "empaquetar movil"
     - "build android"
   stack: ["capacitor", "android", "gradle", "npm"]
-  perfiles: [full]
+  perfiles: [professional, business]
   language: es
 ---
 

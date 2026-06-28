@@ -7,14 +7,15 @@
 
 ## Identidad
 
-Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con dos perfiles (Lite/Full). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 8 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
+Meta-repo de skills OpenCode (SKILL.md autónomos en directorios raíz) para crear apps offline-first con tres perfiles (Lite/Professional/Business). Este es el **Ateje Stack**: una Skill-Layer Architecture de 5 engines + 8 standalone + 16 OmD skills que generan apps completas. No es una app. Skills generan apps en directorios externos, no dentro del repo.
 
 ## Perfiles
 
-| Perfil | Runtime | DB | Cifrado | Empaquetado |
-|--------|---------|----|---------|-------------|
-| Lite | Doble clic `index.html` | Dexie (IndexedDB) | CryptoJS | ZIP + GitHub Pages |
-| Full | NeutralinoJS .exe + Capacitor .apk | Dexie + SQLite (FTS5) | CryptoJS | .exe + .apk + Pages + Release |
+| Perfil | Nivel | Runtime | DB | Cifrado | Empaquetado | HTML visible? |
+|--------|-------|---------|----|---------|-------------|:------------:|
+| Lite | Essential | Doble clic `index.html` | Dexie (IndexedDB) | CryptoJS | ZIP + GitHub Pages | ✅ Sí |
+| Professional | Professional | Neutralino .exe + Fixed WV2 | Dexie + SQLite (FTS5) | CryptoJS | .exe + carpeta (~30MB ZIP) | ❌ No |
+| Business | Business | Neutralino .exe + Fixed WV2 | Dexie + SQLite (FTS5) | CryptoJS | .exe + .apk + branding + docs (~35MB ZIP) | ❌ No |
 
 El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
@@ -34,14 +35,14 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
-| `setup-init/` | Valida entorno, crea estructura, instala librerías. Genera defaults avatar/placeholder en `data/` | lite, full |
-| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` (incl. `search-palette.js`, `file-store.js`, `delete.js`) | lite, full |
-| `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
-| `deployment-jigue/` | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
-| `ia-jutia/` | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
+| `setup-init/` | Valida entorno, crea estructura, instala librerías. Genera defaults avatar/placeholder en `data/` | lite, professional, business |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` (incl. `search-palette.js`, `file-store.js`, `delete.js`) | lite, professional, business |
+| `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, professional, business |
+| `deployment-jigue/` | Commit + push + empaquetado segun perfil (Essential/Professional/Business) | lite, professional, business |
+| `ia-jutia/` | Mini IA: FlexSearch (Essential) / +ingesta docs + QA (Professional/Business) | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
-| `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | full |
-| `upgrade-engine/` | Migra app entre perfiles Lite/Full e IA Lite/Full. No modifica módulos ni datos, solo infraestructura | lite, full |
+| `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | professional, business |
+| `upgrade-engine/` | Migra app entre perfiles Lite/Professional/Business e IA Lite/Full. No modifica módulos ni datos, solo infraestructura | lite, professional, business |
 
 ### Skills externas (oh-my-design + es-writer, en `~/.opencode/skills/`)
 
@@ -82,7 +83,7 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
-| deployment-jigue | — | Commit + Push + Pages + ZIP (Lite) / .exe + .apk + Release (Full) |
+| deployment-jigue | — | Commit + Push + empaquetado segun perfil (Essential: ZIP+Pages / Professional: .exe+FixedWV2 / Business: .exe+.apk+branding) |
 | capacitor | deployment-jigue | `capacitor.config.json` + `android/` |
 | upgrade-engine | — | project.config.js actualizado + infraestructura nueva según perfil destino. Invocación directa `/upgrade` |
 | wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
@@ -114,7 +115,7 @@ El repo incluye **13 plantillas de apps** listas para generar con el pipeline. T
 | **AHA Obra** | `apps/AHA-Obra/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Obra/template.md` |
 | **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-PreFactura/template.md` |
 
-Cada nivel mapea a un perfil técnico: **Inicio** (Lite, ZIP+Pages), **Profesional** (Full, .exe+Pages+Release), **Enterprise** (Full+custom, código fuente+UI personalizada).
+Cada nivel mapea a un perfil técnico: **Inicio** (Lite, ZIP+Pages), **Profesional** (Professional, .exe+FixedWV2), **Enterprise** (Business, .exe+FixedWV2+.apk+branding).
 
 Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y ejecutar pipeline.
 
@@ -195,11 +196,11 @@ Push a `main` → GitHub Actions (`deploy-pages.yml`) → GitHub Pages. Sin buil
 Para empaquetado profesional: `publicar` → deployment-jigue segun perfil.
 
 Niveles de entrega:
-- **Inicio** (Lite): ZIP + GitHub Pages
-- **Profesional** (Full): .exe (Neutralino) + .apk (Capacitor) + Pages + Release
-- **Enterprise** (Full custom): .exe + .apk + código fuente completo + UI personalizada + docs + script brand.ps1 para re-brandeo
+- **Essential** (Lite): ZIP + GitHub Pages. HTML visible para demo/vitrina online.
+- **Professional**: .exe (Neutralino) + Fixed WebView2 (carpeta). Sin HTML visible. Sin .apk. IA Full. ~30MB ZIP.
+- **Business**: .exe (Neutralino) + Fixed WebView2 + .apk (Capacitor) + branding + docs. Sin código fuente. ~35MB ZIP.
 
-Para white-label: ejecutar `brand.ps1` con parámetros del cliente antes de empaquetar.
+Para white-label (Business): ejecutar `brand.ps1` o `package-business.ps1` con parámetros del cliente.
 
 ## Documentación de Estudio
 

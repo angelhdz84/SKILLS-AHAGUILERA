@@ -1,6 +1,6 @@
 ﻿---
 name: upgrade-engine
-description: Migra una app Ateje entre perfiles Lite/Full e IA Lite/Full. No modifica modulos ni datos, solo agrega/remueve archivos de infraestructura.
+description: Migra una app Ateje entre perfiles Lite/Professional/Business e IA Lite/Full. No modifica modulos ni datos, solo agrega/remueve archivos de infraestructura.
 license: MIT
 author: Angel Hernandez - ahaguilera.dev
 version: "1.0"
@@ -13,14 +13,14 @@ triggers:
   - "migrar perfil"
   - "cambiar perfil"
   - "actualizar perfil"
-stack: ["ateje", "upgrade", "perfil", "lite", "full"]
-perfiles: [lite, full]
+stack: ["ateje", "upgrade", "perfil", "lite", "professional", "business"]
+perfiles: [lite, professional, business]
 language: es
 ---
 
 # SKILL: upgrade-engine (Migracion de Perfil)
 
-> **Proposito**: Migrar una app Ateje existente entre perfiles Lite/Full e IA Lite/Full.
+> **Proposito**: Migrar una app Ateje existente entre perfiles Lite/Professional/Business e IA Lite/Full.
 > Sin modificar modulos ni datos del usuario.
 > **Pre-requisito**: project.config.js existente en la raiz del proyecto.
 
@@ -32,7 +32,7 @@ language: es
 2. **NO tocar datos** (IndexedDB) — los datos estan en el navegador, no en archivos
 3. **SI preservar** DESIGN.md, .omd/preferences.md, docs/ y personalizaciones existentes
 4. **SI validar** con stack-compliance-guard post-upgrade
-5. **NO soportar** Full→Lite (ilogico degradar una app)
+5. **NO soportar** Professional/Business→Lite (ilogico degradar una app)
 6. **IA Jutia es independiente** — su perfil no cambia con el perfil tecnico a menos que se explicite
 
 ---
@@ -46,10 +46,9 @@ language: es
 1. Buscar project.config.js en el directorio actual
 2. Si no existe → error: "No se encuentra project.config.js. Ejecuta este comando en la raiz de tu app Ateje."
 3. Leer window.APP_CONFIG:
-   - perfil (lite/full) — perfil tecnico actual
+   - perfil (lite/professional/business) — perfil tecnico actual
    - iaJutia (lite/full/no) — perfil de IA actual
-   - 
-ombreApp — nombre de la app
+   - nombreApp — nombre de la app
 4. Mostrar diagnostico:
 
 `
@@ -57,7 +56,7 @@ ombreApp — nombre de la app
   DIAGNOSTICO DE PERFIL
 ═══════════════════════════════════════════
   App:        [nombreApp]
-  Perfil:     [lite/full]
+  Perfil:     [lite/professional/business]
   IA Jutia:   [lite/full/no]
 ═══════════════════════════════════════════
 `
@@ -68,8 +67,9 @@ ombreApp — nombre de la app
 ┌──────────────────────────────────────────┐
 │  Selecciona los upgrades a aplicar:      │
 ├──────────────────────────────────────────┤
-│  APP (perfil tecnico)                    │
-│  [1] Lite → Full  (agrega .exe + .apk)  │
+│  APP (perfil tecnico)                       │
+│  [1] Lite → Professional   (.exe + Fixed WV2) │
+│  [2] Professional → Business (+ .apk + branding) │
 │  [0] No cambiar                          │
 ├──────────────────────────────────────────┤
 │  IA Jutia (independiente del perfil)     │
@@ -77,7 +77,7 @@ ombreApp — nombre de la app
 │  [3] Lite → Full (QA + ingesta docs)     │
 │  [0] No cambiar                          │
 ├──────────────────────────────────────────┤
-│  Android .apk                            │
+│  Android .apk (solo si Business)          │
 │  [4] Si (requiere JDK 17+ y Android SDK) │
 │  [5] No                                  │
 └──────────────────────────────────────────┘
@@ -89,7 +89,7 @@ ombreApp — nombre de la app
 ═══════════════════════════════════════════
   RESUMEN DE UPGRADE
 ═══════════════════════════════════════════
-  APP:  Lite → Full     ✅ (6 archivos nuevos)
+  APP:  Lite → Professional     ✅ (archivos nuevos)
   IA:   Lite → Full     ✅ (+ modelos ONNX)
   Android: Si           ✅ (requiere JDK 17+)
 ═══════════════════════════════════════════
@@ -98,7 +98,9 @@ ombreApp — nombre de la app
 
 ---
 
-## FASE 1: LITE → FULL (Infraestructura)
+## FASE 1: LITE → PROFESSIONAL (Infraestructura)
+
+Ejecutar SOLO si se eligio upgrade de APP perfil a Professional.
 
 Ejecutar SOLO si se eligio upgrade de APP perfil.
 
@@ -218,17 +220,16 @@ window.APP_CONFIG = {
 
 // Despues del upgrade
 window.APP_CONFIG = {
-  perfil: 'full',
+  perfil: 'professional',
   iaJutia: 'full',
-  android: true,
   // ...
 }
 `
 
 Campos a actualizar:
-- perfil → "full" (si se upgradeo APP)
+- perfil → "professional" o "business" (si se upgradeo APP)
 - iaJutia → nuevo valor (si se upgradeo IA)
-- ndroid → true/false (si se eligio Android)
+- android → true/false (si se eligio Android, solo Business)
 
 ---
 
@@ -240,15 +241,15 @@ Ejecutar stack-compliance-guard con el nuevo perfil.
 
 | Check | Perfil | Que verificar |
 |-------|--------|--------------|
-| 
-eutralino.config.json existe | Full | Necesario para compilar .exe |
-| capacitor.config.json existe | Full+Android | Necesario para generar .apk |
-| core/neutralino.js existe | Full | Cliente Neutralino para frontend |
-| package.json con deps | Full | alpinejs, dexie, cryptojs presentes |
-| ssets/models/ con ONNX | IA Full | Modelos Transformers.js descargados |
-| Sin import/export/	ype=module | Ambos | CORS bloquea ES6 en file:// |
-| Sin etch/CDN en runtime | Ambos | 100% offline sin dependencias externas |
-| cryptoHelpers.encrypt() en datos sensibles | Ambos | Proteccion local |
+| neutralino.config.json existe | Professional/Business | Necesario para compilar .exe |
+| capacitor.config.json existe | Business | Necesario para generar .apk |
+| core/neutralino.js existe | Professional/Business | Cliente Neutralino para frontend |
+| package.json con deps | Professional/Business | alpinejs, dexie, cryptojs presentes |
+| tools/WebView2-Fixed/ existe | Professional/Business | Fixed WebView2 para distribucion sin dependencia |
+| assets/models/ con ONNX | IA Full | Modelos Transformers.js descargados |
+| Sin import/export/type=module | Todos | CORS bloquea ES6 en file:// |
+| Sin fetch/CDN en runtime | Todos | 100% offline sin dependencias externas |
+| cryptoHelpers.encrypt() en datos sensibles | Todos | Proteccion local |
 
 ### Reporte final
 
@@ -256,7 +257,7 @@ eutralino.config.json existe | Full | Necesario para compilar .exe |
 ═══════════════════════════════════════════
   ✅ UPGRADE COMPLETADO
 ═══════════════════════════════════════════
-  APP:  [lite/full] → [lite/full]   ✅
+  APP:  [lite/professional/business] → [lite/professional/business]   ✅
   IA:   [lite/full/no] → [lite/full/no] ✅
   Android: [si/no]                   ✅
 ═══════════════════════════════════════════
@@ -275,8 +276,8 @@ eutralino.config.json existe | Full | Necesario para compilar .exe |
 
 - [ ] ¿project.config.js existe y tiene perfil correcto? → Leer antes de empezar
 - [ ] ¿Se eligio Android pero no hay JDK 17+? → Informar requisito, no bloquear
-- [ ] ¿perfil=Full pero 
-eutralino.config.json no se genero? → RECHAZAR
-- [ ] ¿perfil=Full pero core/neutralino.js no existe? → DESCARGAR
+- [ ] ¿perfil=Professional/Business pero neutralino.config.json no se genero? → RECHAZAR
+- [ ] ¿perfil=Professional/Business pero core/neutralino.js no existe? → DESCARGAR
+- [ ] ¿perfil=Professional/Business pero tools/WebView2-Fixed/ no existe? → EJECUTAR scripts/download-fixed-wv2.ps1
 - [ ] ¿IA Full pero modelos ONNX no descargados? → INFORMAR, no bloquear
 - [ ] ¿Import/export en modulos tras upgrade? → ❌ RECHAZAR

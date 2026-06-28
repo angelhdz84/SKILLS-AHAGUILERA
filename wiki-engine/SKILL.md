@@ -6,7 +6,7 @@ compatibility: Requiere directorio wiki/ en la raíz del proyecto. MCP memory se
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   triggers: ["guardar", "recuerda", "wiki", "documenta", "almacena", "memo", "preference", "aprende", "integra preferencias", "fold preferences"]
   language: es
   requires: []

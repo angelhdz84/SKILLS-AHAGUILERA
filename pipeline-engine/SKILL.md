@@ -6,7 +6,7 @@ compatibility: Requiere @AGENTS.md y las skills engine instaladas. Funciona con 
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "1.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "pipeline-engine orchestrator"
   triggers: ["nuevo proyecto", "iniciar pipeline", "crear app", "iniciar flujo", "/new", "/pro", "landing", "prototype", "primera pantalla"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -61,7 +61,7 @@ PAUSA tras cada fase. Espera confirmación explícita (`✅ CONTINUAR`). OpenCod
  7. ASSETS            → omd:asset-fetch + MCP stocky (imágenes CC0, iconos, avatares)
  8. TESTING           → validation-engine fases 1-3 (compliance + DevTools + E2E)
  9. DESIGN REVIEW     → validation-engine fases 4-5 (brand audit + QA rubric)
-10. DEPLOY            → deployment-jigue (según perfil Lite/Full)
+10. DEPLOY            → deployment-jigue (según perfil Lite/Professional/Business)
 ```
 
 ### Safety cap
@@ -95,7 +95,7 @@ Un solo `/pro` puede ejecutar hasta 12 rondas de sub-agentes. Si se excede, se n
 ## Reglas no negociables
 
 - ❌ PROHIBIDO (Lite): `import`/`export`, `type="module"`, `fetch`, CDNs, build steps.
-- ✅ PERMITIDO (Full): `import` dentro de `src/` para Bun, web server.
+- ❌ NO PERMITIDO (todos los perfiles): `import`/`export` en módulos — todos usan file:// compatible.
 - ✅ OBLIGATORIO (ambos): Variables globales, rutas relativas.
 - 🔐 Cifrado con CryptoJS en ambos perfiles (campos sensibles definidos en spec).
 - 📐 UI: DaisyUI + Bootstrap Icons + Animate.css. Español. Responsive.
@@ -106,7 +106,7 @@ Un solo `/pro` puede ejecutar hasta 12 rondas de sub-agentes. Si se excede, se n
 
 ```
 🚀 PIPELINE COMPLETADO
-📦 Perfil: [lite|full]
+📦 Perfil: [lite|professional|business]
 ✅ Estructura: lista
 ✅ Spec: specs/[app].md (con DESIGN.md brand layer)
 ✅ Tokens de marca: aplicados
