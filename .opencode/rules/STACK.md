@@ -44,3 +44,15 @@
 - ✅ Branding personalizado: logo, colores, nombre del cliente aplicados en toda la UI
 - ✅ Documentación personalizada: `GUIA_USUARIO.md`, `GUIA_INSTALACION.md`
 - 📦 Tamaño entregable: ~35MB ZIP
+
+## Herramientas de desarrollo (opcionales)
+
+Estas herramientas mejoran el pipeline pero **no afectan las apps generadas**. Sin ellas todo funciona igual.
+
+| Herramienta | Perfil | Propósito | Instalación |
+|-------------|:------:|-----------|-------------|
+| **Engram** | Professional / Business | Memoria persistente para el agente OpenCode (wiki-engine) | `winget install Gentleman.Programming.Engram` |
+| **OpenPencil CLI** | Business (opcional) | Extracción de tokens desde archivos .fig para DESIGN.md | `npm install -g @open-pencil/cli` |
+| **OpenPencil Desktop** | Business (opcional) | Editor visual Figma-compatible + preview diseño + MCP server | `winget install OpenPencil.OpenPencil` |
+
+**Nota**: OpenPencil exporta a Tailwind v4 puro. Los tokens extraídos se aplican a DaisyUI 5 vía `@theme`. El resultado visual es el mismo porque DaisyUI usa los mismos tokens.

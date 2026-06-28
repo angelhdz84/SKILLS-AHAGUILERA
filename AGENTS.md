@@ -27,9 +27,9 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 |-----------|-----------|-------------|----------|
 | `pipeline-engine/` | Orquestador maestro dual: Classic (5 fases, /new) y Design (10 fases, /pro) | prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator | lite, full |
 | `spec-engine/` | Spec funcional + DESIGN.md brand layer con 286 referencias oh-my-design | spec-creator + omd:init + omd:taste | lite, full |
-| `design-engine/` | Brand context injection + tokens DaisyUI/alpine-ui-patterns + captura de preferencias persistentes + decision tree component_library | design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn | lite, full |
+| `design-engine/` | Brand context injection + tokens DaisyUI/alpine-ui-patterns + extracción de tokens via OpenPencil (opcional, Business) + captura de preferencias persistentes + decision tree component_library | design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember + omd:learn | lite, full |
 | `validation-engine/` | 4 fases: compliance → brand audit → DevTools/Playwright → QA rubric + modo refactor | validation-offline + ux-refactor + omd:designer-review + omd:final-qa | lite, full |
-| `wiki-engine/` | Wiki persistente + preferencias de diseño .omd/preferences.md + MCP memory | llm-wiki + omd:remember + omd:learn | lite, full |
+| `wiki-engine/` | Wiki persistente + preferencias de diseño .omd/preferences.md + memoria Engram (opcional) | llm-wiki + omd:remember + omd:learn | lite, full |
 
 ### Skills standalone (no reemplazadas)
 
@@ -86,14 +86,24 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | deployment-jigue | — | Commit + Push + empaquetado segun perfil (Essential: ZIP+Pages / Professional: .exe+FixedWV2 / Business: .exe+.apk+branding) |
 | capacitor | deployment-jigue | `capacitor.config.json` + `android/` |
 | upgrade-engine | — | project.config.js actualizado + infraestructura nueva según perfil destino. Invocación directa `/upgrade` |
-| wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
+| wiki-engine | — | `wiki/` + `.omd/preferences.md` + Engram memory (opcional) |
 
 ## MCP Servers
 
-- `mcp-servers/stocky/` — Python. Busca imágenes Pexels + Unsplash. Setup: `pip install -e .`
-- `mcp-servers/refero-styles/` — TypeScript. Busca sistemas de diseño en refero.design. Setup: `npm install && npm run build`
+| Servidor | Tipo | Comando | Propósito |
+|----------|------|---------|-----------|
+| **memory** | Siempre activo | `npx @modelcontextprotocol/server-memory` | Memoria temporal del agente |
+| **github** | Siempre activo | `npx @modelcontextprotocol/server-github` | Operaciones GitHub API |
+| **stocky** | Siempre activo | `python -m mcp-servers.stocky.stocky_mcp` | Imágenes Pexels + Unsplash |
+| **refero-styles** | Siempre activo | `npx tsx mcp-servers/refero-styles/src/index.ts` | Sistemas de diseño en refero.design |
+| **engram** | Opcional | `engram mcp --project "Ateje"` (env: `ENGRAM_DATA_DIR=.omd`) | Memoria persistente SQLite/FTS5 |
+| **open-pencil** | Opcional | `openpencil-mcp` | Leer/modificar diseños desde OpenCode |
 
-Configurados en `opencode.json` en la raíz del repo. Incluye memory, github, stocky y refero-styles.
+Configurados en `opencode.json` en la raíz del repo. Los MCP opcionales se activan automáticamente si la herramienta está instalada.
+
+**Setup de opcionales:**
+- Engram: `winget install Gentleman.Programming.Engram` + `scripts/setup-engram.ps1`
+- OpenPencil: `winget install OpenPencil.OpenPencil` + `npm install -g @open-pencil/cli` + `scripts/setup-opencil.ps1`
 
 ## Catálogo de apps AHA
 
@@ -204,6 +214,7 @@ Para white-label (Business): ejecutar `brand.ps1` o `package-business.ps1` con p
 
 ## Documentación de Estudio
 
-- `docs/guia-estudio-ateje.md` — Guía completa para estudiar y comprender el Stack Ateje (arquitectura, core, perfiles, 13 AHA Apps, módulos compartidos, pipeline, buenas prácticas)
-- `docs/stack-completo.md` — Referencia técnica del stack completo (versión detallada para desarrolladores)
+- `docs/guia-estudio-ateje.md` — Guía completa para estudiar y comprender el Stack Ateje
+- `docs/stack-completo.md` — Referencia técnica del stack completo
 - `docs/guia-stack-skills-layer.md` — Guía de habilidades y capas del stack
+- `docs/guia-integracion-engram-openpencil.md` — Integración de Engram + OpenPencil al pipeline

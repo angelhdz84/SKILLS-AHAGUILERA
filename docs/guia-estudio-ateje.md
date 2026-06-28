@@ -22,7 +22,8 @@
 14. [Pipeline / Flujo de Trabajo](#1️⃣4️⃣-pipeline--flujo-de-trabajo)
 15. [Comandos Slash](#1️⃣5️⃣-comandos-slash)
 16. [Instalación Global](#1️⃣6️⃣-instalación-global)
-17. [Buenas Prácticas](#1️⃣7️⃣-buenas-prácticas)
+17. [Herramientas de Desarrollo (Engram + OpenPencil)](#1️⃣7️⃣-herramientas-de-desarrollo-engram--openpencil)
+18. [Buenas Prácticas](#1️⃣8️⃣-buenas-prácticas)
 
 ---
 
@@ -944,7 +945,84 @@ Para usar el Ateje Stack desde cualquier proyecto:
 
 ---
 
-## 1️⃣7️⃣ Buenas Prácticas
+## 1️⃣7️⃣ Herramientas de Desarrollo (Engram + OpenPencil)
+
+Dos herramientas externas opcionales que mejoran la memoria del agente y el diseño visual. **No son requisito** — el pipeline funciona 100% sin ellas.
+
+### Engram — Memoria Persistente
+
+Engram reemplaza el MCP memory graph conceptual de `wiki-engine` con almacenamiento SQLite real + búsqueda FTS5 + 20 tools MCP.
+
+| Concepto | Descripción |
+|---|---|
+| **¿Qué es?** | Servicio de memoria persistente para agentes de IA. Captura decisiones, preferencias y contexto entre sesiones. |
+| **Instalación** | `winget install Gentleman.Programming.Engram` (~10MB Go binary) |
+| **Configuración** | `scripts/setup-engram.ps1` — detecta Engram, configura `ENGRAM_DATA_DIR=.omd/`, inicializa el proyecto |
+| **Uso en pipeline** | `wiki-engine` lo usa como backend de memoria durante ingest/query/lint |
+| **MCP** | `engram mcp --project "Ateje"` — 20 herramientas MCP (create, search, read, delete entities, add observations, etc.) |
+| **Fallback** | Sin Engram, `wiki-engine` usa markdown en `wiki/` + `.omd/preferences.md` |
+
+**Flujo:**
+1. `scripts/setup-engram.ps1` corre durante `/setup` si Engram está instalado
+2. Configura `ENGRAM_DATA_DIR=.omd/` para que la memoria sea portable con el proyecto
+3. `wiki-engine` invoca Engram via MCP para persistir y buscar conocimiento
+4. Sin Engram: todo funciona con archivos markdown
+
+### OpenPencil — Diseño Visual + MCP
+
+OpenPencil es un editor visual Figma-compatible con CLI para extracción de tokens de diseño.
+
+| Concepto | Descripción |
+|---|---|
+| **¿Qué es?** | Editor visual Figma-compatible + CLI para extraer tokens de diseño a DESIGN.md |
+| **Componentes** | **Desktop App** (Tauri, ~7MB): editor visual + MCP server. **CLI** (`npm install -g @open-pencil/cli`): extracción headless de tokens |
+| **Instalación** | `winget install OpenPencil.OpenPencil` (Desktop) + `npm install -g @open-pencil/cli` (CLI) |
+| **Configuración** | `scripts/setup-opencil.ps1` — detecta CLI + Desktop, crea `assets/brand/`, imprime guía de uso |
+| **Uso en pipeline** | `design-engine` Fase 1.5: extrae colores/tipografía/spacing desde archivos `.fig` y los inyecta en DESIGN.md como tokens DaisyUI `@theme` |
+| **MCP** | `openpencil-mcp` — 90+ tools para leer/modificar diseño desde OpenCode (requiere Desktop App abierta) |
+
+**Flujo de extracción de tokens:**
+```bash
+# 1. Abrir diseño en OpenPencil Desktop y exportar como .fig
+# 2. Extraer tokens
+openpencil analyze colors brand.fig --json > assets/brand/tokens-colors.json
+openpencil analyze typography brand.fig --json > assets/brand/tokens-typography.json
+openpencil analyze spacing brand.fig --json > assets/brand/tokens-spacing.json
+# 3. Preview del diseño
+openpencil preview brand.fig --output docs/preview-brand.html
+# 4. design-engine lee los JSON y genera tokens DaisyUI @theme en DESIGN.md
+```
+
+**Token bridge:** OpenPencil analiza `.fig` → tokens JSON → DESIGN.md → DaisyUI `@theme` daisyui.config → el código generado coincide con el preview visual.
+
+### MCP Servers en opencode.json
+
+Ambos están configurados en `opencode.json` como entidades MCP opcionales:
+
+```json
+"engram": {
+  "type": "local",
+  "command": ["engram", "mcp", "--project", "Ateje"],
+  "env": { "ENGRAM_DATA_DIR": ".omd" }
+},
+"open-pencil": {
+  "type": "local",
+  "command": ["openpencil-mcp"]
+}
+```
+
+Si no tienes las herramientas instaladas, OpenCode ignora estos MCP servers silenciosamente.
+
+### ¿Cuándo activarlas?
+
+| Herramienta | Activar si... | Beneficio |
+|---|---|---|
+| **Engram** | El agente olvida decisiones entre sesiones de trabajo | Memoria persistente SQLite/FTS5, 20 tools MCP, dashboard visual |
+| **OpenPencil** | Tienes diseños en Figma/OpenPencil y quieres que el código generado coincida exactamente | Tokens de diseño automáticos, preview visual, MCP para edición desde OpenCode |
+
+---
+
+## 1️⃣8️⃣ Buenas Prácticas
 
 ### Código
 

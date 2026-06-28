@@ -54,6 +54,40 @@ Antes de cualquier acción, determinar el modo:
   > defaults de DaisyUI 5                                (fallback)
 ```
 
+### Phase 1.5 — Design Token Extraction via OpenPencil (opcional, Business)
+
+Si OpenPencil CLI está instalado y existe `assets/brand/` con archivos `.fig`, extraer tokens automáticamente:
+
+```bash
+# Extraer paleta de colores
+openpencil analyze colors assets/brand/brand.fig --json > assets/brand/tokens-colors.json
+
+# Extraer tipografía
+openpencil analyze typography assets/brand/brand.fig --json > assets/brand/tokens-typography.json
+
+# Extraer espaciado y radios
+openpencil analyze spacing assets/brand/brand.fig --json > assets/brand/tokens-spacing.json
+
+# Extraer variables de diseño
+openpencil variables assets/brand/brand.fig --json > assets/brand/tokens-variables.json
+```
+
+Los tokens extraídos se inyectan en la prioridad de resolución:
+
+```
+.tokens/*.json (extraídos por OpenPencil)
+  > assets/brand/*.fig                        (raw design file)
+  > .omd/preferences.md                       (correcciones del usuario)
+  > DESIGN.md / specs/[app].md secciones 10-15 (esencia: voz, principios)
+  > defaults de DaisyUI 5                     (fallback)
+```
+
+**Nota importante**: OpenPencil exporta a Tailwind v4 puro (no DaisyUI). Los tokens extraídos (colores HEX, tipografías, espaciados) se aplican a DaisyUI 5 vía `@theme`. El resultado visual es el mismo porque DaisyUI usa los mismos tokens.
+
+**Si OpenPencil no está instalado o no hay .fig disponible**, esta fase se omite y DESIGN.md se escribe a mano como hasta ahora.
+
+---
+
 ### Phase 2 — Seleccionar librería de componentes + aplicar tokens
 
 Para cada módulo que code-generator produzca:

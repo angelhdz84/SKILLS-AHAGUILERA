@@ -52,6 +52,17 @@
     "refero-styles": {
       "type": "local",
       "command": ["npx", "tsx", "mcp-servers/refero-styles/src/index.ts"]
+    },
+    "engram": {
+      "type": "local",
+      "command": ["engram", "mcp", "--project", "Ateje"],
+      "env": { "ENGRAM_DATA_DIR": ".omd" },
+      "description": "Memoria persistente del agente. Requiere Engram instalado (winget install Gentleman.Programming.Engram)"
+    },
+    "open-pencil": {
+      "type": "local",
+      "command": ["openpencil-mcp"],
+      "description": "Leer/modificar diseños desde OpenCode. Requiere OpenPencil Desktop App abierta (npm install -g @open-pencil/mcp)"
     }
   },
   "instructions": ["AGENTS.md"]
