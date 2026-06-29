@@ -103,6 +103,42 @@
         </template>
       </div>
 
+      <!-- Estadisticas detalladas + Exportar PDF -->
+      <div class="card bg-base-100 shadow-xl p-4 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold">Estadisticas</h3>
+          <button class="btn btn-ghost btn-xs gap-1" @click="exportPDF()" x-show="Object.keys(estadisticas || {}).length > 0">
+            <i class="bi bi-filetype-pdf"></i>
+            Exportar PDF
+          </button>
+        </div>
+        <template x-if="Object.keys(estadisticas || {}).length > 0">
+          <div class="overflow-x-auto">
+            <template x-for="(stats, tableName) in estadisticas" :key="tableName">
+              <div class="mb-4">
+                <h4 class="text-sm font-semibold mb-2" x-text="tableName"></h4>
+                <table class="table table-sm table-zebra">
+                  <thead>
+                    <tr><th>Metrica</th><th>Valor</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Registros</td><td x-text="stats.count"></td></tr>
+                    <tr><td>Promedio</td><td x-text="stats.mean"></td></tr>
+                    <tr><td>Mediana</td><td x-text="stats.median"></td></tr>
+                    <tr><td>Minimo</td><td x-text="stats.min"></td></tr>
+                    <tr><td>Maximo</td><td x-text="stats.max"></td></tr>
+                    <tr x-show="stats.stddev != null"><td>Desviacion Std</td><td x-text="stats.stddev"></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
+          </div>
+        </template>
+        <template x-if="Object.keys(estadisticas || {}).length === 0">
+          <p class="text-sm text-base-content/40">No hay datos estadisticos disponibles.</p>
+        </template>
+      </div>
+
       <!-- Predictor -->
       <div class="card bg-base-100 shadow-xl p-4 mb-6">
         <h3 class="font-semibold flex items-center gap-2 mb-4">

@@ -110,6 +110,42 @@ const ModuloIA = {
             </template>
           </div>
 
+          <!-- Estadisticas detalladas + Exportar PDF -->
+          <div class="card bg-base-100 shadow-xl p-4 mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">Estadisticas</h3>
+              <button class="btn btn-ghost btn-xs gap-1" @click="exportPDF()" x-show="Object.keys(estadisticas || {}).length > 0">
+                <i class="bi bi-filetype-pdf"></i>
+                Exportar PDF
+              </button>
+            </div>
+            <template x-if="Object.keys(estadisticas || {}).length > 0">
+              <div class="overflow-x-auto">
+                <template x-for="(stats, tableName) in estadisticas" :key="tableName">
+                  <div class="mb-4">
+                    <h4 class="text-sm font-semibold mb-2" x-text="tableName"></h4>
+                    <table class="table table-sm table-zebra">
+                      <thead>
+                        <tr><th>Metrica</th><th>Valor</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>Registros</td><td x-text="stats.count"></td></tr>
+                        <tr><td>Promedio</td><td x-text="stats.mean"></td></tr>
+                        <tr><td>Mediana</td><td x-text="stats.median"></td></tr>
+                        <tr><td>Minimo</td><td x-text="stats.min"></td></tr>
+                        <tr><td>Maximo</td><td x-text="stats.max"></td></tr>
+                        <tr x-show="stats.stddev != null"><td>Desviacion Std</td><td x-text="stats.stddev"></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </template>
+              </div>
+            </template>
+            <template x-if="Object.keys(estadisticas || {}).length === 0">
+              <p class="text-sm text-base-content/40">No hay datos estadisticos disponibles.</p>
+            </template>
+          </div>
+
           <!-- Predictor -->
           <div class="card bg-base-100 shadow-xl p-4 mb-6">
             <h3 class="font-semibold flex items-center gap-2 mb-4">
@@ -187,6 +223,7 @@ document.addEventListener('alpine:init', () => {
     predTabla: '',
     predCampo: '',
     prediccion: null,
+    estadisticas: {},
     groupedResults: {},
     autocompleteResults: [],
     autocompleteIndex: -1,
@@ -202,6 +239,7 @@ document.addEventListener('alpine:init', () => {
           ...s,
           icono: 'bi bi-table'
         }));
+        this._loadDetailedStats(stats);
       }
       if (this.query) await this.buscar();
     },
@@ -347,6 +385,119 @@ document.addEventListener('alpine:init', () => {
         this.autocompleteVisible = false;
         this.autocompleteIndex = -1;
       }
+    },
+
+    // v0.2 — L3 Export stats PDF
+    _loadDetailedStats: async function(overview) {
+      if (!window.ia || !window.db) return;
+      const result = {};
+      for (const s of overview) {
+        const tabla = s.tabla;
+        if (!tabla) continue;
+        try {
+          const sample = await window.db[tabla].limit(1).toArray();
+          if (!sample.length) continue;
+          const numericField = Object.keys(sample[0]).find(k =>
+            typeof sample[0][k] === 'number' && k !== 'id' && k !== '_id'
+          );
+          if (!numericField) continue;
+          const stats = await window.ia.stats(tabla, numericField);
+          if (stats) {
+            result[tabla] = {
+              count: stats.count,
+              mean: stats.media,
+              median: stats.mediana,
+              mode: stats.moda,
+              min: stats.min,
+              max: stats.max,
+              stddev: stats.stddev
+            };
+          }
+        } catch(e) {
+          // skip table on error
+        }
+      }
+      this.estadisticas = result;
+    },
+
+    // v0.2 — L3 Export stats PDF
+    exportPDF: function() {
+      const tables = this.estadisticas || {};
+      const partes = [];
+
+      partes.push('<html><head><meta charset="utf-8">');
+      partes.push('<title>Reporte de Estadisticas</title>');
+      partes.push('<style>');
+      partes.push(`
+        body { font-family: system-ui, -apple-system, sans-serif; padding: 40px; color: #1a1a2e; }
+        h1 { font-size: 24px; margin-bottom: 4px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+        th { background: #f0f0f5; text-align: left; padding: 8px 12px; font-weight: 600; border-bottom: 2px solid #ddd; }
+        td { padding: 6px 12px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) td { background: #fafafa; }
+        .section-title { font-size: 16px; font-weight: 600; margin: 24px 0 12px; color: #333; }
+        .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 11px; color: #999; text-align: center; }
+        @media print {
+          body { padding: 20px; }
+          .no-print { display: none; }
+        }
+      `);
+      partes.push('</style></head><body>');
+
+      const appName = window.APP_CONFIG?.nombre || 'App';
+      const date = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+      partes.push('<h1>' + this._escapeHtml(appName) + '</h1>');
+      partes.push('<div class="subtitle">Reporte generado: ' + date + '</div>');
+
+      if (Object.keys(tables).length > 0) {
+        for (const [tableName, tStats] of Object.entries(tables)) {
+          if (!tStats) continue;
+          partes.push('<div class="section-title">' + this._escapeHtml(tableName) + '</div>');
+          partes.push('<table><thead><tr><th>Metrica</th><th>Valor</th></tr></thead><tbody>');
+          const rows = [
+            ['Registros', tStats.count],
+            ['Promedio', tStats.mean],
+            ['Mediana', tStats.median],
+            ['Moda', tStats.mode],
+            ['Minimo', tStats.min],
+            ['Maximo', tStats.max],
+            ['Desviacion Std', tStats.stddev]
+          ];
+          rows.forEach(([label, val]) => {
+            if (val !== undefined && val !== null) {
+              partes.push('<tr><td>' + this._escapeHtml(label) + '</td><td>' + this._escapeHtml(String(val)) + '</td></tr>');
+            }
+          });
+          partes.push('</tbody></table>');
+        }
+      } else {
+        partes.push('<p>No hay datos estadisticos disponibles.</p>');
+      }
+
+      partes.push('<div class="footer">IA Jutia - ' + appName + ' | ' + date + '</div>');
+      partes.push('</body></html>');
+
+      const win = window.open('', '_blank');
+      if (win) {
+        win.document.write(partes.join(''));
+        win.document.close();
+        setTimeout(function() {
+          win.focus();
+          win.print();
+          setTimeout(function() { win.close(); }, 500);
+        }, 300);
+      }
+    },
+
+    _escapeHtml: function(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
   }));
 });
