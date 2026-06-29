@@ -1,4 +1,4 @@
-// core/ia.js — IA Jutia Lite: FlexSearch + Estadísticas + Predicciones
+﻿// core/ia.js â€” IA Jutia Lite: FlexSearch + EstadÃ­sticas + Predicciones
 // Dependencias: FlexSearch (window.FlexSearch), Dexie (window.db)
 // Expone: window.ia
 
@@ -10,11 +10,14 @@
     _flex: null,
     _tables: [],
     _paletteOpen: false,
+    _worker: null,
+    _workerReady: false,
+    _pending: null,
 
-    // ── Init ──────────────────────────────────────────────
+    // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     initLite() {
       if (typeof FlexSearch === 'undefined') {
-        console.warn('⚠️ ia-jutia: FlexSearch no disponible. Busqueda desactivada.');
+        console.warn('âš ï¸ ia-jutia: FlexSearch no disponible. Busqueda desactivada.');
         return;
       }
       this._flex = new FlexSearch.Document({
@@ -26,9 +29,10 @@
         tokenize: 'forward',
         cache: true
       });
+      this._initWorker();
       this._registerDefaultTables();
       this._initPalette();
-      console.log('🧠 ia-jutia Lite iniciado');
+      console.log('ðŸ§  ia-jutia Lite iniciado');
 
       if (typeof Alpine !== 'undefined') {
         Alpine.store('ia', {
@@ -40,7 +44,69 @@
       }
     },
 
-    _registerDefaultTables() {
+
+    _initWorker() {
+      if (typeof Worker === 'undefined') { this._workerReady = false; return; }
+      try {
+        const flexSource = typeof FLEXSEARCH_SOURCE !== 'undefined' ? FLEXSEARCH_SOURCE : '';
+        const workerSource = this._getWorkerSource();
+        if (!flexSource || !workerSource) {
+          this._workerReady = false;
+          return;
+        }
+        const blob = new Blob([flexSource + '\n' + workerSource], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        this._worker = new Worker(url);
+        URL.revokeObjectURL(url);
+
+        this._worker.onmessage = (e) => {
+          const { type, payload, id } = e.data;
+          if (this._pending && this._pending[type] && this._pending[type][id]) {
+            this._pending[type][id].resolve(payload);
+            delete this._pending[type][id];
+          }
+        };
+
+        this._worker.onerror = () => {
+          console.warn('[IA] Worker fallo, usando main-thread');
+          this._workerReady = false;
+          this._worker = null;
+        };
+
+        this._workerReady = true;
+        this._pending = {};
+        this._worker.postMessage({
+          type: 'init',
+          payload: { fields: ['nombre', 'descripcion', 'notas', 'texto'], store: ['nombre', 'tipo', 'tabla'] }
+        });
+      } catch(e) {
+        console.warn('[IA] Worker no disponible, usando main-thread');
+        this._workerReady = false;
+      }
+    },
+
+    _getWorkerSource() {
+      // IA_WORKER_SOURCE es reemplazado con el contenido real de ia-worker.js durante build
+      // Ver ia-jutia/templates/lite/core/ia-worker.js
+      return typeof IA_WORKER_SOURCE !== 'undefined' ? IA_WORKER_SOURCE : '';
+    },
+
+    _workerPost(type, payload) {
+      return new Promise((resolve, reject) => {
+        const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        this._pending = this._pending || {};
+        this._pending[type] = this._pending[type] || {};
+        this._pending[type][id] = { resolve, reject };
+        this._worker.postMessage({ type, payload, id });
+        setTimeout(() => {
+          if (this._pending[type] && this._pending[type][id]) {
+            reject(new Error('Worker timeout'));
+            delete this._pending[type][id];
+          }
+        }, 30000);
+      });
+    },
+        _registerDefaultTables() {
       if (!window.db) return;
       const tables = [];
       for (const key of Object.keys(window.db)) {
@@ -54,6 +120,17 @@
     },
 
     async registerTable(nombre, campos) {
+      if (this._workerReady && this._worker) {
+        if (!window.db || !window.db[nombre]) return;
+        var _wTotal = await window.db[nombre].count();
+        var _wBatch = 200;
+        for (var _wOff = 0; _wOff < _wTotal; _wOff += _wBatch) {
+          var _wRows = await window.db[nombre].offset(_wOff).limit(_wBatch).toArray();
+          await this._workerPost("registerTable", { nombre: nombre, campos: campos, records: _wRows });
+        }
+        return;
+      }
+
       if (!this._flex) return;
       if (!window.db || !window.db[nombre]) return;
 
@@ -72,9 +149,15 @@
         }));
         docs.forEach(d => this._flex.add(d));
       }
-    },
+    
+},
 
     indexRecord(tabla, record) {
+      if (this._workerReady && this._worker) {
+        this._workerPost("indexRecord", { tabla: tabla, record: record });
+        return;
+      }
+
       if (!this._flex || !record) return;
       const doc = {
         id: `${tabla}-${record.id || record._id}`,
@@ -86,15 +169,36 @@
         tabla: tabla
       };
       this._flex.add(doc);
-    },
+    
+},
 
     removeRecord(tabla, id) {
+      if (this._workerReady && this._worker) {
+        this._workerPost("removeRecord", { tabla: tabla, id: id });
+        return;
+      }
+
       if (!this._flex || !id) return;
       this._flex.remove(`${tabla}-${id}`);
-    },
+    
+},
 
-    // ── Búsqueda ──────────────────────────────────────────
-    search(query, opts = {}) {
+    // â”€â”€ BÃºsqueda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+search(query, opts) {
+      opts = opts || {};
+      if (!this._flex && !this._workerReady) return Promise.resolve([]);
+      if (this._workerReady && this._worker) {
+        return this._workerPost("search", { query: query, opts: opts }).then(function(results) {
+          var flat = results || [];
+          if (typeof Alpine !== "undefined") {
+            Alpine.store("ia").results = flat;
+            Alpine.store("ia").searching = false;
+          }
+          return flat;
+        });
+      }
+
+
       if (!this._flex || !query) return Promise.resolve([]);
       if (typeof Alpine !== 'undefined') {
         Alpine.store('ia').searching = true;
@@ -122,8 +226,15 @@
       });
     },
 
-    // ── Estadísticas ──────────────────────────────────────
+    // â”€â”€ EstadÃ­sticas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     stats(tabla, campo) {
+      if (this._workerReady && this._worker) {
+        if (!window.db || !window.db[tabla]) return Promise.resolve(null);
+        return window.db[tabla].toArray().then(function(rows) {
+          return this._workerPost("stats", { tabla: tabla, campo: campo, records: rows });
+        }.bind(this));
+      }
+
       if (!window.db || !window.db[tabla]) return null;
       return window.db[tabla].toArray().then(rows => {
         const valores = rows
@@ -155,7 +266,8 @@
           suma: +sum.toFixed(2)
         };
       });
-    },
+    
+},
 
     async statsAll() {
       if (!window.db) return [];
@@ -178,8 +290,20 @@
       return maxFreq > 1 ? moda : valores[0];
     },
 
-    // ── Predicciones (JS puro, sin ML) ────────────────────
+    // â”€â”€ Predicciones (JS puro, sin ML) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     predict(tabla, campo, periodos = 3) {
+      var periodos = periodos || 3;
+      if (this._workerReady && this._worker) {
+        if (!window.db || !window.db[tabla]) return Promise.resolve(null);
+        return window.db[tabla].toArray().then(function(rows) {
+          var valores = rows
+            .map(function(r) { return parseFloat(r[campo]); })
+            .filter(function(v) { return !isNaN(v); });
+          if (valores.length < 2) return null;
+          return this._workerPost("predict", { valores: valores, periodos: periodos });
+        }.bind(this));
+      }
+
       if (!window.db || !window.db[tabla]) return Promise.resolve(null);
       return window.db[tabla].toArray().then(rows => {
         const valores = rows
@@ -193,7 +317,8 @@
 
         return this.forecast(ys, periodos);
       });
-    },
+    
+},
 
     forecast(valores, n = 3) {
       if (valores.length < 2) return null;
@@ -240,7 +365,7 @@
       return resultado;
     },
 
-    // ── Utilidades ────────────────────────────────────────
+    // â”€â”€ Utilidades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async exportResumen(tabla) {
       if (!window.db || !window.db[tabla]) return '';
       const registros = await window.db[tabla].count();
@@ -256,7 +381,7 @@
       return txt;
     },
 
-    // ── Command Palette ───────────────────────────────────
+    // â”€â”€ Command Palette â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     _initPalette() {
       if (typeof Alpine === 'undefined') return;
       const self = this;
@@ -279,3 +404,4 @@
     IA.initLite();
   }
 })();
+
