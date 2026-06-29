@@ -20,7 +20,8 @@ Catálogo de plantillas de apps listas para construir y vender con el Ateje Stac
 | [AHA Checklist](AHA-Checklist/template.md) | Mantenimiento / Inspecciones | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Asistencia](AHA-Asistencia/template.md) | RRHH / Pequeñas empresas | $49 | ✅ Lite | 🟢 Listo |
 | [AHA Citas](AHA-Citas/template.md) | Salud / Belleza / Servicios | $99 | ✅ Lite | 🟢 Listo |
-| [AHA Creador](AHA-Creador/template.md) | Creadores de contenido | $49 | ✅ Lite | 🟢 Listo |
+| [AHA Gastos](AHA-Gastos/template.md) | Control gastos micro-negocio | $49 | ✅ Lite | 🟢 Listo |
+| [AHA Contactos](AHA-Contactos/template.md) | CRM manual companion | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Campo](AHA-Campo/template.md) | Agricultura / Ganadería | $99 | ✅ Lite | 🟢 Listo |
 | [AHA POS](AHA-POS/template.md) | Punto de venta offline | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Rx](AHA-Rx/template.md) | Recetas médicas offline | $99 | ✅ Lite | 🟢 Listo |
@@ -60,4 +61,4 @@ Cada template incluye:
 
 ## Próximos templates (en backlog)
 
-*(ninguno — las 13 apps del roadmap ya están completadas)*
+*(próximas: Caja Chica como feature de POS, ver design doc)*

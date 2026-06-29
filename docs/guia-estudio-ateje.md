@@ -153,7 +153,8 @@ Ateje/
 │   ├── AHA-Checklist/template.md
 │   ├── AHA-Asistencia/template.md
 │   ├── AHA-Citas/template.md
-│   ├── AHA-Creador/template.md
+│   ├── AHA-Gastos/template.md
+│   ├── AHA-Contactos/template.md
 │   ├── AHA-Campo/template.md
 │   ├── AHA-POS/template.md
 │   ├── AHA-Rx/template.md
@@ -603,13 +604,14 @@ Cada app tiene **3 niveles comerciales** que mapean a perfiles técnicos:
 | 4 | **AHA Checklist** | Listas de verificación, auditorías, inspecciones con fotos y firmas | usuarios, checklist, dashboard, configuracion, campo |
 | 5 | **AHA Asistencia** | Control horario, geolocalización en marcaciones, turnos, excepciones | usuarios, asistencia, dashboard, configuracion, flota |
 | 6 | **AHA Citas** | Agenda, reservas, recordatorios, disponibilidad en tiempo real | usuarios, citas, crm, dashboard, configuracion |
-| 7 | **AHA Creador** | Catálogo de productos, variantes, precios, galerías multimedia | usuarios, inventario, crm, dashboard, configuracion |
-| 8 | **AHA Campo** | Formularios offline, GPS, fotos, sincronización diferida | usuarios, campo, inventario, checklist, flota, dashboard, configuracion |
-| 9 | **AHA POS** | Punto de venta, tickets, caja, arqueo, promociones | usuarios, inventario, comandas, dashboard, configuracion, prefactura |
-| 10 | **AHA Rx** | Recetas médicas, dispensación, historial pacientes, alertas interacciones | usuarios, rx, dashboard, configuracion |
-| 11 | **AHA Flota** | Vehículos, mantenimiento, rutas, consumo combustible, conductores | usuarios, flota, asistencia, dashboard, configuracion, campo |
-| 12 | **AHA Obra** | Proyectos, partidas, avances de obra, materiales, certificaciones | usuarios, obra, inventario, checklist, campo, flota, dashboard, configuracion, prefactura |
-| 13 | **AHA PreFactura** | Presupuestos, albaranes, facturación electrónica, series, impuestos | usuarios, prefactura, crm, dashboard, configuracion |
+| 7 | **AHA Gastos** | Ingresos, egresos, categorías, reportes PDF | usuarios, contabilidad, dashboard, configuracion |
+| 8 | **AHA Contactos** | CRM manual, plantillas WhatsApp, recordatorios | usuarios, contactos, dashboard, configuracion |
+| 9 | **AHA Campo** | Formularios offline, GPS, fotos, sincronización diferida | usuarios, campo, inventario, checklist, flota, dashboard, configuracion |
+| 10 | **AHA POS** | Punto de venta, tickets, caja, arqueo, promociones | usuarios, inventario, comandas, dashboard, configuracion, prefactura |
+| 11 | **AHA Rx** | Recetas médicas, dispensación, historial pacientes, alertas interacciones | usuarios, rx, dashboard, configuracion |
+| 12 | **AHA Flota** | Vehículos, mantenimiento, rutas, consumo combustible, conductores | usuarios, flota, asistencia, dashboard, configuracion, campo |
+| 13 | **AHA Obra** | Proyectos, partidas, avances de obra, materiales, certificaciones | usuarios, obra, inventario, checklist, campo, flota, dashboard, configuracion, prefactura |
+| 14 | **AHA PreFactura** | Presupuestos, albaranes, facturación electrónica, series, impuestos | usuarios, prefactura, crm, dashboard, configuracion |
 
 ### Cómo Generar una App
 
@@ -685,7 +687,7 @@ dashboard_layout: 'userId, layout, updatedAt'
 
 ### 13.4 `inventario` – Stock y Productos
 
-**Apps:** Inventario, POS, Creador, Campo, Obra
+**Apps:** Inventario, POS, Campo, Obra
 
 **Tablas:**
 ```javascript
@@ -718,7 +720,7 @@ lineas_pedido: 'id, pedidoId, productoId, cantidad, precioUnitario'
 
 ### 13.6 `crm` – Clientes y Oportunidades
 
-**Apps:** CRM, Citas, Creador
+**Apps:** CRM, Citas, Contactos
 
 **Tablas:**
 ```javascript

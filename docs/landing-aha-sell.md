@@ -95,7 +95,8 @@ No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su
 | **AHA Checklist** | Mantenimiento, inspecciones, seguridad | Plantillas, inspecciones con foto/firma, PDF | Predice áreas con más fallas y frecuencia óptima | $39 / $79 / $199 |
 | **AHA Asistencia** | RRHH, empleados, talleres | Marcaje QR, reporte horas, retardos, export nómina | Predice retardos probables basado en historial | $39 / $79 / $199 |
 | **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49 / $99 / $299 |
-| **AHA Creador** | YouTubers, streamers, podcasters | Banco ideas, calendario, producción, patrocinios | Predice productividad semanal y sugiere ajustes | $49 / $99 / $299 |
+| **AHA Gastos** | Micro-pymes, emprendedores | Dashboard, movimientos, categorías, reportes PDF | Predice flujo de caja y alerta gastos excesivos | $49 / $99 / $299 |
+| **AHA Contactos** | Vendedores, inmobiliarias, seguros | Contactos, historial, plantillas WhatsApp, recordatorios | Alerta contactos que requieren seguimiento >30 días | $99 / $149 / $299 |
 | **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $59 / $149 / $399 |
 | **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte caja, devoluciones, ticket | Predice productos más vendidos por hora/día | $49 / $99 / $299 |
 | **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $59 / $149 / $399 |
@@ -117,7 +118,8 @@ Cada app se vende porque resuelve un dolor específico que el cliente ya conoce.
 | **Checklist** | "Los inspectores llenan formatos en papel que se pierden y nadie puede leer." |
 | **Asistencia** | "Los empleados firman en papel y no sabemos quién llega tarde realmente." |
 | **Citas** | "Se me cruzan las citas, pierdo clientes porque no recuerdo cuándo vinieron." |
-| **Creador** | "Tengo mil ideas pero no las organizo y no sé cuánto estoy ganando." |
+| **Gastos** | "No sé si estoy ganando o perdiendo dinero porque no llevo un control diario." |
+| **Contactos** | "Tengo 500 contactos en WhatsApp y no sé a quién seguir ni cuándo." |
 | **Campo** | "No sé realmente cuánto estoy gastando en el campo ni qué lote me da más rendimiento." |
 | **POS** | "Cuando no hay internet no puedo cobrar y pierdo la venta." |
 | **Rx** | "Mis recetas se pierden y no tengo historial de lo que receté." |
@@ -189,7 +191,8 @@ Reglas:
 | AHA Checklist | $39 | $79 | $199 |
 | AHA Asistencia | $39 | $79 | $199 |
 | AHA Citas | $49 | $99 | $299 |
-| AHA Creador | $49 | $99 | $299 |
+| AHA Gastos | $49 | $99 | $299 |
+| AHA Contactos | $99 | $149 | $299 |
 | AHA Campo | $59 | $149 | $399 |
 | AHA POS | $49 | $99 | $299 |
 | AHA Rx | $59 | $149 | $399 |

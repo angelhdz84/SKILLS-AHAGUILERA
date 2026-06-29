@@ -127,7 +127,8 @@ El repo incluye **13 plantillas de apps** listas para generar con el pipeline. T
 | **AHA Checklist** | `apps/AHA-Checklist/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Checklist/template.md` |
 | **AHA Asistencia** | `apps/AHA-Asistencia/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Asistencia/template.md` |
 | **AHA Citas** | `apps/AHA-Citas/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Citas/template.md` |
-| **AHA Creador** | `apps/AHA-Creador/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Creador/template.md` |
+| **AHA Gastos** | `apps/AHA-Gastos/template.md` | Inicio / Profesional | `apps/AHA-Gastos/template.md` |
+| **AHA Contactos** | `apps/AHA-Contactos/template.md` | Inicio / Profesional | `apps/AHA-Contactos/template.md` |
 | **AHA Campo** | `apps/AHA-Campo/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Campo/template.md` |
 | **AHA POS** | `apps/AHA-POS/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-POS/template.md` |
 | **AHA Rx** | `apps/AHA-Rx/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Rx/template.md` |

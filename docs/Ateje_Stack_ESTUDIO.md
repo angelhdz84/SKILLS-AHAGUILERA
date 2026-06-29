@@ -258,7 +258,8 @@ Ateje/
 │   ├── AHA-Checklist/template.md
 │   ├── AHA-Asistencia/template.md
 │   ├── AHA-Citas/template.md
-│   ├── AHA-Creador/template.md
+│   ├── AHA-Gastos/template.md
+│   ├── AHA-Contactos/template.md
 │   ├── AHA-Campo/template.md
 │   ├── AHA-POS/template.md
 │   ├── AHA-Rx/template.md
@@ -707,13 +708,14 @@ Cada app tiene **3 niveles comerciales**:
 | 4 | **AHA Checklist** | Auditorías, inspecciones con fotos y firmas | usuarios, checklist, dashboard, configuracion, campo |
 | 5 | **AHA Asistencia** | Control horario QR, turnos, retardos | usuarios, asistencia, dashboard, configuracion, flota |
 | 6 | **AHA Citas** | Agenda, reservas, recordatorios | usuarios, citas, crm, dashboard, configuracion |
-| 7 | **AHA Creador** | Contenido, ideas, calendario editorial | usuarios, inventario, crm, dashboard, configuracion |
-| 8 | **AHA Campo** | Formularios offline, GPS, fotos, sincronización | usuarios, campo, inventario, checklist, flota, dashboard, configuracion |
-| 9 | **AHA POS** | Punto de venta, tickets, caja, promociones | usuarios, inventario, comandas, dashboard, configuracion, prefactura |
-| 10 | **AHA Rx** | Recetas médicas, historial pacientes | usuarios, rx, dashboard, configuracion |
-| 11 | **AHA Flota** | Vehículos, mantenimiento, combustible | usuarios, flota, asistencia, dashboard, configuracion, campo |
-| 12 | **AHA Obra** | Proyectos, presupuesto, avance de obra | usuarios, obra, inventario, checklist, campo, flota, dashboard, configuracion, prefactura |
-| 13 | **AHA PreFactura** | Presupuestos, facturación electrónica | usuarios, prefactura, crm, dashboard, configuracion |
+| 7 | **AHA Gastos** | Ingresos, egresos, categor?as, reportes PDF | usuarios, contabilidad, dashboard, configuracion |
+| 8 | **AHA Contactos** | CRM manual, plantillas WhatsApp, recordatorios | usuarios, contactos, dashboard, configuracion |
+| 9 | **AHA Campo** | Formularios offline, GPS, fotos, sincronización | usuarios, campo, inventario, checklist, flota, dashboard, configuracion |
+| 10 | **AHA POS** | Punto de venta, tickets, caja, promociones | usuarios, inventario, comandas, dashboard, configuracion, prefactura |
+| 11 | **AHA Rx** | Recetas médicas, historial pacientes | usuarios, rx, dashboard, configuracion |
+| 12 | **AHA Flota** | Vehículos, mantenimiento, combustible | usuarios, flota, asistencia, dashboard, configuracion, campo |
+| 13 | **AHA Obra** | Proyectos, presupuesto, avance de obra | usuarios, obra, inventario, checklist, campo, flota, dashboard, configuracion, prefactura |
+| 14 | **AHA PreFactura** | Presupuestos, facturación electrónica | usuarios, prefactura, crm, dashboard, configuracion |
 
 ### 12.1 Problema que Resuelve por App
 
@@ -725,7 +727,8 @@ Cada app tiene **3 niveles comerciales**:
 | Checklist | "Los inspectores llenan formatos en papel que se pierden y nadie puede leer." |
 | Asistencia | "Los empleados firman en papel y no sabemos quién llega tarde realmente." |
 | Citas | "Se me cruzan las citas, pierdo clientes porque no recuerdo cuándo vinieron." |
-| Creador | "Tengo mil ideas pero no las organizo y no sé cuánto estoy ganando." |
+| Gastos | "No sé si estoy ganando o perdiendo dinero porque no llevo un control diario." |
+| Contactos | "Tengo 500 contactos en WhatsApp y no sé a quién seguir ni cuándo." |
 | Campo | "No sé realmente cuánto estoy gastando en el campo ni qué lote me da más rendimiento." |
 | POS | "Cuando no hay internet no puedo cobrar y pierdo la venta." |
 | Rx | "Mis recetas se pierden y no tengo historial de lo que receté." |
@@ -1190,7 +1193,8 @@ Agroptima ~$30/mes. Mercado desatendido en LATAM.
 | AHA Checklist | $39 | $79 | $199 |
 | AHA Asistencia | $39 | $79 | $199 |
 | AHA Citas | $49 | $99 | $299 |
-| AHA Creador | $49 | $99 | $299 |
+| AHA Gastos | $49 | $99 | $299 |
+| AHA Contactos | $99 | $149 | $299 |
 | AHA Campo | $59 | $149 | $399 |
 | AHA POS | $49 | $99 | $299 |
 | AHA Rx | $59 | $149 | $399 |
