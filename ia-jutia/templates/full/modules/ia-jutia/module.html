@@ -135,56 +135,133 @@
         </div>
       </div>
 
-      <!-- Columna derecha: Chat + Predicciones -->
+      <!-- Columna derecha: Chat con historial (v0.2) + Predicciones -->
       <div class="space-y-4">
-        <div class="card bg-base-100 shadow-xl p-4 flex flex-col" style="min-height: 420px;">
-          <h3 class="font-semibold flex items-center gap-2 mb-3">
-            <i class="bi bi-chat-dots text-info"></i> Pregunta sobre documentos
-          </h3>
-          <div class="flex-1 overflow-y-auto mb-3 space-y-3" style="max-height: 300px;" x-ref="chatBox">
-            <template x-if="mensajes.length === 0">
-              <div class="text-center py-8 text-base-content/30">
-                <i class="bi bi-question-circle text-3xl"></i>
-                <p class="text-sm mt-2">Haz una pregunta sobre los documentos subidos</p>
-                <p class="text-xs mt-1">Ej: "Cual es el total de ventas?" o "Resume el contrato"</p>
-              </div>
-            </template>
-            <template x-for="(msg, i) in mensajes" :key="i">
-              <div>
-                <div class="chat chat-end" x-show="msg.rol === 'user'">
-                  <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.texto"></div>
-                </div>
-                <div class="chat chat-start" x-show="msg.rol === 'ia'">
-                  <div class="chat-bubble chat-bubble-info text-sm">
-                    <p x-text="msg.texto"></p>
-                    <template x-if="msg.fuente">
-                      <p class="text-xs text-base-content/50 mt-1 border-t border-base-content/20 pt-1">
-                        <i class="bi bi-link-45deg"></i> Fuente: <span x-text="msg.fuente"></span>
-                        <template x-if="msg.score">
-                          <span> · confianza: <span x-text="(msg.score * 100).toFixed() + '%'"></span></span>
-                        </template>
-                      </p>
-                    </template>
+        <!-- Chat drawer con threads -->
+        <div class="card bg-base-100 shadow-xl p-4 flex flex-col" style="min-height: 400px;">
+          <div class="drawer lg:drawer-open flex-1 min-h-0">
+            <input id="chat-drawer" type="checkbox" class="drawer-toggle" x-model="chatSidebarOpen" />
+
+            <div class="drawer-content flex flex-col min-h-0">
+              <!-- Chat header -->
+              <div class="flex items-center gap-2 pb-3 border-b border-base-300 mb-3">
+                <label for="chat-drawer" class="btn btn-ghost btn-sm btn-square lg:hidden">
+                  <i class="bi bi-list"></i>
+                </label>
+                <template x-if="currentChat">
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-sm truncate" x-text="currentChat.titulo"></div>
+                    <div class="text-xs text-base-content/50" x-text="currentChat.messageCount + ' mensajes'"></div>
                   </div>
+                </template>
+                <template x-if="!currentChat">
+                  <div class="flex-1 font-semibold text-sm">Chat IA</div>
+                </template>
+                <button class="btn btn-ghost btn-sm btn-square" @click="showNewChatModal = true" title="Nueva conversacion">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+
+              <!-- Messages area -->
+              <div class="flex-1 overflow-y-auto mb-3 space-y-3 min-h-[200px]" x-ref="chatBox">
+                <template x-if="messages.length === 0">
+                  <div class="text-center py-12 text-base-content/30">
+                    <i class="bi bi-chat-dots text-4xl"></i>
+                    <p class="text-sm mt-2">Inicia una conversacion</p>
+                    <p class="text-xs">Sube un documento y haz preguntas</p>
+                  </div>
+                </template>
+                <template x-for="msg in messages" :key="msg.id">
+                  <div>
+                    <div class="chat chat-end" x-show="msg.rol === 'user'">
+                      <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.contenido"></div>
+                    </div>
+                    <div class="chat chat-start" x-show="msg.rol === 'ia'">
+                      <div class="chat-bubble chat-bubble-info text-sm">
+                        <p x-text="msg.contenido"></p>
+                        <template x-if="msg.fuente">
+                          <p class="text-xs text-base-content/50 mt-1 border-t border-base-content/20 pt-1">
+                            <i class="bi bi-link-45deg"></i> Fuente: <span x-text="msg.fuente"></span>
+                            <template x-if="msg.score">
+                              <span> | Score: <span x-text="Math.round(msg.score * 100) + '%'"></span></span>
+                            </template>
+                          </p>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="chatting">
+                  <div class="chat chat-start">
+                    <div class="chat-bubble chat-bubble-ghost">
+                      <span class="loading loading-dots loading-sm"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Input area -->
+              <div class="border-t border-base-300 pt-3">
+                <form @submit.prevent="preguntar()" class="flex gap-2">
+                  <input type="text" x-model="pregunta" placeholder="Escribe tu pregunta..."
+                         class="input input-bordered flex-1 input-sm" :disabled="chatting" />
+                  <button type="submit" class="btn btn-primary btn-sm" :disabled="!pregunta || chatting">
+                    <i class="bi bi-send"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Sidebar: conversation list -->
+            <div class="drawer-side z-30">
+              <label for="chat-drawer" class="drawer-overlay"></label>
+              <div class="bg-base-200 min-h-full w-72 p-3 flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-semibold text-sm">Conversaciones</h3>
+                  <button class="btn btn-ghost btn-xs" @click="showNewChatModal = true">
+                    <i class="bi bi-plus-lg"></i> Nueva
+                  </button>
+                </div>
+
+                <div class="space-y-1 flex-1 overflow-y-auto">
+                  <template x-for="chat in chats" :key="chat.id">
+                    <div class="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors text-sm group"
+                         :class="currentChat?.id === chat.id ? 'bg-primary/10 text-primary' : 'hover:bg-base-300'"
+                         @click="selectChat(chat.id)">
+                      <i class="bi bi-chat-text text-base-content/40"></i>
+                      <div class="flex-1 truncate" x-text="chat.titulo"></div>
+                      <span class="text-xs text-base-content/30" x-text="chat.messageCount"></span>
+                      <button class="btn btn-ghost btn-xs btn-square opacity-0 group-hover:opacity-100 transition-opacity"
+                              @click.stop="deleteChat(chat.id)"
+                              title="Eliminar conversacion">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </div>
+                  </template>
+                  <template x-if="chats.length === 0">
+                    <p class="text-xs text-base-content/40 text-center py-6">No hay conversaciones</p>
+                  </template>
                 </div>
               </div>
-            </template>
-            <template x-if="chatting">
-              <div class="chat chat-start">
-                <div class="chat-bubble chat-bubble-ghost">
-                  <span class="loading loading-dots loading-sm"></span>
-                </div>
-              </div>
-            </template>
+            </div>
           </div>
-          <form @submit.prevent="preguntar()" class="flex gap-2">
-            <input type="text" x-model="preguntaActual" placeholder="Escribe tu pregunta..."
-                   class="input input-bordered flex-1" :disabled="chatting" />
-            <button type="submit" class="btn btn-info btn-square" :disabled="!preguntaActual || chatting">
-              <i class="bi bi-send"></i>
-            </button>
-          </form>
         </div>
+
+        <!-- New chat modal -->
+        <dialog class="modal" :class="{ 'modal-open': showNewChatModal }">
+          <div class="modal-box">
+            <h3 class="font-semibold mb-4">Nueva conversacion</h3>
+            <input type="text" class="input input-bordered w-full"
+                   placeholder="Titulo de la conversacion..."
+                   x-model="newChatTitle"
+                   @keydown.enter.prevent="createChat()">
+            <div class="modal-action">
+              <button class="btn btn-ghost btn-sm" @click="showNewChatModal = false">Cancelar</button>
+              <button class="btn btn-primary btn-sm" @click="createChat()">Crear</button>
+            </div>
+          </div>
+          <div class="modal-backdrop" @click="showNewChatModal = false"></div>
+        </dialog>
 
         <div class="card bg-base-100 shadow-xl p-4">
           <h3 class="font-semibold flex items-center gap-2 mb-3">

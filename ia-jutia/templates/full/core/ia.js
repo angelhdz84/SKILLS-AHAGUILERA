@@ -307,6 +307,64 @@
           if (store) store.paletteOpen = !store.paletteOpen;
         }
       });
+    },
+
+    // ── Chat historial (v0.2) ─────────────────────────
+    async chatNew(titulo) {
+      const db = window.db;
+      if (!db) return { error: 'db no disponible' };
+      const chat = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2),
+        titulo: titulo || 'Nueva conversacion',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        messageCount: 0
+      };
+      await db._ia_chats.put(chat);
+      return chat;
+    },
+
+    async chatList() {
+      const db = window.db;
+      if (!db) return [];
+      return await db._ia_chats.orderBy('updatedAt').reverse().toArray();
+    },
+
+    async chatLoad(chatId) {
+      const db = window.db;
+      if (!db) return { chat: null, messages: [] };
+      const chat = await db._ia_chats.get(chatId);
+      const messages = await db._ia_messages.where('chatId').equals(chatId).sortBy('createdAt');
+      return { chat, messages };
+    },
+
+    async chatDelete(chatId) {
+      const db = window.db;
+      if (!db) return;
+      await db._ia_chats.delete(chatId);
+      await db._ia_messages.where('chatId').equals(chatId).delete();
+    },
+
+    async chatAddMessage(chatId, rol, contenido, fuente, score) {
+      const db = window.db;
+      if (!db || !chatId) return;
+      const msg = {
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2),
+        chatId: chatId,
+        rol: rol,
+        contenido: contenido,
+        fuente: fuente || null,
+        score: score || null,
+        createdAt: new Date().toISOString()
+      };
+      await db._ia_messages.put(msg);
+      const chat = await db._ia_chats.get(chatId);
+      if (chat) {
+        chat.messageCount = (chat.messageCount || 0) + 1;
+        chat.updatedAt = msg.createdAt;
+        await db._ia_chats.put(chat);
+      }
+      return msg;
     }
   };
 

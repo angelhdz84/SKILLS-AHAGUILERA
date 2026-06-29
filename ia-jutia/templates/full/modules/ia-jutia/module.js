@@ -278,6 +278,14 @@ document.addEventListener('alpine:init', () => {
     prediccion: null,
     // v0.2 — OCR
     ocrStatus: null,
+    // v0.2 — Chat historial
+    chats: [],
+    currentChat: null,
+    messages: [],
+    chatSidebarOpen: true,
+    newChatTitle: '',
+    showNewChatModal: false,
+    pregunta: '',
 
     async init(q) {
       this.query = q || '';
@@ -286,6 +294,7 @@ document.addEventListener('alpine:init', () => {
         this.documentos = Alpine.store('ia')?.documentos || [];
         const stats = await window.ia.statsAll();
         this.statsOverview = stats;
+        await this.loadChats();
       }
       if (this.query) await this.buscar();
     },
@@ -324,19 +333,26 @@ document.addEventListener('alpine:init', () => {
     },
 
     async preguntar() {
-      if (!this.preguntaActual || !window.ia) return;
-      const pregunta = this.preguntaActual;
-      this.mensajes.push({ rol: 'user', texto: pregunta });
+      const q = this.pregunta || this.preguntaActual;
+      if (!q || !window.ia) return;
+
+      // Auto-create chat if none selected
+      if (!this.currentChat) {
+        const chat = await window.ia.chatNew(q.slice(0, 50));
+        this.currentChat = chat;
+        await this.loadChats();
+      }
+
+      // Save user message
+      await this.saveMessage('user', q);
+      this.pregunta = '';
       this.preguntaActual = '';
       this.chatting = true;
 
-      const result = await window.ia.qa(pregunta);
-      this.mensajes.push({
-        rol: 'ia',
-        texto: result.respuesta,
-        fuente: result.fuente,
-        score: result.score
-      });
+      const result = await window.ia.qa(q);
+
+      // Save assistant message
+      await this.saveMessage('ia', result.respuesta, result.fuente, result.score);
       this.chatting = false;
 
       this.$nextTick(() => {
@@ -344,6 +360,11 @@ document.addEventListener('alpine:init', () => {
           this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
         }
       });
+    },
+
+    // v0.2 — alias for new HTML templates
+    async hacerPregunta() {
+      await this.preguntar();
     },
 
     async eliminarDoc(id) {
@@ -374,6 +395,52 @@ document.addEventListener('alpine:init', () => {
     formatoMoneda(v) {
       if (v == null) return '';
       return '$' + Number(v).toLocaleString('es', { minimumFractionDigits: 2 });
+    },
+
+    // v0.2 — Chat methods
+    async loadChats() {
+      if (window.ia && window.ia.chatList) {
+        this.chats = await window.ia.chatList();
+      }
+    },
+
+    async selectChat(chatId) {
+      if (!window.ia || !window.ia.chatLoad) return;
+      const data = await window.ia.chatLoad(chatId);
+      this.currentChat = data.chat;
+      this.messages = data.messages;
+      this.chatSidebarOpen = false;
+    },
+
+    async createChat() {
+      const title = this.newChatTitle.trim() || 'Nueva conversacion';
+      if (window.ia && window.ia.chatNew) {
+        const chat = await window.ia.chatNew(title);
+        this.currentChat = chat;
+        this.messages = [];
+        this.showNewChatModal = false;
+        this.newChatTitle = '';
+        await this.loadChats();
+      }
+    },
+
+    async deleteChat(chatId) {
+      if (!window.ia || !window.ia.chatDelete) return;
+      await window.ia.chatDelete(chatId);
+      if (this.currentChat && this.currentChat.id === chatId) {
+        this.currentChat = null;
+        this.messages = [];
+      }
+      await this.loadChats();
+    },
+
+    async saveMessage(rol, content, fuente, score) {
+      if (!this.currentChat || !window.ia || !window.ia.chatAddMessage) return;
+      const msg = await window.ia.chatAddMessage(
+        this.currentChat.id, rol, content, fuente, score
+      );
+      this.messages.push(msg);
+      return msg;
     }
   }));
 });
