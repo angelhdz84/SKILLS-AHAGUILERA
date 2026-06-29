@@ -55,7 +55,7 @@
     },
     "engram": {
       "type": "local",
-      "command": ["engram", "mcp", "--project", "Ateje"],
+      "command": ["C:\\Users\\Angel\\bin\\engram.exe", "mcp", "--project", "Ateje"],
       "env": { "ENGRAM_DATA_DIR": "D:\\REPOSITORIOS GitHUB\\Ateje\\.omd" },
       "description": "Memoria persistente del agente. Requiere Engram instalado"
     },
