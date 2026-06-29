@@ -1,4 +1,4 @@
-// core/ia-ingest.js — IA Jutia Full: Ingesta documentos + QA
+﻿// core/ia-ingest.js — IA Jutia Full: Ingesta documentos + QA
 // Dependencias: window.ia, pdf.js, mammoth.js, marked.js, SheetJS (xlsx),
 //               Transformers.js (pipeline de @xenova/transformers)
 // Expone: window.iaIngest
@@ -87,6 +87,14 @@
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
           texto += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        // Check if scanned (ocr needed)
+        if (texto.length < 50 && typeof Tesseract !== 'undefined') {
+          console.log('[IA] PDF parece escaneado (' + texto.length + ' chars), activando OCR...');
+          const ocrText = await INGEST._ocrIfNeeded(pdf, texto.length);
+          if (ocrText && ocrText.length > texto.length) {
+            texto = ocrText;
+          }
         }
         return texto;
       },
@@ -215,7 +223,56 @@
       return this._worker;
     },
 
-    // ── QA Extractivo ─────────────────────────────────────
+    // --- OCR (v0.2) ---
+
+    // Detect if PDF is scanned and OCR it
+    _ocrIfNeeded: async function(pdfDoc, textLength) {
+      if (textLength >= 50) return null;
+      try {
+        if (typeof Tesseract === 'undefined') {
+          console.warn('[IA] Tesseract no disponible, saltando OCR');
+          return null;
+        }
+        const totalPages = pdfDoc.numPages;
+        const MAX_OCR_PAGES = 20;
+        const pagesToProcess = Math.min(totalPages, MAX_OCR_PAGES);
+        let fullText = '';
+        for (let i = 1; i <= pagesToProcess; i++) {
+          const page = await pdfDoc.getPage(i);
+          const viewport = page.getViewport({ scale: 2.0 });
+          const canvas = document.createElement('canvas');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          const imageData = canvas.toDataURL('image/png');
+          const result = await Tesseract.recognize(imageData, 'spa', {
+            logger: function(m) {
+              if (m.status === 'recognizing text') {
+                const pct = Math.round((m.progress || 0) * 100);
+                console.log('[IA OCR] Pagina ' + i + '/' + pagesToProcess + ': ' + pct + '%');
+                if (typeof Alpine !== 'undefined') {
+                  Alpine.store('ia').ocrStatus = { type: 'progress', message: 'OCR: pagina ' + i + '/' + pagesToProcess + ' (' + pct + '%)' };
+                }
+              }
+            }
+          });
+          fullText += (result.data.text || '') + '\n\n';
+        }
+        if (typeof Alpine !== 'undefined') {
+          Alpine.store('ia').ocrStatus = { type: 'done', message: 'OCR completado (' + pagesToProcess + ' paginas)' };
+          setTimeout(() => { Alpine.store('ia').ocrStatus = null; }, 4000);
+        }
+        return fullText.trim();
+      } catch (e) {
+        console.error('[IA OCR] Error:', e);
+        if (typeof Alpine !== 'undefined') {
+          Alpine.store('ia').ocrStatus = { type: 'error', message: 'OCR: ' + e.message };
+        }
+        return null;
+      }
+    },
+
     async qa(pregunta, qaPipeline, embedPipeline) {
       if (!qaPipeline) {
         return { respuesta: 'Modelo de QA no cargado', fuente: null, score: 0 };

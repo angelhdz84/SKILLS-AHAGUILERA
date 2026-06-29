@@ -97,6 +97,14 @@ const ModuloIA = {
                   <span class="text-xs text-base-content/60">Procesando documento...</span>
                 </div>
               </template>
+              <!-- OCR status indicator (v0.2) -->
+              <div x-show="$store.ia?.ocrStatus"
+                   x-cloak
+                   class="mt-2 flex items-center gap-2 text-sm"
+                   :class="$store.ia?.ocrStatus?.type === 'progress' ? 'text-info' : $store.ia?.ocrStatus?.type === 'done' ? 'text-success' : 'text-error'">
+                <i class="bi" :class="$store.ia?.ocrStatus?.type === 'progress' ? 'bi-arrow-repeat animate-spin' : $store.ia?.ocrStatus?.type === 'done' ? 'bi-check-circle' : 'bi-exclamation-circle'"></i>
+                <span x-text="$store.ia?.ocrStatus?.message"></span>
+              </div>
             </div>
 
             <!-- Lista documentos -->
@@ -268,6 +276,8 @@ document.addEventListener('alpine:init', () => {
     predTabla: '',
     predCampo: '',
     prediccion: null,
+    // v0.2 — OCR
+    ocrStatus: null,
 
     async init(q) {
       this.query = q || '';
@@ -299,6 +309,8 @@ document.addEventListener('alpine:init', () => {
         }
         this.uploadProgress = 30;
         const result = await window.ia.ingestFile(file);
+        // v0.2 — OCR status from store
+        this.ocrStatus = Alpine.store('ia')?.ocrStatus || null;
         this.uploadProgress = 100;
         if (result?.error) {
           window.UI?.toast?.(result.error, 'error');
@@ -308,6 +320,7 @@ document.addEventListener('alpine:init', () => {
       }
       this.uploading = false;
       this.uploadProgress = 0;
+      setTimeout(() => { this.ocrStatus = null; }, 4000);
     },
 
     async preguntar() {

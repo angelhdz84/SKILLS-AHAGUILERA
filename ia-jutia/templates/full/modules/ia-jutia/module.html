@@ -80,6 +80,14 @@
               <span class="text-xs text-base-content/60">Procesando documento...</span>
             </div>
           </template>
+          <!-- OCR status indicator (v0.2) -->
+          <div x-show="$store.ia?.ocrStatus"
+               x-cloak
+               class="mt-2 flex items-center gap-2 text-sm"
+               :class="$store.ia?.ocrStatus?.type === 'progress' ? 'text-info' : $store.ia?.ocrStatus?.type === 'done' ? 'text-success' : 'text-error'">
+            <i class="bi" :class="$store.ia?.ocrStatus?.type === 'progress' ? 'bi-arrow-repeat animate-spin' : $store.ia?.ocrStatus?.type === 'done' ? 'bi-check-circle' : 'bi-exclamation-circle'"></i>
+            <span x-text="$store.ia?.ocrStatus?.message"></span>
+          </div>
         </div>
 
         <div class="card bg-base-100 shadow-xl p-4">
