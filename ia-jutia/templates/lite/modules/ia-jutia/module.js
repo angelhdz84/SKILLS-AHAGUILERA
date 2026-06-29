@@ -26,15 +26,35 @@ const ModuloIA = {
         <span class="badge badge-outline badge-sm">Lite</span>
       </div>
 
-      <!-- Buscador -->
+      <!-- Buscador con autocomplete -->
       <div class="card bg-base-100 shadow-xl p-4 mb-6">
-        <label class="input input-bordered flex items-center gap-2">
-          <i class="bi bi-search text-base-content/40"></i>
-          <input type="text" x-model="query" @input.debounce="buscar()"
-                 placeholder="Buscar en todos los datos... (Cmd+K)"
-                 class="grow bg-transparent border-0 outline-none" />
-          <kbd class="kbd kbd-sm text-base-content/40 hidden sm:inline">Ctrl+K</kbd>
-        </label>
+        <div class="relative" x-data="{ focused: false }">
+          <label class="input input-bordered flex items-center gap-2">
+            <i class="bi bi-search text-base-content/40"></i>
+            <input type="text" x-model="query" @input.debounce.200ms="getAutocomplete(query)"
+                   @focus="focused = true; if(query.length >= 2) getAutocomplete(query)"
+                   @blur="setTimeout(() => { autocompleteVisible = false; focused = false }, 200)"
+                   @keydown="if (['ArrowDown','ArrowUp','Enter','Escape'].includes($event.key)) { _handleAutocompleteKeydown($event); }"
+                   @keydown.enter.prevent="if (autocompleteIndex < 0) { _saveQuery(query); buscar(); }"
+                   placeholder="Buscar en todos los datos..."
+                   class="grow bg-transparent border-0 outline-none" />
+            <kbd class="kbd kbd-sm text-base-content/40 hidden sm:inline">Ctrl+K</kbd>
+          </label>
+
+          <!-- Autocomplete dropdown -->
+          <div x-show="autocompleteVisible && focused" x-cloak
+               class="absolute top-full left-0 right-0 mt-1 bg-base-100 border border-base-300 rounded-lg shadow-xl z-50 overflow-hidden">
+            <template x-for="(item, idx) in autocompleteResults" :key="idx">
+              <div class="px-3 py-2 flex items-center gap-2 cursor-pointer text-sm transition-colors"
+                   :class="idx === autocompleteIndex ? 'bg-primary/10 text-primary' : 'hover:bg-base-200'"
+                   @mousedown.prevent="selectAutocomplete(item.text)"
+                   @mouseenter="autocompleteIndex = idx">
+                <i class="bi" :class="'bi-' + (item.icon || 'search')" class="text-base-content/40"></i>
+                <span x-text="item.text"></span>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
 
       <!-- Resultados de busqueda agrupados -->
@@ -168,6 +188,10 @@ document.addEventListener('alpine:init', () => {
     predCampo: '',
     prediccion: null,
     groupedResults: {},
+    autocompleteResults: [],
+    autocompleteIndex: -1,
+    autocompleteVisible: false,
+    _autocompleteCache: [],
 
     async init(q) {
       this.query = q || '';
@@ -184,6 +208,7 @@ document.addEventListener('alpine:init', () => {
 
     async buscar() {
       if (!this.query || !window.ia) return;
+      this._saveQuery(this.query);
       this.searching = true;
       this.resultados = await window.ia.search(this.query);
       const wrapped = [{
@@ -242,6 +267,85 @@ document.addEventListener('alpine:init', () => {
     selectItem(item) {
       if (window.appRouter && item.id && item.tabla) {
         window.appRouter.go(item.tabla, { id: item.id });
+      }
+    },
+
+    // v0.2 — Autocomplete methods
+    _loadAutocompleteCache: function() {
+      try {
+        const saved = localStorage.getItem('ia_jutia_autocomplete');
+        this._autocompleteCache = saved ? JSON.parse(saved) : [];
+      } catch(e) {
+        this._autocompleteCache = [];
+      }
+    },
+
+    _saveQuery: function(query) {
+      if (!query || query.length < 2) return;
+      this._loadAutocompleteCache();
+      const idx = this._autocompleteCache.indexOf(query);
+      if (idx > -1) this._autocompleteCache.splice(idx, 1);
+      this._autocompleteCache.unshift(query);
+      if (this._autocompleteCache.length > 20) this._autocompleteCache = this._autocompleteCache.slice(0, 20);
+      try {
+        localStorage.setItem('ia_jutia_autocomplete', JSON.stringify(this._autocompleteCache));
+      } catch(e) { /* quota exceeded - ignore */ }
+    },
+
+    getAutocomplete: function(query) {
+      if (!query || query.length < 2) {
+        this.autocompleteVisible = false;
+        this.autocompleteResults = [];
+        return;
+      }
+      const q = query.toLowerCase();
+      const suggestions = [];
+      this._loadAutocompleteCache();
+      this._autocompleteCache.forEach(saved => {
+        if (saved.toLowerCase().startsWith(q) && saved !== query) {
+          suggestions.push({ text: saved, type: 'history', icon: 'clock-history' });
+        }
+      });
+      try {
+        if (window.ia && window.ia._workerReady) {
+          window.ia._worker.postMessage({
+            type: 'suggest',
+            payload: { query: q, limit: 5 },
+            id: 'autocomplete_' + Date.now()
+          });
+        }
+      } catch(e) { /* worker not available */ }
+      const seen = new Set();
+      const unique = suggestions.filter(s => {
+        const key = s.text.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).slice(0, 8);
+      this.autocompleteResults = unique;
+      this.autocompleteVisible = unique.length > 0;
+    },
+
+    selectAutocomplete: function(text) {
+      this.query = text;
+      this.autocompleteVisible = false;
+      this.buscar();
+    },
+
+    _handleAutocompleteKeydown: function(e) {
+      if (!this.autocompleteVisible) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        this.autocompleteIndex = Math.min(this.autocompleteIndex + 1, this.autocompleteResults.length - 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.autocompleteIndex = Math.max(this.autocompleteIndex - 1, -1);
+      } else if (e.key === 'Enter' && this.autocompleteIndex >= 0) {
+        e.preventDefault();
+        this.selectAutocomplete(this.autocompleteResults[this.autocompleteIndex].text);
+      } else if (e.key === 'Escape') {
+        this.autocompleteVisible = false;
+        this.autocompleteIndex = -1;
       }
     }
   }));

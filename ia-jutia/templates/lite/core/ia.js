@@ -61,6 +61,10 @@
 
         this._worker.onmessage = (e) => {
           const { type, payload, id } = e.data;
+          if (type === 'suggest') {
+            // Suggest results from worker — consumed by autocomplete in module
+            return;
+          }
           if (this._pending && this._pending[type] && this._pending[type][id]) {
             this._pending[type][id].resolve(payload);
             delete this._pending[type][id];

@@ -19,14 +19,35 @@
     <span class="badge badge-outline badge-sm">Lite</span>
   </div>
 
-  <!-- Buscador principal -->
+  <!-- Buscador principal con autocomplete -->
   <div class="card bg-base-100 shadow-xl p-4 mb-6">
-    <label class="input input-bordered flex items-center gap-2">
-      <i class="bi bi-search text-base-content/40"></i>
-      <input type="text" x-model="query" @input.debounce="buscar()"
-             placeholder="Buscar en todos los datos..." class="grow bg-transparent border-0 outline-none" />
-      <kbd class="kbd kbd-sm text-base-content/40 hidden sm:inline">Ctrl+K</kbd>
-    </label>
+    <div class="relative" x-data="{ focused: false }">
+      <label class="input input-bordered flex items-center gap-2">
+        <i class="bi bi-search text-base-content/40"></i>
+        <input type="text" x-model="query" @input.debounce.200ms="getAutocomplete(query)"
+               @focus="focused = true; if(query.length >= 2) getAutocomplete(query)"
+               @blur="setTimeout(() => { autocompleteVisible = false; focused = false }, 200)"
+               @keydown="if (['ArrowDown','ArrowUp','Enter','Escape'].includes($event.key)) { _handleAutocompleteKeydown($event); }"
+               @keydown.enter.prevent="if (autocompleteIndex < 0) { _saveQuery(query); buscar(); }"
+               placeholder="Buscar en todos los datos..."
+               class="grow bg-transparent border-0 outline-none" />
+        <kbd class="kbd kbd-sm text-base-content/40 hidden sm:inline">Ctrl+K</kbd>
+      </label>
+
+      <!-- Autocomplete dropdown -->
+      <div x-show="autocompleteVisible && focused" x-cloak
+           class="absolute top-full left-0 right-0 mt-1 bg-base-100 border border-base-300 rounded-lg shadow-xl z-50 overflow-hidden">
+        <template x-for="(item, idx) in autocompleteResults" :key="idx">
+          <div class="px-3 py-2 flex items-center gap-2 cursor-pointer text-sm transition-colors"
+               :class="idx === autocompleteIndex ? 'bg-primary/10 text-primary' : 'hover:bg-base-200'"
+               @mousedown.prevent="selectAutocomplete(item.text)"
+               @mouseenter="autocompleteIndex = idx">
+            <i class="bi" :class="'bi-' + (item.icon || 'search')" class="text-base-content/40"></i>
+            <span x-text="item.text"></span>
+          </div>
+        </template>
+      </div>
+    </div>
   </div>
 
   <!-- Resultados de busqueda agrupados -->
