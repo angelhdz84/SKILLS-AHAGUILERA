@@ -171,12 +171,12 @@ const ModuloIA = {
                 </template>
                 <template x-for="(msg, i) in messages" :key="i">
                   <div>
-                    <div class="chat chat-end" x-show="msg.rol === 'user'">
-                      <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.texto"></div>
+                      <div class="chat chat-end" x-show="msg.rol === 'user'">
+                      <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.contenido"></div>
                     </div>
                     <div class="chat chat-start" x-show="msg.rol === 'ia'">
                       <div class="chat-bubble chat-bubble-info text-sm">
-                        <p x-text="msg.texto"></p>
+                        <p x-text="msg.contenido"></p>
                         <template x-if="msg.fuente">
                           <p class="text-xs text-base-content/50 mt-1 border-t border-base-content/20 pt-1">
                             <i class="bi bi-link-45deg"></i> Fuente: <span x-text="msg.fuente"></span>
