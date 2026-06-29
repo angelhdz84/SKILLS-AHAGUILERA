@@ -295,8 +295,8 @@ search(query, opts) {
     },
 
     // â”€â”€ Predicciones (JS puro, sin ML) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    predict(tabla, campo, periodos = 3) {
-      var periodos = periodos || 3;
+    predict(tabla, campo, periodos) {
+      periodos = periodos || 3;
       if (this._workerReady && this._worker) {
         if (!window.db || !window.db[tabla]) return Promise.resolve(null);
         return window.db[tabla].toArray().then(function(rows) {

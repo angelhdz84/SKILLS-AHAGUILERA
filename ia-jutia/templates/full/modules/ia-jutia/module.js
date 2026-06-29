@@ -169,7 +169,7 @@ const ModuloIA = {
                     <p class="text-xs mt-1">Ej: "Cual es el total de ventas?" o "Resume el contrato"</p>
                   </div>
                 </template>
-                <template x-for="(msg, i) in mensajes" :key="i">
+                <template x-for="(msg, i) in messages" :key="i">
                   <div>
                     <div class="chat chat-end" x-show="msg.rol === 'user'">
                       <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.texto"></div>
@@ -268,7 +268,6 @@ document.addEventListener('alpine:init', () => {
     uploading: false,
     uploadProgress: 0,
     documentos: [],
-    mensajes: [],
     chatting: false,
     preguntaActual: '',
     statsOverview: [],

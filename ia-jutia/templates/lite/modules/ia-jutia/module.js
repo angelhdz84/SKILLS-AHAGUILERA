@@ -49,7 +49,7 @@ const ModuloIA = {
                    :class="idx === autocompleteIndex ? 'bg-primary/10 text-primary' : 'hover:bg-base-200'"
                    @mousedown.prevent="selectAutocomplete(item.text)"
                    @mouseenter="autocompleteIndex = idx">
-                <i class="bi" :class="'bi-' + (item.icon || 'search')" class="text-base-content/40"></i>
+                <i class="bi text-base-content/40" :class="'bi-' + (item.icon || 'search')"></i>
                 <span x-text="item.text"></span>
               </div>
             </template>

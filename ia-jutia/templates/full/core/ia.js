@@ -290,6 +290,16 @@
       return { error: 'Modulo de ingesta no disponible' };
     },
 
+    _calcularModa(valores) {
+      const freq = {};
+      let maxFreq = 0, moda = valores[0];
+      valores.forEach(v => {
+        freq[v] = (freq[v] || 0) + 1;
+        if (freq[v] > maxFreq) { maxFreq = freq[v]; moda = v; }
+      });
+      return maxFreq > 1 ? moda : valores[0];
+    },
+
     // ── Estadisticas y Predicciones (identico Lite) ──────
     stats(tabla, campo) {
       if (!window.db || !window.db[tabla]) return Promise.resolve(null);
@@ -302,10 +312,12 @@
         const mediana = sorted.length % 2 === 0
           ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
           : sorted[Math.floor(sorted.length / 2)];
+        const moda = this._calcularModa(valores);
         const varianza = valores.reduce((acc, v) => acc + (v - media) ** 2, 0) / valores.length;
         return {
           tabla, campo, count: valores.length,
           media: +media.toFixed(2), mediana: +mediana.toFixed(2),
+          moda: +moda.toFixed(2),
           min: +sorted[0].toFixed(2), max: +sorted[sorted.length - 1].toFixed(2),
           stddev: +Math.sqrt(varianza).toFixed(2), suma: +sum.toFixed(2)
         };
