@@ -956,15 +956,15 @@ Engram reemplaza el MCP memory graph conceptual de `wiki-engine` con almacenamie
 | Concepto | Descripción |
 |---|---|
 | **¿Qué es?** | Servicio de memoria persistente para agentes de IA. Captura decisiones, preferencias y contexto entre sesiones. |
-| **Instalación** | `winget install Gentleman.Programming.Engram` (~10MB Go binary) |
+| **Instalación** | Descargar binary de [GitHub Releases](https://github.com/Gentleman-Programming/engram/releases) (~10MB Go binary) |
 | **Configuración** | `scripts/setup-engram.ps1` — detecta Engram, configura `ENGRAM_DATA_DIR=.omd/`, inicializa el proyecto |
 | **Uso en pipeline** | `wiki-engine` lo usa como backend de memoria durante ingest/query/lint |
-| **MCP** | `engram mcp --project "Ateje"` — 20 herramientas MCP (create, search, read, delete entities, add observations, etc.) |
+| **MCP** | `C:\Users\Angel\bin\engram.exe mcp --project Ateje` — 20 herramientas MCP (create, search, read, delete entities, add observations, etc.) |
 | **Fallback** | Sin Engram, `wiki-engine` usa markdown en `wiki/` + `.omd/preferences.md` |
 
 **Flujo:**
 1. `scripts/setup-engram.ps1` corre durante `/setup` si Engram está instalado
-2. Configura `ENGRAM_DATA_DIR=.omd/` para que la memoria sea portable con el proyecto
+2. Configura `ENGRAM_DATA_DIR=.omd/` para que la memoria sea portable (en MCP se pasa ruta absoluta: `D:\REPOSITORIOS GitHUB\Ateje\.omd`)
 3. `wiki-engine` invoca Engram via MCP para persistir y buscar conocimiento
 4. Sin Engram: todo funciona con archivos markdown
 
@@ -1002,8 +1002,8 @@ Ambos están configurados en `opencode.json` como entidades MCP opcionales:
 ```json
 "engram": {
   "type": "local",
-  "command": ["engram", "mcp", "--project", "Ateje"],
-  "env": { "ENGRAM_DATA_DIR": ".omd" }
+  "command": ["C:\\Users\\Angel\\bin\\engram.exe", "mcp", "--project", "Ateje"],
+  "env": { "ENGRAM_DATA_DIR": "D:\\REPOSITORIOS GitHUB\\Ateje\\.omd" }
 },
 "open-pencil": {
   "type": "local",

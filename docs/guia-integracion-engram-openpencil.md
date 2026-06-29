@@ -86,7 +86,7 @@ if (Get-Command engram -ErrorAction SilentlyContinue) {
 ### Recomendaciones
 
 - **✅ Hacerlo primero** — Es la integración de menor riesgo y mayor retorno
-- **✅ Mapear `ENGRAM_DATA_DIR` a `.omd/` del proyecto** — Para que la memoria viaje con el proyecto
+- **✅ Mapear `ENGRAM_DATA_DIR` a `.omd/` del proyecto** — Para que la memoria viaje con el proyecto. En scripts CLI vale `.omd/` relativo; en config MCP de OpenCode usar ruta absoluta (Engram rechaza relativas en MCP)
 - **❌ NO usar Engram en el runtime de la app** — Es solo para el agente de desarrollo
 - **💡 Probar con un proyecto real** — Crea una app, cierra la sesión, vuelve al día siguiente y pregunta "¿qué estábamos haciendo?"
 

@@ -96,14 +96,14 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | **github** | Siempre activo | `npx @modelcontextprotocol/server-github` | Operaciones GitHub API |
 | **stocky** | Siempre activo | `python -m mcp-servers.stocky.stocky_mcp` | Imágenes Pexels + Unsplash |
 | **refero-styles** | Siempre activo | `npx tsx mcp-servers/refero-styles/src/index.ts` | Sistemas de diseño en refero.design |
-| **engram** | Opcional | `engram mcp --project "Ateje"` (env: `ENGRAM_DATA_DIR=.omd`) | Memoria persistente SQLite/FTS5 |
-| **open-pencil** | Opcional | `openpencil-mcp` | Leer/modificar diseños desde OpenCode |
+| **engram** | Opcional | `C:\Users\Angel\bin\engram.exe mcp --project Ateje` (env: `ENGRAM_DATA_DIR=...\.omd`) | Memoria persistente SQLite/FTS5 |
+| **open-pencil** | Opcional | `openpencil-mcp` (requiere Desktop App abierta) | Leer/modificar diseños desde OpenCode |
 
 Configurados en `opencode.json` en la raíz del repo. Los MCP opcionales se activan automáticamente si la herramienta está instalada.
 
 **Setup de opcionales:**
-- Engram: `winget install Gentleman.Programming.Engram` + `scripts/setup-engram.ps1`
-- OpenPencil: `winget install OpenPencil.OpenPencil` + `npm install -g @open-pencil/cli` + `scripts/setup-opencil.ps1`
+- Engram: descargar binary de [GitHub Releases](https://github.com/Gentleman-Programming/engram/releases) + `scripts/setup-engram.ps1`
+- OpenPencil: `npm install -g @open-pencil/cli @open-pencil/mcp` + Desktop App desde [releases](https://github.com/open-pencil/open-pencil/releases) + `scripts/setup-opencil.ps1`
 
 ## Catálogo de apps AHA
 

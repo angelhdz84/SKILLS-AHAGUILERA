@@ -171,7 +171,7 @@ mcp:
     args: ["mcp", "--project", "{project_name}"]
 ```
 
-Variable de entorno: `ENGRAM_DATA_DIR=.omd/` — la memoria viaja con el proyecto.
+Variable de entorno: `ENGRAM_DATA_DIR=.omd/` — la memoria viaja con el proyecto. En config MCP de OpenCode usar ruta absoluta: `D:\REPOSITORIOS GitHUB\Ateje\.omd` (Engram rechaza rutas relativas en MCP).
 
 ### Fallback
 
