@@ -133,7 +133,7 @@ index.html
 | **code-generator** | Genera codigo por fases desde specs. Entrega un modulo por turno para evitar perdida de contexto. Aplica stack-compliance-guard automaticamente. | lite, full |
 | **stack-compliance-guard** | Guarda automatica: bloquea imports ES6, CDNs, fetch, crypto faltante. Se activa tras cada output de codigo. | lite, full |
 | **deployment-jigue** | Commit + push + empaquetado segun perfil. Lite: ZIP + Pages. Full: .exe + .apk + Release. Incluye white-label (brand.ps1) y entrega Enterprise. | lite, full |
-| **ia-jutia** | Mini IA offline. Lite: FlexSearch + estadisticas + predicciones. Full: +ingesta documentos (PDF/DOCX/XLSX) + QA extractivo con Transformers.js + sql.js FTS5. | lite, full |
+| **ia-jutia** | Mini IA v0.2 offline. Lite: FlexSearch + highlight/autocomplete/exportPDF + estadisticas + predicciones. Full: +OCR (Tesseract.js) + chat threads (Dexie) + busqueda hibrida (FlexSearch+embeddings) + QA extractivo (Transformers.js). | lite, full |
 | **alpine-ui-patterns** | Catalogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain (categorias A/B/C) y prioridad por calidad. | lite, full |
 | **capacitor** | Empaquetado .apk Android nativo con Capacitor. Incluye plugins: SQLite FTS5 nativo, camara, GPS, notificaciones, compartir. | full |
 | **upgrade-engine** | Migra app existente entre perfiles Lite/Full e IA Lite/Full. No modifica modulos ni datos, solo agrega/remueve archivos de infraestructura segun destino. | lite, full |

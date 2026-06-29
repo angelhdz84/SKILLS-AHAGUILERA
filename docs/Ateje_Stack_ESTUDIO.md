@@ -137,7 +137,7 @@
 | **code-generator** | Genera código por fases desde specs, un módulo por turno | lite, full |
 | **stack-compliance-guard** | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, full |
 | **deployment-jigue** | Commit + push + Pages + ZIP (Lite) / .exe + Release (Full) | lite, full |
-| **ia-jutia** | Mini IA: FlexSearch (Lite) / +ingesta docs + QA (Full) | lite, full |
+| **ia-jutia** | Mini IA v0.2: FlexSearch + highlight/autocomplete/exportPDF (Lite) / +OCR + chat threads + hybrid search (Full) | lite, full |
 | **alpine-ui-patterns** | Catálogo ~100 componentes Alpine.js de Pines/Penguin/Pinemix | lite, full |
 | **capacitor** | Empaquetado .apk Android nativo con Capacitor | full |
 | **upgrade-engine** | Migra app entre perfiles Lite/Full e IA Lite/Full | lite, full |
