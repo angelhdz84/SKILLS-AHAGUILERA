@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requiere @AGENTS.md y espec validada. Perfil Lite requiere solo FlexSearch (~7KB). Perfil Full requiere pdf.js + mammoth.js + marked.js + Transformers.js (~233MB descarga unica).
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.0"
+  version: "1.1"
   generatedBy: "ia-jutia skill"
   triggers: ["mini ia", "ia jutia", "busqueda inteligente", "analisis datos", "subir documento", "preguntar documento", "predicciones", "estadisticas"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -41,6 +41,12 @@ meta:
     Todo lo de Lite + subir PDF/DOCX/XLSX/CSV/MD para consultar.
     Chat Q&A con respuestas citando fuentes.
     Requiere descargar modelos Transformers.js (~230MB).
+  # Adicional OCR (Tesseract.js):
+  #   - Deteccion automatica PDF escaneado vs digital
+  #   - Usa Tesseract.js v5 con modelo spa (espanol)
+  #   - Se carga desde assets/js/libs/tesseract.min.js
+  #   - WASM: assets/wasm/tesseract-core-simd.wasm
+  #   - Modelo: assets/tessdata/spa.traineddata
 
 [3] No incluir IA
     Saltar generacion del modulo.
@@ -172,6 +178,8 @@ db.version(1).stores({
   // ...tablas existentes...
   _ia_docs: 'id, nombre, tipo, *createdBy, createdAt, updatedAt',
   _ia_chunks: 'id, docId, *texto, createdAt',
+  _ia_chats: 'id, titulo, createdAt, updatedAt, messageCount',
+  _ia_messages: 'id, chatId, rol, contenido, fuente, score, createdAt',
   _ia_index: '&consulta',
   modelos_cache: '&ruta',
 });
@@ -223,6 +231,11 @@ db.version(2).stores({
 - [ ] ¿Cmd+K no interfiere con inputs nativos? → Usar `@keydown.window` no dentro de inputs
 - [ ] ¿Perfil Lite pero usa `Transformers`? → ❌ RECHAZAR
 - [ ] ¿Perfil Full pero no carga `ia-ingest.js`? → ❌ RECHAZAR
+- [ ] ¿Tesseract.js carga desde `assets/js/libs/tesseract.min.js`? → RUTA LOCAL siempre
+- [ ] ¿Chat historial persiste en `_ia_chats` y `_ia_messages`? → Dexie put/get
+- [ ] ¿Busqueda hibrida combina FlexSearch + embeddings? → weight 0.6 flex + 0.4 semantic
+- [ ] ¿OCR se activa solo si pdf.js extrae <50 chars? → umbral configurable
+- [ ] ¿Lite Worker no interfiere con Full Worker? → archivos separados
 
 ---
 
@@ -288,6 +301,17 @@ window.ia.initFull = function() {   // init lite + ingest + modelos
   this.initLite();
   // Cargar Transformers pipeline async
 };
+
+  // v0.2 — IA Jutia mejorada
+  searchHybrid(query),             // FlexSearch + embeddings combinado
+  exportPDF(),                     // Exportar estadisticas a PDF
+
+  // Chat historial
+  chatNew(titulo),                 // Crear nuevo chat thread
+  chatList(),                      // Listar conversaciones guardadas
+  chatLoad(chatId),                // Cargar mensajes de una conversacion
+  chatDelete(chatId),              // Eliminar conversacion
+  chatAddMessage(chatId, rol, contenido, fuente, score), // Guardar mensaje
 ```
 
 ---
@@ -300,6 +324,7 @@ Los templates de codigo estan en:
 - `templates/lite/modules/ia-jutia/module.html` — UI Lite
 - `templates/full/core/ia.js` — Full (hereda Lite + ingest orchestration)
 - `templates/full/core/ia-ingest.js` — Parsers + Transformers + QA
+- `templates/lite/core/ia-worker.js` — FlexSearch en Web Worker
 - `templates/full/modules/ia-jutia/module.js` — Registro Full
 - `templates/full/modules/ia-jutia/module.html` — UI Full (chat + upload)
 
@@ -332,5 +357,10 @@ Los templates de codigo estan en:
 - **Persistencia**: Los documentos subidos (Full) persisten en IndexedDB (`_ia_docs`, `_ia_chunks`). Al recargar, se cargan los ultimos 100 documentos (`reverse().limit(100)`).
 - **Idioma**: Todo en español. Labels, mensajes, respuestas del QA, tooltips.
 - **Si el perfil no esta definido**: Preguntar. No asumir default.
+
+- **v0.2 Mejoras**: Highlight + resultados agrupados, autocompletar en busqueda, export PDF stats, OCR para PDFs escaneados (Tesseract.js spa), chat con historial/threads en Dexie, busqueda hibrida FlexSearch + embeddings.
+- **Tesseract.js (Full OCR)**: Cargar con `importScripts('assets/js/libs/tesseract.min.js')` en Worker. Usar `Tesseract.recognize(imageData, 'spa')` con `{ logger: m => onProgress(m) }`. Convertir pagina PDF a canvas con pdf.js, exportar como ImageData, pasar a Tesseract. Deteccion automatica: si pdf.js extrae <50 caracteres, activar OCR.
+- **Chat historial (Full)**: Usar `_ia_chats` para metadatos de conversacion y `_ia_messages` para cada mensaje. Ordenar por `createdAt` ascendente.
+- **Busqueda hibrida (Full)**: En search(), si hay modelos cargados, calcular embedding de la query, comparar con embeddings de chunks via similitud coseno, combinar scores: 0.6 * flexScore + 0.4 * semanticScore.
 
 ✨ **SKILL ready. Trigger: `mini ia` para iniciar.**
