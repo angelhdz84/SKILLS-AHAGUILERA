@@ -94,7 +94,6 @@ Los siguientes MCPs están disponibles **globalmente** (config `~/.config/openco
 
 | Servidor | Propósito |
 |----------|-----------|
-| **memory** | Memoria temporal del agente (knowledge graph en RAM) |
 | **github** | Operaciones GitHub API (issues, PRs, commits, search) |
 | **stocky** | Imágenes royalty-free (Pexels + Unsplash) |
 | **refero-styles** | Sistemas de diseño en refero.design (286+ brands) |
