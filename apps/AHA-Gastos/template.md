@@ -10,7 +10,7 @@ Lleva el control de ingresos y egresos diarios de tu negocio sin depender de int
 
 ## Niveles comerciales
 
-| Nivel | Perfil técnico | Formato | IA |
+| Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
 | Profesional | Full | .exe + .apk | FlexSearch + Stats + Predicción |
