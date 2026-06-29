@@ -1,8 +1,10 @@
 # IA Jutia v0.2 — Design Document
 
+> ✅ **IMPLEMENTADO** — 2026-06-29
 > Mejoras para perfiles Lite y Full.
 > Fecha: 2026-06-29
 > Autor: Angel Hernández Aguilera
+> Commits: af93b74 b975f63 dea439f 50f7c11 1802c7d b710e03 c37c089 d31021c 6b95c24 ad17e93
 
 ## Alcance
 
@@ -144,13 +146,13 @@ db.version(X).stores({
 
 ## Checklist de Validación
 
-- [ ] Highlight no rompe XSS (usar `textContent` para el texto, solo `<mark>` envuelve)
-- [ ] Auto-completar no dispara búsqueda si no hay cambios (debounce 200ms)
-- [ ] Export PDF usa `@media print` sin cargar librerías extra
-- [ ] OCR detecta correctamente PDFs con texto vs escaneados (umbral 50 chars)
-- [ ] Tesseract.js carga desde local, no CDN
-- [ ] Chat historial persiste entre recargas (Dexie)
-- [ ] Búsqueda híbrida falla graceful si no hay embeddings
-- [ ] Web Worker Lite no interfiere con Worker Full
-- [ ] Cmd+K no se rompe con nuevas UI
-- [ ] Perfil Lite no carga nada de Full
+- [x] Highlight no rompe XSS (usar `textContent` para el texto, solo `<mark>` envuelve)
+- [x] Auto-completar no dispara búsqueda si no hay cambios (debounce 200ms)
+- [x] Export PDF usa `@media print` sin cargar librerías extra
+- [x] OCR detecta correctamente PDFs con texto vs escaneados (umbral 50 chars)
+- [x] Tesseract.js carga desde local, no CDN
+- [x] Chat historial persiste entre recargas (Dexie)
+- [x] Búsqueda híbrida falla graceful si no hay embeddings
+- [x] Web Worker Lite no interfiere con Worker Full
+- [x] Cmd+K no se rompe con nuevas UI
+- [x] Perfil Lite no carga nada de Full

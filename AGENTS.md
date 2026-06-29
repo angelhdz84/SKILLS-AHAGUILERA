@@ -39,7 +39,7 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` (incl. `search-palette.js`, `file-store.js`, `delete.js`) | lite, professional, business |
 | `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, professional, business |
 | `deployment-jigue/` | Commit + push + empaquetado segun perfil (Essential/Professional/Business) | lite, professional, business |
-| `ia-jutia/` | Mini IA: FlexSearch (Essential) / +ingesta docs + QA (Professional/Business) | lite, full |
+| `ia-jutia/` | Mini IA v0.2: FlexSearch + highlight/autocomplete/exportPDF (Lite) / +OCR + chat threads + hybrid search (Full) | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 | `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | professional, business |
 | `upgrade-engine/` | Migra app entre perfiles Lite/Professional/Business e IA Lite/Full. No modifica módulos ni datos, solo infraestructura | lite, professional, business |
@@ -103,14 +103,13 @@ Los siguientes MCPs están disponibles **globalmente** (config `~/.config/openco
 | **context7** | Documentación actualizada de librerías/frameworks |
 | **daisyui-gitmcp** | Documentación de DaisyUI |
 
-Solo los siguientes MCPs están configurados **localmente** en `opencode.json` de este repo:
+Solo el siguiente MCP está configurado **localmente** en `opencode.json` de este repo:
 
 | Servidor | Comando | Propósito | Activar |
 |----------|---------|-----------|---------|
 | **engram** | `C:\Users\Angel\bin\engram.exe mcp --project Ateje` | Memoria persistente SQLite/FTS5 (cross-sesión) | `scripts/setup-engram.ps1` |
-| **open-pencil** | `openpencil-mcp` | Leer/modificar diseños visuales y extraer tokens | `npm install -g @open-pencil/cli @open-pencil/mcp` + Desktop App |
 
-Los MCPs locales son opt-in: si la herramienta no está instalada, OpenCode los ignora silenciosamente.
+**OpenPencil** está en la config global (`~/.config/opencode/opencode.json`), disponible en cualquier repo. Los MCPs locales son opt-in: si la herramienta no está instalada, OpenCode los ignora silenciosamente.
 
 **Setup de MCPs locales:**
 - Engram: descargar binary de [GitHub Releases](https://github.com/Gentleman-Programming/engram/releases) + `scripts/setup-engram.ps1`
