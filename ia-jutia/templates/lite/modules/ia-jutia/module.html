@@ -2,6 +2,14 @@
      Busqueda + estadisticas + predicciones
      Depende de: module.js (Alpine data iaData)
 -->
+<style>
+  .ia-highlight {
+    background-color: hsl(var(--p) / 0.2);
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+</style>
 <div x-data="iaData()" x-init="init('')" class="animate__animated animate__fadeIn">
   <!-- Header -->
   <div class="flex items-center justify-between mb-6">
@@ -21,7 +29,7 @@
     </label>
   </div>
 
-  <!-- Resultados de busqueda -->
+  <!-- Resultados de busqueda agrupados -->
   <template x-if="query.length > 0">
     <div class="mb-6">
       <div class="flex items-center justify-between mb-2">
@@ -36,20 +44,27 @@
           <p class="mt-2">Sin resultados para "<span x-text="query"></span>"</p>
         </div>
       </template>
-      <div class="space-y-2">
-        <template x-for="r in resultados" :key="r.id">
-          <div class="card bg-base-200 p-3 cursor-pointer hover:bg-base-300 transition-colors">
-            <div class="flex items-start gap-3">
-              <i class="bi bi-file-text mt-1 text-primary"></i>
-              <div class="flex-1 min-w-0">
-                <p class="font-medium truncate" x-text="r.nombre || r.tabla"></p>
-                <p class="text-sm text-base-content/60 truncate" x-text="r.texto?.slice(0, 120) || r.descripcion"></p>
-                <span class="badge badge-ghost badge-xs mt-1" x-text="r.tabla"></span>
+      <template x-if="!searching && resultados.length > 0">
+        <div class="space-y-4">
+          <template x-for="(group, table) in groupedResults" :key="table">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-base-content/60" x-text="table"></span>
+                <span class="badge badge-sm badge-ghost" x-text="group.count"></span>
+              </div>
+              <div class="space-y-1">
+                <template x-for="item in group.items" :key="item.id">
+                  <div class="p-3 bg-base-200 rounded-lg hover:bg-base-300 cursor-pointer transition-colors"
+                       @click="selectItem(item)">
+                    <div class="font-medium text-sm" x-html="item._highlighted || highlightText(item.nombre || item.descripcion, query)"></div>
+                    <div class="text-xs text-base-content/50 mt-0.5" x-text="item.descripcion || item.tipo || ''"></div>
+                  </div>
+                </template>
               </div>
             </div>
-          </div>
-        </template>
-      </div>
+          </template>
+        </div>
+      </template>
     </div>
   </template>
 

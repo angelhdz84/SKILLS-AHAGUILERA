@@ -37,7 +37,7 @@ const ModuloIA = {
         </label>
       </div>
 
-      <!-- Resultados de busqueda -->
+      <!-- Resultados de busqueda agrupados -->
       <template x-if="query.length > 0">
         <div class="mb-6">
           <div class="flex items-center justify-between mb-2">
@@ -52,20 +52,27 @@ const ModuloIA = {
               <p class="mt-2">Sin resultados para "<span x-text="query"></span>"</p>
             </div>
           </template>
-          <div class="space-y-2">
-            <template x-for="r in resultados" :key="r.id">
-              <div class="card bg-base-200 p-3 cursor-pointer hover:bg-base-300 transition-colors">
-                <div class="flex items-start gap-3">
-                  <i class="bi bi-file-text mt-1 text-primary"></i>
-                  <div class="flex-1 min-w-0">
-                    <p class="font-medium truncate" x-text="r.nombre || r.tabla"></p>
-                    <p class="text-sm text-base-content/60 truncate" x-text="r.descripcion || r.texto?.slice(0, 120)"></p>
-                    <span class="badge badge-ghost badge-xs mt-1" x-text="r.tabla"></span>
+          <template x-if="!searching && resultados.length > 0">
+            <div class="space-y-4">
+              <template x-for="(group, table) in groupedResults" :key="table">
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-base-content/60" x-text="table"></span>
+                    <span class="badge badge-sm badge-ghost" x-text="group.count"></span>
+                  </div>
+                  <div class="space-y-1">
+                    <template x-for="item in group.items" :key="item.id">
+                      <div class="p-3 bg-base-200 rounded-lg hover:bg-base-300 cursor-pointer transition-colors"
+                           @click="selectItem(item)">
+                        <div class="font-medium text-sm" x-html="item._highlighted || highlightText(item.nombre || item.descripcion, query)"></div>
+                        <div class="text-xs text-base-content/50 mt-0.5" x-text="item.descripcion || item.tipo || ''"></div>
+                      </div>
+                    </template>
                   </div>
                 </div>
-              </div>
-            </template>
-          </div>
+              </template>
+            </div>
+          </template>
         </div>
       </template>
 
@@ -160,6 +167,7 @@ document.addEventListener('alpine:init', () => {
     predTabla: '',
     predCampo: '',
     prediccion: null,
+    groupedResults: {},
 
     async init(q) {
       this.query = q || '';
@@ -178,6 +186,11 @@ document.addEventListener('alpine:init', () => {
       if (!this.query || !window.ia) return;
       this.searching = true;
       this.resultados = await window.ia.search(this.query);
+      const wrapped = [{
+        field: 'all',
+        result: this.resultados.map(r => ({ id: r.id, doc: r }))
+      }];
+      this.groupedResults = this.groupResults(wrapped, this.query);
       this.searching = false;
     },
 
@@ -189,6 +202,47 @@ document.addEventListener('alpine:init', () => {
     formatoMoneda(v) {
       if (v == null) return '';
       return '$' + Number(v).toLocaleString('es', { minimumFractionDigits: 2 });
+    },
+
+    // v0.2 — Highlight + grouped results
+    highlightText(text, query) {
+      if (!query || !text) return text || '';
+      const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const words = q.split(/\s+/).filter(Boolean);
+      let result = text;
+      words.forEach(word => {
+        if (word.length < 2) return;
+        const re = new RegExp('(' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        result = result.replace(re, '<mark class="ia-highlight">$1</mark>');
+      });
+      return result;
+    },
+
+    groupResults(results, query) {
+      if (!results || !Array.isArray(results)) return {};
+      const grouped = {};
+      results.forEach(item => {
+        const field = item.field || 'general';
+        const items = item.result || [];
+        items.forEach(r => {
+          const table = r.doc?.tabla || r.doc?.tipo || field;
+          if (!grouped[table]) {
+            grouped[table] = { count: 0, items: [] };
+          }
+          grouped[table].items.push({
+            ...r.doc,
+            _highlighted: this.highlightText(r.doc?.nombre || r.doc?.descripcion || '', query)
+          });
+          grouped[table].count++;
+        });
+      });
+      return grouped;
+    },
+
+    selectItem(item) {
+      if (window.appRouter && item.id && item.tabla) {
+        window.appRouter.go(item.tabla, { id: item.id });
+      }
     }
   }));
 });
