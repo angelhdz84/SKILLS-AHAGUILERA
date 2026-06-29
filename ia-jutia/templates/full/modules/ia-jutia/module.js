@@ -302,7 +302,11 @@ document.addEventListener('alpine:init', () => {
     async buscar() {
       if (!this.query || !window.ia) return;
       this.searching = true;
-      this.resultados = await window.ia.search(this.query);
+      if (window.ia.searchHybrid) {
+        this.resultados = await window.ia.searchHybrid(this.query);
+      } else {
+        this.resultados = await window.ia.search(this.query);
+      }
       this.searching = false;
     },
 

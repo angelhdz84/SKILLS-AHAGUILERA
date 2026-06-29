@@ -171,6 +171,90 @@
       });
     },
 
+    // v0.2 — Busqueda hibrida FlexSearch + Embeddings
+    _getEmbedding: async function(text) {
+      try {
+        if (window.iaIngest && window.iaIngest._getEmbedding) {
+          return await window.iaIngest._getEmbedding(text);
+        }
+        return null;
+      } catch (e) {
+        console.warn('[IA] Embedding error:', e);
+        return null;
+      }
+    },
+
+    _cosineSimilarity: function(vecA, vecB) {
+      if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+      let dot = 0, normA = 0, normB = 0;
+      for (let i = 0; i < vecA.length; i++) {
+        dot += vecA[i] * vecB[i];
+        normA += vecA[i] * vecA[i];
+        normB += vecB[i] * vecB[i];
+      }
+      const denom = Math.sqrt(normA) * Math.sqrt(normB);
+      return denom === 0 ? 0 : dot / denom;
+    },
+
+    searchHybrid: async function(query, opts = {}) {
+      if (!query) return [];
+
+      const limit = opts.limit || 50;
+      const flexWeight = 0.6;
+      const semanticWeight = 0.4;
+
+      const flexResults = await this.search(query, { ...opts, limit: limit * 2 });
+      if (!flexResults || flexResults.length === 0) return [];
+
+      let enriched = false;
+      const queryEmbedding = await this._getEmbedding(query);
+
+      if (queryEmbedding) {
+        try {
+          const db = window.db;
+          if (db && db._ia_chunks) {
+            const docIds = flexResults.map(r => r.id).filter(Boolean);
+            const chunks = await db._ia_chunks
+              .where('docId')
+              .anyOf(docIds)
+              .toArray();
+
+            if (chunks.length > 0) {
+              const semanticScores = {};
+              for (const chunk of chunks) {
+                if (chunk.embedding) {
+                  const score = this._cosineSimilarity(queryEmbedding, chunk.embedding);
+                  semanticScores[chunk.docId] = Math.max(semanticScores[chunk.docId] || 0, score);
+                }
+              }
+
+              const total = flexResults.length;
+              flexResults.forEach((r, i) => {
+                const flexScore = total > 0 ? 1 - (i / total) : 1;
+                const semanticScore = semanticScores[r.id] || 0;
+                r._combinedScore = flexScore * flexWeight + semanticScore * semanticWeight;
+              });
+              enriched = true;
+            }
+          }
+        } catch (e) {
+          console.warn('[IA] Semantic enrichment error:', e);
+        }
+      }
+
+      if (enriched) {
+        flexResults.sort((a, b) => (b._combinedScore || 0) - (a._combinedScore || 0));
+      }
+
+      if (flexResults.length > limit) flexResults.length = limit;
+
+      if (typeof Alpine !== 'undefined') {
+        Alpine.store('ia').results = flexResults;
+      }
+
+      return flexResults;
+    },
+
     // ── Documentos (Full) ─────────────────────────────────
     async getDocumentos() {
       if (!window.db || !window.db._ia_docs) return [];

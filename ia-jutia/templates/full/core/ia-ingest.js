@@ -223,6 +223,40 @@
       return this._worker;
     },
 
+    // v0.2 — Embedding generation for hybrid search
+    _getEmbedding: async function(text) {
+      try {
+        const worker = this._getWorker();
+        if (worker) {
+          return new Promise((resolve, reject) => {
+            const id = 'emb_' + Date.now();
+            const handler = function(e) {
+              if (e.data && e.data.id === id) {
+                worker.removeEventListener('message', handler);
+                resolve(e.data.data);
+              }
+            };
+            worker.addEventListener('message', handler);
+            worker.postMessage({ type: 'embed', id, data: { texto: text } });
+            setTimeout(() => { worker.removeEventListener('message', handler); reject(new Error('timeout')); }, 30000);
+          });
+        }
+
+        if (typeof pipeline === 'undefined') return null;
+
+        const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+          local: true,
+          dtype: 'q4'
+        });
+
+        const result = await extractor(text, { pooling: 'mean', normalize: true });
+        return Array.from(result.data);
+      } catch (e) {
+        console.warn('[IA] Embedding error:', e);
+        return null;
+      }
+    },
+
     // --- OCR (v0.2) ---
 
     // Detect if PDF is scanned and OCR it
