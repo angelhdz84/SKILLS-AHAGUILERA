@@ -29,10 +29,11 @@ Sistema POS (punto de venta) offline para tiendas, ferias, puestos y pequeÃ±os
 - MÃºltiples formas de pago: efectivo, tarjeta, transferencia
 - Ticket de venta en pantalla (imprimible)
 
-### ðŸ’µ MÃ³dulo Corte de Caja
-- Apertura y cierre de caja por turno
-- Resumen: total ventas, mÃ©todos de pago, nÃºmero de transacciones
-- Diferencia entre efectivo esperado vs real
+### 💵 Módulo Corte
+- **Arqueo**: ingreso de montos por denominación (billetes/monedas), total calculado vs esperado, alerta de descuadre
+- **Gastos Menores**: registro rápido de gasto con concepto y monto, se descuenta del fondo de caja
+- **Cierre**: congela el corte del turno, inicia nuevo corte automáticamente
+- **Historial**: cortes anteriores con detalle de arqueo y gastos, exportable
 
 ### â†©ï¸ MÃ³dulo Devoluciones
 - Seleccionar venta del historial, elegir productos a devolver
@@ -40,20 +41,21 @@ Sistema POS (punto de venta) offline para tiendas, ferias, puestos y pequeÃ±os
 - Afecta inventario automÃ¡ticamente
 
 ### ðŸ“Š MÃ³dulo Reportes
-- Dashboard: ventas hoy, productos top, corte de caja activo
+- Dashboard: ventas hoy, productos top, corte activo
 - Ventas por dÃ­a/semana/mes con grÃ¡ficos Chart.js
 - Export a CSV
 
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
   categorias: 'id, nombre, color, createdAt',
   ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt',
   ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento',
   cortes: 'id, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt',
-  devoluciones: 'id, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt'
+  devoluciones: 'id, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
+  gastosMenores: 'id, *corteId, *concepto, monto, *hora, *createdBy, createdAt'
 })
 ```
 
