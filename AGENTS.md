@@ -90,18 +90,30 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 
 ## MCP Servers
 
-| Servidor | Tipo | Comando | Propósito |
-|----------|------|---------|-----------|
-| **memory** | Siempre activo | `npx @modelcontextprotocol/server-memory` | Memoria temporal del agente |
-| **github** | Siempre activo | `npx @modelcontextprotocol/server-github` | Operaciones GitHub API |
-| **stocky** | Siempre activo | `python -m mcp-servers.stocky.stocky_mcp` | Imágenes Pexels + Unsplash |
-| **refero-styles** | Siempre activo | `npx tsx mcp-servers/refero-styles/src/index.ts` | Sistemas de diseño en refero.design |
-| **engram** | Opcional | `C:\Users\Angel\bin\engram.exe mcp --project Ateje` (env: `ENGRAM_DATA_DIR=...\.omd`) | Memoria persistente SQLite/FTS5 |
-| **open-pencil** | Opcional | `openpencil-mcp` (requiere Desktop App abierta) | Leer/modificar diseños desde OpenCode |
+Los siguientes MCPs están disponibles **globalmente** (config `~/.config/opencode/opencode.json`):
 
-Configurados en `opencode.json` en la raíz del repo. Los MCP opcionales se activan automáticamente si la herramienta está instalada.
+| Servidor | Propósito |
+|----------|-----------|
+| **memory** | Memoria temporal del agente (knowledge graph en RAM) |
+| **github** | Operaciones GitHub API (issues, PRs, commits, search) |
+| **stocky** | Imágenes royalty-free (Pexels + Unsplash) |
+| **refero-styles** | Sistemas de diseño en refero.design (286+ brands) |
+| **web-search** | Búsqueda web |
+| **chrome-devtools** | Navegador headless para testing/Lighthouse |
+| **supabase** | Supabase API (DB, Auth, Edge Functions) |
+| **context7** | Documentación actualizada de librerías/frameworks |
+| **daisyui-gitmcp** | Documentación de DaisyUI |
 
-**Setup de opcionales:**
+Solo los siguientes MCPs están configurados **localmente** en `opencode.json` de este repo:
+
+| Servidor | Comando | Propósito | Activar |
+|----------|---------|-----------|---------|
+| **engram** | `C:\Users\Angel\bin\engram.exe mcp --project Ateje` | Memoria persistente SQLite/FTS5 (cross-sesión) | `scripts/setup-engram.ps1` |
+| **open-pencil** | `openpencil-mcp` | Leer/modificar diseños visuales y extraer tokens | `npm install -g @open-pencil/cli @open-pencil/mcp` + Desktop App |
+
+Los MCPs locales son opt-in: si la herramienta no está instalada, OpenCode los ignora silenciosamente.
+
+**Setup de MCPs locales:**
 - Engram: descargar binary de [GitHub Releases](https://github.com/Gentleman-Programming/engram/releases) + `scripts/setup-engram.ps1`
 - OpenPencil: `npm install -g @open-pencil/cli @open-pencil/mcp` + Desktop App desde [releases](https://github.com/open-pencil/open-pencil/releases) + `scripts/setup-opencil.ps1`
 

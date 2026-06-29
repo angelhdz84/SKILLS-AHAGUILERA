@@ -36,23 +36,6 @@
     }
   },
   "mcp": {
-    "memory": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"]
-    },
-    "github": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-github"]
-    },
-    "stocky": {
-      "type": "local",
-      "command": ["python", "-m", "mcp-servers.stocky.stocky_mcp"],
-      "env": { "ENABLE_ATTRIBUTION_LINKS": "true" }
-    },
-    "refero-styles": {
-      "type": "local",
-      "command": ["npx", "tsx", "mcp-servers/refero-styles/src/index.ts"]
-    },
     "engram": {
       "type": "local",
       "command": ["C:\\Users\\Angel\\bin\\engram.exe", "mcp", "--project", "Ateje"],
