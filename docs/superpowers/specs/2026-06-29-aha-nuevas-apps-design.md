@@ -117,12 +117,35 @@ Mover `apps/AHA-Creador/template.md` a `apps/archived/AHA-Creador/template.md` s
 
 ## Checklist pre-lanzamiento
 
-- [ ] AHA-Gastos: flujo ingreso/egreso con categorías
-- [ ] AHA-Gastos: gráfico flujo de caja con datos de prueba
-- [ ] AHA-Gastos: export PDF reporte mensual
-- [ ] AHA-Contactos: CRUD contactos + historial timeline
-- [ ] AHA-Contactos: recordatorios con notificación
-- [ ] AHA-Contactos: export CSV
-- [ ] Corte: arqueo por denominación + alerta descuadre
-- [ ] Corte: cierre de turno + nuevo corte automático
-- [ ] Corte: historial de cortes con detalle
+- [x] AHA-Gastos: flujo ingreso/egreso con categorías
+- [x] AHA-Gastos: gráfico flujo de caja con datos de prueba
+- [x] AHA-Gastos: export PDF reporte mensual
+- [x] AHA-Contactos: CRUD contactos + historial timeline
+- [x] AHA-Contactos: recordatorios con notificación
+- [x] AHA-Contactos: export CSV
+- [x] Corte: arqueo por denominación + alerta descuadre
+- [x] Corte: cierre de turno + nuevo corte automático
+- [x] Corte: historial de cortes con detalle
+
+## V2: Landing reestructurada por Verticales
+
+Se reorganizó `docs/landing-aha-sell.md` para presentar el catálogo por 8 verticales de negocio en vez de tabla plana de 14 apps.
+
+### Cambios aplicados
+- Sección 4: tabla plana reemplazada por 8 tarjetas de vertical con target, dolor, apps con rol, kit + precio cerrado
+- Se agregó "Apps Transversales" (Gastos + Contactos) destacando que aparecen en todos los verticales
+- Sección 5: tabla de dolores por app → tabla de dolores por vertical con app estrella
+- Sección 7: tabla de precios individuales + tabla de kits por vertical ($249-$449)
+- AGENTS.md: actualizado con tabla de 8 verticales + apps transversales
+
+### Estructura de precios
+| Vertical | Kit | Precio |
+|----------|-----|:------:|
+| Comercio | POS + Inventario + PreFactura + Gastos + Contactos | $299 |
+| Gastronomía | Comanda + POS + Inventario + Gastos + Asistencia | $349 |
+| Belleza | Citas + Contactos + Gastos + Asistencia | $249 |
+| Salud | Rx + Citas + PreFactura + Contactos + Gastos | $299 |
+| Construcción | Obra + Checklist + Campo + PreFactura + Gastos | $449 |
+| Campo | Campo + Inventario + Flota + Gastos | $349 |
+| Logística | Flota + Asistencia + Checklist + Gastos | $349 |
+| Oficina | CRM + Contactos + PreFactura + Gastos | $249 |

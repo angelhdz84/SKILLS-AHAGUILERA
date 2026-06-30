@@ -117,7 +117,7 @@ Solo el siguiente MCP está configurado **localmente** en `opencode.json` de est
 
 ## Catálogo de apps AHA
 
-El repo incluye **13 plantillas de apps** listas para generar con el pipeline. Tres formatos por app:
+El repo incluye **14 plantillas de apps** listas para generar con el pipeline. Tres formatos por app:
 
 | App | Template comercial | Niveles comerciales | Spec técnica |
 |-----|-------------------|-------------------|-------------|
@@ -135,6 +135,23 @@ El repo incluye **13 plantillas de apps** listas para generar con el pipeline. T
 | **AHA Flota** | `apps/AHA-Flota/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Flota/template.md` |
 | **AHA Obra** | `apps/AHA-Obra/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-Obra/template.md` |
 | **AHA PreFactura** | `apps/AHA-PreFactura/template.md` | Inicio / Profesional / Enterprise | `apps/AHA-PreFactura/template.md` |
+
+### Organización por Verticales
+
+Las apps se venden en **8 verticales de negocio**, cada una con su app estrella y un kit sugerido:
+
+| Vertical | App Estrella | Target | Kit sugerido | Precio Kit |
+|----------|-------------|--------|-------------|:----------:|
+| **Comercio y Retail** 🏪 | POS | Ferreterías, abarrotes, tiendas | POS + Inventario + PreFactura + Gastos + Contactos | $299 |
+| **Gastronomía** 🍽️ | Comanda | Restaurantes, bares, cafeterías | Comanda + POS + Inventario + Gastos + Asistencia | $349 |
+| **Belleza y Servicios** 💇 | Citas | Barberías, salones, spas | Citas + Contactos + Gastos + Asistencia | $249 |
+| **Salud y Consultorios** ⚕️ | Rx | Médicos, dentistas, farmacias | Rx + Citas + PreFactura + Contactos + Gastos | $299 |
+| **Construcción y Obra** 🏗️ | Obra | Constructores, contratistas | Obra + Checklist + Campo + PreFactura + Gastos | $449 |
+| **Campo y Agro** 🌾 | Campo | Agricultores, ranchos, cooperativas | Campo + Inventario + Flota + Gastos | $349 |
+| **Logística y Transporte** 🚚 | Flota | Flotillas, mensajerías | Flota + Asistencia + Checklist + Gastos | $349 |
+| **Oficina y Freelancers** 💼 | CRM | Contadores, abogados, freelancers | CRM + Contactos + PreFactura + Gastos | $249 |
+
+**Apps transversales:** AHA **Gastos** 💰 y AHA **Contactos** 📱 aparecen en las 8 verticales. Son el complemento base de cualquier kit.
 
 Cada nivel mapea a un perfil técnico: **Inicio** (Lite, ZIP+Pages), **Profesional** (Professional, .exe+FixedWV2), **Enterprise** (Business, .exe+FixedWV2+.apk+branding).
 
