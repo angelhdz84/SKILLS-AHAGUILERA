@@ -67,8 +67,8 @@ Cada app que construyo incluye **IA Jutia**: una inteligencia artificial que cor
 
 | Perfil | Funcionalidad | Dónde funciona |
 |--------|--------------|----------------|
-| **Lite** (incluido) | Búsqueda instantánea en toda la app — escribe y encuentra. Estadísticas inteligentes sobre sus datos. Predicciones: "¿cuándo se va a acabar este producto?" | ✅ .exe ✅ .apk |
-| **Full** (incluido en Profesional/Enterprise) | Todo lo de Lite + ingesta de PDF, DOCX, XLSX, CSV, MD. QA extractivo: hazle preguntas en español y responde citando sus propios documentos. Atajo global `Cmd+K` desde cualquier pantalla | ✅ .exe ✅ .apk |
+| **Lite** (incluido) | Búsqueda instantánea + resaltado de resultados + autocompletado. Exporta resultados a PDF. Estadísticas inteligentes y predicciones sobre sus datos | ✅ .exe ✅ .apk |
+| **Full** (incluido en Profesional/Enterprise) | Todo lo de Lite + OCR en PDFs escaneados (Tesseract.js). Chat con historial persistente. Búsqueda híbrida (FlexSearch + embeddings). Ingesta de PDF, DOCX, XLSX, CSV, MD. QA extractivo: pregúntale a tus datos en español. Atajo global `Cmd+K` desde cualquier pantalla | ✅ .exe ✅ .apk |
 
 ### Traducido a venta
 
@@ -98,7 +98,7 @@ No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su
 | **AHA Gastos** | Micro-pymes, emprendedores | Dashboard, movimientos, categorías, reportes PDF | Predice flujo de caja y alerta gastos excesivos | $49 / $99 / $299 |
 | **AHA Contactos** | Vendedores, inmobiliarias, seguros | Contactos, historial, plantillas WhatsApp, recordatorios | Alerta contactos que requieren seguimiento >30 días | $99 / $149 / $299 |
 | **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $59 / $149 / $399 |
-| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte caja, devoluciones, ticket | Predice productos más vendidos por hora/día | $49 / $99 / $299 |
+| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte (arqueo+gastos), devoluciones, ticket | Predice productos más vendidos por hora/día | $49 / $99 / $299 |
 | **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $59 / $149 / $399 |
 | **AHA Flota** | Transporte, flotillas, logística | Vehículos, combustible km/l, mantenimiento, incidentes | Predice próximo mantenimiento + alerta consumo anómalo | $79 / $199 / $499 |
 | **AHA Obra** | Construcción, arquitectura, obra | Etapas, materiales, gastos, fotos avance, reporte PDF | Predice desviación de presupuesto + alerta materiales | $79 / $199 / $499 |
@@ -372,5 +372,5 @@ Antes de poner una app nueva en venta:
 | WhatsApp API | `https://wa.me/521NUMERO?text=...` |
 | Ateje Stack (meta-repo) | `https://github.com/angelhdz84/Ateje` |
 | Docs Stack consolidado | `docs/Ateje_Stack_ESTUDIO.md` |
-| Catálogo de apps | `apps/README.md` (13 plantillas AHA) |
+| Catálogo de apps | `apps/README.md` (14 plantillas AHA) |
 | Specs code-generator | `apps/AHA-*/template.md` |
