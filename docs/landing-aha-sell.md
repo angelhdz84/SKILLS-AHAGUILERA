@@ -83,49 +83,167 @@ Cada app que construyo incluye **IA Jutia**: una inteligencia artificial que cor
 
 ---
 
-## 4. Catálogo de verticales
+## 4. Catálogo por Verticales
 
-No vendes apps fijas. Vendes **soluciones por vertical**. El cliente describe su problema, tú eliges los módulos que necesita.
+No vendes apps sueltas. Vendes **kits completos para el negocio de tu cliente**. Cada vertical tiene un pack listo con las apps que necesita, la app estrella y un precio cerrado.
 
-| App | Vertical | Módulos típicos | IA integrada | Precios por perfil |
-|-----|----------|-----------------|--------------|-------------------|
-| **AHA Inventario** | Control de stock, almacén, bodega, tienda | Productos, movimientos, alertas, QR, reportes PDF | Predice cuándo se va a acabar un producto + alertas inteligentes | $49 / $99 / $299 |
-| **AHA Comanda** | Restaurantes, bares, cocinas | Mesas, comandas, platillos, cuentas split, corte caja | Predice platillo más pedido según hora y día | $49 / $99 / $299 |
-| **AHA CRM** | Ventas, freelancers, agencias | Pipeline Kanban, contactos, cotizaciones PDF, facturas | Busca contactos por descripción difusa: "el de la ferretería de la esquina" | $59 / $129 / $399 |
-| **AHA Checklist** | Mantenimiento, inspecciones, seguridad | Plantillas, inspecciones con foto/firma, PDF | Predice áreas con más fallas y frecuencia óptima | $39 / $79 / $199 |
-| **AHA Asistencia** | RRHH, empleados, talleres | Marcaje QR, reporte horas, retardos, export nómina | Predice retardos probables basado en historial | $39 / $79 / $199 |
-| **AHA Citas** | Barberías, salud, belleza, servicios | Agenda por profesional, clientes, servicios, corte día | Predice horarios más solicitados y clientes frecuentes | $49 / $99 / $299 |
-| **AHA Gastos** | Micro-pymes, emprendedores | Dashboard, movimientos, categorías, reportes PDF | Predice flujo de caja y alerta gastos excesivos | $49 / $99 / $299 |
-| **AHA Contactos** | Vendedores, inmobiliarias, seguros | Contactos, historial, plantillas WhatsApp, recordatorios | Alerta contactos que requieren seguimiento >30 días | $99 / $149 / $299 |
-| **AHA Campo** | Agricultura, ganadería, ranchos | Lotes, cultivos, ganado, insumos, gastos | Predice rendimiento por hectárea y alerta de insumos | $59 / $149 / $399 |
-| **AHA POS** | Punto de venta, tiendas, ferias | Carrito, código barras, corte (arqueo+gastos), devoluciones, ticket | Predice productos más vendidos por hora/día | $49 / $99 / $299 |
-| **AHA Rx** | Consultorios, médicos, farmacias | Pacientes, recetas PDF, medicamentos, historial clínico | Búsqueda de pacientes por síntoma, diagnósticos frecuentes | $59 / $149 / $399 |
-| **AHA Flota** | Transporte, flotillas, logística | Vehículos, combustible km/l, mantenimiento, incidentes | Predice próximo mantenimiento + alerta consumo anómalo | $79 / $199 / $499 |
-| **AHA Obra** | Construcción, arquitectura, obra | Etapas, materiales, gastos, fotos avance, reporte PDF | Predice desviación de presupuesto + alerta materiales | $79 / $199 / $499 |
-| **AHA PreFactura** | Freelancers, pequeños negocios | Clientes RFC, facturas XML+PDF, historial | Búsqueda por RFC, total facturado por período | $39 / $79 / $199 |
+### 🏪 VERTICAL 1: COMERCIO Y RETAIL
+**Target:** Ferreterías, abarrotes, tiendas de ropa, minimarkets, puestos de mercado
+**Dolor:** "Si se va internet no cobro y no sé qué tengo en stock"
+
+| App | Rol |
+|-----|-----|
+| **AHA POS** | ⭐ Motor de ventas (la estrella) |
+| **AHA Inventario** | Control de stock en tiempo real |
+| **AHA PreFactura** | Facturación electrónica local |
+| **AHA Gastos** | 💰 Control financiero del negocio |
+| **AHA Contactos** | 📱 CRM de clientes frecuentes |
+
+📦 **Kit sugerido:** "Kit Ferretería/Minimarket" = POS + Inventario + PreFactura + Gastos + Contactos → **$299 USD**
 
 ---
 
-## 5. Problema que Resuelve por App
+### 🍽️ VERTICAL 2: GASTRONOMÍA
+**Target:** Restaurantes, bares, cafeterías, taquerías, food trucks
+**Dolor:** "Los pedidos en papel se pierden y la cocina tarda"
 
-Cada app se vende porque resuelve un dolor específico que el cliente ya conoce. Usa esta tabla para el discurso de venta:
+| App | Rol |
+|-----|-----|
+| **AHA Comanda** | ⭐ Motor de pedidos (la estrella) |
+| **AHA POS** | Cobro y corte de caja |
+| **AHA Inventario** | Control de insumos y mermas |
+| **AHA Gastos** | 💰 Control de gastos operativos |
+| **AHA Asistencia** | Control de meseros y cocineros |
+| **AHA Contactos** | 📱 Proveedores y clientes frecuentes |
 
-| App | Frase del cliente (dolor) |
-|-----|--------------------------|
-| **Inventario** | "Perdemos ventas porque no sabemos qué tenemos en existencia hasta que el cliente pregunta." |
-| **Comanda** | "Se nos pierden los pedidos en papel y los meseros pierden tiempo buscando comandas." |
-| **CRM** | "Se me escapan los clientes porque no les doy seguimiento." |
-| **Checklist** | "Los inspectores llenan formatos en papel que se pierden y nadie puede leer." |
-| **Asistencia** | "Los empleados firman en papel y no sabemos quién llega tarde realmente." |
-| **Citas** | "Se me cruzan las citas, pierdo clientes porque no recuerdo cuándo vinieron." |
-| **Gastos** | "No sé si estoy ganando o perdiendo dinero porque no llevo un control diario." |
-| **Contactos** | "Tengo 500 contactos en WhatsApp y no sé a quién seguir ni cuándo." |
-| **Campo** | "No sé realmente cuánto estoy gastando en el campo ni qué lote me da más rendimiento." |
-| **POS** | "Cuando no hay internet no puedo cobrar y pierdo la venta." |
-| **Rx** | "Mis recetas se pierden y no tengo historial de lo que receté." |
-| **Flota** | "No sé cuánto gasto en gasolina ni cuándo toca mantenimiento." |
-| **Obra** | "Los gastos se me disparan y no tengo control del avance." |
-| **PreFactura** | "Necesito facturar pero no siempre tengo internet ni quiero pagar suscripción." |
+📦 **Kit sugerido:** "Kit Restaurante Completo" = Comanda + POS + Inventario + Gastos + Asistencia → **$349 USD**
+
+---
+
+### 💇 VERTICAL 3: BELLEZA Y SERVICIOS PERSONALES
+**Target:** Barberías, peluquerías, salones de uñas, spas, tatuadores
+**Dolor:** "Se me cruzan las citas y pierdo clientes por no dar seguimiento"
+
+| App | Rol |
+|-----|-----|
+| **AHA Citas** | ⭐ Agenda visual (la estrella) |
+| **AHA Contactos** | 📱 Historial y seguimiento WhatsApp |
+| **AHA CRM** | Clientes y promociones |
+| **AHA Gastos** | 💰 Control financiero |
+| **AHA Asistencia** | Control de estilistas/barberos |
+
+📦 **Kit sugerido:** "Kit Barbería/Salón" = Citas + Contactos + Gastos + Asistencia → **$249 USD**
+
+---
+
+### ⚕️ VERTICAL 4: SALUD Y CONSULTORIOS
+**Target:** Médicos independientes, dentistas, fisioterapeutas, farmacias, psicólogos
+**Dolor:** "Mis recetas se pierden y no tengo historial clínico digital"
+
+| App | Rol |
+|-----|-----|
+| **AHA Rx** | ⭐ Recetas e historial clínico (la estrella) |
+| **AHA Citas** | Agenda de pacientes |
+| **AHA Contactos** | 📱 Seguimiento de pacientes |
+| **AHA PreFactura** | Facturación de consultas |
+| **AHA Gastos** | 💰 Control del consultorio |
+
+📦 **Kit sugerido:** "Kit Consultorio Médico" = Rx + Citas + PreFactura + Contactos + Gastos → **$299 USD**
+
+---
+
+### 🏗️ VERTICAL 5: CONSTRUCCIÓN Y OBRA
+**Target:** Constructores, arquitectos, contratistas, ingenieros civiles
+**Dolor:** "Los gastos se disparan y no tengo control del avance en obra"
+
+| App | Rol |
+|-----|-----|
+| **AHA Obra** | ⭐ Control de partidas y avances (la estrella) |
+| **AHA Checklist** | Inspecciones y seguridad |
+| **AHA Campo** | Reportes desde obra sin internet |
+| **AHA Flota** | Maquinaria y transporte |
+| **AHA Asistencia** | Control de trabajadores |
+| **AHA PreFactura** | Certificaciones y facturación |
+| **AHA Gastos** | 💰 Control presupuestario |
+
+📦 **Kit sugerido:** "Kit Constructora Pro" = Obra + Checklist + Campo + PreFactura + Gastos → **$449 USD**
+
+---
+
+### 🌾 VERTICAL 6: CAMPO Y AGRO
+**Target:** Agricultores, ganaderos, ranchos, cooperativas agrícolas
+**Dolor:** "No sé cuánto gasto en el campo ni qué lote me da más"
+
+| App | Rol |
+|-----|-----|
+| **AHA Campo** | ⭐ Lotes, cultivos y rendimiento (la estrella) |
+| **AHA Inventario** | Control de insumos y cosecha |
+| **AHA Flota** | Tractores y vehículos agrícolas |
+| **AHA Asistencia** | Jornaleros y trabajadores |
+| **AHA Gastos** | 💰 Control por lote/hectárea |
+
+📦 **Kit sugerido:** "Kit Rancho/Finca" = Campo + Inventario + Flota + Gastos → **$349 USD**
+
+---
+
+### 🚚 VERTICAL 7: LOGÍSTICA Y TRANSPORTE
+**Target:** Empresas de transporte, repartidores, flotillas, mensajerías
+**Dolor:** "No sé cuánto gasto en gasolina ni cuándo toca mantenimiento"
+
+| App | Rol |
+|-----|-----|
+| **AHA Flota** | ⭐ Control vehicular (la estrella) |
+| **AHA Asistencia** | Control de choferes |
+| **AHA Checklist** | Inspecciones vehiculares |
+| **AHA Gastos** | 💰 Control por vehículo |
+| **AHA PreFactura** | Facturación de servicios |
+
+📦 **Kit sugerido:** "Kit Flotilla" = Flota + Asistencia + Checklist + Gastos → **$349 USD**
+
+---
+
+### 💼 VERTICAL 8: OFICINA Y FREELANCERS
+**Target:** Contadores, abogados, consultores, freelancers, agencias pequeñas
+**Dolor:** "Tengo mil clientes y no sé a quién dar seguimiento ni cuánto gano"
+
+| App | Rol |
+|-----|-----|
+| **AHA CRM** | ⭐ Pipeline de oportunidades (la estrella) |
+| **AHA Contactos** | 📱 Gestión WhatsApp |
+| **AHA PreFactura** | Facturación profesional |
+| **AHA Citas** | Agenda de reuniones |
+| **AHA Gastos** | 💰 Control financiero |
+
+📦 **Kit sugerido:** "Kit Freelancer Pro" = CRM + Contactos + PreFactura + Gastos → **$249 USD**
+
+---
+
+### 🧩 Apps Transversales
+
+Dos apps aparecen en **TODOS los verticales**. Son el complemento obligatorio de cualquier kit:
+
+| App | Por qué es transversal |
+|-----|----------------------|
+| **AHA Gastos** 💰 | Todo negocio necesita saber si gana o pierde dinero. Ingresos/egresos, categorías, reportes PDF, gráficos de flujo. |
+| **AHA Contactos** 📱 | Toda empresa tiene clientes, proveedores o empleados a quién contactar. CRM manual + plantillas WhatsApp + recordatorios. |
+
+Siempre que vendas un kit, **incluye AHA Gastos y AHA Contactos** como base. El cliente los necesita aunque no lo sepa.
+
+---
+
+## 5. Problema que Resuelve por Vertical
+
+Cada vertical se vende porque resuelve un dolor específico que el cliente ya vive. Usa esta tabla para identificar rápido qué decirle:
+| Vertical | Frase del cliente (dolor) | Estrella |
+|----------|--------------------------|----------|
+| **Comercio** | "Si se va internet no cobro y no sé qué tengo en stock." | POS |
+| **Gastronomía** | "Los pedidos en papel se pierden y la cocina tarda." | Comanda |
+| **Belleza** | "Se me cruzan las citas y pierdo clientes por no dar seguimiento." | Citas |
+| **Salud** | "Mis recetas se pierden y no tengo historial clínico digital." | Rx |
+| **Construcción** | "Los gastos se disparan y no tengo control del avance en obra." | Obra |
+| **Campo** | "No sé cuánto gasto en el campo ni qué lote me da más." | Campo |
+| **Logística** | "No sé cuánto gasto en gasolina ni cuándo toca mantenimiento." | Flota |
+| **Oficina** | "Tengo mil clientes y no sé a quién dar seguimiento ni cuánto gano." | CRM |
 
 Todas incluyen: **IA Jutia**, cifrado AES-256, exportación CSV, modo claro/oscuro, 100% offline.
 
@@ -179,6 +297,20 @@ Reglas:
 - Sin regateo. Sin descuentos. Precio justo, una vez.
 - El código fuente se entrega solo en Enterprise — es parte del valor.
 - Los tres niveles son funcionales completos; Inicio y Profesional son sin acceso al source.
+
+### Kits por Vertical
+
+| Vertical | Kit | Apps incluidas | Precio |
+|----------|-----|---------------|--------|
+| **Comercio** | Kit Ferretería/Minimarket | POS + Inventario + PreFactura + Gastos + Contactos | $299 |
+| **Gastronomía** | Kit Restaurante Completo | Comanda + POS + Inventario + Gastos + Asistencia | $349 |
+| **Belleza** | Kit Barbería/Salón | Citas + Contactos + Gastos + Asistencia | $249 |
+| **Salud** | Kit Consultorio Médico | Rx + Citas + PreFactura + Contactos + Gastos | $299 |
+| **Construcción** | Kit Constructora Pro | Obra + Checklist + Campo + PreFactura + Gastos | $449 |
+| **Campo** | Kit Rancho/Finca | Campo + Inventario + Flota + Gastos | $349 |
+| **Logística** | Kit Flotilla | Flota + Asistencia + Checklist + Gastos | $349 |
+| **Oficina** | Kit Freelancer Pro | CRM + Contactos + PreFactura + Gastos | $249 |
+
 - IA Jutia: Inicio incluye búsqueda+predicciones. Profesional y Enterprise incluyen QA + ingesta de documentos. Todo en todos los formatos.
 
 ### Precios Sugeridos por App
