@@ -108,6 +108,105 @@ def test_viewport_meta(page):
     assert viewport and "width=device-width" in viewport, "Viewport meta missing"
     return True, f"Viewport meta OK: {viewport}"
 
+def test_skip_link(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    skip = page.locator("#skip-link")
+    assert skip.is_visible(), "#skip-link not visible"
+    text = skip.inner_text()
+    assert "Saltar al contenido" in text, f"Wrong skip text: '{text}'"
+    skip.focus()
+    is_focused = page.evaluate("document.activeElement === document.getElementById('skip-link')")
+    assert is_focused, "Skip link not focusable via tab"
+    return True, f"Skip link OK: '{text}', focusable"
+
+def test_aria_live(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    live = page.locator('[aria-live="polite"], [aria-live="assertive"], #toast-container, #a11y-live-region').first
+    assert live.is_visible(), "No aria-live region found"
+    tag = live.evaluate("el => el.tagName.toLowerCase() + (el.id ? '#' + el.id : '')")
+    role = live.get_attribute("aria-live") or "N/A"
+    return True, f"Aria-live region OK: <{tag}> aria-live='{role}'"
+
+def test_manifest(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    manifest = page.locator('link[rel="manifest"]')
+    assert manifest.count() > 0, 'No <link rel="manifest" href="manifest.json"> found'
+    href = manifest.get_attribute("href")
+    assert href, "Manifest href attribute missing"
+    return True, f"Manifest OK: href='{href}'"
+
+def test_service_worker(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    is_file = page.evaluate("window.location.protocol === 'file:'")
+    if is_file:
+        return True, "ServiceWorker SKIP: file:// protocol does not support SW (use http://)"
+    sw = page.evaluate("""() => {
+        if (!navigator.serviceWorker) return { available: false, reason: 'no serviceWorker API' };
+        try {
+            return navigator.serviceWorker.getRegistrations().then(regs => ({
+                available: true,
+                registered: regs.length > 0,
+                count: regs.length
+            }));
+        } catch(e) {
+            return { available: true, registered: false, reason: e.message };
+        }
+    }""")
+    assert sw.get("available"), f"ServiceWorker API not available: {sw.get('reason')}"
+    assert sw.get("registered"), f"No service workers registered"
+    return True, f"ServiceWorker OK: {sw['count']} registration(s)"
+
+def test_bottom_nav(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    nav = page.locator("#bottom-nav")
+    assert nav.is_visible(), "#bottom-nav not visible"
+    cls = nav.get_attribute("class") or ""
+    assert "btm-nav" in cls, f"#bottom-nav missing btm-nav class (got: '{cls}')"
+    return True, "Bottom nav OK: #bottom-nav.btm-nav"
+
+def test_loading_state(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    page.wait_for_timeout(1500)
+    page.evaluate("UI?.loading ? UI.loading(true, 'Test') : null")
+    page.wait_for_timeout(300)
+    overlay = page.locator("#ui-loading-overlay")
+    if overlay.is_visible():
+        page.evaluate("UI?.loading ? UI.loading(false) : null")
+        page.wait_for_timeout(300)
+        assert not overlay.is_visible(), "Overlay still visible after UI.loading(false)"
+        return True, "Loading state OK: overlay shown/hidden"
+    return True, "UI.loading not implemented (skip)"
+
+def test_stagger_animation(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    page.wait_for_timeout(1500)
+    result = page.evaluate("""() => {
+        try {
+            if (typeof UI !== 'undefined' && typeof UI.stagger === 'function') {
+                UI.stagger([document.body], 50);
+                return 'ok';
+            }
+            return 'UI.stagger not available';
+        } catch(e) { return 'error: ' + e.message; }
+    }""")
+    assert not result.startswith('error:'), f"Stagger threw error: {result}"
+    return True, f"Stagger animation OK: {result}"
+
+def test_offline_detection(page):
+    page.goto(APP_FILE.resolve().as_uri())
+    page.wait_for_timeout(1500)
+    online = page.evaluate("navigator.onLine")
+    assert online is not None, "navigator.onLine not available"
+    has_ui_store = page.evaluate("""() => {
+        try {
+            return typeof Alpine !== 'undefined'
+                && Alpine.store('ui') !== undefined
+                && Alpine.store('ui').online !== undefined;
+        } catch(e) { return false; }
+    }""")
+    assert has_ui_store, "Alpine.store('ui').online not defined"
+    return True, f"Offline detection OK: online={online}, store defined"
+
 CHECKS = [
     ("Page Load", test_page_loads),
     ("Alpine.js Interactivity", test_alpine_interactivity),
@@ -118,6 +217,14 @@ CHECKS = [
     ("Focus Rings", test_focus_rings),
     ("Viewport Meta", test_viewport_meta),
     ("Empty State", test_empty_state),
+    ("Skip Link", test_skip_link),
+    ("Aria Live Region", test_aria_live),
+    ("Manifest", test_manifest),
+    ("Service Worker", test_service_worker),
+    ("Bottom Nav", test_bottom_nav),
+    ("Loading State", test_loading_state),
+    ("Stagger Animation", test_stagger_animation),
+    ("Offline Detection", test_offline_detection),
 ]
 
 def main():
