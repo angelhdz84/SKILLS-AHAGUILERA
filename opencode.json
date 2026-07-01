@@ -41,11 +41,6 @@
       "command": ["C:\\Users\\Angel\\bin\\engram.exe", "mcp", "--project", "Ateje"],
       "env": { "ENGRAM_DATA_DIR": "D:\\REPOSITORIOS GitHUB\\Ateje\\.omd" },
       "description": "Memoria persistente del agente. Requiere Engram instalado"
-    },
-    "open-pencil": {
-      "type": "local",
-      "command": ["openpencil-mcp"],
-      "description": "Leer/modificar diseños desde OpenCode. Requiere OpenPencil Desktop App abierta + npm install -g @open-pencil/mcp"
     }
   },
   "instructions": ["AGENTS.md"]

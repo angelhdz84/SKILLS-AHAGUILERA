@@ -2,6 +2,14 @@
 docs/validacion-*.md
 docs/test_results.json
 docs/screenshot_*.png
+docs/*.html
+
+# Archivos comprimidos
+*.rar
+
+# Estado local de herramientas
+.omd/
+.opencode/tmp/
 tests/test_results.json
 skills.rar
 

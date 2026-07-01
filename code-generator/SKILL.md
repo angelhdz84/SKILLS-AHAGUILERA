@@ -130,6 +130,54 @@ window.UI = {
 ### `core/theme.js`
 [Inyección de CSS variables desde APP_CONFIG.tema.colores. window.themeStore]
 
+### `core/env.js`
+[Sistema de licencias: flag de entorno ENV. Ver template en `code-generator/templates/core/env.js`
+
+```javascript
+// env.js — Environment flag for license system
+const ENV = 'development' // development (dev) | production (cliente)
+```
+
+En desarrollo: todo desbloqueado sin verificación. En producción: el sistema de licencias bloquea features según el plan.]
+
+### `core/license.js`
+[Verificador de licencias AHA offline. Ver template en `code-generator/templates/core/license.js`
+
+Define:
+- `window.APP_CONFIG` con defaults Lite (30 registros, sin export, sin IA Full)
+- `window.APP_ID` — identificador de la app (ej: `aha-pos`), inyectado por el generador
+- `checkLicense()` — verificación automática: development → todo abierto, production → busca `.aha`, verifica firma RSA + decripta AES, aplica plan
+- `cargarLicencia()` — carga manual desde selector de archivos
+
+**Orden de carga en index.html:** `env.js` antes que `db.js`, `license.js` después que `sync.js`.
+
+**Placeholders que el generador debe reemplazar:**
+| Placeholder | Valor |
+|---|---|
+| `{{APP_ID}}` | `app.id` del `project.config.js` (ej: `aha-pos`) |
+| `{{PUBLIC_KEY}}` | Contenido de `keys/public.pem` |
+| `{{AES_KEY_HEX}}` | `crypto.createHash('sha256').update('aha-license-system-v1').digest('hex')` — 64 caracteres hex |
+
+Campos de `window.APP_CONFIG`:
+| Campo | Lite | Profesional | Enterprise |
+|-------|:----:|:-----------:|:----------:|
+| plan | `lite` | `profesional` | `enterprise` |
+| maxRecords | 30 | `Infinity` | `Infinity` |
+| canExport | false | true | true |
+| iaTier | `lite` | `full` | `full` |
+| canWhiteLabel | false | false | true |
+| customer | null | { name, business, phone, email } | { name, business, phone, email } |
+
+**Uso en módulos:**
+```javascript
+function render() {
+  if (APP_CONFIG.plan === 'lite') {
+    const count = db.movimientos.count()
+    showBanner(`Plan Lite — ${count}/${APP_CONFIG.maxRecords} registros`)
+  }
+}
+```]
+
 ### `core/search-palette.js`
 [Command Palette (Cmd+K) global con navegación de módulos + búsqueda IA integrada.
 
@@ -269,7 +317,9 @@ window.FileStore = {
 [Config white-label completa según spec, incluyendo:
 
 **Secciones estándar (siempre):**
-- `app`: nombre, version, tipo, descripcion
+- `app`: id, nombre, version, tipo, descripcion
+  - `id`: identificador único para licencias (ej: `aha-pos`). Se inyecta como `APP_ID` en `core/license.js`
+  - `plan`: `lite` | `profesional` | `enterprise` (default: `lite`; la licencia `.aha` lo actualiza dinámicamente)
 - `perfil`: lite | professional | business
 - `iaJutia`: lite | full | no
 - `modulosActivos`: array de IDs de módulos
@@ -398,6 +448,7 @@ todos los plugins nativos funcionen con fallback web automatico.
 <!-- FIN librerías adicionales -->
 
 <!-- Core -->
+<script src="core/env.js"></script>
 <script src="core/db.js"></script>
 <script src="core/crypto.js"></script>
 <script src="core/ui.js"></script>
@@ -406,6 +457,7 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="core/search-palette.js"></script>
 <script src="core/file-store.js"></script>
 <script src="core/sync.js"></script>
+<script src="core/license.js"></script>
 
 <!-- Main -->
 <script src="main.js"></script>
@@ -470,6 +522,11 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿`sw.js` generado pero no registrado en index.html? → AGREGAR registro
 - [ ] ¿`manifest.json` generado pero no enlazado? → AGREGAR `<link rel="manifest">`
 - [ ] ¿Falta `core/network.js` en apps que monitorean conexión? → AGREGAR
+- [ ] **Licencias**: ¿Falta `core/env.js`? → AGREGAR (debe ser el primer core script)
+- [ ] **Licencias**: ¿Falta `core/license.js`? → AGREGAR (después de sync.js)
+- [ ] **Licencias**: ¿`env.js` no es el primer script de core? → REORDENAR
+- [ ] **Licencias**: ¿`license.js` no está después de `sync.js`? → REORDENAR
+- [ ] **Licencias**: ¿`APP_CONFIG.plan` usado sin default? → AGREGAR default 'lite'
 - [ ] **Sync**: ¿Falta `core/sync.js`? → AGREGAR (siempre se incluye por defecto)
 - [ ] **Sync**: ¿Operaciones Dexie en sync.js sin try/catch? → AGREGAR manejo de errores
 - [ ] **Sync**: ¿Export/import sin feedback visual (UI.toast)? → AGREGAR notificaciones
@@ -739,10 +796,10 @@ const ASSETS = [
   'assets/js/libs/alpine.js',
   'assets/js/libs/dexie.js',
   'assets/js/libs/crypto-js.js',
-  'core/db.js', 'core/crypto.js',
+  'core/env.js', 'core/db.js', 'core/crypto.js',
   'core/ui.js', 'core/theme.js',
   'core/app.js', 'core/search-palette.js',
-  'core/file-store.js', 'core/sync.js', 'main.js'
+  'core/file-store.js', 'core/sync.js', 'core/license.js', 'main.js'
 ];
 
 self.addEventListener('install', (e) => {
