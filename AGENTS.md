@@ -79,7 +79,8 @@ El Orchestrator pregunta el modo si no se especifica. Si el catálogo OmD no est
 | pipeline-engine | setup-init, spec-engine | Nombre + tipo + descripción + perfil + modo (classic/design) |
 | setup-init | code-generator | Estructura + librerías según perfil |
 | spec-engine | design-engine, code-generator, wiki-engine | `specs/[app].md` + `specs/DESIGN.md` |
-| design-engine | code-generator | Preferencias de diseño en `.omd/preferences.md` |
+| design-engine | code-generator, alpine-ui-patterns | Preferencias de diseño en `.omd/preferences.md` |
+| alpine-ui-patterns | design-engine, code-generator | `alpine-ui-patterns/SKILL.md` — catálogo de ~100 componentes con categorías A/B/C y fallback chain |
 | code-generator | stack-compliance-guard, validation-engine, wiki-engine, design-engine (retroalimentación) | `modules/*`, `core/*`, `index.html` |
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
@@ -177,6 +178,7 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 | `/deploy` | `publicar` | deployment-jigue: commit + push + empaquetado según perfil |
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
 | `/upgrade` | `actualizar perfil` | upgrade-engine: diagnostico → migra Lite→Full y/o IA Lite→Full. Sin modificar modulos ni datos |
+| `/licencia` | `generar licencia` | `scripts/license.js` — CLI interactivo que genera archivos `.aha` firmados (RSA+AES). Pregunta plan, apps, cliente y guarda en `licencias/[fecha]/`. Soporta una app o kits completos. Subcomandos: `generar`, `generar --kit [vertical]` |
 
 ## Instalación Global
 
@@ -238,7 +240,7 @@ Niveles de entrega:
 - **Professional**: .exe (Neutralino) + Fixed WebView2 (carpeta). Sin HTML visible. Sin .apk. IA Full. ~30MB ZIP.
 - **Business**: .exe (Neutralino) + Fixed WebView2 + .apk (Capacitor) + branding + docs. Sin código fuente. ~35MB ZIP.
 
-Para white-label (Business): ejecutar `brand.ps1` o `package-business.ps1` con parámetros del cliente.
+Para white-label (Business): ejecutar `deployment-jigue/templates/brand.ps1` o `deployment-jigue/templates/package-business.ps1` con parámetros del cliente.
 
 ## Documentación de Estudio
 

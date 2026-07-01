@@ -23,3 +23,6 @@ _backup-config/
 
 # License system - private key (never version)
 keys/private.pem
+
+# License system - generated output
+licencias/

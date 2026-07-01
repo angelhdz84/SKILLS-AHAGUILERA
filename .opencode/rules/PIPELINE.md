@@ -22,7 +22,9 @@
 | stack-compliance-guard | code-generator | Validación automática post-generación (con checks de perfil) |
 | validation-engine | wiki-engine | `docs/validacion-[app].md` + brand audit + QA rubric |
 | deployment-jigue | — | Commit + Push + empaquetado segun perfil (Essential: ZIP+Pages / Professional: .exe+FixedWV2 / Business: .exe+.apk+branding) |
-| wiki-engine | — | `wiki/` + `.omd/preferences.md` + MCP memory graph |
+| capacitor | deployment-jigue | `capacitor.config.json` + `android/` |
+| upgrade-engine | — | project.config.js actualizado + infraestructura nueva según perfil destino. Invocación directa `/upgrade` |
+| wiki-engine | — | `wiki/` + `.omd/preferences.md` + Engram memory (opcional) |
 
 ## Archivos generados (no versionar)
 

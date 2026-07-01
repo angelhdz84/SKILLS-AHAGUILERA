@@ -1,3 +1,7 @@
+---
+name: alpine-ui-patterns
+---
+
 # alpine-ui-patterns — Catálogo Unificado de Componentes Alpine.js
 
 Catálogo unificado de las 3 librerías de componentes Alpine.js + Tailwind CSS: **Pines UI**, **Penguin UI** y **Pinemix**. Consumido por `code-generator` y `design-engine` como alternativa o complemento a DaisyUI.
