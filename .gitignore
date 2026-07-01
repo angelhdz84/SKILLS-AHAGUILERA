@@ -20,3 +20,6 @@ _backup-config/
 
 # Directorios vacios
 **/img/
+
+# License system - private key (never version)
+keys/private.pem
