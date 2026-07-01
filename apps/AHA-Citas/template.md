@@ -1,12 +1,12 @@
-﻿# AHA Citas â€” GestiÃ³n de citas y agenda offline para negocios de servicios
+# AHA Citas — Gestión de citas y agenda offline para negocios de servicios
 
-## DescripciÃ³n comercial
+## Descripción comercial
 
-Agenda digital para negocios de servicios que manejan citas. GestiÃ³n de clientes, calendario por profesional, historial de visitas y recordatorios locales. Todo sin internet, sin pagar por calendario SaaS.
+Agenda digital para negocios de servicios que manejan citas. Gestión de clientes, calendario por profesional, historial de visitas y recordatorios locales. Todo sin internet, sin pagar por calendario SaaS.
 
-**Target:** BarberÃ­as, salones de belleza, consultorios mÃ©dicos, dentistas, spas, talleres mecÃ¡nicos.
+**Target:** Barberías, salones de belleza, consultorios médicos, dentistas, spas, talleres mecánicos.
 
-**Dolor que resuelve:** "Uso Google Calendar pero cuando no hay internet no veo mis citas del dÃ­a."
+**Dolor que resuelve:** "Uso Google Calendar pero cuando no hay internet no veo mis citas del día."
 
 
 ## Niveles comerciales
@@ -17,91 +17,94 @@ Agenda digital para negocios de servicios que manejan citas. GestiÃ³n de clien
 | Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## MÃ³dulos
+## Módulos
 
-### ðŸ“… MÃ³dulo Agenda
+### 📅 Módulo Agenda
 - Calendario diario/semanal/mensual
 - Bloque de tiempo por cita (15/30/60 min)
 - Agendar: seleccionar cliente + servicio + profesional + hora
 - Reagendar: mover cita con drag & drop
 - Cancelar cita con motivo
-- Vista del dÃ­a: lista cronolÃ³gica de citas
+- Vista del día: lista cronológica de citas
 
-### ðŸ‘¤ MÃ³dulo Clientes
-- CRUD: nombre, telÃ©fono, email, notas
+### 👤 Módulo Clientes
+- CRUD: nombre, teléfono, email, notas
 - Historial de visitas: fecha, servicio, profesional, monto
-- Cliente frecuente: automÃ¡tico despuÃ©s de 3 visitas
-- BÃºsqueda instantÃ¡nea
+- Cliente frecuente: automático después de 3 visitas
+- Búsqueda instantánea
 
-### ðŸ’‡ MÃ³dulo Servicios
-- CRUD de servicios: nombre, duraciÃ³n, precio
-- CategorÃ­as: corte, tinte, manicure, etc.
+### 💇 Módulo Servicios
+- CRUD de servicios: nombre, duración, precio
+- Categorías: corte, tinte, manicure, etc.
 - Asignar profesionales habilitados por servicio
 
-### ðŸ‘¨â€ðŸ”§ MÃ³dulo Profesionales
-- CRUD: nombre, horario laboral, dÃ­as de descanso
+### 👨‍🔧 Módulo Profesionales
+- CRUD: nombre, horario laboral, días de descanso
 - Vista de agenda por profesional
 - Servicios que ofrece cada uno
 
-### ðŸ’° MÃ³dulo Ingresos
+### 💰 Módulo Ingresos
 - Registro de pago al cerrar cita
-- Corte del dÃ­a: total, por profesional, por forma de pago
+- Corte del día: total, por profesional, por forma de pago
 - Export PDF y CSV
 
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   clientes: 'id, nombre, *telefono, email, *frecuente, *createdBy, createdAt, updatedAt',
   profesionales: 'id, nombre, *horario, *diasDescanso, *serviciosOfrece, *createdBy, createdAt, updatedAt',
-  servicios: 'id, nombre, *categoriaId, duracion, precio, *createdBy, createdAt',
-  categorias_servicios: 'id, nombre, createdAt',
+  servicios: 'id, nombre, *categoriaId, duracion, precio, *createdBy, createdAt, updatedAt',
+  categorias_servicios: 'id, nombre, createdAt, updatedAt',
   citas: 'id, *clienteId, *profesionalId, *servicioId, *fecha, *horaInicio, *horaFin, *estado, *motivoCancelacion, *createdBy, createdAt, updatedAt',
-  pagos: 'id, *citaId, *monto, *formaPago, *createdBy, createdAt'
-})
+  pagos: 'id, *citaId, *monto, *formaPago, *createdBy, createdAt',
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+});
 ```
 
 ## UI
 
 | Pantalla | Componentes |
 |----------|------------|
-| Dashboard | Citas hoy, prÃ³ximas, ingresos del dÃ­a, ocupaciÃ³n |
+| Dashboard | Citas hoy, próximas, ingresos del día, ocupación |
 | Calendario | Grid semanal con slots de tiempo, drag para reagendar |
-| Nueva cita | Selector cliente (bÃºsqueda IA) â†’ servicio â†’ profesional â†’ hora |
+| Nueva cita | Selector cliente (búsqueda IA) → servicio → profesional → hora |
 | Ficha cliente | Datos + historial de visitas + total gastado |
-| Corte del dÃ­a | Total, por profesional, por servicio, export PDF |
+| Corte del día | Total, por profesional, por servicio, export PDF |
 
 ## IA integrada
 
-- **BÃºsqueda**: buscar clientes por nombre, telÃ©fono o descripciÃ³n difusa
-- **PredicciÃ³n**: "Los miÃ©rcoles a las 10am son los mÃ¡s solicitados. Sugiero abrir agenda"
-- **EstadÃ­sticas**: servicio mÃ¡s vendido, profesional con mÃ¡s citas, hora pico
-- **Full**: "Â¿CuÃ¡nto ingresÃ³ la barberÃ­a la semana pasada?" â€” QA sobre datos locales
+- **Búsqueda**: buscar clientes por nombre, teléfono o descripción difusa
+- **Predicción**: "Los miércoles a las 10am son los más solicitados. Sugiero abrir agenda"
+- **Estadísticas**: servicio más vendido, profesional con más citas, hora pico
+- **Full**: "¿Cuánto ingresó la barbería la semana pasada?" — QA sobre datos locales
 
 ## Pricing sugerido
 
 | Nivel | Precio USD | Incluye |
 |-------|-----------|---------|
-| Lite | $49 | .exe, 1 profesional, agenda bÃ¡sica |
-| Standard | $99 | .exe + .apk, mÃºltiples profesionales, IA predicciÃ³n |
-| Custom | $199+ | Todo + UI con logo + cliente frecuente automÃ¡tico + cÃ³digo fuente |
+| Lite | $49 | .exe, 1 profesional, agenda básica |
+| Standard | $99 | .exe + .apk, múltiples profesionales, IA predicción |
+| Custom | $199+ | Todo + UI con logo + cliente frecuente automático + código fuente |
 
 ## WhatsApp para venta
 
 ```
-Hola Angel, quiero una agenda offline para mi barberÃ­a.
+Hola Angel, quiero una agenda offline para mi barbería.
 Me interesa AHA Citas con .exe y .apk para varios
 profesionales. Plan Standard.
 ```
 
 ## Checklist pre-lanzamiento
 
-- [ ] Probar flujo: crear cliente â†’ agendar cita â†’ cerrar â†’ registrar pago
+- [ ] Probar flujo: crear cliente → agendar cita → cerrar → registrar pago
 - [ ] Probar drag & drop para reagendar
 - [ ] Probar vista por profesional
 - [ ] Probar bloqueo de horarios (no agendar donde ya hay cita)
-- [ ] Probar cancelaciÃ³n con motivo
-- [ ] Probar corte del dÃ­a vs citas pagadas
+- [ ] Probar cancelación con motivo
+- [ ] Probar corte del día vs citas pagadas
 - [ ] Probar en .exe y .apk
 
 

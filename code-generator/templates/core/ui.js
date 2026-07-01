@@ -1,0 +1,393 @@
+// ui.js — API estándar de UI + helpers offline-first
+// window.UI expuesto globalmente
+// Alpine store: $store.ui (estado de loading, modales)
+// Dependencias: Alpine.js, Dexie (para FileStore)
+
+(function () {
+  'use strict';
+
+  if (typeof window.UI !== 'undefined') return;
+
+  // ─── Toast ───────────────────────────────────────────
+  function showToast(msg, tipo, duracion) {
+    tipo = tipo || 'info';
+    duracion = duracion || 4000;
+    const colors = { success: 'alert-success', error: 'alert-error', warning: 'alert-warning', info: 'alert-info' };
+    const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' };
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const el = document.createElement('div');
+    el.setAttribute('role', 'alert');
+    el.className = 'alert ' + (colors[tipo] || 'alert-info') + ' shadow-lg animate__animated animate__fadeInRight';
+    el.innerHTML = '<i class="bi ' + (icons[tipo] || icons.info) + '"></i><span>' + msg + '</span>';
+    container.appendChild(el);
+
+    setTimeout(function () {
+      el.classList.remove('animate__fadeInRight');
+      el.classList.add('animate__fadeOutRight');
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400);
+    }, duracion);
+  }
+
+  // ─── Confirm ─────────────────────────────────────────
+  function showConfirm(msg, titulo) {
+    titulo = titulo || 'Confirmar';
+    return new Promise(function (resolve) {
+      var dialog = document.createElement('dialog');
+      dialog.className = 'modal modal-open';
+      dialog.setAttribute('role', 'alertdialog');
+      dialog.setAttribute('aria-labelledby', 'confirm-title');
+      dialog.innerHTML =
+        '<div class="modal-box">' +
+          '<h3 id="confirm-title" class="text-lg font-bold mb-2">' + titulo + '</h3>' +
+          '<p class="py-4">' + msg + '</p>' +
+          '<div class="modal-action">' +
+            '<button class="btn btn-ghost" data-cancel>' +
+              '<i class="bi bi-x-lg"></i> Cancelar' +
+            '</button>' +
+            '<button class="btn btn-error" data-confirm>' +
+              '<i class="bi bi-check-lg"></i> Confirmar' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="modal-backdrop" data-cancel></div>';
+      document.body.appendChild(dialog);
+      if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.trap) {
+        window.FocusTrap.trap(dialog);
+      }
+
+      function cleanup(result) {
+        if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.release) {
+          window.FocusTrap.release();
+        }
+        dialog.classList.remove('modal-open');
+        setTimeout(function () {
+          if (dialog.parentNode) dialog.parentNode.removeChild(dialog);
+          resolve(result);
+        }, 200);
+      }
+
+      dialog.querySelector('[data-confirm]').addEventListener('click', function () { cleanup(true); });
+      var cancels = dialog.querySelectorAll('[data-cancel]');
+      for (var i = 0; i < cancels.length; i++) {
+        cancels[i].addEventListener('click', function () { cleanup(false); });
+      }
+      dialog.addEventListener('close', function () { cleanup(false); });
+    });
+  }
+
+  // ─── Modal Form ──────────────────────────────────────
+  function showModalForm(titulo, html, onSave) {
+    onSave = onSave || function () {};
+    var dialog = document.createElement('dialog');
+    dialog.className = 'modal modal-open';
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-labelledby', 'modal-title');
+    dialog.innerHTML =
+      '<div class="modal-box max-w-lg">' +
+        '<h3 id="modal-title" class="text-lg font-bold mb-4">' + titulo + '</h3>' +
+        '<div id="modal-form-body" x-data="formData" x-init="init()">' + html + '</div>' +
+        '<div class="modal-action">' +
+          '<button class="btn btn-ghost" data-cancel>' +
+            '<i class="bi bi-x-lg"></i> Cancelar' +
+          '</button>' +
+          '<button class="btn btn-primary" data-save>' +
+            '<i class="bi bi-check-lg"></i> Guardar' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-backdrop" data-cancel></div>';
+    document.body.appendChild(dialog);
+    if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.trap) {
+      window.FocusTrap.trap(dialog);
+    }
+
+    window.formData = {
+      form: {},
+      errors: {},
+      saving: false,
+      init: function () { this.form = window._modalFormData || {}; },
+      validate: function () {
+        this.errors = {};
+        return keys(this.errors).length === 0;
+      }
+    };
+
+    dialog.querySelector('[data-save]').addEventListener('click', async function () {
+      var saveBtn = this;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Guardando...';
+      try {
+        await onSave(window.formData.form);
+        if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.release) {
+          window.FocusTrap.release();
+        }
+        dialog.classList.remove('modal-open');
+        setTimeout(function () {
+          if (dialog.parentNode) dialog.parentNode.removeChild(dialog);
+          delete window.formData;
+          delete window._modalFormData;
+        }, 200);
+      } catch (e) {
+        showToast(e.message || 'Error al guardar', 'error');
+      }
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Guardar';
+    });
+
+    var cancels = dialog.querySelectorAll('[data-cancel]');
+    for (var i = 0; i < cancels.length; i++) {
+      cancels[i].addEventListener('click', function () {
+        if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.release) {
+          window.FocusTrap.release();
+        }
+        dialog.classList.remove('modal-open');
+        setTimeout(function () {
+          if (dialog.parentNode) dialog.parentNode.removeChild(dialog);
+          delete window.formData;
+          delete window._modalFormData;
+        }, 200);
+      });
+    }
+  }
+
+  // ─── Loading Overlay ─────────────────────────────────
+  var loadingCount = 0;
+  var loadingEl = null;
+
+  function loadingContentHTML(msg, progress) {
+    var text = msg || 'Cargando...';
+    if (progress != null && typeof progress === 'number' && progress >= 0 && progress <= 1) {
+      var pct = Math.round(progress * 100);
+      return (
+        '<div class="flex flex-col items-center gap-3">' +
+          '<progress class="progress progress-primary w-56" value="' + pct + '" max="100"></progress>' +
+          '<p class="text-sm text-base-content/60">' + text + '</p>' +
+        '</div>'
+      );
+    }
+    return (
+      '<div class="flex flex-col items-center gap-3">' +
+        '<span class="loading loading-spinner loading-lg text-primary"></span>' +
+        '<p class="text-sm text-base-content/60">' + text + '</p>' +
+      '</div>'
+    );
+  }
+
+  function showLoading(show, msg, progress) {
+    if (show) {
+      loadingCount++;
+      if (loadingCount > 1) {
+        if (msg != null || progress != null) {
+          updateLoadingContent(msg, progress);
+        }
+        return;
+      }
+      if (!loadingEl) {
+        loadingEl = document.createElement('div');
+        loadingEl.id = 'ui-loading-overlay';
+        loadingEl.setAttribute('role', 'status');
+        loadingEl.setAttribute('aria-live', 'polite');
+        loadingEl.className = 'fixed inset-0 z-[70] flex items-center justify-center bg-base-300/50 backdrop-blur-sm animate__animated animate__fadeIn';
+        loadingEl.innerHTML = loadingContentHTML(msg, progress);
+        document.body.appendChild(loadingEl);
+      } else if (msg != null || progress != null) {
+        updateLoadingContent(msg, progress);
+      }
+    } else {
+      loadingCount = Math.max(0, loadingCount - 1);
+      if (loadingCount === 0 && loadingEl) {
+        loadingEl.classList.add('animate__fadeOut');
+        setTimeout(function () {
+          if (loadingEl && loadingEl.parentNode) loadingEl.parentNode.removeChild(loadingEl);
+          loadingEl = null;
+        }, 200);
+      }
+    }
+  }
+
+  function updateLoadingContent(msg, progress) {
+    if (!loadingEl) return;
+    loadingEl.className = 'fixed inset-0 z-[70] flex items-center justify-center bg-base-300/50 backdrop-blur-sm animate__animated animate__fadeIn';
+    loadingEl.innerHTML = loadingContentHTML(msg, progress);
+  }
+
+  // ─── Formateo ─────────────────────────────────────────
+  function formatDate(date) {
+    if (!date) return '';
+    var d = new Date(date);
+    if (isNaN(d.getTime())) return String(date);
+    var meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function formatCurrency(n) {
+    if (n === null || n === undefined || isNaN(n)) return '$0.00';
+    return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes || bytes === 0) return '0 B';
+    var units = ['B', 'KB', 'MB', 'GB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + ' ' + units[i];
+  }
+
+  function formatRelative(date) {
+    if (!date) return '';
+    var d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    var diff = Date.now() - d.getTime();
+    var abs = Math.abs(diff);
+    var seg = Math.floor(abs / 1000);
+    var min = Math.floor(seg / 60);
+    var hor = Math.floor(min / 60);
+    var dia = Math.floor(hor / 24);
+    var mes = Math.floor(dia / 30);
+
+    if (seg < 10) return 'ahora';
+    if (seg < 60) return 'hace ' + seg + ' segundos';
+    if (min < 60) return 'hace ' + min + ' min';
+    if (hor < 24) return 'hace ' + hor + ' h';
+    if (dia < 30) return 'hace ' + dia + ' d\u00edas';
+    if (mes < 12) return 'hace ' + mes + ' meses';
+    return 'hace ' + Math.floor(mes / 12) + ' a\u00f1os';
+  }
+
+  // ─── Avatares ─────────────────────────────────────────
+  function avatarDefault() {
+    var path = 'data/defaults/avatar.png';
+    if (window.APP_CONFIG && window.APP_CONFIG.data && window.APP_CONFIG.data.avatars && window.APP_CONFIG.data.avatars.default) {
+      path = window.APP_CONFIG.data.avatars.default;
+    }
+    if (window.NL_OS) return 'resources/' + path.replace(/^data\//, '');
+    return path;
+  }
+
+  async function avatarToDataUri(url) {
+    if (!url) return avatarDefault();
+    try {
+      if (url.startsWith('data:')) return url;
+      if (url.startsWith('blob:')) return url;
+      var resp = await fetch(url);
+      if (!resp.ok) return avatarDefault();
+      var blob = await resp.blob();
+      return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = function () { resolve(avatarDefault()); };
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      return avatarDefault();
+    }
+  }
+
+  // ─── Skeleton helper ─────────────────────────────────
+  function skeleton(lines, opts) {
+    opts = opts || {};
+    var count = lines || 3;
+    var html = '';
+    for (var i = 0; i < count; i++) {
+      var w = opts.widths ? opts.widths[i % opts.widths.length] : (60 + Math.floor(Math.random() * 30));
+      html += '<div class="skeleton h-' + (opts.height || 4) + ' w-' + w + ' mb-' + (opts.gap || 2) + '"></div>';
+    }
+    return html;
+  }
+
+  // ─── Lazy Load ────────────────────────────────────────
+  function lazyLoad(containerId, url) {
+    var container = document.getElementById(containerId);
+    if (!container) return Promise.reject(new Error('Container not found: ' + containerId));
+    container.setAttribute('role', 'region');
+    container.setAttribute('aria-live', 'polite');
+    container.innerHTML = skeleton(4, { widths: [100, 90, 80, 70] });
+    var promise = fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function (html) {
+      container.innerHTML = html;
+    }).catch(function (err) {
+      var cid = containerId;
+      var u = url.replace(/'/g, "\\'");
+      container.innerHTML =
+        '<div class="alert alert-error shadow-lg" role="alert">' +
+          '<i class="bi bi-exclamation-triangle-fill"></i>' +
+          '<span>Error: ' + err.message + '</span>' +
+          '<button class="btn btn-sm btn-ghost" onclick="UI.lazyLoad(\'' + cid + '\',\'' + u + '\')">Reintentar</button>' +
+        '</div>';
+    });
+    return promise;
+  }
+
+  // ─── Stagger ──────────────────────────────────────────
+  function stagger(items, delay) {
+    delay = delay || 80;
+    if (typeof items === 'string') items = document.querySelectorAll(items);
+    if (!items || typeof items.length === 'undefined') return Promise.resolve();
+    var len = items.length;
+    if (len === 0) return Promise.resolve();
+    for (var i = 0; i < len; i++) {
+      var el = items[i];
+      if (el.classList.contains('animate__fadeInUp')) continue;
+      el.style.opacity = '0';
+      if (el.style.display === 'none') el.style.display = '';
+    }
+    return new Promise(function (resolve) {
+      for (var i = 0; i < len; i++) {
+        (function (idx) {
+          setTimeout(function () {
+            var el = items[idx];
+            if (!el.classList.contains('animate__fadeInUp')) {
+              el.style.opacity = '';
+              el.classList.add('animate__animated', 'animate__fadeInUp');
+            }
+            if (idx === len - 1) setTimeout(resolve, 1000);
+          }, delay * idx);
+        })(i);
+      }
+      if (len === 0) resolve();
+    });
+  }
+
+  // ─── Export ───────────────────────────────────────────
+  window.UI = {
+    toast: showToast,
+    confirm: showConfirm,
+    modalForm: showModalForm,
+    loading: showLoading,
+    lazyLoad: lazyLoad,
+    stagger: stagger,
+    formatDate: formatDate,
+    formatCurrency: formatCurrency,
+    formatBytes: formatBytes,
+    formatRelative: formatRelative,
+    avatarDefault: avatarDefault,
+    avatarToDataUri: avatarToDataUri,
+    skeleton: skeleton
+  };
+
+  // ─── Alpine Store ─────────────────────────────────────
+  document.addEventListener('alpine:init', function () {
+    if (typeof Alpine !== 'undefined' && Alpine.store) {
+      if (!Alpine.store('ui')) {
+        Alpine.store('ui', {
+          loading: false,
+          online: navigator.onLine
+        });
+      }
+    }
+  });
+
+  // ─── Toast container ─────────────────────────────────
+  (function ensureContainer() {
+    if (!document.getElementById('toast-container')) {
+      var c = document.createElement('div');
+      c.id = 'toast-container';
+      c.setAttribute('aria-live', 'polite');
+      c.className = 'toast toast-end toast-bottom z-[80]';
+      document.body.appendChild(c);
+    }
+  })();
+})();

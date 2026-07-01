@@ -1,7 +1,11 @@
-<!-- modules/ia-jutia/module.html (Full)
-     Subida documentos + Chat QA + Busqueda + Stats + Predicciones
+<!-- modules/ia-jutia/module.html (Full) v0.3
+     Subida documentos + Chat QA (BD + Docs) + Busqueda + Stats + Predicciones
      Depende de: module.js (Alpine data iaFullData)
 -->
+<style>
+  .ia-source-bd { border-left: 3px solid hsl(var(--p) / 0.5); }
+  .ia-source-doc { border-left: 3px solid hsl(var(--a) / 0.5); }
+</style>
 <div x-data="iaFullData()" x-init="init('')" class="animate__animated animate__fadeIn">
   <!-- Header -->
   <div class="flex items-center justify-between mb-6">
@@ -80,7 +84,6 @@
               <span class="text-xs text-base-content/60">Procesando documento...</span>
             </div>
           </template>
-          <!-- OCR status indicator (v0.2) -->
           <div x-show="$store.ia?.ocrStatus"
                x-cloak
                class="mt-2 flex items-center gap-2 text-sm"
@@ -135,7 +138,7 @@
         </div>
       </div>
 
-      <!-- Columna derecha: Chat con historial (v0.2) + Predicciones -->
+      <!-- Columna derecha: Chat con historial (v0.3) + fuentes separadas -->
       <div class="space-y-4">
         <!-- Chat drawer con threads -->
         <div class="card bg-base-100 shadow-xl p-4 flex flex-col" style="min-height: 400px;">
@@ -155,20 +158,20 @@
                   </div>
                 </template>
                 <template x-if="!currentChat">
-                  <div class="flex-1 font-semibold text-sm">Chat IA</div>
+                  <div class="flex-1 font-semibold text-sm">Chat IA (BD + Documentos)</div>
                 </template>
                 <button class="btn btn-ghost btn-sm btn-square" @click="showNewChatModal = true" title="Nueva conversacion">
                   <i class="bi bi-plus-lg"></i>
                 </button>
               </div>
 
-              <!-- Messages area -->
+              <!-- Messages area con fuentes separadas -->
               <div class="flex-1 overflow-y-auto mb-3 space-y-3 min-h-[200px]" x-ref="chatBox">
                 <template x-if="messages.length === 0">
                   <div class="text-center py-12 text-base-content/30">
                     <i class="bi bi-chat-dots text-4xl"></i>
                     <p class="text-sm mt-2">Inicia una conversacion</p>
-                    <p class="text-xs">Sube un documento y haz preguntas</p>
+                    <p class="text-xs">Pregunta sobre datos o documentos</p>
                   </div>
                 </template>
                 <template x-for="msg in messages" :key="msg.id">
@@ -177,17 +180,25 @@
                       <div class="chat-bubble chat-bubble-primary text-sm" x-text="msg.contenido"></div>
                     </div>
                     <div class="chat chat-start" x-show="msg.rol === 'ia'">
-                      <div class="chat-bubble chat-bubble-info text-sm">
-                        <p x-text="msg.contenido"></p>
-                        <template x-if="msg.fuente">
-                          <p class="text-xs text-base-content/50 mt-1 border-t border-base-content/20 pt-1">
-                            <i class="bi bi-link-45deg"></i> Fuente: <span x-text="msg.fuente"></span>
-                            <template x-if="msg.score">
-                              <span> | Score: <span x-text="Math.round(msg.score * 100) + '%'"></span></span>
-                            </template>
-                          </p>
-                        </template>
-                      </div>
+                      <div class="chat-bubble chat-bubble-info text-sm whitespace-pre-wrap" x-text="msg.contenido"></div>
+                      <!-- Fuentes como badges separados -->
+                      <template x-if="msg.fuente">
+                        <div class="mt-1 space-y-1">
+                          <template x-for="(f, fi) in (typeof msg.fuente === 'string' ? JSON.parse(msg.fuente) : msg.fuente)" :key="fi">
+                            <div class="flex items-center gap-1 text-xs px-2 py-1 rounded"
+                                 :class="f.tipo === 'bd' ? 'bg-primary/10 ia-source-bd' : 'bg-accent/10 ia-source-doc'">
+                              <i class="bi" :class="f.tipo === 'bd' ? 'bi-database' : 'bi-file-earmark-text'"></i>
+                              <span :class="f.tipo === 'bd' ? 'text-primary' : 'text-accent'">
+                                <span x-text="f.tipo === 'bd' ? 'BD: ' : 'Doc: '"></span>
+                              </span>
+                              <span class="text-base-content/60 truncate" x-text="f.texto"></span>
+                            </div>
+                          </template>
+                        </div>
+                      </template>
+                      <template x-if="msg.score">
+                        <p class="text-xs text-base-content/40 mt-1">Confianza: <span x-text="Math.round(msg.score * 100) + '%'"></span></p>
+                      </template>
                     </div>
                   </div>
                 </template>
@@ -203,7 +214,7 @@
               <!-- Input area -->
               <div class="border-t border-base-300 pt-3">
                 <form @submit.prevent="preguntar()" class="flex gap-2">
-                  <input type="text" x-model="pregunta" placeholder="Escribe tu pregunta..."
+                  <input type="text" x-model="pregunta" placeholder="Pregunta sobre datos o documentos..."
                          class="input input-bordered flex-1 input-sm" :disabled="chatting" />
                   <button type="submit" class="btn btn-primary btn-sm" :disabled="!pregunta || chatting">
                     <i class="bi bi-send"></i>
@@ -216,6 +227,26 @@
             <div class="drawer-side z-30">
               <label for="chat-drawer" class="drawer-overlay"></label>
               <div class="bg-base-200 min-h-full w-72 p-3 flex flex-col">
+                <!-- Search in history (Nivel 2) -->
+                <div class="mb-3">
+                  <div class="relative">
+                    <input type="text" x-model="historyQuery" @input.debounce.300ms="searchHistory()"
+                           placeholder="Buscar en historial..."
+                           class="input input-bordered input-xs w-full pl-7" />
+                    <i class="bi bi-search absolute left-2 top-1/2 -translate-y-1/2 text-xs text-base-content/40"></i>
+                  </div>
+                  <template x-if="historyResults.length > 0">
+                    <div class="mt-1 space-y-1 max-h-32 overflow-y-auto">
+                      <template x-for="r in historyResults" :key="r.id">
+                        <div class="px-2 py-1 rounded cursor-pointer text-xs hover:bg-base-300 transition-colors truncate"
+                             @click="selectHistoryResult(r)">
+                          <span class="text-base-content/60" x-text="r.contenido.slice(0, 60)"></span>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+
                 <div class="flex items-center justify-between mb-3">
                   <h3 class="font-semibold text-sm">Conversaciones</h3>
                   <button class="btn btn-ghost btn-xs" @click="showNewChatModal = true">

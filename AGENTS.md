@@ -36,10 +36,10 @@ El frontend (Alpine + DaisyUI + módulos) es ~95% idéntico entre perfiles.
 | Directorio | Propósito | Perfiles |
 |-----------|-----------|----------|
 | `setup-init/` | Valida entorno, crea estructura, instala librerías. Genera defaults avatar/placeholder en `data/` | lite, professional, business |
-| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). Templates en `code-generator/templates/` (incl. `search-palette.js`, `file-store.js`, `delete.js`) | lite, professional, business |
+| `code-generator/` | Genera código por fases desde specs, un módulo por turno. Soporta `component_library` (DaisyUI/Pines/Penguin/Pinemix). **20 templates core** en `code-generator/templates/core/`: app, db, crypto, ui, theme, main, sw, manifest, a11y, focus-trap, responsive, bottom-nav, push-manager, analytics, sync, backup-manager, env, network, export, license + `data/` con defaults avatar/placeholder | lite, professional, business |
 | `stack-compliance-guard/` | Guarda automática: bloquea imports, CDNs, fetch, crypto faltante | lite, professional, business |
-| `deployment-jigue/` | Commit + push + empaquetado segun perfil (Essential/Professional/Business) | lite, professional, business |
-| `ia-jutia/` | Mini IA v0.2: FlexSearch + highlight/autocomplete/exportPDF (Lite) / +OCR + chat threads + hybrid search (Full) | lite, full |
+| `deployment-jigue/` | Commit + push + empaquetado segun perfil (Essential/Professional/Business). CI/CD validation: GitHub Actions test.yml + deploy-pages.yml con test gate | lite, professional, business |
+| `ia-jutia/` | Mini IA v0.2: FlexSearch + highlight/autocomplete/exportPDF (Lite) / +OCR + chat threads + hybrid search (Full). Incluye `ia-chat.js` core + módulos module.html/module.js para Lite y Full | lite, full |
 | `alpine-ui-patterns/` | Catálogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain + prioridad por calidad | lite, full |
 | `capacitor/` | Empaquetado .apk Android nativo con Capacitor. Incluye SQLite FTS5, cámara, GPS, notificaciones, compartir | professional, business |
 | `upgrade-engine/` | Migra app entre perfiles Lite/Professional/Business e IA Lite/Full. No modifica módulos ni datos, solo infraestructura | lite, professional, business |
@@ -179,6 +179,7 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 | `/wiki` | `gestionar wiki` | wiki-engine: ingest/query/lint sobre wiki + preferencias |
 | `/upgrade` | `actualizar perfil` | upgrade-engine: diagnostico → migra Lite→Full y/o IA Lite→Full. Sin modificar modulos ni datos |
 | `/licencia` | `generar licencia` | `scripts/license.js` — CLI interactivo que genera archivos `.aha` firmados (RSA+AES). Pregunta plan, apps, cliente y guarda en `licencias/[fecha]/`. Soporta una app o kits completos. Subcomandos: `generar`, `generar --kit [vertical]` |
+| `/docs-gen` | `generar docs` | `scripts/generate-docs.js` — Escanea módulos y genera `docs/API.md` con funciones, parámetros, dependencias. Flags: `--watch`, `--dir [ruta]` |
 
 ## Instalación Global
 
@@ -224,10 +225,16 @@ Usar `{file:ruta}` inline para prompts de agentes. Ver `opencode.json` en raiz c
 ## Tests
 
 ```powershell
-cd tests; python -m pytest test_app.py -v
+cd tests; python test_app.py
 ```
 
-Playwright E2E sobre `test-app.html` (Alpine.js task manager). Requiere Chrome system channel.
+Playwright E2E sobre `test-app.html` (Alpine.js task manager). 17 checks: page load, Alpine interactivity, form validation, toggle, responsive, touch targets, focus rings, viewport, empty state, skip link, aria-live, manifest, SW, bottom nav, loading state, stagger, offline detection. Requiere Chrome system channel.
+
+```powershell
+cd tests; python -m pytest test-template.py -v
+```
+
+Playwright + pytest para el test de template (chequea estructura de módulos generados).
 
 ## Deploy
 

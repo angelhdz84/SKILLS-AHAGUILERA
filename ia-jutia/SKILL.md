@@ -1,13 +1,13 @@
 ---
 name: ia-jutia
-description: Mini IA offline-first con dos perfiles. Lite: FlexSearch + estadisticas + predicciones sobre datos de la app. Full: +ingesta PDF/DOCX/XLSX/CSV/MD + Transformers.js QA extractivo. Acceso por modulo + atajo global Cmd+K.
+description: Mini IA offline-first con dos perfiles. Lite: FlexSearch + estadisticas + predicciones + chat conversacional sobre datos. Full: +ingesta PDF/DOCX/XLSX/CSV/MD + Transformers.js QA extractivo + chat combinado BD/documentos. Acceso por modulo + atajo global Cmd+K.
 license: MIT
 compatibility: Requiere @AGENTS.md y espec validada. Perfil Lite requiere solo FlexSearch (~7KB). Perfil Full requiere pdf.js + mammoth.js + marked.js + Transformers.js (~233MB descarga unica).
 meta:
   author: Angel Hernandez - ahaguilera.dev
-  version: "1.1"
+  version: "1.2"
   generatedBy: "ia-jutia skill"
-  triggers: ["mini ia", "ia jutia", "busqueda inteligente", "analisis datos", "subir documento", "preguntar documento", "predicciones", "estadisticas"]
+  triggers: ["mini ia", "ia jutia", "busqueda inteligente", "analisis datos", "subir documento", "preguntar documento", "predicciones", "estadisticas", "chat datos", "preguntar datos", "conversacion datos"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
   perfiles: [lite, full]
   language: es
@@ -19,7 +19,7 @@ meta:
 
 > **Proposito**: Agregar inteligencia artificial offline a apps del stack. Dos perfiles: **Lite** (FlexSearch + estadisticas + predicciones, ~7KB) y **Full** (+ingesta documentos + QA extractivo con Transformers.js, ~233MB).
 > **Modo**: Generacion de modulo por perfil | **Idioma**: ES | **Contexto**: Requiere spec validada + @AGENTS.md
-> **Output**: `modules/ia-jutia/module.js` + `modules/ia-jutia/module.html` + `core/ia.js` (+ `core/ia-ingest.js` en Full)
+> **Output**: `modules/ia-jutia/module.js` + `modules/ia-jutia/module.html` + `core/ia.js` + `core/ia-chat.js` (+ `core/ia-ingest.js` en Full)
 
 ---
 
@@ -79,15 +79,19 @@ Segun perfil detectado, genera los archivos correspondientes:
 ### `core/ia.js`
 [FlexSearch init + busqueda full-text sobre Dexie + estadisticas + predicciones]
 
+### `core/ia-chat.js`
+[Motor de chat conversacional: patrones DB query + FlexSearch fallback + persistencia Dexie + busqueda en historial FlexSearch]
+
 📁 MODULO IA-JUTIA
 ### `modules/ia-jutia/module.js`
-[Registro en window.MODULES, init de FlexSearch, metodos publicos]
+[Registro en window.MODULES, init de FlexSearch, metodos publicos + chat Alpine data]
 
 ### `modules/ia-jutia/module.html`
-[UI: buscador, panel de estadisticas, grafico de predicciones, resultados]
+[UI con tabs: Buscar/Chat/Stats/Pred. Chat con sidebar de hilos + busqueda en historial]
 
 📁 REGISTRO EN INDEX.HTML
 [Añadir <script src="core/ia.js"> entre core/ui.js y core/app.js]
+[Añadir <script src="core/ia-chat.js"> DESPUES de core/ia.js y ANTES de los scripts de modulo]
 [Añadir <script src="assets/js/libs/flexsearch.min.js"> entre libs base y adicionales]
 ```
 
@@ -98,6 +102,11 @@ Segun perfil detectado, genera los archivos correspondientes:
 [FlexSearch + estadisticas + predicciones (identico a Lite)
  + metodos de orquestacion: ingest(), qa(), getDocumentos()
  + indexRecord(), removeRecord() para indexacion incremental]
+
+### `core/ia-chat.js`
+[Extension de Lite: askFull() combina consultas BD + documentos QA.
+ Devuelve fuentes separadas {tipo: 'bd'|'doc', texto: string}.
+ Fuentes renderizadas con badges diferenciados BD (primary) / Docs (accent)]
 
 ### `core/ia-ingest.js`
 [Parsers: pdf(), docx(), xlsx(), csv(), md(), txt()
@@ -127,7 +136,8 @@ Segun perfil detectado, genera los archivos correspondientes:
 
 📁 REGISTRO EN INDEX.HTML
 [Añadir <script src="core/ia.js"> entre core/ui.js y core/app.js]
-[Añadir <script src="core/ia-ingest.js"> despues de core/ia.js]
+[Añadir <script src="core/ia-chat.js"> despues de core/ia.js]
+[Añadir <script src="core/ia-ingest.js"> despues de core/ia-chat.js]
 [Añadir scripts de librerias adicionales entre libs base y core]
 ```
 
@@ -236,6 +246,14 @@ db.version(2).stores({
 - [ ] ¿Busqueda hibrida combina FlexSearch + embeddings? → weight 0.6 flex + 0.4 semantic
 - [ ] ¿OCR se activa solo si pdf.js extrae <50 chars? → umbral configurable
 - [ ] ¿Lite Worker no interfiere con Full Worker? → archivos separados
+- [ ] v0.3 Chat: ¿core/ia-chat.js se carga DESPUES de core/ia.js y ANTES de module.js?
+- [ ] v0.3 Chat: ¿Lite tiene tablas _ia_chats + _ia_messages en db.js? → schema Dexie
+- [ ] v0.3 Chat: ¿Patrones DB cubren conteo, suma, ranking, filtro, fecha, lista?
+- [ ] v0.3 Chat: ¿FlexSearch fallback activo cuando no hay patrón?
+- [ ] v0.3 Chat: ¿Respuestas incluyen fuentes (tabla|flexsearch)?
+- [ ] v0.3 Chat: ¿Sidebar de hilos con create/delete/select?
+- [ ] v0.3 Chat: ¿Busqueda en historial (Nivel 2) via FlexSearch sobre _ia_messages?
+- [ ] v0.3 Chat: ¿Full separa fuentes BD (badge primary) y Docs (badge accent)?
 
 ---
 
@@ -307,11 +325,16 @@ window.ia.initFull = function() {   // init lite + ingest + modelos
   exportPDF(),                     // Exportar estadisticas a PDF
 
   // Chat historial
-  chatNew(titulo),                 // Crear nuevo chat thread
-  chatList(),                      // Listar conversaciones guardadas
-  chatLoad(chatId),                // Cargar mensajes de una conversacion
-  chatDelete(chatId),              // Eliminar conversacion
-  chatAddMessage(chatId, rol, contenido, fuente, score), // Guardar mensaje
+  chat: {
+    create(titulo),                // v0.3: Crear nuevo chat thread
+    list(),                        // Listar conversaciones guardadas
+    load(chatId),                  // Cargar mensajes de una conversacion
+    delete(chatId),                // Eliminar conversacion
+    addMessage(chatId, rol, contenido, fuente, score), // Guardar mensaje
+    ask(chatId, pregunta),         // v0.3: Responder con patrones DB + FlexSearch fallback
+    searchHistory(query),          // v0.3: Buscar en historial de conversaciones (Nivel 2)
+    askFull(chatId, pregunta),     // v0.3 Full: BD + documentos combinado (devuelve fuentes[])
+  },
 ```
 
 ---
@@ -359,6 +382,8 @@ Los templates de codigo estan en:
 - **Si el perfil no esta definido**: Preguntar. No asumir default.
 
 - **v0.2 Mejoras**: Highlight + resultados agrupados, autocompletar en busqueda, export PDF stats, OCR para PDFs escaneados (Tesseract.js spa), chat con historial/threads en Dexie, busqueda hibrida FlexSearch + embeddings.
+
+- **v0.3 Chat Conversacional**: Nuevo `core/ia-chat.js` con DB Query Engine basado en 9 patrones (count, sum, rank, top, filter, date, list, avg, compare) + fallback a FlexSearch. Busqueda en historial (Nivel 2) indizando mensajes IA con FlexSearch. Full: `askFull()` combina BD + documentos con fuentes separadas visualmente (badges primary/accent). Lite: UI reorganizada con tabs (Buscar/Chat/Stats/Pred). Compatible con perfil Lite y Full.
 - **Tesseract.js (Full OCR)**: Cargar con `importScripts('assets/js/libs/tesseract.min.js')` en Worker. Usar `Tesseract.recognize(imageData, 'spa')` con `{ logger: m => onProgress(m) }`. Convertir pagina PDF a canvas con pdf.js, exportar como ImageData, pasar a Tesseract. Deteccion automatica: si pdf.js extrae <50 caracteres, activar OCR.
 - **Chat historial (Full)**: Usar `_ia_chats` para metadatos de conversacion y `_ia_messages` para cada mensaje. Ordenar por `createdAt` ascendente.
 - **Busqueda hibrida (Full)**: En search(), si hay modelos cargados, calcular embedding de la query, comparar con embeddings de chunks via similitud coseno, combinar scores: 0.6 * flexScore + 0.4 * semanticScore.

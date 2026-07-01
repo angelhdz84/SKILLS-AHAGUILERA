@@ -1,10 +1,10 @@
-﻿# AHA Campo â€” Registro de campo offline para agricultura y ganaderÃ­a
+# AHA Campo — Registro de campo offline para agricultura y ganadería
 
-## DescripciÃ³n comercial
+## Descripción comercial
 
-Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos â€” todo offline, desde el celular, sin necesidad de seÃ±al. Ideal para el campo mexicano y latinoamericano donde internet no llega.
+Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos — todo offline, desde el celular, sin necesidad de señal. Ideal para el campo mexicano y latinoamericano donde internet no llega.
 
-**Target:** Agricultores, ganaderos, ingenieros agrÃ³nomos, dueÃ±os de ranchos, cooperativas del campo.
+**Target:** Agricultores, ganaderos, ingenieros agrónomos, dueños de ranchos, cooperativas del campo.
 
 **Dolor que resuelve:** "En el campo no hay internet. Llevo todo en libreta y luego paso a Excel. Pierdo tiempo y datos."
 
@@ -17,43 +17,43 @@ Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos â€
 | Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## MÃ³dulos
+## Módulos
 
-### ðŸŒ± MÃ³dulo Cultivos
-- CRUD de lotes/parcelas: nombre, hectÃ¡reas, cultivo actual
+### 🌱 Módulo Cultivos
+- CRUD de lotes/parcelas: nombre, hectáreas, cultivo actual
 - Siembra: fecha, variedad, densidad, lote
-- Registro diario: riego, fertilizaciÃ³n, plagas, temperatura
+- Registro diario: riego, fertilización, plagas, temperatura
 - Historial de ciclos de cultivo por lote
 - Fotos del cultivo por fecha (seguimiento visual)
 
-### ðŸ„ MÃ³dulo Ganado
+### 🐄 Módulo Ganado
 - Registro de animales: arete/nombre, especie, raza, fecha nacimiento
-- Eventos: vacunaciÃ³n, desparasitaciÃ³n, pesaje, inseminaciÃ³n
-- Alertas: prÃ³xima vacuna, prÃ³ximo pesaje
+- Eventos: vacunación, desparasitación, pesaje, inseminación
+- Alertas: próxima vacuna, próximo pesaje
 - Historial de salud por animal
 
-### ðŸ“¦ MÃ³dulo Insumos
+### 📦 Módulo Insumos
 - CRUD de insumos: nombre, tipo (semilla, fertilizante, vacuna, herramienta)
 - Entradas: compra con cantidad, fecha, proveedor, costo
-- Salidas: aplicaciÃ³n a lote o animal
-- Stock actual con alerta de mÃ­nimo
+- Salidas: aplicación a lote o animal
+- Stock actual con alerta de mínimo
 
-### ðŸ’° MÃ³dulo Gastos
-- Registro de gastos: concepto, monto, categorÃ­a, lote asociado
-- CategorÃ­as: insumos, mano de obra, maquinaria, transporte
-- Reporte de costos por lote y por hectÃ¡rea
+### 💰 Módulo Gastos
+- Registro de gastos: concepto, monto, categoría, lote asociado
+- Categorías: insumos, mano de obra, maquinaria, transporte
+- Reporte de costos por lote y por hectárea
 - Export CSV
 
-### ðŸ“Š MÃ³dulo Reportes
+### 📊 Módulo Reportes
 - Costos del ciclo por lote
-- Rendimiento estimado por hectÃ¡rea
+- Rendimiento estimado por hectárea
 - Historial de eventos por lote o animal
 - Export PDF y CSV
 
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   lotes: 'id, nombre, *hectareas, *cultivoActual, *createdBy, createdAt, updatedAt',
   ciclos: 'id, *loteId, *cultivo, *fechaSiembra, *fechaCosecha, *createdBy, createdAt, updatedAt',
   registros_diarios: 'id, *loteId, *fecha, *tipo, *descripcion, *fotos, *createdBy, createdAt',
@@ -61,8 +61,11 @@ db.version(1).stores({
   eventos_animal: 'id, *animalId, *tipo, *fecha, *descripcion, *proximaFecha, *createdBy, createdAt',
   insumos: 'id, nombre, *tipo, *stockActual, *stockMinimo, *unidad, *createdBy, createdAt, updatedAt',
   movimientos_insumo: 'id, *insumoId, *tipo, *cantidad, *loteId, *animalId, *proveedor, *costo, *createdBy, createdAt',
-  gastos: 'id, *concepto, *monto, *categoria, *loteId, *createdBy, createdAt'
-})
+  gastos: 'id, *concepto, *monto, *categoria, *loteId, *createdBy, createdAt',
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+});
 ```
 
 ## UI
@@ -70,26 +73,26 @@ db.version(1).stores({
 | Pantalla | Componentes |
 |----------|------------|
 | Dashboard | Lotres activos, animales registrados, insumos bajos, gastos del mes |
-| Lotres | Grid de lotes con cultivo actual, estado, Ãºltima actividad |
-| Registro diario | Por lote: selector de tipo (riego/ferti/plaga) + descripciÃ³n + foto |
-| Ganado | Lista + ficha por animal con eventos y prÃ³ximas alertas |
-| Insumos | Tabla con stock, alerta roja si < mÃ­nimo, entradas/salidas |
-| Gastos | Por lote o general, grÃ¡fico circular por categorÃ­a |
+| Lotres | Grid de lotes con cultivo actual, estado, última actividad |
+| Registro diario | Por lote: selector de tipo (riego/ferti/plaga) + descripción + foto |
+| Ganado | Lista + ficha por animal con eventos y próximas alertas |
+| Insumos | Tabla con stock, alerta roja si < mínimo, entradas/salidas |
+| Gastos | Por lote o general, gráfico circular por categoría |
 
 ## IA integrada
 
-- **BÃºsqueda**: buscar lotes, animales, insumos por nombre o arete
-- **PredicciÃ³n**: "Basado en el historial de riego, sugiere regar el lote 3 maÃ±ana"
-- **EstadÃ­sticas**: costo por hectÃ¡rea, animal con mÃ¡s eventos, insumo mÃ¡s usado
-- **Full**: "Â¿CuÃ¡nto gastÃ© en fertilizante este ciclo?" â€” QA sobre datos locales
+- **Búsqueda**: buscar lotes, animales, insumos por nombre o arete
+- **Predicción**: "Basado en el historial de riego, sugiere regar el lote 3 mañana"
+- **Estadísticas**: costo por hectárea, animal con más eventos, insumo más usado
+- **Full**: "¿Cuánto gasté en fertilizante este ciclo?" — QA sobre datos locales
 
 ## Pricing sugerido
 
 | Nivel | Precio USD | Incluye |
 |-------|-----------|---------|
-| Lite | $49 | .exe, 1 lote, registro bÃ¡sico |
+| Lite | $49 | .exe, 1 lote, registro básico |
 | Standard | $99 | .exe + .apk, ilimitado, fotos + alertas + IA |
-| Custom | $199+ | Todo + UI personalizada + reportes PDF con logo del rancho + cÃ³digo fuente |
+| Custom | $199+ | Todo + UI personalizada + reportes PDF con logo del rancho + código fuente |
 
 ## WhatsApp para venta
 
@@ -101,12 +104,12 @@ desde el celular. Plan Standard con .apk.
 
 ## Checklist pre-lanzamiento
 
-- [ ] Probar flujo: crear lote â†’ sembrar â†’ registro diario â†’ fotos
+- [ ] Probar flujo: crear lote → sembrar → registro diario → fotos
 - [ ] Probar registro de animal con eventos (vacuna, pesaje)
-- [ ] Probar insumos: entrada (compra) â†’ salida (aplicaciÃ³n)
-- [ ] Probar alerta de stock mÃ­nimo
+- [ ] Probar insumos: entrada (compra) → salida (aplicación)
+- [ ] Probar alerta de stock mínimo
 - [ ] Probar gasto por lote
-- [ ] Probar fotos desde cÃ¡mara (.apk)
+- [ ] Probar fotos desde cámara (.apk)
 - [ ] Probar en .exe y .apk
 
 

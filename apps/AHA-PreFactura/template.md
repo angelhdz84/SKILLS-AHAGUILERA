@@ -1,14 +1,14 @@
-﻿# AHA PreFactura â€” PrefacturaciÃ³n offline para freelancers
+# AHA PreFactura — Prefacturación offline para freelancers
 
-## DescripciÃ³n comercial
+## Descripción comercial
 
-Sistema de prefacturaciÃ³n offline para freelancers y pequeÃ±os negocios. Genera facturas con folio automÃ¡tico, exporta XML y PDF, lleva el control de clientes con RFC y productos/servicios. Sin internet, sin mensualidades.
+Sistema de prefacturación offline para freelancers y pequeños negocios. Genera facturas con folio automático, exporta XML y PDF, lleva el control de clientes con RFC y productos/servicios. Sin internet, sin mensualidades.
 
-> **Nota importante:** AHA PreFactura genera el comprobante fiscal offline (XML+PDF). No envÃ­a al SAT/SUNAT automÃ¡ticamente. El cliente descarga el XML y lo sube manualmente al portal fiscal cuando tenga internet.
+> **Nota importante:** AHA PreFactura genera el comprobante fiscal offline (XML+PDF). No envía al SAT/SUNAT automáticamente. El cliente descarga el XML y lo sube manualmente al portal fiscal cuando tenga internet.
 
-**Target:** Freelancers, profesionistas independientes, pequeÃ±os negocios que facturan ocasionalmente.
+**Target:** Freelancers, profesionistas independientes, pequeños negocios que facturan ocasionalmente.
 
-**Dolor que resuelve:** "Necesito facturar pero no siempre tengo internet y no quiero pagar suscripciÃ³n mensual solo para hacer 5 facturas al mes."
+**Dolor que resuelve:** "Necesito facturar pero no siempre tengo internet y no quiero pagar suscripción mensual solo para hacer 5 facturas al mes."
 
 ## Niveles comerciales
 
@@ -18,44 +18,47 @@ Sistema de prefacturaciÃ³n offline para freelancers y pequeÃ±os negocios. Ge
 | Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## MÃ³dulos
+## Módulos
 
-### ðŸ¢ MÃ³dulo Clientes Fiscales
-- CRUD: nombre/razÃ³n social, RFC, rÃ©gimen fiscal, direcciÃ³n fiscal, email, telÃ©fono
-- BÃºsqueda instantÃ¡nea por nombre o RFC
-- ValidaciÃ³n bÃ¡sica de RFC (formato)
+### 🏢 Módulo Clientes Fiscales
+- CRUD: nombre/razón social, RFC, régimen fiscal, dirección fiscal, email, teléfono
+- Búsqueda instantánea por nombre o RFC
+- Validación básica de RFC (formato)
 
-### ðŸ“¦ MÃ³dulo Productos/Servicios
+### 📦 Módulo Productos/Servicios
 - CRUD: clave (similar a SAT), nombre, precio unitario, IVA aplicable
-- ClasificaciÃ³n por categorÃ­a fiscal
-- BÃºsqueda por clave o nombre
+- Clasificación por categoría fiscal
+- Búsqueda por clave o nombre
 
-### ðŸ§¾ MÃ³dulo Facturas
+### 🧾 Módulo Facturas
 - Crear factura: seleccionar cliente, agregar productos/servicios
-- Folio automÃ¡tico por serie (ej: F-001, F-002...)
-- CÃ¡lculo automÃ¡tico: subtotal, IVA, total
-- GeneraciÃ³n PDF con formato fiscal
-- GeneraciÃ³n XML descargable
+- Folio automático por serie (ej: F-001, F-002...)
+- Cálculo automático: subtotal, IVA, total
+- Generación PDF con formato fiscal
+- Generación XML descargable
 
-### ðŸ“œ MÃ³dulo Historial
+### 📜 Módulo Historial
 - Lista de facturas emitidas con filtros por fecha, cliente, folio
 - Vista detalle con opciones: ver PDF, descargar XML, reimprimir
-- EstadÃ­sticas: total facturado por mes, por cliente
+- Estadísticas: total facturado por mes, por cliente
 
-### ðŸ“Š MÃ³dulo Reportes
+### 📊 Módulo Reportes
 - Dashboard: total facturado mes, facturas emitidas, clientes registrados
-- GrÃ¡fico de ingresos por mes (Chart.js)
+- Gráfico de ingresos por mes (Chart.js)
 - Export a CSV
 
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   clientes_fiscales: 'id, nombre, *rfc, *regimen, direccion, email, *telefono, createdAt, updatedAt',
-  productos_fiscales: 'id, *clave, nombre, precioUnitario, *iva, *categoria, createdAt',
-  facturas: 'id, *folio, *serie, *clienteId, subtotal, iva, total, *createdBy, createdAt',
-  facturas_items: 'id, *facturaId, *productoId, cantidad, precioUnitario, importe'
-})
+  productos_fiscales: 'id, *clave, nombre, precioUnitario, *iva, *categoria, createdAt, updatedAt',
+  facturas: 'id, *folio, *serie, *clienteId, subtotal, iva, total, *createdBy, createdAt, updatedAt',
+  facturas_items: 'id, *facturaId, *productoId, cantidad, precioUnitario, importe',
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+});
 ```
 
 ## Pricing sugerido
@@ -70,6 +73,6 @@ db.version(1).stores({
 
 ```
 Hola Angel, necesito facturar sin pagar mensualidades ni tener
-internet todo el tiempo. Â¿AHA PreFactura plan Standard?
+internet todo el tiempo. ¿AHA PreFactura plan Standard?
 
 

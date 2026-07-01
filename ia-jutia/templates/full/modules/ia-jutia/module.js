@@ -1,6 +1,6 @@
-// modules/ia-jutia/module.js — IA Jutia (Full)
+// modules/ia-jutia/module.js — IA Jutia (Full) v0.3
 // Busqueda + Ingesta documentos + Chat QA + Predicciones
-// Depende de: core/ia.js (window.ia), core/ia-ingest.js (window.iaIngest)
+// Depende de: core/ia.js (window.ia), core/ia-ingest.js (window.iaIngest), core/ia-chat.js (window.ia.chat)
 
 const ModuloIA = {
   id: 'ia-jutia',
@@ -285,6 +285,9 @@ document.addEventListener('alpine:init', () => {
     newChatTitle: '',
     showNewChatModal: false,
     pregunta: '',
+    // v0.3 — Busqueda en historial
+    historyQuery: '',
+    historyResults: [],
 
     async init(q) {
       this.query = q || '';
@@ -341,7 +344,7 @@ document.addEventListener('alpine:init', () => {
 
       // Auto-create chat if none selected
       if (!this.currentChat) {
-        const chat = await window.ia.chatNew(q.slice(0, 50));
+        const chat = await window.ia.chat.create(q.slice(0, 50));
         this.currentChat = chat;
         await this.loadChats();
       }
@@ -352,10 +355,25 @@ document.addEventListener('alpine:init', () => {
       this.preguntaActual = '';
       this.chatting = true;
 
-      const result = await window.ia.qa(q);
+      // v0.3: Usar askFull() que combina BD + Documentos
+      let result;
+      if (window.ia.chat && window.ia.chat.askFull) {
+        result = await window.ia.chat.askFull(this.currentChat.id, q);
+      } else {
+        // Fallback: solo QA documentos
+        const qaResult = await window.ia.qa(q);
+        result = {
+          respuesta: qaResult?.respuesta || 'No se encontró respuesta.',
+          fuentes: qaResult?.fuente ? [{ tipo: 'doc', texto: qaResult.fuente }] : [],
+          score: qaResult?.score || null
+        };
+      }
 
-      // Save assistant message
-      await this.saveMessage('ia', result.respuesta, result.fuente, result.score);
+      // Save assistant message — guardar fuentes como JSON
+      await this.saveMessage('ia', result.respuesta,
+        result.fuentes ? JSON.stringify(result.fuentes) : null,
+        result.score
+      );
       this.chatting = false;
 
       this.$nextTick(() => {
@@ -402,23 +420,23 @@ document.addEventListener('alpine:init', () => {
 
     // v0.2 — Chat methods
     async loadChats() {
-      if (window.ia && window.ia.chatList) {
-        this.chats = await window.ia.chatList();
+      if (window.ia && window.ia.chat && window.ia.chat.list) {
+        this.chats = await window.ia.chat.list();
       }
     },
 
     async selectChat(chatId) {
-      if (!window.ia || !window.ia.chatLoad) return;
-      const data = await window.ia.chatLoad(chatId);
+      if (!window.ia || !window.ia.chat || !window.ia.chat.load) return;
+      const data = await window.ia.chat.load(chatId);
       this.currentChat = data.chat;
       this.messages = data.messages;
-      this.chatSidebarOpen = false;
+      if (window.innerWidth < 1024) this.chatSidebarOpen = false;
     },
 
     async createChat() {
       const title = this.newChatTitle.trim() || 'Nueva conversacion';
-      if (window.ia && window.ia.chatNew) {
-        const chat = await window.ia.chatNew(title);
+      if (window.ia && window.ia.chat && window.ia.chat.create) {
+        const chat = await window.ia.chat.create(title);
         this.currentChat = chat;
         this.messages = [];
         this.showNewChatModal = false;
@@ -428,8 +446,8 @@ document.addEventListener('alpine:init', () => {
     },
 
     async deleteChat(chatId) {
-      if (!window.ia || !window.ia.chatDelete) return;
-      await window.ia.chatDelete(chatId);
+      if (!window.ia || !window.ia.chat || !window.ia.chat.delete) return;
+      await window.ia.chat.delete(chatId);
       if (this.currentChat && this.currentChat.id === chatId) {
         this.currentChat = null;
         this.messages = [];
@@ -438,12 +456,30 @@ document.addEventListener('alpine:init', () => {
     },
 
     async saveMessage(rol, content, fuente, score) {
-      if (!this.currentChat || !window.ia || !window.ia.chatAddMessage) return;
-      const msg = await window.ia.chatAddMessage(
+      if (!this.currentChat || !window.ia || !window.ia.chat || !window.ia.chat.addMessage) return;
+      const msg = await window.ia.chat.addMessage(
         this.currentChat.id, rol, content, fuente, score
       );
       this.messages.push(msg);
       return msg;
+    },
+
+    // v0.3 — Busqueda en historial de conversaciones (Nivel 2)
+    async searchHistory() {
+      const q = this.historyQuery;
+      if (!q || !window.ia || !window.ia.chat || !window.ia.chat.searchHistory) {
+        this.historyResults = [];
+        return;
+      }
+      this.historyResults = await window.ia.chat.searchHistory(q, 10);
+    },
+
+    selectHistoryResult(msg) {
+      if (msg.chatId) {
+        this.selectChat(msg.chatId);
+        this.historyQuery = '';
+        this.historyResults = [];
+      }
     }
   }));
 });

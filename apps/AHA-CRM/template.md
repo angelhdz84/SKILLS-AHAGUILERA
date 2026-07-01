@@ -1,10 +1,10 @@
-﻿# AHA CRM â€” GestiÃ³n de clientes y ventas offline
+# AHA CRM — Gestión de clientes y ventas offline
 
-## DescripciÃ³n comercial
+## Descripción comercial
 
-CRM minimalista offline para freelancers y pequeÃ±os negocios. GestiÃ³n de clientes, pipeline de ventas Kanban, cotizaciones, recordatorios y facturaciÃ³n bÃ¡sica. Sin la complejidad de Salesforce, sin mensualidades.
+CRM minimalista offline para freelancers y pequeños negocios. Gestión de clientes, pipeline de ventas Kanban, cotizaciones, recordatorios y facturación básica. Sin la complejidad de Salesforce, sin mensualidades.
 
-**Target:** Freelancers, consultores, agentes de seguros, agencias pequeÃ±as, negocios de servicios profesionales.
+**Target:** Freelancers, consultores, agentes de seguros, agencias pequeñas, negocios de servicios profesionales.
 
 **Dolor que resuelve:** "Uso Excel para clientes, WhatsApp para cotizaciones y una libreta para seguimiento. Necesito todo en un solo lugar."
 
@@ -16,45 +16,48 @@ CRM minimalista offline para freelancers y pequeÃ±os negocios. GestiÃ³n de c
 | Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
-## MÃ³dulos
+## Módulos
 
-### ðŸ‘¤ MÃ³dulo Contactos
-- CRUD: nombre, empresa, telÃ©fono, email, direcciÃ³n, notas
+### 👤 Módulo Contactos
+- CRUD: nombre, empresa, teléfono, email, dirección, notas
 - Historial de interacciones por contacto
-- BÃºsqueda instantÃ¡nea IA
+- Búsqueda instantánea IA
 
-### ðŸ“‹ MÃ³dulo Pipeline (Kanban)
-- Etapas: prospecto, contactado, propuesta, negociaciÃ³n, cerrado
+### 📋 Módulo Pipeline (Kanban)
+- Etapas: prospecto, contactado, propuesta, negociación, cerrado
 - Arrastrar deals entre etapas
 - Deal: nombre, contacto, monto, probabilidad, fecha cierre
 
-### ðŸ“„ MÃ³dulo Cotizaciones
-- Crear cotizaciÃ³n desde un deal
+### 📄 Módulo Cotizaciones
+- Crear cotización desde un deal
 - Items: servicio, cantidad, precio
-- Generar PDF de cotizaciÃ³n
+- Generar PDF de cotización
 - Enviar por WhatsApp (compartir archivo)
 
-### ðŸ’° MÃ³dulo FacturaciÃ³n
+### 💰 Módulo Facturación
 - Generar factura desde deal cerrado
-- NÃºmero de factura automÃ¡tico
+- Número de factura automático
 - Estado: pagada / pendiente / vencida
 - Export PDF
 
-### ðŸ“Š MÃ³dulo Reportes
-- Tasa de conversiÃ³n por etapa
+### 📊 Módulo Reportes
+- Tasa de conversión por etapa
 - Ingresos del mes por cliente
 - Export CSV
 
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   contactos: 'id, nombre, *empresa, *telefono, email, *notas, *createdBy, createdAt, updatedAt',
   deals: 'id, *contactoId, *nombre, *monto, *etapa, *probabilidad, *fechaCierre, *createdBy, createdAt, updatedAt',
   cotizaciones: 'id, *dealId, *items, *total, *pdfGenerado, *estado, *createdBy, createdAt, updatedAt',
   facturas: 'id, *dealId, *contactoId, *folio, *total, *estado, *createdBy, createdAt, updatedAt',
-  interacciones: 'id, *contactoId, *tipo, *nota, *createdBy, createdAt'
-})
+  interacciones: 'id, *contactoId, *tipo, *nota, *createdBy, createdAt',
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+});
 ```
 
 ## Pricing sugerido

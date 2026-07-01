@@ -38,10 +38,13 @@ Lleva el control de ingresos y egresos diarios de tu negocio sin depender de int
 ## Tablas Dexie
 
 ```javascript
-db.version(1).stores({
+db.version(2).stores({
   movimientos: 'id, tipo, *categoria, monto, *fecha, *nota, *createdBy, createdAt',
-  categorias: 'id, nombre, tipo, *createdBy, createdAt'
-})
+  categorias: 'id, nombre, tipo, *createdBy, createdAt, updatedAt',
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+});
 ```
 
 ## UI
