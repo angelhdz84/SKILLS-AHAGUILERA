@@ -43,7 +43,7 @@ meta:
     • Perfil: [lite|professional|business]
     • Core: app.js, db.js, crypto.js, ui.js, theme.js, main.js, index.html (compartido 95%)
     • Módulos: [lista de módulos desde spec] (compartidos)
-     • IA Jutia: [lite|full|no] (genera modules/ia-jutia/ + core/ia.js)
+     • IA Jutia: [lite|full|no] (plugin auto-contenido, un solo &lt;script&gt;)
      • Librería UI: [daisyui|pines|penguin|pinemix] (desde preferencia o auto)
      • Librerías adicionales: [lista] (desde spec)
     • Professional/Business extra: neutralino.config.json
@@ -321,7 +321,7 @@ window.FileStore = {
   - `id`: identificador único para licencias (ej: `aha-pos`). Se inyecta como `APP_ID` en `core/license.js`
   - `plan`: `lite` | `profesional` | `enterprise` (default: `lite`; la licencia `.aha` lo actualiza dinámicamente)
 - `perfil`: lite | professional | business
-- `iaJutia`: lite | full | no
+- `iaJutia`: `{ perfil: 'lite' }` | `{ perfil: 'full' }` | `{ perfil: false }`
 - `modulosActivos`: array de IDs de módulos
 - `tema`: modo (claro|oscuro), colores (DaisyUI palette), tipografia
 - `cifrado`: camposSensibles[], storageKey
@@ -1227,7 +1227,7 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 |-------|------------------|
 | `spec-engine` | Provee `specs/[app].md` con estructura, campos sensibles, reglas UI y `libreriasAdicionales` |
 | `setup-init` | Instala librerías según perfil (Lite: curl a assets/ / Professional/Business: npm) |
-| `ia-jutia` | Si se incluye, genera módulo IA + core/ia.js según perfil Lite/Full |
+| `ia-jutia` | Plugin auto-contenido: un solo &lt;script&gt;, sin modificar core/ ni db.js. Según perfil Lite/Full |
 | `stack-compliance-guard` | Se ejecuta automáticamente tras generar cada bloque |
 | `design-engine` | Aplica tono visual, contrastes, espaciado y animaciones según DESIGN.md |
 | `alpine-ui-patterns` | Catálogo de ~100 patrones Pines/Penguin/Pinemix con fallback chain. Se consulta cuando `component_library` ≠ daisyui o cuando DaisyUI no tiene el componente |

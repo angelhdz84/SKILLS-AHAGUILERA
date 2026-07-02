@@ -184,25 +184,23 @@ npm install flexsearch
 2. Agregar <script src="modules/ia-lite.js"> en index.html antes de core/app.js
 3. Inyectar atajo global Cmd+K para busqueda en core/app.js
 
-### 2.2 Lite → Full (QA + ingesta documentos)
+### 2.2 Lite → Full (DLC plugin)
 
-`ash
-npm install @xenova/transformers pdfjs-dist mammoth marked
-`
+El perfil Full es un DLC del plugin. No requiere modificar index.html ni db.js.
 
-1. Copiar templates desde ia-jutia/templates/full/:
-   - core/ia-worker.js — Web Worker para Transformers.js
-   - core/ia-sqlite.js — SQLite FTS5 para busqueda en documentos
-2. Descargar modelos ONNX a ssets/models/:
+1. Copiar templates DLC desde ia-jutia/templates/plugin/:
+   - ia-full.js — Ingesta documentos + Transformers.js QA
+   - ia-sqlite.js — SQLite FTS5 (Professional/Business)
+   - ia-worker.js — Web Worker para Transformers.js
+2. module.js detecta ia-full.js y carga initFull() automaticamente al arranque
+3. Modelos ONNX se descargan una vez a ruta compartida (ProgramData, ~/.local/share, etc):
 `ash
-mkdir -p assets/models
-curl -f -L -# -o assets/models/bert-qa.onnx "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/model.onnx"
-curl -f -L -# -o assets/models/bert-qa-tokenizer.json "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/tokenizer.json"
+# Ruta compartida entre apps del mismo equipo
+mkdir -p "$IA_MODELS_DIR"
+curl -f -L -# -o "$IA_MODELS_DIR/bert-qa.onnx" "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/model.onnx"
+curl -f -L -# -o "$IA_MODELS_DIR/bert-qa-tokenizer.json" "https://huggingface.co/Xenova/bert-base-multilingual-uncased-squad/resolve/main/tokenizer.json"
 `
-3. Agregar scripts en index.html:
-   - <script src="core/ia-worker.js"> antes de core/app.js
-   - <script src="core/ia-sqlite.js"> antes de core/app.js
-4. Inyectar atajo global Cmd+K en core/app.js
+4. No modificar index.html ni db.js — el plugin gestiona sus propias tablas
 
 ---
 
@@ -214,21 +212,21 @@ Modificar project.config.js:
 // Antes del upgrade
 window.APP_CONFIG = {
   perfil: 'lite',
-  iaJutia: 'lite',
+  iaJutia: { perfil: 'lite' },
   // ...
 }
 
 // Despues del upgrade
 window.APP_CONFIG = {
   perfil: 'professional',
-  iaJutia: 'full',
+  iaJutia: { perfil: 'full' },
   // ...
 }
 `
 
 Campos a actualizar:
 - perfil → "professional" o "business" (si se upgradeo APP)
-- iaJutia → nuevo valor (si se upgradeo IA)
+- iaJutia.perfil → nuevo valor "full" o false (si se upgradeo IA)
 - android → true/false (si se eligio Android, solo Business)
 
 ---
