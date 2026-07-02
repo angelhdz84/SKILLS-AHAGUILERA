@@ -42,22 +42,14 @@
   // ─── 2. Hybrid DB init ───────────────────────────────────────────────
 
   function ensureDBTables () {
-    if (window.db) {
-      var hasChats = false;
-      try { hasChats = !!window.db._ia_chats; } catch (e) { /* ignore */ }
+    if (window.db && window.db.tables) {
+      var hasChats = window.db.tables.some(function (t) { return t.name === '_ia_chats'; });
       if (!hasChats) {
-        var currentVer = window.db._dbSchema ? Object.keys(window.db._dbSchema).length : 1;
-        var newVer = currentVer + 1;
-        var stores = {};
-        if (window.db.tables) {
-          window.db.tables.forEach(function (t) {
-            var schema = window.db._dbSchema && window.db._dbSchema[t.name];
-            if (schema) stores[t.name] = schema.primKey && schema.primKey.keyPath ? schema.primKey.keyPath + (schema.indexes && schema.indexes.length ? ',' + schema.indexes.map(function (idx) { return idx.keyPath; }).join(',') : '') : '';
-          });
-        }
-        stores['_ia_chats'] = 'id, titulo, createdAt, updatedAt, messageCount';
-        stores['_ia_messages'] = 'id, chatId, rol, contenido, fuente, score, createdAt';
-        window.db.version(newVer).stores(stores);
+        var curVer = window.db.verno || 1;
+        window.db.version(curVer + 1).stores({
+          _ia_chats: 'id, titulo, createdAt, updatedAt, messageCount',
+          _ia_messages: 'id, chatId, rol, contenido, fuente, score, createdAt'
+        });
         console.log('[ia-jutia] Tablas _ia_chats + _ia_messages agregadas a db principal');
       }
     }
@@ -88,6 +80,10 @@
       return;
     }
     try {
+      if (Alpine.store('ia')) {
+        console.log('[ia-jutia] Alpine.store(ia) ya registrado, omitiendo');
+        return;
+      }
       Alpine.store('ia', {
         chatOpen: false,
         drawerView: 'chat',
