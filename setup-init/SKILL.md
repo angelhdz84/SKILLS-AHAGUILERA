@@ -29,7 +29,7 @@ meta:
 ```
 📋 ¿Qué perfil de proyecto?
 [1] Lite (Essential) — file:// + doble clic en index.html (ZIP + GitHub Pages)
-[2] Professional — Neutralino .exe + Fixed WebView2 (sin HTML visible)
+[2] Professional — Neutralino .exe + Fixed WebView2 + .apk (Capacitor) (sin HTML visible)
 [3] Business — Neutralino .exe + Fixed WebView2 + .apk (Capacitor) + branding
 ```
 

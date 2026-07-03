@@ -1,0 +1,108 @@
+<div x-data="[ID]_gallery()" x-init="init()" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-images"></i> [TITLE]</h3>
+    <div class="flex items-center gap-1">
+      <button @click="viewMode = 'grid'" class="btn btn-ghost btn-xs btn-square" :class="viewMode === 'grid' ? 'text-primary' : ''"><i class="bi bi-grid-3x3-gap"></i></button>
+      <button @click="viewMode = 'list'" class="btn btn-ghost btn-xs btn-square" :class="viewMode === 'list' ? 'text-primary' : ''"><i class="bi bi-list"></i></button>
+    </div>
+  </div>
+
+  <div x-show="viewMode === 'grid'" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    <template x-for="(img, i) in images" :key="img.id || i">
+      <div @click="openLightbox(i)" class="aspect-square rounded-xl overflow-hidden bg-base-200 cursor-pointer group relative border border-base-300">
+        <img :src="img.src" :alt="img.alt" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+          <i class="bi bi-arrows-angle-expand text-white/0 group-hover:text-white/80 text-xl transition-colors"></i>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+          <p class="text-xs text-white truncate" x-text="img.alt"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <div x-show="viewMode === 'list'" class="space-y-2">
+    <template x-for="(img, i) in images" :key="img.id || i">
+      <div @click="openLightbox(i)" class="flex items-center gap-3 p-2 rounded-xl hover:bg-base-200/70 cursor-pointer border border-transparent hover:border-base-300 transition-all">
+        <div class="w-16 h-12 rounded-lg overflow-hidden bg-base-200 shrink-0">
+          <img :src="img.src" :alt="img.alt" class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate" x-text="img.alt"></p>
+          <p x-show="img.desc" class="text-xs text-base-content/40 truncate" x-text="img.desc"></p>
+        </div>
+        <span class="text-xs text-base-content/30" x-text="img.size || ''"></span>
+      </div>
+    </template>
+  </div>
+
+  <div x-show="lightboxOpen" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+       @keydown.escape="closeLightbox()" @keydown.right="next()" @keydown.left="prev()" tabindex="0" x-ref="lightbox">
+    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+      <button @click="closeLightbox()" class="absolute top-0 right-0 -mt-2 -mr-2 btn btn-ghost btn-sm btn-square text-white/60 hover:text-white z-10">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <img :src="images[lightboxIdx]?.src" :alt="images[lightboxIdx]?.alt" class="max-w-full max-h-[80vh] object-contain rounded-xl">
+      <div class="flex items-center gap-4 mt-3">
+        <button @click="prev()" class="btn btn-ghost text-white/60 hover:text-white btn-sm"><i class="bi bi-chevron-left text-xl"></i></button>
+        <span class="text-sm text-white/60" x-text="(lightboxIdx + 1) + ' / ' + images.length"></span>
+        <button @click="next()" class="btn btn-ghost text-white/60 hover:text-white btn-sm"><i class="bi bi-chevron-right text-xl"></i></button>
+      </div>
+      <p class="text-sm text-white/50 mt-2" x-text="images[lightboxIdx]?.alt"></p>
+    </div>
+  </div>
+
+  <div x-show="!images.length" class="flex flex-col items-center py-12 text-base-content/40">
+    <i class="bi bi-image text-5xl mb-3"></i>
+    <p class="text-sm">Sin imágenes</p>
+  </div>
+</div>
+
+<script>
+function [ID]_gallery() {
+  const DEFAULT_IMAGES = [
+    { id: 'g1', src: '[IMAGE_URL_1]', alt: '[ALT_TEXT_1]', desc: '[DESCRIPTION_1]', size: '2.1 MB' },
+    { id: 'g2', src: '[IMAGE_URL_2]', alt: '[ALT_TEXT_2]', desc: '[DESCRIPTION_2]', size: '1.8 MB' },
+    { id: 'g3', src: '[IMAGE_URL_3]', alt: '[ALT_TEXT_3]', desc: '[DESCRIPTION_3]', size: '3.2 MB' },
+    { id: 'g4', src: '[IMAGE_URL_4]', alt: '[ALT_TEXT_4]', desc: '[DESCRIPTION_4]', size: '1.5 MB' },
+    { id: 'g5', src: '[IMAGE_URL_5]', alt: '[ALT_TEXT_5]', desc: '[DESCRIPTION_5]', size: '2.7 MB' }
+  ]
+
+  return {
+    images: [],
+    viewMode: 'grid',
+    lightboxOpen: false,
+    lightboxIdx: 0,
+
+    init() {
+      this.images = JSON.parse(JSON.stringify(DEFAULT_IMAGES))
+      document.addEventListener('keydown', e => {
+        if (!this.lightboxOpen) return
+        if (e.key === 'Escape') this.closeLightbox()
+        if (e.key === 'ArrowRight') this.next()
+        if (e.key === 'ArrowLeft') this.prev()
+      })
+    },
+
+    openLightbox(i) {
+      this.lightboxIdx = i
+      this.lightboxOpen = true
+      document.body.style.overflow = 'hidden'
+      setTimeout(() => this.$refs.lightbox?.focus(), 100)
+    },
+
+    closeLightbox() {
+      this.lightboxOpen = false
+      document.body.style.overflow = ''
+    },
+
+    prev() {
+      this.lightboxIdx = (this.lightboxIdx - 1 + this.images.length) % this.images.length
+    },
+
+    next() {
+      this.lightboxIdx = (this.lightboxIdx + 1) % this.images.length
+    }
+  }
+}
+</script>

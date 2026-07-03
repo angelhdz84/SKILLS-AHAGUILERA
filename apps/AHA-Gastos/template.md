@@ -81,3 +81,7 @@ sin herramientas online. ¿AHA Gastos con reportes PDF?
 - [ ] Probar gráfico flujo de caja con datos de 3 meses
 - [ ] Probar export PDF con datos reales
 - [ ] Probar filtros de movimientos por mes/categoría/tipo
+- [ ] Probar persistencia: recargar y verificar datos conservados
+- [ ] Probar IA: "¿cuánto gasté en mercancía este mes?"
+- [ ] Probar responsive: móvil, tablet, escritorio
+

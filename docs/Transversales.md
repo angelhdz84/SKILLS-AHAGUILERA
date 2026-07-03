@@ -1,6 +1,6 @@
-# ✅ Corrección: 14 Apps AHA organizadas en Verticales
+# ✅ Corrección: 15 Apps AHA organizadas en Verticales
 
-Tienes razón, son **14 apps**. Las dos adicionales son **AHA Gastos** y **AHA Contactos** (las que sugerí integrar). Aquí está la organización completa y corregida:
+Tienes razón, son **15 apps** (14 de negocio + AHA Base como template de desarrollo). Las dos adicionales son **AHA Gastos** y **AHA Contactos** (las que sugerí integrar). Aquí está la organización completa y corregida:
 
 ---
 
@@ -173,7 +173,7 @@ Tienes razón, son **14 apps**. Las dos adicionales son **AHA Gastos** y **AHA C
 
 ---
 
-## 🎯 Plan de Construcción Actualizado (con 14 apps)
+## 🎯 Plan de Construcción Actualizado (con 15 apps)
 
 ### **Fase 1 (Semanas 1-4): Apps Transversales + Verticales 1-3**
 - ✅ **AHA Gastos** (transversal, construye primero)

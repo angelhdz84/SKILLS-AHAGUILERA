@@ -97,3 +97,6 @@ y dar seguimiento a clientes. ¿AHA Contactos con recordatorios?
 - [ ] Probar notificación de recordatorio al abrir app
 - [ ] Probar export CSV con contactos de prueba
 - [ ] Probar búsqueda por nombre y teléfono
+- [ ] Probar filtro por etiqueta (prospecto/cliente/VIP/inactivo)
+- [ ] Probar persistencia: recargar y verificar contactos conservados
+

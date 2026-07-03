@@ -19,9 +19,9 @@
 
 ## ia
 
-**Archivo:** `ia-jutia/templates/full/core/ia.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-core.js`
 
-core/ia.js — IA Jutia Full: FlexSearch + Estadisticas + Predicciones + Orquestacion
+ia-core.js — IA Jutia Core Plugin: FlexSearch + Estadisticas + Chat + Predicciones + Orquestacion
 
 ### Dependencias
 
@@ -50,9 +50,9 @@ core/ia.js — IA Jutia Full: FlexSearch + Estadisticas + Predicciones + Orquest
 
 ## ia
 
-**Archivo:** `ia-jutia/templates/lite/core/ia.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-core.js`
 
-core/ia.js â€” IA Jutia Lite: FlexSearch + EstadÃ­sticas + Predicciones
+ia-core.js — IA Jutia Core Plugin (perfil lite): FlexSearch + Estadisticas + Predicciones
 
 ### Dependencias
 
@@ -63,9 +63,9 @@ core/ia.js â€” IA Jutia Lite: FlexSearch + EstadÃ­sticas + Predicciones
 
 ## ia-chat
 
-**Archivo:** `ia-jutia/templates/full/core/ia-chat.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-chat.js`
 
-core/ia-chat.js — IA Jutia Chat v0.3 (Full) Extiende Lite: fusión de consultas BD + QA sobre documentos
+ia-chat.js — IA Jutia Chat Plugin: Chat conversacional con consultas BD + FlexSearch fallback
 
 ### Dependencias
 
@@ -76,9 +76,9 @@ core/ia-chat.js — IA Jutia Chat v0.3 (Full) Extiende Lite: fusión de consulta
 
 ## ia-chat
 
-**Archivo:** `ia-jutia/templates/lite/core/ia-chat.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-chat.js`
 
-core/ia-chat.js — IA Jutia Chat v0.3 Motor de chat conversacional con consultas a BD + FlexSearch fallback
+ia-chat.js — IA Jutia Chat Plugin (perfil lite): Chat conversacional con consultas a BD + FlexSearch fallback
 
 ### Dependencias
 
@@ -92,9 +92,9 @@ core/ia-chat.js — IA Jutia Chat v0.3 Motor de chat conversacional con consulta
 
 ## ia-ingest
 
-**Archivo:** `ia-jutia/templates/full/core/ia-ingest.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-core.js`
 
-core/ia-ingest.js — IA Jutia Full: Ingesta documentos + QA
+ia-core.js — IA Jutia Core Plugin (perfil full): Ingesta documentos + QA (funciones integradas)
 
 ### Dependencias
 
@@ -121,9 +121,9 @@ core/ia-ingest.js — IA Jutia Full: Ingesta documentos + QA
 
 ## ia-jutia
 
-**Archivo:** `ia-jutia/templates/full/modules/ia-jutia/module.js`
+**Archivo:** `ia-jutia/templates/plugin/module.js`
 
-modules/ia-jutia/module.js — IA Jutia (Full) v0.3 Busqueda + Ingesta documentos + Chat QA + Predicciones
+module.js — IA Jutia Plugin Module (perfil full): Busqueda + Ingesta documentos + Chat QA + Predicciones
 
 ### Dependencias
 
@@ -135,9 +135,9 @@ modules/ia-jutia/module.js — IA Jutia (Full) v0.3 Busqueda + Ingesta documento
 
 ## ia-jutia
 
-**Archivo:** `ia-jutia/templates/lite/modules/ia-jutia/module.js`
+**Archivo:** `ia-jutia/templates/plugin/module.js`
 
-modules/ia-jutia/module.js — IA Jutia (Lite) v0.3 Busqueda inteligente + Chat conversacional + estadisticas + predicciones
+module.js — IA Jutia Plugin Module (perfil lite): Busqueda inteligente + Chat conversacional + estadisticas + predicciones
 
 ### Dependencias
 
@@ -204,9 +204,9 @@ v0.2 — L3 Export stats PDF
 
 ## ia-sqlite
 
-**Archivo:** `ia-jutia/templates/full/core/ia-sqlite.js`
+**Archivo:** `ia-jutia/templates/archived/full/core/ia-sqlite.js`
 
-core/ia-sqlite.js — SQLite con FTS5 para IA Jutia (sql.js WASM)
+ia-sqlite.js — SQLite con FTS5 para IA Jutia (sql.js WASM) [ARCHIVED: funcionalidad integrada en ia-core.js]
 
 ### Dependencias
 
@@ -223,17 +223,17 @@ core/ia-sqlite.js — SQLite con FTS5 para IA Jutia (sql.js WASM)
 
 ## ia-worker
 
-**Archivo:** `ia-jutia/templates/full/core/ia-worker.js`
+**Archivo:** `ia-jutia/templates/archived/full/core/ia-worker.js`
 
-core/ia-worker.js — Transformers.js en Web Worker + q4 quantization Cargado como: new Worker('core/ia-worker.js')
+ia-worker.js — Transformers.js en Web Worker + q4 quantization [ARCHIVED: funcionalidad integrada en ia-core.js]
 
 ---
 
 ## ia-worker
 
-**Archivo:** `ia-jutia/templates/lite/core/ia-worker.js`
+**Archivo:** `ia-jutia/templates/archived/lite/core/ia-worker.js`
 
-FLEXSEARCH_SOURCE debe ser reemplazado con el contenido real de flexsearch.min.js durante build El build inlinea FlexSearch antes que este codigo en el Blob URL
+ia-worker.js — [ARCHIVED: funcionalidad integrada en ia-core.js]
 
 ---
 

@@ -1,0 +1,99 @@
+<div x-data="[ID]_stepper()" x-init="init()" class="space-y-6">
+  <div class="relative">
+    <div class="absolute top-5 left-0 right-0 h-0.5 bg-base-300 -z-0" :style="{ background: `linear-gradient(to right, var(--p) ${progress}%, var(--b3) ${progress}%)` }"></div>
+    <div class="flex justify-between relative z-10">
+      <template x-for="(step, i) in steps" :key="i">
+        <div class="flex flex-col items-center cursor-pointer" @click="goTo(i)">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300"
+               :class="i < current ? 'bg-primary text-primary-content border-primary' : i === current ? 'bg-primary/10 text-primary border-primary' : 'bg-base-100 text-base-content/30 border-base-300'">
+            <i x-show="i < current" class="bi bi-check-lg text-lg"></i>
+            <span x-show="i >= current" x-text="i + 1"></span>
+          </div>
+          <span class="text-xs mt-2 text-center max-w-[80px] leading-tight"
+                :class="i <= current ? 'font-medium text-base-content' : 'text-base-content/30'"
+                x-text="step.label">
+          </span>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div class="p-6 bg-base-100 border border-base-300 rounded-2xl shadow-sm min-h-[200px]">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="badge badge-primary badge-sm" x-text="'Paso ' + (current + 1) + ' de ' + steps.length"></span>
+      <h4 class="font-semibold text-lg" x-text="steps[current]?.label"></h4>
+    </div>
+    <p class="text-sm text-base-content/60 leading-relaxed" x-text="steps[current]?.description"></p>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <button @click="prev()" :disabled="current === 0" class="btn btn-ghost" :class="current === 0 ? 'btn-disabled' : ''">
+      <i class="bi bi-arrow-left"></i> Anterior
+    </button>
+    <div class="flex items-center gap-2 text-xs text-base-content/40">
+      <span x-text="'Completado: ' + Math.round(progress) + '%'"></span>
+    </div>
+    <button @click="next()" class="btn btn-primary" :class="current === steps.length - 1 ? 'btn-success' : ''">
+      <span x-text="current === steps.length - 1 ? 'Finalizar' : 'Siguiente'"></span>
+      <i x-show="current < steps.length - 1" class="bi bi-arrow-right"></i>
+      <i x-show="current === steps.length - 1" class="bi bi-check-lg"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+function [ID]_stepper() {
+  const DEFAULT_STEPS = [
+    { label: 'Información', description: '[STEP_1_DESC]' },
+    { label: 'Configuración', description: '[STEP_2_DESC]' },
+    { label: 'Revisión', description: '[STEP_3_DESC]' },
+    { label: 'Finalizar', description: '[STEP_4_DESC]' }
+  ]
+
+  return {
+    steps: [],
+    current: 0,
+
+    init() {
+      this.steps = DEFAULT_STEPS
+      this.load()
+    },
+
+    get progress() {
+      return this.steps.length > 1 ? (this.current / (this.steps.length - 1)) * 100 : 100
+    },
+
+    goTo(i) {
+      if (i >= 0 && i < this.steps.length) {
+        this.current = i
+        this.save()
+      }
+    },
+
+    next() {
+      if (this.current < this.steps.length - 1) {
+        this.current++
+        this.save()
+      }
+    },
+
+    prev() {
+      if (this.current > 0) {
+        this.current--
+        this.save()
+      }
+    },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s !== null) this.current = parseInt(s) || 0
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', String(this.current)) } catch {}
+    }
+  }
+}
+</script>

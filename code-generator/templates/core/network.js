@@ -1,8 +1,8 @@
 // network.js — Monitoreo de conectividad offline-first
 // window.network expuesto globalmente
-// Alpine store: $store.network.online
+// Alpine store instanciado en alpine:init para evitar $store undefined
 // Evento: connection-change con detail.online
-// Banner offline automático via Alpine store
+// Banner offline automatico via Alpine store
 // Dependencias: Alpine.js
 
 (function () {
@@ -13,33 +13,48 @@
   window.network = {
     online: navigator.onLine,
 
-    init() {
-      window.addEventListener('online', () => this._setStatus(true));
-      window.addEventListener('offline', () => this._setStatus(false));
-      this._setStore();
+    init: function () {
+      var self = this;
+      window.addEventListener('online', function () { self._setStatus(true); });
+      window.addEventListener('offline', function () { self._setStatus(false); });
+
+      if (typeof Alpine !== 'undefined' && Alpine.store && !Alpine.store('network')) {
+        Alpine.store('network', { online: navigator.onLine, showBanner: false });
+      }
+      this._startPing();
     },
 
-    _setStatus(status) {
+    _setStatus: function (status) {
       this.online = status;
       this._notify();
     },
 
-    _notify() {
-      const evt = new CustomEvent('connection-change', {
+    _notify: function () {
+      var evt = new CustomEvent('connection-change', {
         detail: { online: this.online }
       });
       window.dispatchEvent(evt);
       this._setStore();
     },
 
-    _setStore() {
+    _setStore: function () {
       if (typeof Alpine !== 'undefined' && Alpine.store) {
-        Alpine.store('network', { online: this.online });
+        Alpine.store('network', { online: this.online, showBanner: !this.online });
       }
+    },
+
+    _startPing: function () {
+      var self = this;
+      setInterval(function () {
+        var img = new Image();
+        img.onload = function () { if (!self.online) self._setStatus(true); };
+        img.onerror = function () { if (self.online) self._setStatus(false); };
+        img.src = './favicon.ico?_t=' + Date.now();
+      }, 30000);
     }
   };
 
-  document.addEventListener('alpine:init', () => {
+  document.addEventListener('alpine:init', function () {
     Alpine.store('network', {
       online: navigator.onLine,
       showBanner: false

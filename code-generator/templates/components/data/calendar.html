@@ -1,0 +1,135 @@
+<div x-data="[ID]_calendar()" x-init="init()" class="min-w-[300px]">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-calendar-event"></i> [TITLE]</h3>
+    <div class="flex items-center gap-1">
+      <button @click="prevYear()" class="btn btn-ghost btn-xs btn-square"><i class="bi bi-chevron-double-left"></i></button>
+      <button @click="prevMonth()" class="btn btn-ghost btn-xs btn-square"><i class="bi bi-chevron-left"></i></button>
+      <span class="font-semibold text-sm w-32 text-center" x-text="monthLabel"></span>
+      <button @click="nextMonth()" class="btn btn-ghost btn-xs btn-square"><i class="bi bi-chevron-right"></i></button>
+      <button @click="nextYear()" class="btn btn-ghost btn-xs btn-square"><i class="bi bi-chevron-double-right"></i></button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-7 gap-0.5">
+    <template x-for="d in dayHeaders" :key="d">
+      <span class="text-xs font-medium text-base-content/40 text-center py-1" x-text="d"></span>
+    </template>
+    <template x-for="(day, i) in days" :key="i">
+      <button @click="selectDay(day)"
+              :disabled="!day"
+              class="btn btn-ghost rounded-lg p-0 h-10 min-h-0 text-sm flex-col items-center justify-center disabled:opacity-0 disabled:cursor-default relative gap-0"
+              :class="selectedDay(day) ? 'bg-primary/20 text-primary font-bold' : ''">
+        <span x-text="day || ''"></span>
+        <div x-show="day && hasEvent(day)" class="flex gap-0.5 mt-0.5">
+          <span class="w-1 h-1 rounded-full bg-error"></span>
+          <span x-show="eventCount(day) > 1" class="w-1 h-1 rounded-full bg-warning"></span>
+        </div>
+      </button>
+    </template>
+  </div>
+
+  <div x-show="selectedDate" class="mt-4 p-3 bg-base-200/70 rounded-xl">
+    <p class="text-sm font-semibold mb-2" x-text="selectedDate.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })"></p>
+    <template x-if="dayEvents.length">
+      <div class="space-y-1">
+        <template x-for="ev in dayEvents" :key="ev.id">
+          <div class="flex items-center gap-2 p-2 bg-base-100 rounded-lg border border-base-300">
+            <span class="w-2 h-2 rounded-full shrink-0" :style="'background:' + (ev.color || '#3b82f6')"></span>
+            <span class="flex-1 text-sm" x-text="ev.title"></span>
+            <span x-show="ev.time" class="text-xs text-base-content/40" x-text="ev.time"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+    <p x-show="!dayEvents.length" class="text-xs text-base-content/40 text-center py-2">Sin eventos este día</p>
+  </div>
+</div>
+
+<script>
+function [ID]_calendar() {
+  return {
+    year: 0,
+    month: 0,
+    selectedDate: null,
+    events: [],
+    dayHeaders: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
+
+    init() {
+      const now = new Date()
+      this.year = now.getFullYear()
+      this.month = now.getMonth()
+      this.load()
+    },
+
+    get monthLabel() {
+      return new Date(this.year, this.month).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })
+    },
+
+    get days() {
+      const first = new Date(this.year, this.month, 1).getDay()
+      const total = new Date(this.year, this.month + 1, 0).getDate()
+      const grid = []
+      for (let i = 0; i < first; i++) grid.push(null)
+      for (let d = 1; d <= total; d++) grid.push(d)
+      while (grid.length % 7) grid.push(null)
+      return grid
+    },
+
+    hasEvent(day) {
+      if (!day) return false
+      return this.events.some(e => {
+        const d = new Date(e.date)
+        return d.getFullYear() === this.year && d.getMonth() === this.month && d.getDate() === day
+      })
+    },
+
+    eventCount(day) {
+      if (!day) return 0
+      return this.events.filter(e => {
+        const d = new Date(e.date)
+        return d.getFullYear() === this.year && d.getMonth() === this.month && d.getDate() === day
+      }).length
+    },
+
+    get dayEvents() {
+      if (!this.selectedDate) return []
+      return this.events.filter(e => {
+        const d = new Date(e.date)
+        return d.toDateString() === this.selectedDate.toDateString()
+      })
+    },
+
+    selectedDay(day) {
+      if (!day || !this.selectedDate) return false
+      return this.selectedDate.getFullYear() === this.year && this.selectedDate.getMonth() === this.month && this.selectedDate.getDate() === day
+    },
+
+    selectDay(day) {
+      if (day) this.selectedDate = new Date(this.year, this.month, day)
+    },
+
+    prevMonth() { this.month--; if (this.month < 0) { this.month = 11; this.year-- } },
+    nextMonth() { this.month++; if (this.month > 11) { this.month = 0; this.year++ } },
+    prevYear() { this.year-- },
+    nextYear() { this.year++ },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s) {
+          const data = JSON.parse(s)
+          this.events = data.events || []
+          if (data.selected) this.selectedDate = new Date(data.selected)
+        }
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify({
+        events: this.events,
+        selected: this.selectedDate?.toISOString()
+      })) } catch {}
+    }
+  }
+}
+</script>

@@ -1,0 +1,227 @@
+<div x-data="[ID]FormWizard()" x-init="init()" class="max-w-4xl mx-auto">
+  <div class="flex items-center gap-4 mb-6">
+    <button class="btn btn-ghost btn-sm" @click="cancelar">
+      <i class="bi bi-arrow-left"></i> Volver
+    </button>
+    <h2 class="text-2xl font-bold" x-text="editando ? 'Editar [TITLE]' : 'Nuevo [TITLE]'"></h2>
+  </div>
+
+  <ul class="steps steps-horizontal mb-8 w-full overflow-x-auto">
+    <template x-for="(step, i) in pasos" :key="i">
+      <li class="step cursor-pointer" @click="irAPaso(i)"
+          :class="{ 'step-primary': i <= pasoActual, 'font-medium': i === pasoActual }"
+          x-text="step.titulo"></li>
+    </template>
+  </ul>
+
+  <div class="card bg-base-100 border border-base-300 shadow-sm">
+    <div class="card-body">
+      <template x-for="(step, i) in pasos" :key="i">
+        <div x-show="i === pasoActual" class="animate__animated animate__fadeIn">
+          <h3 class="text-lg font-semibold mb-1" x-text="step.titulo"></h3>
+          <p class="text-sm text-base-content/60 mb-6" x-text="step.descripcion"></p>
+          <div class="space-y-4">
+            <template x-for="field in step.campos" :key="field.name">
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text" x-text="field.label"></span>
+                  <span x-show="field.required" class="text-error">*</span>
+                </div>
+                <input x-model="form[field.name]" :type="field.type || 'text'"
+                       class="input input-bordered w-full" :required="field.required" />
+                <div class="label" x-show="errores[field.name]">
+                  <span class="label-text-alt text-error" x-text="errores[field.name]"></span>
+                </div>
+              </label>
+            </template>
+
+            <template x-if="step.repeater">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium" x-text="step.repeater.label"></span>
+                  <button class="btn btn-sm btn-ghost" @click="agregarItem(step.repeater.name)">
+                    <i class="bi bi-plus-lg"></i> Agregar
+                  </button>
+                </div>
+                <template x-for="(item, idx) in form[step.repeater.name]" :key="idx">
+                  <div class="flex gap-2 items-start mb-2 p-3 bg-base-200 rounded-box">
+                    <template x-for="rf in step.repeater.fields" :key="rf.name">
+                      <label class="form-control flex-1">
+                        <span class="label-text text-xs" x-text="rf.label"></span>
+                        <input x-model="item[rf.name]" :type="rf.type || 'text'"
+                               class="input input-bordered input-sm w-full" />
+                      </label>
+                    </template>
+                    <button class="btn btn-ghost btn-xs btn-square mt-6 text-error" @click="quitarItem(step.repeater.name, idx)">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <div class="flex justify-between mt-8 pt-4 border-t border-base-300">
+        <div>
+          <button class="btn btn-ghost" @click="anterior" :disabled="pasoActual === 0">
+            <i class="bi bi-chevron-left"></i> Anterior
+          </button>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-xs text-base-content/40 self-center">
+            Paso <span x-text="pasoActual + 1"></span> de <span x-text="pasos.length"></span>
+          </span>
+          <button class="btn btn-ghost" @click="guardarBorrador" :disabled="guardando">
+            <i class="bi bi-save"></i> Guardar borrador
+          </button>
+          <template x-if="pasoActual < pasos.length - 1">
+            <button class="btn btn-primary" @click="siguiente" :disabled="guardando">
+              Siguiente <i class="bi bi-chevron-right"></i>
+            </button>
+          </template>
+          <template x-if="pasoActual === pasos.length - 1">
+            <button class="btn btn-primary" @click="submit" :disabled="guardando">
+              <i class="bi bi-check2" :class="{ 'animate-spin': guardando }"></i>
+              <span x-text="guardando ? 'Guardando...' : 'Guardar'"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function [ID]FormWizard() {
+  return {
+    pasoActual: 0,
+    editando: false,
+    editandoId: null,
+    guardando: false,
+    form: {},
+    errores: {},
+    pasos: [],
+
+    init() {
+      this.pasos = [PASOS];
+      this.form = [FORM_DEFAULTS];
+      const hash = window.location.hash;
+      if (hash && hash !== '#/[ID]') {
+        this.editando = true;
+        this.editandoId = hash.split('/').pop();
+        this.cargarDatos(this.editandoId);
+      }
+      this.restaurarBorrador();
+    },
+
+    get avanzando() {
+      return this.pasoActual < this.pasos.length - 1;
+    },
+
+    siguiente() {
+      if (this.validarPaso(this.pasoActual)) {
+        this.guardarBorrador();
+        this.pasoActual++;
+      }
+    },
+
+    anterior() {
+      if (this.pasoActual > 0) this.pasoActual--;
+    },
+
+    irAPaso(idx) {
+      if (idx < this.pasoActual) this.pasoActual = idx;
+    },
+
+    validarPaso(idx) {
+      const paso = this.pasos[idx];
+      if (!paso) return true;
+      this.errores = {};
+      let valido = true;
+      paso.campos.forEach(field => {
+        if (field.required && !this.form[field.name]) {
+          this.errores[field.name] = `${field.label} es requerido`;
+          valido = false;
+        }
+        if (field.validation && !field.validation(this.form[field.name])) {
+          this.errores[field.name] = field.validation.message || 'Valor inválido';
+          valido = false;
+        }
+      });
+      return valido;
+    },
+
+    async guardarBorrador() {
+      try {
+        const key = `draft_[ID]`;
+        const data = { form: this.form, paso: this.pasoActual, updatedAt: Date.now() };
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        // localStorage quota exceeded, silently discard
+      }
+    },
+
+    restaurarBorrador() {
+      if (this.editando) return;
+      try {
+        const key = `draft_[ID]`;
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const data = JSON.parse(raw);
+          const edad = Date.now() - data.updatedAt;
+          if (edad < 86400000) {
+            Object.assign(this.form, data.form);
+            this.pasoActual = data.paso || 0;
+          } else {
+            localStorage.removeItem(key);
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    },
+
+    async cargarDatos(id) {
+      // Subagent: implementar carga según DB
+    },
+
+    agregarItem(name) {
+      if (!this.form[name]) this.form[name] = [];
+      const paso = this.pasos.find(p => p.repeater?.name === name);
+      const defaults = {};
+      (paso?.repeater?.fields || []).forEach(f => defaults[f.name] = '');
+      this.form[name].push(defaults);
+    },
+
+    quitarItem(name, idx) {
+      this.form[name].splice(idx, 1);
+    },
+
+    async submit() {
+      if (!this.validarPaso(this.pasoActual)) return;
+      this.guardando = true;
+      try {
+        if (this.editando) {
+          await window.MODULES['[ID]'].actualizar(this.editandoId, this.form);
+          UI.toast('[TITLE] actualizado', 'success');
+        } else {
+          await window.MODULES['[ID]'].guardar(this.form);
+          UI.toast('[TITLE] creado', 'success');
+        }
+        localStorage.removeItem(`draft_[ID]`);
+        window.appRouter.navigate('[ID]');
+      } catch (err) {
+        UI.toast(err.message || 'Error al guardar', 'error');
+      } finally {
+        this.guardando = false;
+      }
+    },
+
+    cancelar() {
+      window.appRouter.navigate('[ID]');
+    }
+  };
+}
+</script>

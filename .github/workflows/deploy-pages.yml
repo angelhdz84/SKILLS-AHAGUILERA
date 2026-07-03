@@ -26,6 +26,8 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci || npm install
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
       - name: Run Python tests (Playwright)
         run: |
           cd tests

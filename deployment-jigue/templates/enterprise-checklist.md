@@ -7,6 +7,14 @@
 
 ---
 
+## 0. White-Label habilitado
+
+- [ ] `brand.config.json` generado (o creado desde el panel de branding)
+- [ ] `core/brand-loader.js` incluido en el build
+- [ ] `core/feature-flags.js` incluido en el build
+- [ ] Colores, logo y nombre de cliente verificados en la UI
+- [ ] Archivo de licencia `.aha` con `canWhiteLabel: true`
+
 ## 1. Branding aplicado
 
 - [ ] Nombre de app reemplazado en `project.config.js`

@@ -12,12 +12,12 @@
   function showToast(msg, tipo, duracion) {
     tipo = tipo || 'info';
     duracion = duracion || 4000;
-    const colors = { success: 'alert-success', error: 'alert-error', warning: 'alert-warning', info: 'alert-info' };
-    const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' };
-    const container = document.getElementById('toast-container');
+    var colors = { success: 'alert-success', error: 'alert-error', warning: 'alert-warning', info: 'alert-info' };
+    var icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' };
+    var container = document.getElementById('toast-container');
     if (!container) return;
 
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.setAttribute('role', 'alert');
     el.className = 'alert ' + (colors[tipo] || 'alert-info') + ' shadow-lg animate__animated animate__fadeInRight';
     el.innerHTML = '<i class="bi ' + (icons[tipo] || icons.info) + '"></i><span>' + msg + '</span>';
@@ -110,16 +110,16 @@
       init: function () { this.form = window._modalFormData || {}; },
       validate: function () {
         this.errors = {};
-        return keys(this.errors).length === 0;
+        return Object.keys(this.errors).length === 0;
       }
     };
 
-    dialog.querySelector('[data-save]').addEventListener('click', async function () {
+    dialog.querySelector('[data-save]').addEventListener('click', function () {
       var saveBtn = this;
       saveBtn.disabled = true;
       saveBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> Guardando...';
-      try {
-        await onSave(window.formData.form);
+
+      function doCleanup() {
         if (typeof window.FocusTrap !== 'undefined' && window.FocusTrap.release) {
           window.FocusTrap.release();
         }
@@ -129,11 +129,28 @@
           delete window.formData;
           delete window._modalFormData;
         }, 200);
-      } catch (e) {
-        showToast(e.message || 'Error al guardar', 'error');
       }
-      saveBtn.disabled = false;
-      saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Guardar';
+
+      function doFinally() {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Guardar';
+      }
+
+      try {
+        var promise = onSave(window.formData.form);
+        if (promise && typeof promise.then === 'function') {
+          promise.then(function () { doCleanup(); doFinally(); }, function (e) {
+            showToast(e && e.message || 'Error al guardar', 'error');
+            doFinally();
+          });
+        } else {
+          doCleanup();
+          doFinally();
+        }
+      } catch (e) {
+        showToast(e && e.message || 'Error al guardar', 'error');
+        doFinally();
+      }
     });
 
     var cancels = dialog.querySelectorAll('[data-cancel]');
@@ -265,19 +282,21 @@
     return path;
   }
 
-  async function avatarToDataUri(url) {
+  function avatarToDataUri(url) {
     if (!url) return avatarDefault();
     try {
       if (url.startsWith('data:')) return url;
       if (url.startsWith('blob:')) return url;
-      var resp = await fetch(url);
-      if (!resp.ok) return avatarDefault();
-      var blob = await resp.blob();
-      return new Promise(function (resolve) {
-        var reader = new FileReader();
-        reader.onload = function () { resolve(reader.result); };
-        reader.onerror = function () { resolve(avatarDefault()); };
-        reader.readAsDataURL(blob);
+      return fetch(url).then(function (resp) {
+        if (!resp.ok) return avatarDefault();
+        return resp.blob().then(function (blob) {
+          return new Promise(function (resolve) {
+            var reader = new FileReader();
+            reader.onload = function () { resolve(reader.result); };
+            reader.onerror = function () { resolve(avatarDefault()); };
+            reader.readAsDataURL(blob);
+          });
+        });
       });
     } catch (e) {
       return avatarDefault();

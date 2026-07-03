@@ -1,4 +1,5 @@
 ---
+<!-- Archived — reemplazado por validation-engine -->
 # @deprecated — Reemplazado por validation-engine
 # Motivo: Fusión validation-offline + ux-refactor + omd:designer-review + omd:final-qa en validation-engine
 # Migración: Usar `/test` o `/validate` que activan validation-engine
@@ -30,7 +31,7 @@ meta:
 ### 🟢 FASE 1: Verificación de Prerequisitos
 1. Comprueba existencia de:
    - `index.html`, `project.config.js`, `AGENTS.md`
-   - `specs/[nombre-app].md` (si no existe, activa `spec-creator`)
+    - `specs/[nombre-app].md` (si no existe, activa `spec-engine`)
    - Carpetas: `core/`, `modules/`, `assets/`, `docs/`
 2. Si falta algo: `⚠️ Ejecuta primero: setup → definir spec app → generar código`
 3. Si todo existe: `✅ Contexto cargado. Iniciando validación.`
@@ -95,7 +96,7 @@ Como OpenCode no ejecuta navegadores, **entrega estos comandos listos para pegar
 📝 Responde con: "1✅ 2✅ 3✅ 4❌ error... 5✅"
 ```
 
-### 🟠 FASE 3.5: Validación de Diseño/UX (Automática con design-ux-intelligence)
+### 🟠 FASE 3.5: Validación de Diseño/UX (Automática con design-engine)
 ```
 [▓▓▓▓▓▓▓░░░░░░░░░] 70% • Validación de Diseño/UX
 🎨 Verificando checklist UX crítico...
@@ -469,12 +470,12 @@ const paciente = { email: cryptoHelpers.encrypt(inputEmail.value) };
   🛡️ Validando contra @AGENTS.md... → 12/12 checks passed
   ```
 
-### Con `design-ux-intelligence.md`:
+### Con `design-engine`:
 - Activar automáticamente en Fase 3.5 para checklist de diseño/UX
 - Si hay FAILs de diseño, sugerir correcciones con snippets exactos
 
-### Con `spec-creator.md`:
-- Si no existe `specs/[app].md`, activar automáticamente `spec-creator` con la historia detectada en `project.config.js`
+### Con `spec-engine`:
+- Si no existe `specs/[app].md`, activar automáticamente `spec-engine` con la historia detectada en `project.config.js`
 
 ---
 

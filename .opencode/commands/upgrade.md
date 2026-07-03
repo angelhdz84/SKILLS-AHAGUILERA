@@ -1,3 +1,7 @@
+---
+name: /upgrade
+---
+
 # /upgrade
 
 Migra una app Ateje entre perfiles Lite/Professional/Business e IA Lite/Full.

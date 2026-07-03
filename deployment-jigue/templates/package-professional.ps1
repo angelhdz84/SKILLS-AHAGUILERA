@@ -1,7 +1,7 @@
 ﻿# deployment-jigue/templates/package-professional.ps1
-# Empaqueta app perfil Professional: Neutralino .exe + Fixed WebView2 stripped
+# Empaqueta app perfil Professional: Neutralino .exe + Fixed WebView2 stripped + .apk (Capacitor)
 # Uso: .\deployment-jigue\templates\package-professional.ps1 -AppName "MiApp"
-# Requiere: neu CLI, tools/WebView2-Fixed/
+# Requiere: neu CLI, tools/WebView2-Fixed/, (opcional) JDK 17+ y Android SDK para .apk
 
 param(
     [Parameter(Mandatory)]
@@ -9,7 +9,9 @@ param(
 
     [string]$Version = "1.0.0",
 
-    [switch]$Ofuscar = $true
+    [switch]$Ofuscar = $true,
+
+    [switch]$SkipApk = $false
 )
 
 $ErrorActionPreference = 'Stop'
@@ -102,7 +104,7 @@ if (Test-Path $wvSource) {
 
 # Paso 5: Limpiar WebView2
 Write-Host ""
-Write-Host "[5/6] Limpiando WebView2 (stripping)..." -ForegroundColor Yellow
+Write-Host "[5/7] Limpiando WebView2 (stripping)..." -ForegroundColor Yellow
 if (Test-Path $wvDest) {
     & "$scriptDir\clean-webview2.ps1" -WebView2Path $wvDest
     Write-Host "  [+] WebView2 stripped" -ForegroundColor Green
@@ -110,9 +112,63 @@ if (Test-Path $wvDest) {
     Write-Host "  [-] No hay WebView2 que limpiar" -ForegroundColor Gray
 }
 
-# Paso 6: Armar carpeta final y comprimir
+# Paso 6: Compilar .apk (Capacitor) si aplica
+if (-not $SkipApk) {
+    Write-Host ""
+    Write-Host "[6/7] Compilando .apk con Capacitor..." -ForegroundColor Yellow
+
+    if (-not (Get-Command "npx" -ErrorAction SilentlyContinue)) {
+        Write-Host "  [-] npx no disponible, saltando .apk" -ForegroundColor Yellow
+    } else {
+        Set-Location $rootDir
+
+        if (-not (Test-Path "capacitor.config.json")) {
+            Write-Host "  Generando capacitor.config.json..." -ForegroundColor Yellow
+            @"
+{
+  "appId": "com.$AppName.app",
+  "appName": "$AppName",
+  "webDir": ".",
+  "plugins": {
+    "CapacitorSQLite": { "androidIsEncrypted": false },
+    "LocalNotifications": { "smallIcon": "ic_stat_icon_config_sample", "iconColor": "#1e3a5f" }
+  },
+  "android": {
+    "minSdkVersion": 26,
+    "targetSdkVersion": 34,
+    "compileSdkVersion": 34
+  }
+}
+"@ | Set-Content "capacitor.config.json" -Encoding UTF8
+        }
+
+        npx cap sync android
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "  [-] cap sync fallo, saltando .apk" -ForegroundColor Yellow
+        } else {
+            if (Test-Path "$rootDir\android") {
+                Set-Location "$rootDir\android"
+                .\gradlew assembleRelease
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Host "  [-] gradlew assembleRelease fallo" -ForegroundColor Yellow
+                } else {
+                    $apkSource = "$rootDir\android\app\build\outputs\apk\release\app-release.apk"
+                    if (Test-Path $apkSource) {
+                        Copy-Item $apkSource -Destination "$stagingDir\$AppName\$AppName.apk" -Force
+                        Write-Host "  [+] .apk generado: $([math]::Round((Get-Item $apkSource).Length / 1MB, 1)) MB" -ForegroundColor Green
+                    }
+                }
+                Set-Location $rootDir
+            } else {
+                Write-Host "  [-] android/ no existe, ejecuta 'npx cap add android' primero" -ForegroundColor Yellow
+            }
+        }
+    }
+}
+
+# Paso 7: Armar carpeta final y comprimir
 Write-Host ""
-Write-Host "[6/6] Generando entregable..." -ForegroundColor Yellow
+Write-Host "[7/7] Generando entregable..." -ForegroundColor Yellow
 if (Test-Path $outputDir) {
     Remove-Item $outputDir -Recurse -Force
 }
@@ -140,6 +196,9 @@ Write-Host "  $AppName/" -ForegroundColor Gray
 Write-Host "    +-- $AppName.exe" -ForegroundColor Gray
 Write-Host "    +-- resources.neu" -ForegroundColor Gray
 Write-Host "    +-- WebView2/ (stripped)" -ForegroundColor Gray
+if (-not $SkipApk) {
+    Write-Host "    +-- $AppName.apk" -ForegroundColor Gray
+}
 Write-Host "    +-- favicon.ico" -ForegroundColor Gray
 Write-Host "    +-- LEEME.txt" -ForegroundColor Gray
 Write-Host "====================================================" -ForegroundColor Cyan

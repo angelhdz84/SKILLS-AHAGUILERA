@@ -1,0 +1,125 @@
+<aside x-data="[ID]Sidebar()" x-init="init()"
+       class="fixed top-0 left-0 z-40 h-screen transition-all duration-300 bg-base-200 border-r border-base-300 flex flex-col"
+       :class="colapsado ? 'w-16' : 'w-64'">
+
+  <div class="flex items-center h-16 px-4 border-b border-base-300 shrink-0">
+    <div class="flex items-center gap-3 overflow-hidden" :class="colapsado ? 'justify-center w-full' : ''">
+      <div class="avatar placeholder">
+        <div class="w-8 rounded-lg bg-primary text-primary-content text-xs font-bold">
+          <span>[LOGO]</span>
+        </div>
+      </div>
+      <div x-show="!colapsado" class="truncate">
+        <div class="font-semibold text-sm truncate">[APP_NAME]</div>
+        <div class="text-[10px] text-base-content/40 leading-tight truncate" x-show="plan">[PLAN]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto overflow-x-hidden py-2 scrollbar-thin" x-data="{ active: '' }">
+    <template x-for="mod in modulos" :key="mod.id">
+      <template x-if="!mod.children">
+        <a href="#/[ID]/" @click.prevent="navegar(mod.id)"
+           class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors cursor-pointer"
+           :class="active === mod.id ? 'bg-primary text-primary-content' : 'hover:bg-base-300 text-base-content/70 hover:text-base-content'">
+          <i :class="mod.icono" class="text-lg shrink-0 w-6 text-center"></i>
+          <span x-show="!colapsado" class="text-sm truncate" x-text="mod.titulo"></span>
+        </a>
+      </template>
+      <template x-if="mod.children">
+        <div>
+          <div @click="toggleGroup(mod.id)"
+               class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg cursor-pointer transition-colors"
+               :class="activeGroup === mod.id ? 'bg-base-300' : 'hover:bg-base-300'">
+            <i :class="mod.icono" class="text-lg shrink-0 w-6 text-center text-base-content/70"></i>
+            <span x-show="!colapsado" class="text-sm flex-1 truncate text-base-content/70" x-text="mod.titulo"></span>
+            <i x-show="!colapsado" class="bi bi-chevron-down text-xs transition-transform"
+               :class="{ 'rotate-180': openGroups.includes(mod.id) }"></i>
+          </div>
+          <div x-show="openGroups.includes(mod.id) && !colapsado" class="animate__animated animate__fadeIn">
+            <template x-for="child in mod.children" :key="child.id">
+              <a href="#/[ID]/" @click.prevent="navegar(child.id)"
+                 class="flex items-center gap-3 pl-10 pr-4 py-2 mx-2 rounded-lg transition-colors cursor-pointer"
+                 :class="active === child.id ? 'bg-primary/10 text-primary' : 'hover:bg-base-300 text-base-content/60'">
+                <i :class="child.icono" class="text-base shrink-0 w-5 text-center"></i>
+                <span class="text-sm truncate" x-text="child.titulo"></span>
+              </a>
+            </template>
+          </div>
+        </div>
+      </template>
+    </template>
+  </div>
+
+  <div class="border-t border-base-300 p-3 shrink-0">
+    <div class="flex items-center justify-between">
+      <button @click="toggleColapso" class="btn btn-ghost btn-sm btn-square" title="Colapsar menú">
+        <i class="bi bi-layout-sidebar" :class="{ 'rotate-180': colapsado }"></i>
+      </button>
+      <div x-show="!colapsado" class="flex gap-1">
+        <button @click="abrirWiki" class="btn btn-ghost btn-xs btn-square" title="Wiki">
+          <i class="bi bi-book"></i>
+        </button>
+        <button @click="abrirConfig" class="btn btn-ghost btn-xs btn-square" title="Configuración">
+          <i class="bi bi-gear"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div x-data x-show="$store.sidebar?.mobileOpen" @click="$store.sidebar.mobileOpen = false"
+     class="fixed inset-0 z-30 bg-black/50 lg:hidden"></div>
+
+<script>
+function [ID]Sidebar() {
+  return {
+    colapsado: false,
+    modulos: [],
+    active: '',
+    activeGroup: '',
+    openGroups: [],
+
+    init() {
+      this.colapsado = localStorage.getItem('sidebar_colapsado') === 'true';
+      this.modulos = window.APP_CONFIG?.modulos || [];
+      this.cargarEstado();
+      window.addEventListener('hashchange', () => this.cargarEstado());
+      window.addEventListener('module:loaded', () => this.cargarEstado());
+    },
+
+    cargarEstado() {
+      const mod = window.appRouter?.moduloActual;
+      this.active = mod || '';
+      if (!this.active) return;
+      this.modulos.forEach(m => {
+        if (m.children) {
+          if (m.children.some(c => c.id === this.active)) {
+            this.activeGroup = m.id;
+            if (!this.openGroups.includes(m.id)) this.openGroups.push(m.id);
+          }
+        }
+      });
+    },
+
+    toggleGroup(id) {
+      const idx = this.openGroups.indexOf(id);
+      if (idx >= 0) this.openGroups.splice(idx, 1);
+      else this.openGroups.push(id);
+    },
+
+    toggleColapso() {
+      this.colapsado = !this.colapsado;
+      localStorage.setItem('sidebar_colapsado', this.colapsado);
+    },
+
+    navegar(id) {
+      window.appRouter?.navigate(id);
+      this.active = id;
+      if (window.innerWidth < 1024) {
+        window.dispatchEvent(new CustomEvent('sidebar:close'));
+      }
+    }
+  };
+}
+</script>

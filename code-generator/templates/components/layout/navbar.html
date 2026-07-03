@@ -1,0 +1,117 @@
+<header x-data="[ID]Navbar()" x-init="init()"
+        class="sticky top-0 z-30 flex items-center h-16 gap-3 px-4 bg-base-100/80 backdrop-blur border-b border-base-300 shadow-sm">
+
+  <button class="btn btn-ghost btn-sm btn-square lg:hidden" @click="toggleMobile">
+    <i class="bi bi-list text-xl"></i>
+  </button>
+
+  <div class="flex items-center gap-2 text-sm breadcrumbs">
+    <ul>
+      <li><a href="#/" @click.prevent="irAlInicio" class="text-base-content/50"><i class="bi bi-house"></i></a></li>
+      <template x-for="(crumb, i) in breadcrumbs" :key="i">
+        <li>
+          <span :class="i === breadcrumbs.length - 1 ? 'font-medium text-base-content' : 'text-base-content/50 cursor-pointer hover:text-base-content'"
+                x-text="crumb" @click="i < breadcrumbs.length - 1 ? navegar(moduloActual) : null"></span>
+        </li>
+      </template>
+    </ul>
+  </div>
+
+  <div class="flex-1"></div>
+
+  <div class="flex items-center gap-1">
+    <label class="input input-bordered input-sm hidden sm:flex items-center gap-2 w-48 lg:w-64">
+      <i class="bi bi-search text-base-content/40 text-xs"></i>
+      <input type="search" placeholder="Buscar... (Ctrl+K)" class="grow text-xs"
+             @focus="abrirPaleta" @keydown.prevent.slash="abrirPaleta" />
+    </label>
+
+    <button class="btn btn-ghost btn-sm btn-square" @click="abrirPaleta" title="Buscar (Ctrl+K)">
+      <i class="bi bi-search"></i>
+    </button>
+
+    <button class="btn btn-ghost btn-sm btn-square relative" @click="toggleTheme" title="Tema">
+      <i class="bi bi-moon-stars" x-show="$store.theme?.mode === 'light'"></i>
+      <i class="bi bi-sun" x-show="$store.theme?.mode === 'dark'"></i>
+    </button>
+
+    <div class="dropdown dropdown-end" x-data="{ abierto: false }">
+      <button class="btn btn-ghost btn-sm btn-circle" @click="abierto = !abierto" tabindex="0">
+        <div class="avatar placeholder">
+          <div class="w-7 rounded-full bg-primary text-primary-content text-xs font-bold">
+            <span x-text="userInitials"></span>
+          </div>
+        </div>
+      </button>
+      <ul class="dropdown-content menu p-2 shadow-xl bg-base-100 rounded-box w-52 border border-base-300 z-50"
+          @click.outside="abierto = false">
+        <li class="menu-title" x-show="userName"><span x-text="userName"></span></li>
+        <li><a @click="abierto=false;irAConfig()"><i class="bi bi-gear"></i> Configuración</a></li>
+        <li><a @click="abierto=false;irAWiki()"><i class="bi bi-book"></i> Wiki</a></li>
+        <li><a @click="abierto=false;irALicencia()"><i class="bi bi-key"></i> Licencia</a></li>
+        <li class="menu-title">Datos</li>
+        <li><a @click="abierto=false;exportarBackup()"><i class="bi bi-download"></i> Exportar backup</a></li>
+        <li><a @click="abierto=false;importarBackup()"><i class="bi bi-upload"></i> Importar backup</a></li>
+        <li><div class="divider my-1"></div></li>
+        <li><a @click="abierto=false;acercaDe()"><i class="bi bi-info-circle"></i> Acerca de</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+function [ID]Navbar() {
+  return {
+    breadcrumbs: ['Inicio'],
+    moduloActual: '',
+
+    init() {
+      this.actualizarRuta();
+      window.addEventListener('hashchange', () => this.actualizarRuta());
+      window.addEventListener('module:loaded', () => this.actualizarRuta());
+    },
+
+    actualizarRuta() {
+      const mod = window.appRouter?.moduloActual;
+      this.moduloActual = mod || '';
+      const modInfo = window.MODULES?.[mod];
+      if (modInfo) {
+        this.breadcrumbs = ['Inicio', modInfo.titulo || mod];
+      } else {
+        this.breadcrumbs = mod ? ['Inicio', mod] : ['Inicio'];
+      }
+    },
+
+    get userName() {
+      const c = window.APP_CONFIG?.cliente;
+      return c?.nombre || c?.negocio || '';
+    },
+
+    get userInitials() {
+      const name = this.userName;
+      if (!name) return '?';
+      return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    },
+
+    toggleMobile() {
+      window.dispatchEvent(new CustomEvent('sidebar:toggle'));
+    },
+
+    toggleTheme() {
+      window.appRouter?.toggleTheme?.();
+    },
+
+    abrirPaleta() {
+      window.appRouter?.abrirPaleta?.();
+    },
+
+    irAlInicio() { window.appRouter?.navigate?.(''); },
+    irAConfig() { window.appRouter?.navigate?.('configuracion'); },
+    irAWiki() { window.appRouter?.navigate?.('wiki'); },
+    irALicencia() { window.appRouter?.navigate?.('licencia'); },
+    exportarBackup() { window.SyncEngine?.exportarBackup?.(); },
+    importarBackup() { window.SyncEngine?.importarBackup?.(); },
+    acercaDe() { UI.toast?.('[APP_NAME] v[VERSION] — [PLAN]', 'info'); }
+  };
+}
+</script>

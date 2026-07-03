@@ -1,6 +1,6 @@
 ---
 name: deployment-jigue
-description: Publica cambios a GitHub, despliega GitHub Pages y empaqueta segun perfil. Lite: ZIP + Pages. Professional: Neutralino .exe + Fixed WV2. Business: .exe + .apk (Capacitor) + branding + docs.
+description: Publica cambios a GitHub, despliega GitHub Pages y empaqueta segun perfil. Lite: ZIP + Pages. Professional: .exe + .apk (Capacitor). Business: .exe + .apk + white-label + soporte prioritario.
 license: MIT
 compatibility: Requiere GitHub MCP configurado en opencode.json con GITHUB_TOKEN. Repositorio con GitHub Pages habilitado y action deploy-pages.yml existente. Perfil Professional/Business requiere @neutralinojs/neu CLI.
 meta:
@@ -30,10 +30,10 @@ meta:
 
 # SKILL: deployment-jigue (Publicacion + Deploy + Empaquetado)
 
-> **Proposito**: Publicar cambios locales a GitHub, desplegar a GitHub Pages y empaquetar segun el perfil del proyecto. Lite genera ZIP+Pages. Professional genera .exe (Neutralino) + Fixed WV2. Business genera .exe + .apk (Capacitor) + branding + docs.
+> **Proposito**: Publicar cambios locales a GitHub, desplegar a GitHub Pages y empaquetar segun el perfil del proyecto. Lite genera ZIP+Pages. Professional genera .exe (Neutralino) + .apk (Capacitor). Business genera .exe + .apk + white-label + soporte prioritario.
 > **Modo**: 5 fases secuenciales | **Idioma**: ES | **Contexto**: Repositorio git local con remoto en GitHub
 > **Input**: Directorio git local + confirmacion del usuario
-> **Output**: Commit + Push + Pages deploy + (Essential) ZIP+Pages / (Professional) .exe+FixedWV2 / (Business) .exe+.apk+branding+docs
+> **Output**: Commit + Push + Pages deploy + (Essential) ZIP+Pages / (Professional) .exe+.apk / (Business) .exe+.apk+white-label
 
 ---
 
@@ -61,17 +61,19 @@ Antes de iniciar, detecta el perfil del proyecto:
     Demo online, HTML visible, IA Lite (FlexSearch).
     Push a main → GitHub Pages automatico.
 
-[2] Professional — .exe + Fixed WebView2
+[2] Professional — .exe + .apk
     Ejecutable nativo SIN WebView2 del sistema.
     Incluye Fixed WebView2 (stripped, x64 + espanol).
+    .apk Android nativo (Capacitor) — SQLite FTS5, cámara, GPS.
     IA Full (FlexSearch + QA con documentos).
     Sin HTML visible para el cliente.
-    Tamaño: ~30MB ZIP. NO incluye .apk.
+    Tamaño: ~30MB ZIP.
 
-[3] Business — .exe + .apk + branding
-    Todo lo de Professional + .apk Android (Capacitor).
-    Branding personalizado (logo, colores, nombre cliente).
+[3] Business — .exe + .apk + white-label
+    Todo lo de Professional + white-label completo.
+    Logo, colores y nombre del cliente en toda la UI.
     Documentacion personalizada (GUIA_USUARIO, GUIA_INSTALACION).
+    Soporte prioritario 48h + guia de marca personalizada.
     Tamaño: ~35MB ZIP.
 
 [4] Solo commit + push (sin empaquetar)
@@ -246,7 +248,7 @@ Tamaño: [X] MB
 [2] No, ya termine
 ```
 
-### Perfil Professional: Neutralino .exe + Fixed WebView2 (stripped)
+### Perfil Professional: Neutralino .exe + Fixed WebView2 (stripped) + .apk (Capacitor)
 
 ```
 [▓▓▓▓▓▓▓▓▓▓░░░░░░] 85% • Empaquetando Professional...
@@ -263,24 +265,29 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralin
 3. Verificar que `tools/WebView2-Fixed/` existe:
    Si no, ejecutar `.\scripts\download-fixed-wv2.ps1`
 
-4. Ejecutar script de empaquetado:
+4. Verificar Android SDK (opcional, para .apk):
+   Si no está disponible, el script salta el .apk y genera solo .exe.
+
+5. Ejecutar script de empaquetado:
 ```bash
 .\deployment-jigue\templates\package-professional.ps1 -AppName "[nombre]" -Version "[version]"
 ```
 
-5. Output:
+6. Output:
 ```
 ✅ dist/[AppName]-Professional-v1.0.0.zip (~30MB)
   ├── [AppName].exe          ← Neutralino runtime (~2MB)
   ├── resources.neu          ← App ofuscada (terser --mangle)
   ├── WebView2/              ← Fixed Version stripped (~53MB)
   │   └── EBWebView/x64/     ← Solo x64 + es-419.pak + swiftshader (WebGPU)
+  ├── [AppName].apk          ← Android nativo (Capacitor) — si SDK disponible
   └── favicon.ico
 
   Sin HTML visible, sin WebView2 del sistema, IA Full funcional.
+  Android .apk incluido si Android SDK + JDK 17+ están disponibles.
 ```
 
-### Perfil Business: .exe + .apk + branding + docs
+### Perfil Business: .exe + .apk + white-label + soporte
 
 ```
 [▓▓▓▓▓▓▓▓▓▓░░░░░░] 85% • Empaquetando Business...
@@ -307,10 +314,12 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralin
   ├── favicon.ico
   └── LEEME.txt
 
-  Branding personalizado: colores, logo y nombre del cliente aplicados.
+  White-label completo: colores, logo y nombre del cliente en toda la UI.
+  self-service: cliente puede cambiar marca desde el panel de ajustes (branding).
+  Soporte prioritario 48h incluido.
 ```
 
-**Nota:** El build de .apk requiere Android SDK + JDK 17+. Si no estan disponibles, el script salta el .apk y continua solo con .exe.
+**Nota:** El build de .apk requiere Android SDK + JDK 17+. Si no estan disponibles, el script salta el .apk y continua solo con .exe. Esto aplica tanto a Professional como a Business.
 
 **sql.js (IA Jutia con FTS5):**
 Si la app incluye IA Jutia Full con sql.js, verificar que `assets/wasm/` contiene:
@@ -388,7 +397,7 @@ gh release create v[version] "dist/[AppName]-Business-v[version].zip#App_v[versi
 ```
 ✅ ENTREGA BUSINESS COMPLETADA
 📦 dist/[AppName]-Business-v[version].zip (~35MB)
-  Contiene: .exe + .apk + branding + docs
+  Contiene: .exe + .apk + white-label + docs
   Cliente personalizado
 📎 Release: [URL del release | No aplica]
 ```
@@ -592,8 +601,8 @@ Si el usuario selecciona "Modo rapido" en Fase 1:
 ```
 ⚡ MODO RAPIDO ACTIVADO
 - Essential: Commit + Push + Pages deploy
-- Professional: Commit + Push + package-professional.ps1
-- Business: Commit + Push + package-business.ps1 (branding desde config)
+- Professional: Commit + Push + package-professional.ps1 (incluye .apk)
+- Business: Commit + Push + package-business.ps1 (white-label desde config)
 ```
 
 ---

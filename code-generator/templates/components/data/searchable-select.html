@@ -1,0 +1,106 @@
+<div x-data="[ID]_select()" x-init="init()" class="relative min-w-[200px]">
+  <label x-show="label" class="label-text text-xs font-medium text-base-content/60 mb-1" x-text="label"></label>
+  <div @click="open = !open; if (open) $nextTick(() => $refs.search?.focus())"
+       class="flex items-center gap-2 p-2.5 bg-base-100 border rounded-xl cursor-pointer select-none transition-colors"
+       :class="open ? 'border-primary ring-1 ring-primary' : 'border-base-300 hover:border-base-content/30'">
+    <i class="bi bi-search text-base-content/30 text-sm"></i>
+    <span x-show="!selected" class="flex-1 text-sm text-base-content/30" x-text="placeholder || 'Seleccionar...'"></span>
+    <span x-show="selected" class="flex-1 text-sm font-medium" x-text="selected.label"></span>
+    <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+  </div>
+
+  <div x-show="open" @click.outside="open = false" class="absolute top-full left-0 right-0 mt-1 bg-base-100 border border-base-300 rounded-xl shadow-xl z-50 overflow-hidden">
+    <div class="p-2 border-b border-base-200">
+      <input x-ref="search" type="text" x-model="query" placeholder="Buscar..."
+             class="input input-bordered input-sm w-full text-sm"
+             @keydown.escape="open = false"
+             @keydown.enter="selectFirst()"
+             @keydown.down.prevent="highlightNext()"
+             @keydown.up.prevent="highlightPrev()">
+    </div>
+    <div class="max-h-60 overflow-y-auto">
+      <template x-for="(opt, i) in filtered" :key="opt.value">
+        <div @click="pick(opt)"
+             class="flex items-center gap-3 px-3 py-2.5 cursor-pointer text-sm transition-colors"
+             :class="{ 'bg-primary/10 text-primary': opt.value === selected?.value, 'bg-base-200/50': hl === i, 'hover:bg-base-200/50': hl !== i }"
+             @mouseenter="hl = i">
+          <i x-show="opt.value === selected?.value" class="bi bi-check-circle-fill text-primary"></i>
+          <span x-show="opt.value !== selected?.value" class="w-4"></span>
+          <span x-text="opt.label"></span>
+          <span x-show="opt.description" class="text-xs text-base-content/40 ml-auto" x-text="opt.description"></span>
+        </div>
+      </template>
+      <div x-show="!filtered.length" class="flex items-center justify-center py-6 text-sm text-base-content/30">
+        <i class="bi bi-inbox mr-2"></i> Sin resultados
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function [ID]_select() {
+  const OPTIONS = [
+    { value: 'mx', label: 'México', description: '+52' },
+    { value: 'us', label: 'Estados Unidos', description: '+1' },
+    { value: 'es', label: 'España', description: '+34' },
+    { value: 'co', label: 'Colombia', description: '+57' },
+    { value: 'ar', label: 'Argentina', description: '+54' },
+    { value: 'cl', label: 'Chile', description: '+56' },
+    { value: 'pe', label: 'Perú', description: '+51' }
+  ]
+
+  return {
+    label: '[LABEL]',
+    placeholder: '[PLACEHOLDER]',
+    open: false,
+    query: '',
+    selected: null,
+    hl: 0,
+
+    init() {
+      this.load()
+    },
+
+    get filtered() {
+      const q = this.query.toLowerCase().trim()
+      if (!q) return this.options
+      return this.options.filter(o =>
+        o.label.toLowerCase().includes(q) ||
+        (o.description || '').toLowerCase().includes(q)
+      )
+    },
+
+    options: OPTIONS,
+
+    pick(opt) {
+      this.selected = opt
+      this.open = false
+      this.query = ''
+      this.save()
+    },
+
+    selectFirst() {
+      if (this.filtered.length) this.pick(this.filtered[0])
+    },
+
+    highlightNext() {
+      this.hl = Math.min(this.hl + 1, this.filtered.length - 1)
+    },
+
+    highlightPrev() {
+      this.hl = Math.max(this.hl - 1, 0)
+    },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s) this.selected = JSON.parse(s)
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.selected)) } catch {}
+    }
+  }
+}
+</script>

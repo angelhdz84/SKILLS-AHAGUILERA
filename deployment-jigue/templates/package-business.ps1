@@ -15,7 +15,6 @@ param(
     [string]$SecondaryColor = "#3b82f6",
     [string]$LogoPath = "",
 
-    [switch]$SkipApk = $false,
     [switch]$SkipDocs = $false,
     [switch]$Ofuscar = $true
 )
@@ -31,9 +30,9 @@ Write-Host "  Package BUSINESS - $AppName v$Version" -ForegroundColor Cyan
 Write-Host "  Cliente: $Cliente" -ForegroundColor Cyan
 Write-Host "====================================================" -ForegroundColor Cyan
 
-# Paso 1: Empaquetar Professional (.exe + Fixed WV2)
+# Paso 1: Empaquetar Professional (.exe + Fixed WV2 + .apk)
 Write-Host ""
-Write-Host "[1/6] Generando base Professional (.exe)..." -ForegroundColor Yellow
+Write-Host "[1/6] Generando base Professional (.exe + .apk)..." -ForegroundColor Yellow
 & "$scriptDir\package-professional.ps1" -AppName $AppName -Version $Version -Ofuscar:$Ofuscar
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  ERROR: Package Professional fallo" -ForegroundColor Red
@@ -47,65 +46,9 @@ if (Test-Path $outputDir) {
 }
 Rename-Item $profDir -NewName "$AppName-Business"
 
-# Paso 2: Compilar .apk (Capacitor) si aplica
-if (-not $SkipApk) {
-    Write-Host ""
-    Write-Host "[2/6] Compilando .apk con Capacitor..." -ForegroundColor Yellow
-
-    if (-not (Get-Command "npx" -ErrorAction SilentlyContinue)) {
-        Write-Host "  ERROR: npx no disponible" -ForegroundColor Red
-        exit 1
-    }
-
-    Set-Location $rootDir
-
-    # Verificar capacitor.config.json
-    if (-not (Test-Path "capacitor.config.json")) {
-        Write-Host "  Generando capacitor.config.json..." -ForegroundColor Yellow
-        @"
-{
-  "appId": "$AppId",
-  "appName": "$AppName",
-  "webDir": ".",
-  "plugins": {
-    "CapacitorSQLite": { "androidIsEncrypted": false },
-    "LocalNotifications": { "smallIcon": "ic_stat_icon_config_sample", "iconColor": "$PrimaryColor" }
-  },
-  "android": {
-    "minSdkVersion": 26,
-    "targetSdkVersion": 34,
-    "compileSdkVersion": 34
-  }
-}
-"@ | Set-Content "capacitor.config.json" -Encoding UTF8
-    }
-
-    npx cap sync android
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "  ERROR: cap sync fallo" -ForegroundColor Red
-        exit 1
-    }
-
-    Set-Location "$rootDir\android"
-    .\gradlew assembleRelease
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "  ERROR: gradlew assembleRelease fallo" -ForegroundColor Red
-        exit 1
-    }
-    Set-Location $rootDir
-
-    $apkSource = "$rootDir\android\app\build\outputs\apk\release\app-release.apk"
-    if (Test-Path $apkSource) {
-        Copy-Item $apkSource -Destination "$outputDir\$AppName.apk" -Force
-        Write-Host "  [+] .apk generado: $([math]::Round((Get-Item $apkSource).Length / 1MB, 1)) MB" -ForegroundColor Green
-    } else {
-        Write-Host "  [-] .apk no encontrado" -ForegroundColor Yellow
-    }
-}
-
-# Paso 3: Branding (brand.ps1)
+# Paso 2: Branding (brand.ps1)
 Write-Host ""
-Write-Host "[3/6] Aplicando branding..." -ForegroundColor Yellow
+Write-Host "[2/6] Aplicando branding..." -ForegroundColor Yellow
 $brandScript = "$scriptDir\brand.ps1"
 if (Test-Path $brandScript) {
     $brandArgs = @(
@@ -125,6 +68,51 @@ if (Test-Path $brandScript) {
 } else {
     Write-Host "  [-] brand.ps1 no encontrado" -ForegroundColor Yellow
 }
+
+# Paso 3: Generar brand.config.json (white-label)
+Write-Host ""
+Write-Host "[3/6] Generando brand.config.json..." -ForegroundColor Yellow
+$brandConfig = @"
+{
+  "client": "$Cliente",
+  "appName": "$AppName",
+  "appId": "$AppId",
+  "colors": {
+    "primary": "$PrimaryColor",
+    "secondary": "$SecondaryColor",
+    "accent": "#0ea5e9",
+    "neutral": "#1c1917",
+    "base-100": "#ffffff",
+    "base-200": "#f1f5f9",
+    "base-300": "#e2e8f0",
+    "info": "#3b82f6",
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "error": "#ef4444"
+  },
+  "fonts": {
+    "heading": "system-ui, sans-serif",
+    "body": "system-ui, sans-serif",
+    "mono": "monospace"
+  },
+  "logo": {
+    "light": "",
+    "dark": "",
+    "favicon": "",
+    "splash": ""
+  },
+  "features": {},
+  "support": {
+    "email": "",
+    "docsUrl": "",
+    "phone": ""
+  },
+  "customCss": "",
+  "version": "$Version"
+}
+"@
+Set-Content "$outputDir\brand.config.json" -Value $brandConfig -Encoding UTF8
+Write-Host "  [+] brand.config.json generado con marca de $Cliente" -ForegroundColor Green
 
 # Paso 4: Generar docs (si aplica)
 if (-not $SkipDocs) {
@@ -206,6 +194,7 @@ Write-Host "[5/6] Generando LEEME.txt..." -ForegroundColor Yellow
     $AppName.exe     — Aplicacion de escritorio
     WebView2/        — Componente de visualizacion
     $AppName.apk     — App Android (si aplica)
+    brand.config.json — White-label: colores, logo, fuentes (editable desde Ajustes)
     docs/            — Documentacion
     favicon.ico      — Icono de la aplicacion
 
@@ -241,9 +230,8 @@ Write-Host ""
 Write-Host "  Contenido:" -ForegroundColor Gray
 Write-Host "    $AppName.exe + resources.neu" -ForegroundColor Gray
 Write-Host "    WebView2/ (stripped, con swiftshader)" -ForegroundColor Gray
-if (-not $SkipApk) {
-    Write-Host "    $AppName.apk" -ForegroundColor Gray
-}
+Write-Host "    $AppName.apk" -ForegroundColor Gray
 Write-Host "    docs/ (GUIA_USUARIO, GUIA_INSTALACION)" -ForegroundColor Gray
+Write-Host "    brand.config.json (white-label: colores, logo, fuentes)" -ForegroundColor Gray
 Write-Host "    favicon.ico, LEEME.txt" -ForegroundColor Gray
 Write-Host "====================================================" -ForegroundColor Cyan

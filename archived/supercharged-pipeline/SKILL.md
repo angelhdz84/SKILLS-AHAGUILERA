@@ -64,7 +64,7 @@ skill tool to load brainstorming
 
 **Fallback (si Superpowers no esta instalado o brainstorming no disponible):**
 > "Superpowers no detectado. Continuando con pipeline SKILLS-AHAGUILERA clasico."
-> Saltar a Fase 2 directamente (spec-creator).
+> Saltar a Fase 2 directamente (spec-engine).
 
 **Output:** `docs/superpowers/specs/YYYY-MM-DD-<app>-design.md`
 
@@ -76,13 +76,13 @@ Estructurar la especificacion tecnica a partir del design doc (o desde cero si h
 
 **Instruccion:**
 ```
-skill tool to load spec-creator
+skill tool to load spec-engine
 ```
 
 **Checklist:**
-- [ ] Cargar skill `spec-creator`
+- [ ] Cargar skill `spec-engine`
 - [ ] Si existe design doc de SP, usarlo como contexto inicial
-- [ ] Ejecutar el ciclo de spec-creator v4:
+   - [ ] Ejecutar el ciclo de spec-engine:
   1. Asunciones (4+1 refinamiento business/UX)
   2. Modelo de datos detallado (con columnas de perfil Lite/Full)
   3. User Journeys
@@ -200,7 +200,7 @@ skill tool to load stack-compliance-guard
 
 **Instruccion 3 (SA):**
 ```
-skill tool to load validation-offline
+skill tool to load validation-engine
 ```
 
 **Checklist:**

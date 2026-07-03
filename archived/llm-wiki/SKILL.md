@@ -1,4 +1,5 @@
 ---
+<!-- Archived — reemplazado por wiki-engine -->
 # @deprecated — Reemplazado por wiki-engine
 # Motivo: Fusión llm-wiki + omd:remember + omd:learn en wiki-engine con preferencias de diseño + auto-ingesta
 # Migración: wiki-engine unifica wiki pages + preferencias de diseño + memory graph
@@ -19,9 +20,9 @@ meta:
     - "wiki"
     - "persistir conocimiento"
     - "registra esto"
-    - "auto-ingest spec-creator"
+    - "auto-ingest spec-engine"
     - "auto-ingest code-generator"
-    - "auto-ingest validation-offline"
+    - "auto-ingest validation-engine"
     - "lint wiki"
     - "que sabes sobre"
     - "busca en el wiki"
@@ -71,9 +72,9 @@ Solo si `wiki/` no existe o el usuario pide explícitamente "crea wiki":
 
 Se activa cuando:
 - El usuario dice "guarda esto", "recuerda que...", "resume esta fuente"
-- Se completa `spec-creator` (spec generada)
+- Se completa `spec-engine` (spec generada)
 - Se completa `code-generator` (codigo generado)
-- Se completa `validation-offline` (reporte generado)
+- Se completa `validation-engine` (reporte generado)
 - El usuario comparte un articulo, conversacion o decision
 
 #### Paso 2.1 — Identificar la fuente
@@ -207,8 +208,8 @@ faltantes). Preguntar antes de fusionar o eliminar paginas.
 Este skill se activa automaticamente tras ciertas fases del pipeline
 principal, sin necesidad de que el usuario lo solicite.
 
-### Tras spec-creator (spec generada)
-Al completar `spec-creator`, auto-ejecutar ingest de `specs/[app].md`:
+### Tras spec-engine (spec generada)
+Al completar `spec-engine`, auto-ejecutar ingest de `specs/[app].md`:
 - Crear pagina fuente en wiki/sources/
 - Crear pagina de app en wiki/apps/
 - Relacionar con skills y patrones usados en la spec
@@ -221,8 +222,8 @@ Al completar `code-generator`, auto-ejecutar ingest:
 - Actualizar pagina de app con patrones usados
 - Si se descubrio un patron nuevo, crear pagina
 
-### Tras validation-offline (validacion completada)
-Al completar `validation-offline`, auto-ejecutar ingest:
+### Tras validation-engine (validacion completada)
+Al completar `validation-engine`, auto-ejecutar ingest:
 - Actualizar pagina de app con resultados de validacion
 - Registrar issues encontrados como observaciones en la entidad app
 - Si un issue revela un patron problematica, crear pagina en wiki/patterns/

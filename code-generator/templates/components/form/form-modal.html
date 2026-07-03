@@ -1,0 +1,81 @@
+<div class="space-y-4">
+  <template x-for="field in fields" :key="field.name">
+    <label class="form-control w-full">
+      <div class="label">
+        <span class="label-text flex items-center gap-1">
+          <span x-text="field.label"></span>
+          <span x-show="field.required" class="text-error">*</span>
+          <i x-show="field.encrypt" class="bi bi-lock text-xs text-base-content/40" title="Cifrado"></i>
+        </span>
+      </div>
+
+      <template x-if="field.type === 'text' || field.type === 'email' || field.type === 'url'">
+        <input :type="field.type" x-model="form[field.name]" class="input input-bordered w-full"
+               :required="field.required" :placeholder="field.placeholder" />
+      </template>
+
+      <template x-if="field.type === 'number'">
+        <input type="number" x-model.number="form[field.name]" class="input input-bordered w-full"
+               :required="field.required" :min="field.min" :max="field.max" :step="field.step || 'any'" />
+      </template>
+
+      <template x-if="field.type === 'textarea'">
+        <textarea x-model="form[field.name]" class="textarea textarea-bordered w-full"
+                  :required="field.required" :rows="field.rows || 3"></textarea>
+      </template>
+
+      <template x-if="field.type === 'select'">
+        <select x-model="form[field.name]" class="select select-bordered w-full" :required="field.required">
+          <option value="" disabled x-text="field.placeholder || 'Seleccionar...'"></option>
+          <template x-for="opt in field.options" :key="opt.value">
+            <option :value="opt.value" x-text="opt.label"></option>
+          </template>
+        </select>
+      </template>
+
+      <template x-if="field.type === 'toggle'">
+        <div class="flex items-center gap-3 mt-1">
+          <input type="checkbox" x-model="form[field.name]" class="toggle toggle-primary" />
+          <span class="text-sm text-base-content/60" x-text="field.help || field.label"></span>
+        </div>
+      </template>
+
+      <template x-if="field.type === 'file'">
+        <div class="flex items-center gap-3 mt-1">
+          <img x-show="form[field.name]" :src="form[field.name]" class="w-16 h-16 rounded-lg object-cover border" />
+          <input type="file" accept="image/*" class="file-input file-input-bordered w-full max-w-xs"
+                 @change="field.onChange?.($el, form)" />
+        </div>
+      </template>
+
+      <template x-if="field.type === 'color'">
+        <div class="flex items-center gap-3 mt-1">
+          <input type="color" x-model="form[field.name]" class="w-10 h-10 rounded cursor-pointer" />
+          <span class="text-sm font-mono" x-text="form[field.name]"></span>
+        </div>
+      </template>
+
+      <template x-if="field.type === 'date'">
+        <input type="date" x-model="form[field.name]" class="input input-bordered w-full" :required="field.required" />
+      </template>
+
+      <template x-if="field.validation?.message">
+        <div class="label" x-show="errors[field.name]">
+          <span class="label-text-alt text-error" x-text="errors[field.name]"></span>
+        </div>
+      </template>
+    </label>
+  </template>
+
+  <details class="collapse collapse-arrow border border-base-300 rounded-box" x-show="hasAdvanced">
+    <summary class="collapse-title text-sm font-medium text-base-content/60">Avanzado</summary>
+    <div class="collapse-content space-y-4 pt-2">
+      <template x-for="field in advancedFields" :key="field.name">
+        <label class="form-control w-full">
+          <span class="label-text" x-text="field.label"></span>
+          <input x-model="form[field.name]" :type="field.type || 'text'" class="input input-bordered w-full" />
+        </label>
+      </template>
+    </div>
+  </details>
+</div>

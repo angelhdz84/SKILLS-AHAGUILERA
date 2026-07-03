@@ -1,0 +1,139 @@
+<div x-data="[ID]_notifications()" x-init="init()" class="relative">
+  <button @click="toggle()" class="btn btn-ghost btn-sm btn-circle relative">
+    <i class="bi bi-bell text-lg"></i>
+    <span x-show="unreadCount" x-text="unreadCount"
+          class="absolute -top-0.5 -right-0.5 badge badge-error badge-xs badge-outline animate__animated animate__heartBeat">
+    </span>
+  </button>
+
+  <div x-show="open" x-cloak @click.away="open = false"
+       class="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-base-100 border border-base-300 rounded-2xl shadow-2xl z-50 overflow-hidden">
+
+    <div class="flex items-center justify-between px-4 py-3 border-b border-base-200">
+      <h3 class="font-semibold text-sm flex items-center gap-2">
+        <i class="bi bi-bell"></i> Notificaciones
+      </h3>
+      <div class="flex gap-1">
+        <button x-show="unreadCount" @click="markAllRead()" class="btn btn-ghost btn-xs text-primary">
+          <i class="bi bi-check2-all"></i> Leer todo
+        </button>
+        <button @click="toggle()" class="btn btn-ghost btn-xs btn-square">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    </div>
+
+    <template x-if="!items.length">
+      <div class="flex flex-col items-center py-10 text-base-content/40">
+        <i class="bi bi-bell-slash text-4xl mb-3"></i>
+        <p class="text-sm font-medium">Sin notificaciones</p>
+        <p class="text-xs mt-1">No hay actividad reciente</p>
+      </div>
+    </template>
+
+    <template x-if="items.length">
+      <div class="max-h-80 overflow-y-auto divide-y divide-base-200">
+        <template x-for="(n, i) in items" :key="n.id">
+          <div @click="markRead(n)"
+               :class="{ 'bg-primary/5': !n.read, 'cursor-pointer': true }"
+               class="flex items-start gap-3 px-4 py-3 hover:bg-base-200/50 transition-colors">
+            <div class="mt-0.5 shrink-0">
+              <i :class="iconFor(n.type)"
+                 class="text-lg"
+                 :class="colorFor(n.type)"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate" x-text="n.title"></p>
+              <p x-show="n.body" class="text-xs text-base-content/60 mt-0.5 line-clamp-2" x-text="n.body"></p>
+              <p class="text-xs text-base-content/30 mt-1" x-text="timeAgo(n.time)"></p>
+            </div>
+            <span x-show="!n.read" class="w-2 h-2 rounded-full bg-primary shrink-0 mt-2"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <template x-if="items.length">
+      <div class="p-2 border-t border-base-200">
+        <button @click="clearAll()" class="btn btn-ghost btn-sm w-full text-base-content/50">
+          <i class="bi bi-trash3"></i> Limpiar todas
+        </button>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+function [ID]_notifications() {
+  return {
+    open: false,
+    items: [],
+    get unreadCount() { return this.items.filter(n => !n.read).length },
+
+    init() {
+      this.load()
+    },
+
+    toggle() { this.open = !this.open },
+
+    load() {
+      try {
+        const saved = localStorage.getItem('[STORAGE_KEY]')
+        if (saved) this.items = JSON.parse(saved)
+        else this.items = []
+      } catch { this.items = [] }
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.items)) } catch {}
+    },
+
+    add(notif) {
+      this.items.unshift({
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        type: notif.type || 'info',
+        title: notif.title,
+        body: notif.body || '',
+        time: new Date().toISOString(),
+        read: false
+      })
+      this.save()
+    },
+
+    markRead(n) { if (!n.read) { n.read = true; this.save() } },
+
+    markAllRead() {
+      this.items.forEach(n => n.read = true)
+      this.save()
+    },
+
+    clearAll() {
+      this.items = []
+      this.save()
+    },
+
+    iconFor(type) {
+      const icons = { success: 'bi bi-check-circle-fill', error: 'bi bi-x-circle-fill', warning: 'bi bi-exclamation-triangle-fill', info: 'bi bi-info-circle-fill' }
+      return icons[type] || icons.info
+    },
+
+    colorFor(type) {
+      const colors = { success: 'text-success', error: 'text-error', warning: 'text-warning', info: 'text-info' }
+      return colors[type] || colors.info
+    },
+
+    timeAgo(iso) {
+      if (!iso) return ''
+      const diff = Date.now() - new Date(iso).getTime()
+      const mins = Math.floor(diff / 60000)
+      if (mins < 1) return 'ahora'
+      if (mins < 60) return `hace ${mins} min`
+      const hrs = Math.floor(mins / 60)
+      if (hrs < 24) return `hace ${hrs}h`
+      const days = Math.floor(hrs / 24)
+      if (days < 7) return `hace ${days}d`
+      return new Date(iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
+    }
+  }
+}
+</script>

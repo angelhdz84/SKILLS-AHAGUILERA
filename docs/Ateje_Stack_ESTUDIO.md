@@ -44,7 +44,7 @@
 ### Principios Arquitectónicos
 
 - **Offline-first**: Todo funciona sin internet. La sincronización es un añadido, no un requisito.
-- **Skill-Layer Architecture**: 5 engines orquestadores + 8 skills standalone + 16 skills OmD de diseño.
+- **Skill-Layer Architecture**: 5 engines orquestadores + 9 standalone + 1 writer + 16 OmD
 - **Single Source of Truth**: Las plantillas de apps están en `apps/AHA-*/template.md`.
 - **Perfiles progresivos**: Inicio (Lite) → Profesional (Full) → Enterprise (Full custom).
 - **95% UI compartida**: El frontend (Alpine + DaisyUI) es casi idéntico entre perfiles.
@@ -507,7 +507,7 @@ window.APP_CONFIG = {
     descripcion: 'App de inventario'
   },
   perfil: 'lite',           // 'lite' | 'professional' | 'business'
-  iaJutia: 'no',            // 'lite' | 'full' | 'no'
+  iaJutia: { perfil: false },  // { perfil: 'lite' } | { perfil: 'full' } | { perfil: false }
   modulosActivos: ['usuarios', 'inventario', 'dashboard'],
   tema: {
     modo: 'claro',

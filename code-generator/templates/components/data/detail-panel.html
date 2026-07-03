@@ -1,0 +1,137 @@
+<div x-data="[ID]Detail()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <template x-if="cargando">
+    <div class="space-y-4">
+      <div class="flex items-center gap-4">
+        <div class="skeleton h-16 w-16 rounded-full"></div>
+        <div class="space-y-2 flex-1">
+          <div class="skeleton h-6 w-48"></div>
+          <div class="skeleton h-4 w-32"></div>
+        </div>
+      </div>
+      <div class="skeleton h-64 w-full"></div>
+    </div>
+  </template>
+
+  <template x-if="!cargando && item">
+    <div>
+      <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div class="flex items-center gap-4">
+          <div class="avatar" x-show="[SHOW_AVATAR]">
+            <div class="w-16 rounded-xl">
+              <img :src="item.avatar || APP_CONFIG?.data?.avatars?.default"
+                   @error="$el.src=APP_CONFIG?.ui?.avatarDefault || ''" />
+            </div>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold flex items-center gap-2" x-text="item.nombre || '[TITLE]'"></h2>
+            <p class="text-sm text-base-content/60" x-text="item.descripcion || item.categoria || ''"></p>
+            <div class="flex gap-2 mt-1" x-show="item.estado">
+              <span class="badge badge-sm" :class="badgeEstado(item.estado)" x-text="item.estado"></span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-primary btn-sm" @click="editar()">
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+          <button class="btn btn-ghost btn-sm text-error" @click="eliminar()">
+            <i class="bi bi-trash"></i>
+          </button>
+          <button class="btn btn-ghost btn-sm" @click="volver">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <template x-for="(val, key) in camposInfo" :key="key">
+          <div class="flex flex-col gap-1 p-3 bg-base-100 border border-base-300 rounded-lg">
+            <span class="text-xs font-medium text-base-content/40 uppercase tracking-wider" x-text="key"></span>
+            <span class="text-sm font-medium" x-text="val || '—'"></span>
+          </div>
+        </template>
+      </div>
+
+      <div role="tablist" class="tabs tabs-bordered mb-6">
+        <template x-for="(tab, idx) in tabs" :key="idx">
+          <a role="tab" class="tab text-sm" :class="{ 'tab-active': tabActivo === idx }"
+             @click="tabActivo = idx" x-text="tab.titulo"></a>
+        </template>
+      </div>
+
+      <div class="min-h-[200px]">
+        <template x-for="(tab, idx) in tabs" :key="idx">
+          <div x-show="tabActivo === idx" class="animate__animated animate__fadeIn">
+            <div x-html="tab.content"></div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]Detail() {
+  return {
+    item: null,
+    cargando: true,
+    tabActivo: 0,
+    tabs: [],
+
+    async init() {
+      this.cargando = true;
+      try {
+        const id = window.appRouter?.moduloParams?.id;
+        if (id) {
+          this.item = await window.MODULES['[ID]'].cargarItem(id);
+        }
+        this.tabs = this.definirTabs();
+      } catch (err) {
+        UI.toast(err.message || 'Error al cargar detalle', 'error');
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    get camposInfo() {
+      if (!this.item) return {};
+      const exclude = ['id', 'avatar', 'createdAt', 'updatedAt', '_sync'];
+      return Object.fromEntries(
+        Object.entries(this.item).filter(([k]) => !exclude.includes(k))
+      );
+    },
+
+    badgeEstado(estado) {
+      const map = {
+        activo: 'badge-success',
+        inactivo: 'badge-ghost',
+        pendiente: 'badge-warning',
+        completado: 'badge-info',
+        cancelado: 'badge-error'
+      };
+      return map[estado?.toLowerCase()] || 'badge-ghost';
+    },
+
+    definirTabs() {
+      return [
+        { titulo: 'Información', content: '<!-- Subagent: render full info -->' },
+        { titulo: 'Historial', content: '<!-- Subagent: render timeline -->' },
+        { titulo: 'Archivos', content: '<!-- Subagent: render file list -->' },
+        { titulo: 'Notas', content: '<!-- Subagent: render notes -->' }
+      ];
+    },
+
+    async editar() {
+      if (this.item) window.MODULES['[ID]'].abrirForm(this.item);
+    },
+
+    async eliminar() {
+      if (this.item) window.MODULES['[ID]'].eliminar(this.item);
+    },
+
+    volver() {
+      window.appRouter?.navigate('[ID]');
+    }
+  };
+}
+</script>

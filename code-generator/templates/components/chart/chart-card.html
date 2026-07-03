@@ -1,0 +1,113 @@
+<div x-data="[ID]Chart()" x-init="init()" class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="card-title text-base flex items-center gap-2">
+        <i class="bi bi-[CHART_ICON] text-primary"></i>
+        <span>[CHART_TITLE]</span>
+      </h3>
+      <div class="flex gap-1">
+        <template x-for="p in periodos" :key="p">
+          <button class="btn btn-xs" :class="periodo === p ? 'btn-primary' : 'btn-ghost'"
+                  @click="cambiarPeriodo(p)" x-text="p"></button>
+        </template>
+      </div>
+    </div>
+
+    <template x-if="cargando">
+      <div class="skeleton h-64 w-full rounded-lg"></div>
+    </template>
+
+    <template x-if="!cargando && !error">
+      <div class="relative">
+        <canvas x-ref="canvas" class="w-full h-64"></canvas>
+      </div>
+    </template>
+
+    <template x-if="error">
+      <div class="flex flex-col items-center justify-center h-64 text-base-content/40">
+        <i class="bi bi-exclamation-triangle text-3xl mb-2"></i>
+        <p class="text-sm">No se pudieron cargar los datos del gráfico</p>
+        <button class="btn btn-xs btn-ghost mt-2" @click="cargarDatos">
+          <i class="bi bi-arrow-clockwise"></i> Reintentar
+        </button>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+function [ID]Chart() {
+  return {
+    cargando: true,
+    error: null,
+    chartInstance: null,
+    periodo: '[PERIODO_DEFECTO]',
+    periodos: ['7d', '30d', '90d'],
+
+    async init() {
+      this.$nextTick(() => this.cargarDatos());
+      window.addEventListener('resize', () => this.chartInstance?.resize());
+    },
+
+    async cargarDatos() {
+      this.cargando = true;
+      this.error = null;
+      try {
+        const data = await this.obtenerDatos(this.periodo);
+        this.renderizar(data);
+      } catch (err) {
+        this.error = err.message || 'Error al cargar datos';
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    async cambiarPeriodo(p) {
+      this.periodo = p;
+      await this.cargarDatos();
+    },
+
+    async obtenerDatos(periodo) {
+      // Subagent: implementar consulta a DB
+      // Retornar { labels: [], datasets: [{ label, data, backgroundColor, borderColor }] }
+      return { labels: [], datasets: [] };
+    },
+
+    renderizar(data) {
+      if (this.chartInstance) this.chartInstance.destroy();
+      if (!this.$refs.canvas || !data?.datasets?.length) return;
+
+      this.chartInstance = new Chart(this.$refs.canvas, {
+        type: '[CHART_TYPE]',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: [SHOW_LEGEND],
+              position: 'bottom',
+              labels: { boxWidth: 12, padding: 16, font: { size: 11 } }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              titleFont: { size: 12 },
+              bodyFont: { size: 11 },
+              cornerRadius: 8,
+              padding: 10
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+    },
+
+    destroy() {
+      if (this.chartInstance) this.chartInstance.destroy();
+    }
+  };
+}
+</script>

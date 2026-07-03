@@ -68,18 +68,14 @@ language: es
 │  Selecciona los upgrades a aplicar:      │
 ├──────────────────────────────────────────┤
 │  APP (perfil tecnico)                       │
-│  [1] Lite → Professional   (.exe + Fixed WV2) │
-│  [2] Professional → Business (+ .apk + branding) │
+│  [1] Lite → Professional   (.exe + Fixed WV2 + .apk) │
+│  [2] Professional → Business (+ white-label + branding) │
 │  [0] No cambiar                          │
 ├──────────────────────────────────────────┤
 │  IA Jutia (independiente del perfil)     │
 │  [2] No → Lite  (FlexSearch + stats)     │
 │  [3] Lite → Full (QA + ingesta docs)     │
 │  [0] No cambiar                          │
-├──────────────────────────────────────────┤
-│  Android .apk (solo si Business)          │
-│  [4] Si (requiere JDK 17+ y Android SDK) │
-│  [5] No                                  │
 └──────────────────────────────────────────┘
 `
 

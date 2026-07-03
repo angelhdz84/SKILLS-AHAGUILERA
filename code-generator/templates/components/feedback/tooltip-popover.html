@@ -1,0 +1,53 @@
+<div x-data="[ID]_tooltips()" class="flex flex-wrap items-center gap-4 p-4">
+  <template x-for="t in triggers" :key="t.id">
+    <div class="relative inline-flex">
+      <button @mouseenter="show = t.id" @mouseleave="show = null"
+              @click="pinned = pinned === t.id ? null : t.id; show = pinned || t.id"
+              class="btn btn-sm" :class="t.btnClass || 'btn-ghost'" x-text="t.label">
+      </button>
+      <div x-show="show === t.id"
+           x-transition:enter="transition ease-out duration-150"
+           x-transition:enter-start="opacity-0 scale-95"
+           x-transition:enter-end="opacity-100 scale-100"
+           x-transition:leave="transition ease-in duration-100"
+           x-transition:leave-start="opacity-100 scale-100"
+           x-transition:leave-end="opacity-0 scale-95"
+           @click.outside="if (pinned !== t.id) show = null"
+           class="absolute z-50 w-56 p-3 bg-base-100 border border-base-300 rounded-xl shadow-xl text-sm"
+           :class="t.position || 'bottom-full left-1/2 -translate-x-1/2 mb-2'">
+        <div class="absolute w-2 h-2 bg-base-100 border-r border-b border-base-300 rotate-45"
+             :class="arrowClass(t.position || 'bottom-full')"></div>
+        <p class="font-semibold text-sm mb-1" x-text="t.title"></p>
+        <p class="text-xs text-base-content/60 leading-relaxed" x-text="t.body"></p>
+        <div x-show="t.action" class="mt-2 pt-2 border-t border-base-200">
+          <button @click="handleAction(t)" class="btn btn-primary btn-xs w-full" x-text="t.action"></button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]_tooltips() {
+  return {
+    show: null,
+    pinned: null,
+    triggers: [
+      { id: 't1', label: 'Hover arriba', title: 'Tooltip Superior', body: 'Información adicional que aparece al hacer hover o click.', position: 'bottom-full left-1/2 -translate-x-1/2 mb-2' },
+      { id: 't2', label: 'Hover abajo', title: 'Tooltip Inferior', body: 'Aparece debajo del elemento activo.', position: 'top-full left-1/2 -translate-x-1/2 mt-2', arrow: 'top-0 -mt-1 rotate-45' },
+      { id: 't3', label: 'Popover acción', title: 'Confirmar acción', body: '¿Estás seguro de realizar esta acción?', position: 'bottom-full left-1/2 -translate-x-1/2 mb-2', action: 'Confirmar' }
+    ],
+
+    arrowClass(pos) {
+      if (pos.includes('mb-2')) return '-bottom-1 left-1/2 -translate-x-1/2 rotate-45'
+      if (pos.includes('mt-2')) return '-top-1 left-1/2 -translate-x-1/2 rotate-45'
+      return ''
+    },
+
+    handleAction(t) {
+      this.show = null
+      this.pinned = null
+    }
+  }
+}
+</script>

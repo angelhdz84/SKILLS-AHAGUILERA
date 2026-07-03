@@ -1,0 +1,57 @@
+<div x-data="[ID]_colorpicker()" x-init="init()" class="space-y-3">
+  <label x-show="label" class="label-text text-xs font-medium text-base-content/60" x-text="label"></label>
+
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl border-2 border-base-300 shadow-sm shrink-0 transition-colors" :style="'background:' + value"></div>
+    <input type="text" x-model="value" @input="save()" class="input input-bordered input-sm font-mono w-28 uppercase" placeholder="#000000">
+    <input type="color" :value="value" @input="value = $event.target.value; save()" class="w-10 h-10 p-0.5 border-0 cursor-pointer rounded-xl shrink-0">
+  </div>
+
+  <div class="grid grid-cols-6 gap-2">
+    <template x-for="(palette, pi) in palettes" :key="pi">
+      <div class="space-y-1">
+        <p class="text-[10px] font-medium text-base-content/30 uppercase tracking-wider text-center" x-text="palette.label"></p>
+        <div class="grid grid-cols-1 gap-1">
+          <template x-for="color in palette.colors" :key="color">
+            <button @click="value = color; save()"
+                    class="w-full h-7 rounded-lg border border-base-300/50 transition-transform hover:scale-110 hover:z-10"
+                    :class="{ 'ring-2 ring-primary ring-offset-1 scale-110 z-10': value === color }"
+                    :style="'background:' + color"
+                    :title="color">
+            </button>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+function [ID]_colorpicker() {
+  return {
+    value: '#6366f1',
+    label: '[TITLE]',
+    palettes: [
+      { label: 'Púrpura', colors: ['#f5f3ff','#ede9fe','#ddd6fe','#c4b5fd','#a78bfa','#8b5cf6','#7c3aed','#6d28d9','#5b21b6','#4c1d95'] },
+      { label: 'Azul', colors: ['#eff6ff','#dbeafe','#bfdbfe','#93c5fd','#60a5fa','#3b82f6','#2563eb','#1d4ed8','#1e40af','#1e3a5f'] },
+      { label: 'Verde', colors: ['#f0fdf4','#dcfce7','#bbf7d0','#86efac','#4ade80','#22c55e','#16a34a','#15803d','#166534','#14532d'] },
+      { label: 'Ámbar', colors: ['#fffbeb','#fef3c7','#fde68a','#fcd34d','#fbbf24','#f59e0b','#d97706','#b45309','#92400e','#78350f'] },
+      { label: 'Rojo', colors: ['#fef2f2','#fee2e2','#fecaca','#fca5a5','#f87171','#ef4444','#dc2626','#b91c1c','#991b1b','#7f1d1d'] },
+      { label: 'Rosa', colors: ['#fdf2f8','#fce7f3','#fbcfe8','#f9a8d4','#f472b6','#ec4899','#db2777','#be185d','#9d174d','#831843'] }
+    ],
+
+    init() { this.load() },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s) this.value = s
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', this.value) } catch {}
+    }
+  }
+}
+</script>

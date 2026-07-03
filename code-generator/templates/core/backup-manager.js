@@ -11,7 +11,7 @@
     _debug: false,
 
     async exportarBackup(password) {
-      return SyncEngine.exportar(password);
+      return SyncEngine.exportarBackup(password);
     },
 
     async importarBackup(password) {
@@ -23,7 +23,7 @@
           const file = e.target.files[0];
           if (!file) { resolve(false); return; }
           try {
-            await SyncEngine.importar(file, password);
+            await SyncEngine.importarBackup(file, password);
             resolve(true);
           } catch (err) {
             UI.toast('Error al importar: ' + err.message, 'error');
@@ -54,8 +54,26 @@
     },
 
     async limpiarDatos() {
-      const confirmed = await SyncEngine.limpiarDatos();
-      return confirmed;
+      if (!confirm('¿Estás seguro de limpiar todos los datos locales? Esta acción no se puede deshacer.')) return false;
+      try {
+        var dbRef = window.db;
+        if (!dbRef) { UI.toast('Base de datos no disponible', 'error'); return false; }
+        var tables = dbRef.tables;
+        var ps = [];
+        for (var i = 0; i < tables.length; i++) {
+          ps.push(tables[i].clear());
+        }
+        return Promise.all(ps).then(function () {
+          UI.toast('Datos locales eliminados correctamente', 'success');
+          return true;
+        }).catch(function (err) {
+          UI.toast('Error al limpiar datos: ' + (err.message || 'Error'), 'error');
+          return false;
+        });
+      } catch (err) {
+        UI.toast('Error al limpiar datos: ' + (err.message || 'Error'), 'error');
+        return false;
+      }
     },
 
     async recargarDemo() {

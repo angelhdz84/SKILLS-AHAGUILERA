@@ -16,7 +16,7 @@ El SDD anterior estaba pensado para una app independiente (Vue/Vite). Al integra
 
 ## 1. Arquitectura AHA-Jutia
 
-IA Jutia no es una app, es un **Engine Transversal** (`engine-ia-jutia.js`) que se inyecta en las 14 apps AHA.
+IA Jutia no es una app, es un **Engine Transversal** (`engine-ia-jutia.js`) que se inyecta en las apps AHA.
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐

@@ -1,4 +1,8 @@
 ---
+<!-- Archived — reemplazado por deployment-jigue -->
+# @deprecated — Reemplazado por deployment-jigue
+# Motivo: Unificado en deployment-jigue que maneja commit + push + empaquetado según perfil
+# Migración: Usar `/deploy` que activa deployment-jigue
 name: github-page-publish
 description: Publica commits a GitHub y despliega a GitHub Pages. 4 fases secuenciales: diagnostico → commit → push → deploy. Modo manual (con confirmaciones) o rapido (todo automatico). Detecta el repositorio remoto, genera mensaje de commit a partir de los cambios, ejecuta git push y verifica que el Action workflow de Pages se complete exitosamente.
 license: MIT

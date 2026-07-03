@@ -1,4 +1,5 @@
 ---
+<!-- Archived — reemplazado por design-engine -->
 # @deprecated — Absorbido por design-engine
 # Motivo: Unificación design-ux-intelligence + daisyui-patterns + omd:apply + omd:sync + omd:remember/learn en design-engine
 # Migración: design-engine integra todo el diseño + captura de preferencias + catálogo OmD
@@ -19,7 +20,7 @@ meta:
 
 # 🎨 SKILL: design-ux-intelligence (Capa de Diseño Adaptada)
 
-> **Propósito**: Aplicar inteligencia de diseño visual y experiencia de usuario profesional, **100% compatible con tu stack offline-first**. No genera código por sí sola; se activa automáticamente cuando `spec-creator` o `validation-offline` requieren validación de diseño/UX.
+> **Propósito**: Aplicar inteligencia de diseño visual y experiencia de usuario profesional, **100% compatible con tu stack offline-first**. No genera código por sí sola; se activa automáticamente cuando `spec-engine` o `validation-engine` requieren validación de diseño/UX.
 > **Modo**: Consulta + Guía | **Idioma**: ES | **Contexto**: Requiere @AGENTS.md
 > **Activación**: Automática por triggers o integración con otras SKILLs
 
@@ -27,8 +28,8 @@ meta:
 
 ## 🔄 ACTIVACIÓN AUTOMÁTICA
 Esta SKILL se activa cuando:
-- `spec-creator` pregunta por "tono visual" o "diferenciador clave"
-- `validation-offline` ejecuta la fase de "Validación de Diseño/UX"
+- `spec-engine` pregunta por "tono visual" o "diferenciador clave"
+- `validation-engine` ejecuta la fase de "Validación de Diseño/UX"
 - El usuario usa cualquier trigger: `tono visual`, `diseño distintivo`, `UX profesional`, `validar accesibilidad`
 
 ---
@@ -101,7 +102,7 @@ Rechazar patrones idénticos. Cada pantalla emerge de su tarea:
   - Output esperado: un párrafo que cualquiera pueda leer y decir "sí, esa app se ve así"
 ```
 
-> 🔑 **Regla**: Si el usuario ya definió tono visual en `spec-creator` (Pasos 1-8 de Configuración), salta los Pasos 0.1-0.2 y ve directo a 0.3-0.5. Si eligió "defaults", ejecuta TODO el Paso 0.
+> 🔑 **Regla**: Si el usuario ya definió tono visual en `spec-engine` (Pasos 1-8 de Configuración), salta los Pasos 0.1-0.2 y ve directo a 0.3-0.5. Si eligió "defaults", ejecuta TODO el Paso 0.
 
 ### Paso 1: Definir antes de codificar
 ```
@@ -551,11 +552,11 @@ Componentes Alpine.js + Tailwind CSS nativo, copiados de [Pines](https://devdojo
 
 ## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 
-### En `spec-creator.md`:
+### En `spec-engine`:
 - Tras recibir historia de usuario, preguntar por tono visual si el usuario lo solicita.
 - Incluir respuestas en la spec final bajo sección "## 🎨 UI/UX y Animaciones".
 
-### En `validation-offline.md`:
+### En `validation-engine`:
 - Activar automáticamente en Fase 3.5 para checklist de diseño/UX.
 - Si hay FAILs, sugerir correcciones con snippets exactos.
 

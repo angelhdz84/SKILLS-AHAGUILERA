@@ -1,0 +1,89 @@
+<div x-data="[ID]_dropdown()" class="relative inline-block text-left">
+  <button @click="open = !open" @keydown.escape="open = false"
+          class="btn" :class="btnClass">
+    <i :class="icon"></i>
+    <span x-text="label"></span>
+    <i class="bi" :class="open ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+  </button>
+
+  <div x-show="open" @click.outside="open = false"
+       x-transition:enter="transition ease-out duration-150"
+       x-transition:enter-start="opacity-0 scale-95"
+       x-transition:enter-end="opacity-100 scale-100"
+       x-transition:leave="transition ease-in duration-100"
+       x-transition:leave-start="opacity-100 scale-100"
+       x-transition:leave-end="opacity-0 scale-95"
+       class="absolute right-0 mt-2 w-56 bg-base-100 border border-base-300 rounded-xl shadow-xl z-50 overflow-hidden"
+       @keydown.escape="open = false">
+    <div class="py-1">
+      <template x-for="(item, i) in items" :key="i">
+        <template x-if="item.separator">
+          <div class="border-t border-base-200 my-1"></div>
+        </template>
+        <template x-if="!item.separator">
+          <button @click="select(item)" @keydown.down.prevent="focusNext(i)" @keydown.up.prevent="focusPrev(i)"
+                  class="flex items-center gap-3 w-full px-3 py-2 text-sm text-left transition-colors hover:bg-base-200/70"
+                  :class="{ 'text-error': item.danger, 'text-base-content/30 cursor-not-allowed': item.disabled }"
+                  :disabled="item.disabled">
+            <i x-show="item.icon" :class="item.icon" class="w-4 text-base-content/40 shrink-0"></i>
+            <span class="flex-1" x-text="item.label"></span>
+            <span x-show="item.shortcut" class="text-xs text-base-content/30 font-mono" x-text="item.shortcut"></span>
+            <span x-show="item.badge" class="badge badge-sm" :class="item.badgeClass || 'badge-ghost'" x-text="item.badge"></span>
+            <i x-show="item.checked !== undefined" class="bi" :class="item.checked ? 'bi-check-circle-fill text-primary' : 'bi-circle text-base-content/20'"></i>
+          </button>
+        </template>
+      </template>
+    </div>
+  </div>
+</div>
+
+<script>
+function [ID]_dropdown() {
+  const DEFAULT_ITEMS = [
+    { label: 'Editar', icon: 'bi-pencil', shortcut: 'Ctrl+E' },
+    { label: 'Duplicar', icon: 'bi-files', shortcut: 'Ctrl+D' },
+    { label: 'Compartir', icon: 'bi-share', badge: 'Nuevo', badgeClass: 'badge-primary' },
+    { separator: true },
+    { label: 'Mover a...', icon: 'bi-folder2', disabled: true },
+    { label: 'Cambiar estado', icon: 'bi-arrow-repeat', checked: false },
+    { separator: true },
+    { label: 'Eliminar', icon: 'bi-trash3', danger: true, shortcut: 'Supr' }
+  ]
+
+  return {
+    open: false,
+    label: '[TRIGGER_LABEL]',
+    icon: 'bi-three-dots-vertical',
+    btnClass: 'btn-ghost btn-sm btn-square',
+    items: [],
+
+    init() {
+      this.items = DEFAULT_ITEMS
+    },
+
+    select(item) {
+      if (item.disabled || item.separator) return
+      if (item.checked !== undefined) {
+        item.checked = !item.checked
+        this.save()
+        return
+      }
+      this.open = false
+    },
+
+    focusNext(i) {
+      const next = this.items.findIndex((it, idx) => idx > i && !it.separator && !it.disabled)
+      if (next >= 0) this.$el.querySelectorAll('button')[next]?.focus()
+    },
+
+    focusPrev(i) {
+      const prev = [...this.items].reverse().findIndex((it, idx) => (this.items.length - 1 - idx) < i && !it.separator && !it.disabled)
+      if (prev >= 0) this.$el.querySelectorAll('button')[this.items.length - 1 - prev]?.focus()
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.items.filter(i => !i.separator).map(i => ({ label: i.label, checked: i.checked })))) } catch {}
+    }
+  }
+}
+</script>

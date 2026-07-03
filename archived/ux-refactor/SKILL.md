@@ -1,9 +1,10 @@
 ---
+<!-- Archived — reemplazado por validation-engine -->
 # @deprecated — Absorbido por validation-engine
 # Motivo: Unificación con validation-offline + omd:designer-review + omd:final-qa en validation-engine
 # Migración: validation-engine tiene modo "refactor" que auto-corrige desviaciones de DESIGN.md
 name: ux-refactor
-description: [DEPRECATED] Absorbido por validation-engine (modo refactor). Audita, recomienda y aplica mejoras de UX/UI a apps offline-first existentes. 4 fases: audit → recommend → implement → validate. Lee codigo existente y lo modifica in-place sin regenerar la app. Orquesta design-ux-intelligence, interaction-patterns, page-structure-patterns y demas skills/patrones.
+description: [DEPRECATED] Absorbido por validation-engine (modo refactor). Audita, recomienda y aplica mejoras de UX/UI a apps offline-first existentes. 4 fases: audit → recommend → implement → validate. Lee codigo existente y lo modifica in-place sin regenerar la app. Orquesta design-engine, interaction-patterns, page-structure-patterns y demas skills/patrones.
 license: MIT
 compatibility: Requiere @AGENTS.md y project.config.js. Funciona sobre apps offline-first existentes (Alpine.js, Tailwind CSS local, DaisyUI, Bootstrap Icons, Animate.css). No usa spec-creator ni code-generator.
 meta:
@@ -17,7 +18,7 @@ meta:
     - "references/audit-checklist.md"
     - "references/pattern-matrix.md"
   orchestrates:
-    - "design-ux-intelligence"
+    - "design-engine"
     - "visual-design-system"
     - "page-structure-patterns"
     - "form-patterns"
@@ -65,7 +66,7 @@ meta:
 
 1. **NO regenerar la app** — trabajas sobre el codigo existente, editandolo in-place
 2. **NO tocar logica de negocio** — solo HTML/CSS/UX: clases Tailwind, estructura DOM, Alpine x-data/x-show/x-transition,aria attributes, layout, colores, tipografia
-3. **NO usar spec-creator, code-generator, setup-init** — esta skill es independiente
+3. **NO usar spec-engine, code-generator, setup-init** — esta skill es independiente
 4. **SI orquestar** skills de patrones (design-ux-intelligence, form-patterns, etc.) y MCPs (a11y, refero-styles) como oraculos de consulta
 5. **Validar con stack-compliance-guard** al final — asegurar que no se introdujeron CDNs, imports, ni violaciones del stack
 
@@ -86,7 +87,7 @@ El usuario dice frases como:
 
 ```
 [▓▓▓▓░░░░░░░░░░░░] 25% • Auditando UX/UI actual...
-(design-ux-intelligence + audit-checklist + a11y MCP + refero-styles)
+(design-engine + audit-checklist + a11y MCP + refero-styles)
 ```
 
 ### Paso 1.1 — Cargar contexto del proyecto
@@ -148,7 +149,7 @@ Muestra el resumen y pregunta:
 
 ```
 [▓▓▓▓▓▓▓▓░░░░░░░░] 50% • Generando plan de accion...
-(design-ux-intelligence + pattern-matrix + refero-styles)
+(design-engine + pattern-matrix + refero-styles)
 ```
 
 ### Paso 2.1 — Seleccionar patrones aplicables
@@ -166,7 +167,7 @@ Para items especificos, carga la skill de patron correspondiente:
 - **Datos densos**: data-density-patterns, status-visualization-patterns
 - **Responsive**: mobile-responsive-ux
 - **Accesibilidad**: wcag-accessibility + a11y MCP
-- **Diseno visual**: design-ux-intelligence, visual-design-system
+- **Diseno visual**: design-engine, visual-design-system
 
 No duplices el contenido de la skill — usala como referencia y adapta sus recomendaciones al contexto especifico de la app.
 

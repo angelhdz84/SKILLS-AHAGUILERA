@@ -1,0 +1,136 @@
+<div x-data="[ID]_fileUpload()" x-init="init()" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <label class="text-sm font-medium">[LABEL]</label>
+    <span x-show="files.length" class="text-xs text-base-content/40" x-text="`${files.length} archivo(s)`"></span>
+  </div>
+
+  <div @drop.prevent="addFiles($event.dataTransfer.files)"
+       @dragover.prevent="dragover = true"
+       @dragleave.prevent="dragover = false"
+       :class="dragover ? 'border-primary bg-primary/5' : 'border-base-300'"
+       class="relative border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer hover:border-primary/50 group"
+       @click="$refs.input.click()">
+
+    <input type="file" x-ref="input" accept="[ACCEPT]" [MULTIPLE] class="hidden" @change="addFiles($event.target.files)">
+
+    <template x-if="!dragover">
+      <div>
+        <i class="bi bi-cloud-upload text-4xl text-base-content/30 group-hover:text-primary/50 transition-colors"></i>
+        <p class="mt-3 text-sm font-medium text-base-content/70">Arrastra archivos aquí o <span class="text-primary cursor-pointer">examina</span></p>
+        <p class="mt-1 text-xs text-base-content/40">[HINT]</p>
+      </div>
+    </template>
+
+    <template x-if="dragover">
+      <div>
+        <i class="bi bi-check-circle text-4xl text-primary"></i>
+        <p class="mt-3 text-sm font-medium text-primary">Suelta los archivos aquí</p>
+      </div>
+    </template>
+  </div>
+
+  <template x-if="files.length">
+    <div class="space-y-2">
+      <template x-for="(f, i) in files" :key="f.id">
+        <div class="flex items-center gap-3 p-3 bg-base-200 rounded-xl group/file">
+          <template x-if="f.preview">
+            <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-base-300">
+              <img :src="f.preview" class="w-full h-full object-cover">
+            </div>
+          </template>
+          <template x-if="!f.preview">
+            <div class="w-10 h-10 rounded-lg bg-base-300 flex items-center justify-center shrink-0">
+              <i class="bi bi-file-earmark-text text-lg text-base-content/40"></i>
+            </div>
+          </template>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium truncate" x-text="f.name"></p>
+            <p class="text-xs text-base-content/40" x-text="formatSize(f.size)"></p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span x-show="f.uploading" class="loading loading-spinner loading-xs text-primary"></span>
+            <template x-if="f.status === 'error'">
+              <span class="text-xs text-error flex items-center gap-1"><i class="bi bi-exclamation-circle"></i> Error</span>
+            </template>
+            <button @click="remove(i)" class="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-error opacity-0 group-hover/file:opacity-100 transition-opacity">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <template x-if="files.length && gallery">
+    <div>
+      <p class="text-xs font-medium text-base-content/40 uppercase tracking-wider mb-2">Vista previa</p>
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+        <template x-for="(f, i) in files" :key="f.id">
+          <template x-if="f.preview">
+            <div class="relative group/card rounded-lg overflow-hidden aspect-square bg-base-300 cursor-pointer"
+                 @click="galleryIndex = i">
+              <img :src="f.preview" class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">
+                <i class="bi bi-eye text-white text-lg"></i>
+              </div>
+              <button @click.stop="remove(i)" class="absolute top-1 right-1 btn btn-xs btn-circle btn-ghost text-white/80 hover:text-error bg-black/20 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </template>
+        </template>
+      </div>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]_fileUpload() {
+  return {
+    files: [],
+    dragover: false,
+    maxSize: [MAX_SIZE],
+    maxFiles: [MAX_FILES],
+    gallery: [GALLERY],
+
+    init() {
+      this.maxSize = this.maxSize || 10 * 1024 * 1024
+    },
+
+    addFiles(fileList) {
+      this.dragover = false
+      const nuevos = Array.from(fileList).map(file => ({
+        id: crypto.randomUUID ? crypto.randomUUID() : 'f_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        status: 'pending',
+        uploading: false,
+        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null
+      })).filter(f => {
+        if (f.size > this.maxSize) { f.status = 'error'; return false }
+        return true
+      })
+      const disponibles = this.maxFiles - this.files.length
+      if (nuevos.length > disponibles) nuevos.length = disponibles
+      this.files = [...this.files, ...nuevos]
+      if (this.files.length > this.maxFiles) this.files = this.files.slice(0, this.maxFiles)
+    },
+
+    remove(i) {
+      const f = this.files[i]
+      if (f.preview) URL.revokeObjectURL(f.preview)
+      this.files.splice(i, 1)
+    },
+
+    formatSize(bytes) {
+      if (!bytes) return '0 B'
+      const u = ['B', 'KB', 'MB', 'GB']
+      let i = 0
+      while (bytes >= 1024 && i < u.length - 1) { bytes /= 1024; i++ }
+      return bytes.toFixed(i > 0 ? 1 : 0) + ' ' + u[i]
+    }
+  }
+}
+</script>

@@ -1,4 +1,5 @@
 ---
+<!-- Archived — reemplazado por pipeline-engine -->
 # @deprecated — Reemplazado por pipeline-engine
 # Motivo: Fusión prompt-inicial + supercharged-pipeline + omd:harness + omd:orchestrator en pipeline-engine
 # Migración: Usar `/new` o `/pro` que activan pipeline-engine
@@ -9,7 +10,7 @@ compatibility: Requiere @AGENTS.md y las 7 SKILLs base instaladas en ~/.opencode
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "3.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "prompt-inicial orchestrator"
   triggers: ["nuevo proyecto", "iniciar pipeline", "crear app", "iniciar flujo", "prompt-inicial", "/pro"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -32,9 +33,9 @@ meta:
 💡 Descripción breve (1-2 líneas): [Ej: App para recepcionistas que permite registrar pacientes, agendar citas y exportar reportes diarios. Todo offline.]
 🎨 Tono visual: [1-6] (1: Profesional, 2: Vibrante, 3: Minimal, 4: Editorial, 5: Retro, 6: Default config)
 🔑 Módulos requeridos: [Ej: dashboard, pacientes, citas, reportes, settings]
-📦 Perfil: [lite/full]
+📦 Perfil: [lite/professional]
    (lite) file:// + Dexie + CryptoJS — doble clic, sin dependencias
-   (full) Bun + SQLite + Web Crypto — .exe instalable profesional
+   (professional) Bun + SQLite + Web Crypto — .exe instalable profesional
 🧠 IA Jutia: [lite/full/no]
    (lite) FlexSearch + estadísticas + predicciones (~7KB)
    (full) +Ingesta documentos + QA con Transformers.js (~233MB)
@@ -62,7 +63,7 @@ Al recibir la configuración, sigue ESTE orden exacto. **PAUSA tras cada fase y 
 → Incluye **Fase 0.6 (Detección de librerías externas)**: propone librerías según la descripción de la app.
 → Si perfil=Full, genera Modelo de Datos con schema SQL además del schema Dexie.
 → Genera asunciones 4+1 con barra `▓▓░░`, y guarda en `specs/[nombre].md`.
-→ Aplica automáticamente principios de `design-ux-intelligence` si se solicitó tono visual.
+→ Aplica automáticamente principios de `design-engine` si se solicitó tono visual.
 → Si se detectaron librerías adicionales, se registran en la spec bajo `## 📚 Librerías Adicionales`.
 → ⏸️ **PAUSA**: Espera `✅ FASE 2 OK`
 
@@ -129,16 +130,16 @@ Al finalizar, muestra:
 | SKILL | Rol en este flujo | Trigger usado |
 |-------|------------------|---------------|
 | `setup-init` | Fase 1: Entorno y librerías | `iniciar setup` |
-| `spec-creator` | Fase 2: Definición técnica | `definir spec app` |
-| `design-ux-intelligence` | Integración visual/UX | Auto-activada por spec-creator |
+| `spec-engine` | Fase 2: Definición técnica | `definir spec app` |
+| `design-engine` | Integración visual/UX | Auto-activada por spec-engine |
 | `stack-compliance-guard` | Validación en cada output | Auto-activada |
 | `code-generator` | Fase 3: Código funcional | `generar codigo` |
 | `ia-jutia` | Módulo de IA opcional (Lite/Full) | `mini ia` |
-| `validation-offline` | Fase 4: Reporte final | `validar app` |
+| `validation-engine` | Fase 4: Reporte final | `validar app` |
 | `deployment-jigue` | Fase 5: Empaquetado y deploy | `publicar` |
-| `supercharged-pipeline` | Pipeline potenciado SP+SA (alternativa a /new) | `/pro` |
-| `ux-refactor` | Refactor UX/UI para apps existentes | `/refactor` |
-| `daisyui-patterns` | Patrones DaisyUI 5 + Alpine.js | Auto-activada por code-generator |
+| `pipeline-engine` | Pipeline potenciado (alternativa a /new) | `/pro` |
+| `validation-engine` | Refactor UX/UI para apps existentes | `/refactor` |
+| `design-engine` | Patrones DaisyUI 5 + Alpine.js | Auto-activada por code-generator |
 
 ---
 

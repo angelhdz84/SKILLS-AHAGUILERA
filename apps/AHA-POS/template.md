@@ -75,5 +75,4 @@ db.version(3).stores({
 ```
 Hola Angel, necesito un punto de venta offline para mi tienda
 sin pagar mensualidades. ¿AHA POS plan Standard con .exe y .apk?
-
-
+```

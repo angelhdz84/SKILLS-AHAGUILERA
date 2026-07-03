@@ -14,7 +14,7 @@
   };
 
   // ─── Inicialización ─────────────────────────────────
-  async function init() {
+  function init() {
     try {
       // 1. Verificar que core esté cargado
       if (!window.db) throw new Error('core/db.js no cargado');

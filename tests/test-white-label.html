@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="business">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test White-Label</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script>
+    // Simular APP_CONFIG con plan Business para probar feature flags
+    window.APP_CONFIG = {
+      app: { id: 'test-white-label', nombre: 'Test White-Label' },
+      plan: 'business',
+      debug: true,
+      version: '1.0.0'
+    };
+    // brand.config.json mock inline
+    window.BRAND_CONFIG_DEFAULTS = {
+      client: 'Test Corp',
+      appName: 'AHA Test',
+      appId: 'test-001',
+      colors: {
+        primary: '#1e3a5f',
+        secondary: '#64748b',
+        accent: '#0ea5e9',
+        neutral: '#1c1917',
+        'base-100': '#ffffff',
+        'base-200': '#f1f5f9',
+        'base-300': '#e2e8f0',
+        info: '#3b82f6',
+        success: '#22c55e',
+        warning: '#f59e0b',
+        error: '#ef4444'
+      },
+      fonts: {
+        heading: 'Inter, system-ui, sans-serif',
+        body: 'Inter, system-ui, sans-serif',
+        mono: 'JetBrains Mono, monospace'
+      },
+      logo: { light: '', dark: '', favicon: '', splash: '' },
+      features: {},
+      support: { email: '', docsUrl: '', phone: '' },
+      customCss: '',
+      version: '1.0.0'
+    };
+  </script>
+</head>
+<body class="bg-base-200 min-h-screen p-4" x-data>
+  <div class="max-w-4xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-base-content">Test White-Label</h1>
+      <p class="text-base-content/60" x-text="'Brand: ' + (Alpine.store('brand')?.get()?.appName || 'loading...')"></p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">Botones DaisyUI</h2>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-primary">Primary</button>
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-accent">Accent</button>
+            <button class="btn btn-neutral">Neutral</button>
+            <button class="btn btn-info">Info</button>
+            <button class="btn btn-success">Success</button>
+            <button class="btn btn-warning">Warning</button>
+            <button class="btn btn-error">Error</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">Tarjetas base</h2>
+          <div class="p-3 bg-base-200 rounded-box mb-2">base-200</div>
+          <div class="p-3 bg-base-300 rounded-box">base-300</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- brand-loader.js + feature-flags.js -->
+  <script src="../code-generator/templates/core/brand-loader.js"></script>
+  <script src="../code-generator/templates/core/feature-flags.js"></script>
+
+  <script>
+    document.addEventListener('alpine:init', function () {
+      if (typeof brandLoader !== 'undefined' && !window._brandInited) {
+        window._brandInited = true;
+        brandLoader.injectConfig(window.BRAND_CONFIG_DEFAULTS);
+        brandLoader.load();
+        brandLoader.apply();
+      }
+      if (typeof FF !== 'undefined') {
+        FF.init();
+      }
+    });
+  </script>
+</body>
+</html>

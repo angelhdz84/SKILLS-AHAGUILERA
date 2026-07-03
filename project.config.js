@@ -10,7 +10,7 @@ window.APP_CONFIG = {
     descripcion: 'App offline-first generada desde SKILLS-AHAGUILERA'
   },
   perfil: 'lite',
-  iaJutia: 'lite',
+  iaJutia: { perfil: 'lite', flexSearch: { preset: 'default', tokenize: 'forward' } },
   modulosActivos: [
     'dashboard',
     'configuracion',

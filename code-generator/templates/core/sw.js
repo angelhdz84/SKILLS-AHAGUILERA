@@ -8,6 +8,8 @@ var DB_VERSION = new URL(self.location.href).searchParams.get('v') || 1;
 var CACHE = CACHE_PREFIX + '-' + DB_VERSION;
 
 // NOTA: apps específicas deben extender PRECACHE_URLS con sus módulos, CSS y data
+// TODO: REEMPLAZAR con PRECACHE_URLS dinámicos generados por code-generator Fase 2 listando
+//       todos los módulos en modules/<modulo>/ para evitar precache manual en cada template
 var PRECACHE_URLS = [
   './',
   'index.html',
@@ -22,8 +24,8 @@ var PRECACHE_URLS = [
   'core/sync.js',
   'core/license.js',
   'core/network.js',
-  'core/export.js',
-  'core/backup-manager.js',
+  'core/brand-loader.js',
+  'core/feature-flags.js',
   'main.js'
 ];
 

@@ -1,0 +1,83 @@
+<div x-data="[ID]Stats()" x-init="init()">
+  <template x-if="cargando">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <template x-for="i in 4" :key="i">
+        <div class="skeleton h-28 w-full rounded-xl"></div>
+      </template>
+    </div>
+  </template>
+
+  <template x-if="!cargando">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <template x-for="stat in stats" :key="stat.label">
+        <div class="stat bg-base-100 border border-base-300 rounded-xl shadow-sm"
+             x-intersect:enter.once="countUp($el.querySelector('.stat-value'), stat.valor)">
+          <div class="stat-figure text-[stat.color]">
+            <i :class="stat.icono" class="text-3xl"></i>
+          </div>
+          <div class="stat-title text-sm font-medium text-base-content/60" x-text="stat.label"></div>
+          <div class="stat-value text-2xl font-bold tabular-nums" x-text="'0'" :data-target="stat.valor"></div>
+          <div class="stat-desc flex items-center gap-1 mt-1" x-show="stat.trend !== undefined">
+            <i :class="stat.trend >= 0 ? 'bi bi-arrow-up text-success' : 'bi bi-arrow-down text-error'"></i>
+            <span :class="stat.trend >= 0 ? 'text-success' : 'text-error'" x-text="formatTrend(stat.trend)"></span>
+            <span class="text-base-content/40">vs. periodo anterior</span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]Stats() {
+  return {
+    stats: [],
+    cargando: true,
+
+    async init() {
+      this.cargando = true;
+      try {
+        this.stats = await this.calcularStats();
+      } catch (err) {
+        console.error('Error loading stats:', err);
+        this.stats = [STAT_FALLBACKS];
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    countUp(el, target) {
+      if (!el) return;
+      const duration = 800;
+      const start = performance.now();
+      const from = 0;
+      const value = typeof target === 'number' ? target : parseFloat(target) || 0;
+
+      const animate = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = from + (value - from) * eased;
+
+        if (value >= 10) {
+          el.textContent = Math.round(current).toLocaleString('es-MX');
+        } else if (Number.isInteger(value)) {
+          el.textContent = Math.round(current);
+        } else {
+          el.textContent = current.toFixed(1);
+        }
+
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+
+      requestAnimationFrame(animate);
+    },
+
+    formatTrend(val) {
+      if (val === undefined || val === null) return '';
+      const prefix = val >= 0 ? '+' : '';
+      return `${prefix}${val.toFixed(1)}%`;
+    }
+  };
+}
+</script>

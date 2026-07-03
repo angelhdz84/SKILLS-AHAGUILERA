@@ -1,0 +1,92 @@
+<div x-data="[ID]_tags()" x-init="init()" class="space-y-2">
+  <label x-show="label" class="label-text text-xs font-medium text-base-content/60" x-text="label"></label>
+  <div class="flex flex-wrap items-center gap-1.5 p-2 bg-base-100 border rounded-xl min-h-[42px] cursor-text focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-colors"
+       :class="focused ? 'border-primary ring-1 ring-primary' : 'border-base-300'"
+       @click="$refs.input.focus()">
+    <template x-for="(tag, i) in tags" :key="tag.id || i">
+      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-medium"
+            :style="'background:' + (tag.color || tagColors[i % tagColors.length]) + '20; color:' + (tag.color || tagColors[i % tagColors.length])">
+        <span x-text="tag.label || tag"></span>
+        <button @click="removeTag(i)" class="hover:opacity-60 leading-none text-sm">&times;</button>
+      </span>
+    </template>
+    <input x-ref="input"
+           type="text"
+           x-model="input"
+           @focus="focused = true"
+           @blur="focused = false; commitPending()"
+           @keydown.enter.prevent="addTag()"
+           @keydown.,.prevent="addTag()"
+           @keydown.backspace="backspace()"
+           @keydown.escape="$refs.input.blur()"
+           class="flex-1 min-w-[80px] outline-none border-0 p-0 text-sm bg-transparent"
+           :placeholder="tags.length ? '' : placeholder || 'Escribir y Enter...'">
+  </div>
+  <p x-show="hint" class="text-xs text-base-content/30" x-text="hint"></p>
+  <div x-show="suggestions.length && focused" class="flex flex-wrap gap-1">
+    <template x-for="s in suggestions" :key="s">
+      <button @click="addSuggestion(s)" class="btn btn-ghost btn-xs text-base-content/40 hover:text-primary">
+        <i class="bi bi-plus"></i> <span x-text="s"></span>
+      </button>
+    </template>
+  </div>
+</div>
+
+<script>
+function [ID]_tags() {
+  return {
+    tags: [],
+    input: '',
+    label: '[LABEL]',
+    placeholder: '[PLACEHOLDER]',
+    hint: 'Enter o coma para agregar',
+    focused: false,
+    tagColors: ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#3b82f6','#ef4444','#14b8a6'],
+    suggestions: ['urgente', 'pendiente', 'revisión', 'completado', 'idea', 'mejora'],
+
+    init() { this.load() },
+
+    addTag() {
+      const v = this.input.trim()
+      if (!v) return
+      if (this.tags.some(t => (t.label || t).toLowerCase() === v.toLowerCase())) {
+        this.input = ''
+        return
+      }
+      this.tags.push({ id: 't_' + Date.now().toString(36), label: v, color: this.tagColors[this.tags.length % this.tagColors.length] })
+      this.input = ''
+      this.save()
+    },
+
+    addSuggestion(s) {
+      if (this.tags.some(t => (t.label || t) === s)) return
+      this.tags.push({ id: 't_' + Date.now().toString(36), label: s, color: this.tagColors[this.tags.length % this.tagColors.length] })
+      this.save()
+    },
+
+    removeTag(i) {
+      this.tags.splice(i, 1)
+      this.save()
+    },
+
+    commitPending() {
+      this.addTag()
+    },
+
+    backspace() {
+      if (!this.input && this.tags.length) this.removeTag(this.tags.length - 1)
+    },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s) this.tags = JSON.parse(s)
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.tags)) } catch {}
+    }
+  }
+}
+</script>

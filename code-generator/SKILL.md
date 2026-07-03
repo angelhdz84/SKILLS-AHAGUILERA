@@ -1,4 +1,4 @@
----
+﻿---
 name: code-generator
 description: Genera código estructurado y funcional siguiendo estrictamente specs/[app].md y @AGENTS.md. Flujo por fases, validación automática de compliance, y output listo para file:// sin imports ES6. Soporta librerías adicionales desde la spec.
 license: MIT
@@ -308,6 +308,10 @@ window.FileStore = {
 [Motor de respaldo: exporta todas las tablas Dexie a archivo cifrado/comprimido y restaura en cualquier perfil]
 
 ### `sw.js` (si la app requiere PWA/instalabilidad)
+
+> **NOTA:** El PRECACHE_URLS en `sw.js` es estático. Al final de Fase 2 (generación del index.html),
+> el listado de módulos generados debería inyectarse en `PRECACHE_URLS` automáticamente
+> para evitar precache manual. Esto es una mejora futura (ver TODO en `templates/core/sw.js`).
 [Service Worker con cache-first, skipWaiting, clientsClaim]
 
 ### `manifest.json` (si la app requiere PWA/instalabilidad)
@@ -397,7 +401,7 @@ ui: {
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js" -OutFile "core/neutralino.js"
 ```
 
-**Si perfil=Business (requiere .apk), añadir tambien:**
+**Si perfil=Professional o Business (incluyen .apk), añadir tambien:**
 ### `capacitor.config.json`
 [Configuracion de Capacitor para APK Android nativo. Ver capacitor/templates/capacitor.config.json]
 ```json
@@ -447,17 +451,97 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="assets/js/libs/dayjs.min.js"></script>
 <!-- FIN librerías adicionales -->
 
+**Layout shell:**
+Para el body HTML completo con sidebar + navbar + stores Alpine, referencia `{file:code-generator/templates/components/layout/app-shell.html}`. El generador debe adaptar `[ID]`, `[APP_NAME]`, `[PLAN]`, `[LOADING_ICON]` y `[VERSION]` según `project.config.js`.
+
+**Componentes UI adicionales disponibles:**
+
+**data/** (8 — displays e interacción):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Data table | `{file:code-generator/templates/components/data/data-table.html}` | Tablas CRUD con sort/paginación/batch/mobile |
+| Stats cards | `{file:code-generator/templates/components/data/stats-card.html}` | KPIs dashboard con count-up animado |
+| Timeline | `{file:code-generator/templates/components/data/timeline.html}` | Historial de actividad |
+| Detail panel | `{file:code-generator/templates/components/data/detail-panel.html}` | Vista detalle con tabs |
+| Kanban board | `{file:code-generator/templates/components/data/kanban-board.html}` | Columnas drag & drop para workflows |
+| Filter bar | `{file:code-generator/templates/components/data/filter-bar.html}` | Panel multi-filtro con chips activos |
+| Date picker | `{file:code-generator/templates/components/data/date-picker.html}` | Calendario fecha única/rango con navegación meses |
+| Tree view | `{file:code-generator/templates/components/data/tree-view.html}` | Árbol jerárquico expandible/colapsable con iconos |
+| Calendar | `{file:code-generator/templates/components/data/calendar.html}` | Grilla mensual con dots de eventos, navegación, click en día |
+| Avatar group | `{file:code-generator/templates/components/data/avatar-group.html}` | Avatares apilados con contador overflow + tooltip |
+| Sortable list | `{file:code-generator/templates/components/data/sortable-list.html}` | Lista reordenable drag & drop nativo |
+| Searchable select | `{file:code-generator/templates/components/data/searchable-select.html}` | Combobox con filtro type-to-search + teclado |
+| Rating | `{file:code-generator/templates/components/data/rating.html}` | Estrellas interactivas 1-5 con hover + tooltip |
+| Branding panel | `{file:code-generator/templates/components/data/branding-panel.html}` | White-label: colores, logo, fuentes, CSS, preview, export config |
+| Code block | `{file:code-generator/templates/components/data/code-block.html}` | Bloque código con copy + diff view |
+
+**form/** (3 — inputs especializados):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Form modal | `{file:code-generator/templates/components/form/form-modal.html}` | Formularios CRUD en modal con validación |
+| Form page | `{file:code-generator/templates/components/form/form-page.html}` | Wizards multi-paso con auto-save |
+| File upload | `{file:code-generator/templates/components/form/file-upload.html}` | Drag & drop con preview y galería |
+| Tags input | `{file:code-generator/templates/components/form/tags-input.html}` | Input multi-tag con enter/coma, backspace delete |
+| Color picker | `{file:code-generator/templates/components/form/color-picker.html}` | Paleta de 12 colores + input custom + swatch |
+| Stepper | `{file:code-generator/templates/components/form/stepper.html}` | Barra de progreso multi-paso con estados |
+
+**feedback/** (4 — overlays, menús y estados):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Empty state | `{file:code-generator/templates/components/feedback/empty-state.html}` | Estado vacío reutilizable |
+| Error state | `{file:code-generator/templates/components/feedback/error-state.html}` | Estado error con retry |
+| Notification center | `{file:code-generator/templates/components/feedback/notification-center.html}` | Dropdown notificaciones con badges |
+| Tooltip popover | `{file:code-generator/templates/components/feedback/tooltip-popover.html}` | Tooltip hover + popover click con posiciones |
+| Dropdown menu | `{file:code-generator/templates/components/feedback/dropdown-menu.html}` | Menú contextual con items, divisores, atajos |
+
+**layout/** (2 — navegación):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Sidebar | `{file:code-generator/templates/components/layout/sidebar.html}` | Navegación colapsable |
+| Navbar | `{file:code-generator/templates/components/layout/navbar.html}` | Barra superior con breadcrumbs |
+
+**chart/** (1 — gráficos):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Chart card | `{file:code-generator/templates/components/chart/chart-card.html}` | Gráficos Chart.js en Alpine |
+
+**media/** (3 — visuales):
+| Template | Ruta | Uso |
+|----------|------|------|
+| Image gallery | `{file:code-generator/templates/components/media/image-gallery.html}` | Grid responsive + lightbox modal con teclado |
+| Carousel | `{file:code-generator/templates/components/media/carousel.html}` | Slider con scroll-snap, arrows, dots, auto-play |
+| QR code | `{file:code-generator/templates/components/media/qr-code.html}` | Generador QR + escáner (Lite: input, Full: cámara) |
+
+El generador debe elegir el template según el tipo de módulo:
+- **CRUD simple**: data-table.html + form-modal.html
+- **Dashboard inicial**: stats-card.html + chart-card.html
+- **Forms complejos**: form-page.html (en vez de form-modal.html)
+- **Vista detalle**: detail-panel.html + timeline.html
+- **Módulos con fotos/archivos**: file-upload.html (dentro del form-modal)
+- **Workflows/etapas**: kanban-board.html (para módulos tipo CRM, Obra etapas)
+- **Alertas/actividad**: notification-center.html (integrado en navbar)
+- **Listas con muchos filtros**: filter-bar.html (encima de data-table)
+- **Galerías/multimedia**: image-gallery.html o carousel.html (media/)
+- **Código técnico**: code-block.html (data/) para mostrar ejemplos o diffs
+- **Selección avanzada**: searchable-select.html o tags-input.html (form/)
+- **Jerarquías**: tree-view.html (data/) para categorías anidadas
+- **Pasos/progreso**: stepper.html (form/) para wizards multi-paso
+- **Roles/colaboradores**: avatar-group.html (data/) en encabezados de detalle
+- **Calificaciones**: rating.html (data/) para reseñas o prioridades
+
 <!-- Core -->
 <script src="core/env.js"></script>
 <script src="core/db.js"></script>
 <script src="core/crypto.js"></script>
 <script src="core/ui.js"></script>
 <script src="core/theme.js"></script>
+<script src="core/brand-loader.js"></script>
 <script src="core/app.js"></script>
 <script src="core/search-palette.js"></script>
 <script src="core/file-store.js"></script>
 <script src="core/sync.js"></script>
 <script src="core/license.js"></script>
+<script src="core/feature-flags.js"></script>
 
 <!-- Main -->
 <script src="main.js"></script>
@@ -490,11 +574,11 @@ Para cada módulo en la spec:
 # Professional: .exe + Fixed WebView2
 cd proyecto && .\deployment-jigue\templates\package-professional.ps1 -AppName "[nombre]"
 
-# Business: .exe + .apk + branding
+# Business: .exe + .apk + white-label
 cd proyecto && .\deployment-jigue\templates\package-business.ps1 -AppName "[nombre]" -Cliente "[cliente]"
 ```
    El .exe se empaqueta en `dist/[AppName]-Professional-v[version].zip` (~30MB).
-   Business adicionalmente incluye .apk en `android/app/build/outputs/apk/release/app-release.apk`.
+    Professional y Business incluyen .apk en `android/app/build/outputs/apk/release/app-release.apk`. Business adicionalmente aplica white-label.
 4. Mensaje de cierre:
 ```
 ✅ GENERACIÓN COMPLETADA
@@ -666,10 +750,36 @@ window.MODULES[[NombreModulo].id] = [NombreModulo];
 2. ✅ **Feedback** con `UI.toast()`. NUNCA `alert()`.
 3. ✅ **Antes de borrar** mostrar `UI.confirm()`.
 4. ✅ **Toolbar** con botón "Agregar" (abre modal), búsqueda (input con debounce), y "PDF" si aplica.
-5. ✅ **Lista** en `<div class="overflow-x-auto">` con `<table class="table">`.
+5. ✅ **Lista** en `<div class="overflow-x-auto">` con `<table class="table">`. Para tablas avanzadas con sort/paginación/selección batch/vista mobile cards, referencia `{file:code-generator/templates/components/data/data-table.html}` y adapta `[TABLE_HEADERS]`, `[TABLE_CELLS]`, `[MOBILE_CARD_CONTENT]` según los campos del módulo.
 6. ✅ **Avatar** en listas si el módulo tiene campo foto: `<div class="avatar"><div class="w-10 rounded-full">`.
-7. ✅ **Empty state** cuando no hay datos: icono grande + mensaje + botón "Agregar primero".
+7. ✅ **Empty state** cuando no hay datos: icono grande + mensaje + botón "Agregar primero". Referencia `{file:code-generator/templates/components/feedback/empty-state.html}`.
 8. ✅ **Loading state** con skeleton (clases de DaisyUI), no spinner genérico.
+9. ✅ **Para módulos dashboard** (estadísticas, KPIs), referencia `{file:code-generator/templates/components/data/stats-card.html}` al inicio del render().
+10. ✅ **Para módulos con historial**, referencia `{file:code-generator/templates/components/data/timeline.html}`.
+11. ✅ **Para vista detalle** de una entidad (info + tabs), referencia `{file:code-generator/templates/components/data/detail-panel.html}`.
+12. ✅ **Para gráficos**, referencia `{file:code-generator/templates/components/chart/chart-card.html}` con Chart.js.
+13. ✅ **Para módulos con fotos/archivos** (avatares, evidencias, documentos), referencia `{file:code-generator/templates/components/form/file-upload.html}` dentro del modal crear/editar.
+14. ✅ **Para módulos tipo workflow** (CRM etapas, Obra fases, Kanban), referencia `{file:code-generator/templates/components/data/kanban-board.html}` como vista principal alternativa a data-table.
+15. ✅ **Para notificaciones y alertas**, referencia `{file:code-generator/templates/components/feedback/notification-center.html}` integrado en la navbar del app-shell.
+16. ✅ **Para listas con múltiples filtros** (fechas, categorías, estados), referencia `{file:code-generator/templates/components/data/filter-bar.html}` sobre la data-table.
+17. ✅ **Para selección de fecha/rango**, referencia `{file:code-generator/templates/components/data/date-picker.html}` en vez de `<input type="date">` nativo.
+18. ✅ **Para jerarquías navegables** (categorías, organigramas, estructura de archivos), referencia `{file:code-generator/templates/components/data/tree-view.html}` como navegación lateral.
+19. ✅ **Para calendario de eventos** con dots visuales y detalle por día, referencia `{file:code-generator/templates/components/data/calendar.html}`.
+20. ✅ **Para mostrar colaboradores o equipos**, referencia `{file:code-generator/templates/components/data/avatar-group.html}` con tooltip en hover.
+21. ✅ **Para listas reordenables por el usuario** (prioridades, orden de juego, ranking), referencia `{file:code-generator/templates/components/data/sortable-list.html}` con drag & drop nativo.
+22. ✅ **Para selección con búsqueda** (combobox type-to-search), referencia `{file:code-generator/templates/components/data/searchable-select.html}` como alternativa a `<select>` nativo.
+23. ✅ **Para calificación/valoración** (estrellas 1-5), referencia `{file:code-generator/templates/components/data/rating.html}` con hover state.
+24. ✅ **Para mostrar código fuente o diffs**, referencia `{file:code-generator/templates/components/data/code-block.html}` con copy button.
+25. ✅ **Para entrada de tags/labels** (Enter o coma para agregar), referencia `{file:code-generator/templates/components/form/tags-input.html}` dentro de formularios.
+26. ✅ **Para selección de color**, referencia `{file:code-generator/templates/components/form/color-picker.html}` con paletas predefinidas y color picker nativo.
+27. ✅ **Para wizards o progreso multi-paso**, referencia `{file:code-generator/templates/components/form/stepper.html}` con navegación y barra de progreso.
+28. ✅ **Para menús contextuales** con items, separadores y atajos de teclado, referencia `{file:code-generator/templates/components/feedback/dropdown-menu.html}` en lugar de `<select>`.
+29. ✅ **Para tooltips y popovers** informativos, referencia `{file:code-generator/templates/components/feedback/tooltip-popover.html}` con posiciones configurables.
+30. ✅ **Para galerías de imágenes**, referencia `{file:code-generator/templates/components/media/image-gallery.html}` con lightbox modal y navegación por teclado.
+31. ✅ **Para carruseles/sliders** (banners, testimonios, productos destacados), referencia `{file:code-generator/templates/components/media/carousel.html}` con auto-play configurable.
+32. ✅ **Para generación de códigos QR**, referencia `{file:code-generator/templates/components/media/qr-code.html}`; en perfil Full usar escáner de cámara, en Lite entrada manual.
+33. ✅ **Si perfil=Business (white-label habilitado por licencia)**, incluir `core/brand-loader.js` y `core/feature-flags.js` en la carga de core, y anadir modulo branding-panel accesible desde configuracion.
+34. ✅ **Para panel de personalizacion de marca** (colores, logo, fuentes, CSS personalizado, preview en vivo y export config), referencia `{file:code-generator/templates/components/data/branding-panel.html}` con Alpine store `$store.brand`.
 
 ```html
 <!-- Vista principal: toolbar + lista + empty state -->
@@ -751,17 +861,16 @@ window.MODULES[[NombreModulo].id] = [NombreModulo];
 ```
 
 **Uso de `UI.modalForm()` en `module.js`:**
+Para formularios CRUD estándar, referencia `{file:code-generator/templates/components/form/form-modal.html}` y adapta `[TABLE_HEADERS]` según los campos del módulo.
+
+Para formularios complejos multi-sección (AHA Obra, Rx, PreFactura), usa `{file:code-generator/templates/components/form/form-page.html}` en vez del modal — renderiza como página completa con wizard de pasos.
+
+**Patrón mínimo (módulos CRUD simples):**
 ```javascript
 async abrirForm(item = null) {
   const editando = !!item
-  const html = `
-    <div class="space-y-4">
-      <label class="form-control w-full">
-        <span class="label-text">Nombre</span>
-        <input type="text" x-model="form.nombre"
-               class="input input-bordered" />
-      </label>
-    </div>`
+  // Referencia form-modal.html para los fields
+  const html = `...campos del formulario...`
   await UI.modalForm(
     editando ? 'Editar [Título]' : 'Nuevo [Título]',
     html,
@@ -798,8 +907,8 @@ const ASSETS = [
   'assets/js/libs/crypto-js.js',
   'core/env.js', 'core/db.js', 'core/crypto.js',
   'core/ui.js', 'core/theme.js',
-  'core/app.js', 'core/search-palette.js',
-  'core/file-store.js', 'core/sync.js', 'core/license.js', 'main.js'
+  'core/brand-loader.js', 'core/app.js', 'core/search-palette.js',
+  'core/file-store.js', 'core/sync.js', 'core/license.js', 'core/feature-flags.js', 'main.js'
 ];
 
 self.addEventListener('install', (e) => {
@@ -1232,7 +1341,7 @@ Aplicar spring physics CSS en lugar de easing lineal en todos los interactivos:
 | `design-engine` | Aplica tono visual, contrastes, espaciado y animaciones según DESIGN.md |
 | `alpine-ui-patterns` | Catálogo de ~100 patrones Pines/Penguin/Pinemix con fallback chain. Se consulta cuando `component_library` ≠ daisyui o cuando DaisyUI no tiene el componente |
 | `validation-engine` | Ejecuta `validar app` tras completar FASE 4 |
-| `deployment-jigue` | Empaqueta según perfil (Essential: ZIP+Pages / Professional: .exe+FixedWV2 / Business: .exe+.apk+branding) |
+| `deployment-jigue` | Empaqueta según perfil (Essential: ZIP+Pages / Professional: .exe+.apk / Business: .exe+.apk+white-label) |
 
 ---
 
@@ -1439,4 +1548,6 @@ Cuando la spec requiera UX avanzada o `component_library=pines`, inyectar estos 
 ```
 
 ---
+
+
 

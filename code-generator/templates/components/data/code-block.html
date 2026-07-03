@@ -1,0 +1,105 @@
+<div x-data="[ID]_code()" x-init="init()" class="rounded-xl overflow-hidden border border-base-300 bg-base-900 text-base-100">
+  <div class="flex items-center justify-between px-4 py-2 bg-base-800/50 border-b border-base-700/50">
+    <div class="flex items-center gap-2">
+      <div class="flex gap-1.5">
+        <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-green-500/70"></span>
+      </div>
+      <span x-show="filename" class="text-xs text-base-400 ml-2 font-mono" x-text="filename"></span>
+    </div>
+    <div class="flex items-center gap-1">
+      <button @click="copyCode()" class="btn btn-ghost btn-xs text-base-400 hover:text-base-100 gap-1">
+        <i class="bi" :class="copied ? 'bi-check-lg text-success' : 'bi-clipboard'"></i>
+        <span class="text-xs" x-text="copied ? 'Copiado' : 'Copiar'"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm leading-relaxed font-mono">
+      <template x-for="(line, i) in lines" :key="i">
+        <tr :class="line.type === 'added' ? 'bg-success/10' : line.type === 'removed' ? 'bg-error/10' : ''">
+          <td class="text-right px-3 py-0 text-base-500 select-none w-10 text-xs align-top" x-text="line.num"></td>
+          <td x-show="diff" class="w-5 px-1 py-0 text-center align-top select-none"
+              :class="line.type === 'added' ? 'text-success' : line.type === 'removed' ? 'text-error' : 'text-base-500'"
+              x-text="line.type === 'added' ? '+' : line.type === 'removed' ? '−' : ' '">
+          </td>
+          <td class="px-3 py-0 whitespace-pre" :class="line.type === 'added' ? 'text-success' : line.type === 'removed' ? 'text-error' : 'text-base-300'" x-text="line.text"></td>
+        </tr>
+      </template>
+    </table>
+  </div>
+</div>
+
+<script>
+function [ID]_code() {
+  const DEFAULT_CODE = [
+    'function greet(name) {',
+    '  return `¡Hola, ${name}!`;',
+    '}',
+    '',
+    'const users = [',
+    '  { id: 1, name: "Ana" },',
+    '  { id: 2, name: "Luis" }',
+    '];',
+    '',
+    'users.forEach(u => console.log(greet(u.name)));'
+  ]
+
+  const DIFF_CODE = [
+    { num: 1, type: '', text: 'function greet(name) {' },
+    { num: 2, type: '', text: '  return `¡Hola, ${name}!`;' },
+    { num: 3, type: '', text: '}' },
+    { num: 4, type: '', text: '' },
+    { num: 5, type: '', text: 'const users = [' },
+    { num: 6, type: 'removed', text: '  { id: 1, name: "Ana" },' },
+    { num: 7, type: 'added', text: '  { id: 1, name: "Ana García" },' },
+    { num: 8, type: '', text: '  { id: 2, name: "Luis" }' },
+    { num: 9, type: '', text: '];' }
+  ]
+
+  return {
+    code: [],
+    filename: '[FILENAME]',
+    diff: false,
+    copied: false,
+
+    init() {
+      this.code = DEFAULT_CODE
+    },
+
+    get lines() {
+      return this.diff ? DIFF_CODE : this.code.map((text, i) => ({ num: i + 1, type: '', text }))
+    },
+
+    setCode(newCode, filename) {
+      this.code = newCode
+      if (filename) this.filename = filename
+    },
+
+    setDiff(diffLines, filename) {
+      this.diff = true
+      if (filename) this.filename = filename
+    },
+
+    async copyCode() {
+      const text = this.lines.map(l => l.text).join('\n')
+      try {
+        await navigator.clipboard.writeText(text)
+        this.copied = true
+        setTimeout(() => this.copied = false, 2000)
+      } catch {
+        const ta = document.createElement('textarea')
+        ta.value = text
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        ta.remove()
+        this.copied = true
+        setTimeout(() => this.copied = false, 2000)
+      }
+    }
+  }
+}
+</script>

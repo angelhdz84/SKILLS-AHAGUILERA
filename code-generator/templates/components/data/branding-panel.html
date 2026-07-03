@@ -1,0 +1,464 @@
+<div x-data="[ID]_branding()" x-init="init()" class="max-w-4xl mx-auto space-y-6" x-show="$store.brand.ready">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold">Personalizar Marca</h2>
+      <p class="text-sm text-base-content/60">Configura los colores, logo y estilo de la aplicación</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span x-show="$store.brand.preview" class="badge badge-success gap-1">
+        <i class="bi bi-check-circle"></i> Vista previa guardada
+      </span>
+      <span class="badge badge-warning gap-1" x-show="!$store.brand.ready">
+        <i class="bi bi-hourglass"></i> Cargando...
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs tabs-box bg-base-100 border border-base-300 overflow-x-auto">
+    <template x-for="(tab, i) in tabs" :key="i">
+      <button class="tab tab-lg gap-2" :class="{ 'tab-active': tabActive === i }" @click="tabActive = i">
+        <i :class="tab.icon" class="text-lg"></i>
+        <span class="hidden sm:inline" x-text="tab.label"></span>
+      </button>
+    </template>
+  </div>
+
+  <!-- Tab: General -->
+  <div x-show="tabActive === 0" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-gear"></i> Información General</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Nombre del Cliente</span></div>
+          <input type="text" class="input input-bordered w-full" x-model="$store.brand.config.client"
+                 @input.debounce.500ms="$store.brand.setAppName($store.brand.config.appName)"
+                 placeholder="Acme Corp">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Nombre de la App</span></div>
+          <input type="text" class="input input-bordered w-full" x-model="$store.brand.config.appName"
+                 @input.debounce.500ms="$store.brand.setAppName($store.brand.config.appName)"
+                 placeholder="MiApp Gestor">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">App ID (dominio reverso)</span></div>
+          <input type="text" class="input input-bordered w-full font-mono text-sm"
+                 x-model="$store.brand.config.appId"
+                 @input.debounce.500ms="$store.brand.set($store.brand.config)"
+                 placeholder="com.acme.miapp">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Versión</span></div>
+          <input type="text" class="input input-bordered w-full font-mono text-sm"
+                 x-model="$store.brand.config.version"
+                 @input.debounce.500ms="$store.brand.set($store.brand.config)"
+                 placeholder="1.0.0">
+        </label>
+      </div>
+
+      <div class="divider text-xs text-base-content/40 uppercase font-medium">Soporte</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Email de Soporte</span></div>
+          <input type="email" class="input input-bordered w-full" x-model="$store.brand.config.support.email"
+                 @input.debounce.500ms="$store.brand.set($store.brand.config)"
+                 placeholder="soporte@acme.com">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">URL de Documentación</span></div>
+          <input type="url" class="input input-bordered w-full" x-model="$store.brand.config.support.docsUrl"
+                 @input.debounce.500ms="$store.brand.set($store.brand.config)"
+                 placeholder="https://docs.acme.com">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Teléfono</span></div>
+          <input type="tel" class="input input-bordered w-full" x-model="$store.brand.config.support.phone"
+                 @input.debounce.500ms="$store.brand.set($store.brand.config)"
+                 placeholder="+34 900 123 456">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Colors -->
+  <div x-show="tabActive === 1" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="card-title text-lg"><i class="bi bi-palette"></i> Colores de Marca</h3>
+        <button class="btn btn-ghost btn-sm text-xs" @click="resetColors">
+          <i class="bi bi-arrow-counterclockwise"></i> Restaurar defaults
+        </button>
+      </div>
+      <p class="text-sm text-base-content/60">Los cambios se reflejan en vivo en la vista previa.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <template x-for="(color, key) in $store.brand.config.colors" :key="key">
+          <div class="flex items-center gap-3 p-3 bg-base-200/50 rounded-xl">
+            <div class="w-9 h-9 rounded-lg border-2 border-base-300 shrink-0" :style="'background:' + color"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-base-content/60 uppercase tracking-wider" x-text="key"></p>
+              <div class="flex items-center gap-1 mt-1">
+                <input type="color" :value="color"
+                       @input="$store.brand.setColor(key, $event.target.value)"
+                       class="w-7 h-7 p-0 border-0 cursor-pointer rounded shrink-0">
+                <input type="text" x-model="$store.brand.config.colors[key]"
+                       @input.debounce.300ms="$store.brand.setColor(key, $store.brand.config.colors[key])"
+                       class="input input-sm input-bordered font-mono w-24 uppercase" placeholder="#000000">
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Color presets -->
+      <div class="divider text-xs text-base-content/40 uppercase font-medium">Paletas Predefinidas</div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <template x-for="(preset, pi) in colorPresets" :key="pi">
+          <button @click="applyPreset(preset.colors)"
+                  class="p-3 rounded-xl border border-base-300 hover:border-primary/50 transition-colors text-left">
+            <div class="flex gap-1 mb-2">
+              <template x-for="c in preset.swatch" :key="c">
+                <div class="w-4 h-4 rounded-full border border-base-300/50" :style="'background:' + c"></div>
+              </template>
+            </div>
+            <p class="text-xs font-medium" x-text="preset.label"></p>
+          </button>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Logo -->
+  <div x-show="tabActive === 2" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-image"></i> Logo e Imágenes</h3>
+      <p class="text-sm text-base-content/60">Sube imágenes PNG o SVG. Se codificarán en base64 dentro del archivo de configuración.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <template x-for="logoKey in ['light', 'dark', 'favicon', 'splash']" :key="logoKey">
+          <div class="form-control">
+            <div class="label">
+              <span class="label-text capitalize" x-text="logoKey === 'light' ? 'Logo modo claro' : logoKey === 'dark' ? 'Logo modo oscuro' : logoKey === 'favicon' ? 'Favicon' : 'Splash Screen'"></span>
+              <span class="label-text-alt text-[10px] text-base-content/40" x-text="logoKey === 'favicon' ? 'ICO/PNG' : logoKey === 'splash' ? 'PNG 1242x2436' : 'SVG/PNG'"></span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-14 h-14 rounded-xl bg-base-200 border border-base-300 flex items-center justify-center overflow-hidden shrink-0">
+                <template x-if="$store.brand.config.logo[logoKey]">
+                  <img :src="$store.brand.config.logo[logoKey]" class="w-full h-full object-contain p-1">
+                </template>
+                <template x-if="!$store.brand.config.logo[logoKey]">
+                  <i class="bi bi-image text-2xl text-base-content/30"></i>
+                </template>
+              </div>
+              <div class="flex-1">
+                <input type="file" :accept="logoKey === 'favicon' ? '.ico,.png' : '.svg,.png,.jpg'" class="file-input file-input-bordered file-input-sm w-full text-xs"
+                       @change="uploadLogo(logoKey, $event)">
+                <button x-show="$store.brand.config.logo[logoKey]" class="btn btn-ghost btn-xs text-error mt-1"
+                        @click="$store.brand.setLogo(logoKey, '')">
+                  <i class="bi bi-trash3"></i> Quitar
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Fonts -->
+  <div x-show="tabActive === 3" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-fonts"></i> Tipografía</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Fuente para Títulos</span></div>
+          <input type="text" class="input input-bordered w-full font-semibold"
+                 x-model="$store.brand.config.fonts.heading"
+                 @input.debounce.500ms="$store.brand.setFont('heading', $store.brand.config.fonts.heading)"
+                 placeholder="Inter, system-ui, sans-serif">
+          <div class="label"><span class="label-text-alt text-xs text-base-content/40">Ej: Inter, Poppins, DM Sans</span></div>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Fuente para Cuerpo</span></div>
+          <input type="text" class="input input-bordered w-full"
+                 x-model="$store.brand.config.fonts.body"
+                 @input.debounce.500ms="$store.brand.setFont('body', $store.brand.config.fonts.body)"
+                 placeholder="Inter, system-ui, sans-serif">
+          <div class="label"><span class="label-text-alt text-xs text-base-content/40">Ej: Inter, Open Sans, Lato</span></div>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Fuente Mono (Código)</span></div>
+          <input type="text" class="input input-bordered w-full font-mono"
+                 x-model="$store.brand.config.fonts.mono"
+                 @input.debounce.500ms="$store.brand.setFont('mono', $store.brand.config.fonts.mono)"
+                 placeholder="JetBrains Mono, monospace">
+          <div class="label"><span class="label-text-alt text-xs text-base-content/40">Ej: JetBrains Mono, Fira Code</span></div>
+        </label>
+      </div>
+
+      <div class="divider text-xs text-base-content/40 uppercase font-medium">Vista Previa de Fuentes</div>
+      <div class="space-y-3 p-4 bg-base-200 rounded-xl">
+        <p class="text-3xl font-bold" style="font-family: var(--font-heading)">Título de Ejemplo</p>
+        <p class="text-xl font-semibold" style="font-family: var(--font-heading)">Subtítulo de Sección</p>
+        <p style="font-family: var(--font-body)">Texto de cuerpo normal. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p>
+        <p class="text-sm text-base-content/60" style="font-family: var(--font-body)">Texto secundario más pequeño para descripciones y metadatos.</p>
+        <code class="block p-3 rounded-lg bg-base-300 text-sm" style="font-family: var(--font-mono)">const app = new AtejeApp(); app.init();</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Custom CSS -->
+  <div x-show="tabActive === 4" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-code-slash"></i> CSS Personalizado</h3>
+      <p class="text-sm text-base-content/60">Escribe CSS para sobrescribir estilos. Se inyecta en tiempo real.</p>
+      <textarea class="textarea textarea-bordered font-mono text-sm w-full h-48"
+                x-model="$store.brand.config.customCss"
+                @input.debounce.500ms="$store.brand.setCustomCss($store.brand.config.customCss)"
+                placeholder="/* Tus estilos personalizados */&#10;.btn-primary {&#10;  border-radius: 0.5rem;&#10;}&#10;.card {&#10;  box-shadow: 0 8px 32px rgba(0,0,0,0.1);&#10;}"></textarea>
+    </div>
+  </div>
+
+  <!-- Tab: Preview -->
+  <div x-show="tabActive === 5" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-eye"></i> Vista Previa en Vivo</h3>
+      <p class="text-sm text-base-content/60">Todos los cambios se aplican en vivo. Esta vista previa te muestra cómo se ve la app con la configuración actual.</p>
+
+      <div class="border border-base-300 rounded-2xl overflow-hidden">
+        <!-- Mini shell preview -->
+        <div class="bg-base-200 p-3 border-b border-base-300 flex items-center gap-3">
+          <div x-show="$store.brand.config.logo.light" class="w-8 h-8 rounded-lg overflow-hidden bg-base-100 p-1">
+            <img :src="$store.brand.config.logo.light" class="w-full h-full object-contain">
+          </div>
+          <div x-show="!$store.brand.config.logo.light" class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-content font-bold text-sm">
+            <span x-text="$store.brand.config.appName ? $store.brand.config.appName.charAt(0).toUpperCase() : 'A'"></span>
+          </div>
+          <span class="font-semibold text-sm" x-text="$store.brand.config.appName || 'MiApp'"></span>
+          <div class="flex-1"></div>
+          <div class="flex gap-2">
+            <div class="w-2 h-2 rounded-full bg-base-content/20"></div>
+            <div class="w-2 h-2 rounded-full bg-base-content/20"></div>
+            <div class="w-2 h-2 rounded-full bg-base-content/20"></div>
+          </div>
+        </div>
+
+        <!-- Preview content -->
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-primary-content text-2xl font-bold shadow-lg">
+              <span x-text="$store.brand.config.appName ? $store.brand.config.appName.charAt(0).toUpperCase() : 'A'"></span>
+            </div>
+            <div>
+              <h4 class="text-lg font-bold" x-text="$store.brand.config.appName || 'Nombre de App'"></h4>
+              <p class="text-sm text-base-content/60" x-text="$store.brand.config.client ? `Cliente: ${$store.brand.config.client}` : 'Cliente no configurado'"></p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Botón Primario</button>
+            <button class="btn btn-secondary btn-sm"><i class="bi bi-star"></i> Botón Secundario</button>
+            <button class="btn btn-outline btn-sm"><i class="bi bi-arrow-right"></i> Outline</button>
+            <button class="btn btn-accent btn-sm"><i class="bi bi-bell"></i> Acento</button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-base-200 border border-base-300">
+              <p class="text-2xl font-bold text-primary">$12.4k</p>
+              <p class="text-xs text-base-content/60">Ventas hoy</p>
+            </div>
+            <div class="p-3 rounded-xl bg-base-200 border border-base-300">
+              <p class="text-2xl font-bold text-success">89%</p>
+              <p class="text-xs text-base-content/60">Satisfacción</p>
+            </div>
+            <div class="p-3 rounded-xl bg-base-200 border border-base-300">
+              <p class="text-2xl font-bold text-warning">12</p>
+              <p class="text-xs text-base-content/60">Pendientes</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 text-sm text-base-content/60">
+            <i class="bi bi-info-circle text-info"></i>
+            <span>Colores: </span>
+            <span class="badge badge-xs" :style="{ background: $store.brand.config.colors.primary }"></span>
+            <span class="font-mono text-xs" x-text="$store.brand.config.colors.primary"></span>
+            <span class="badge badge-xs" :style="{ background: $store.brand.config.colors.secondary }"></span>
+            <span class="font-mono text-xs" x-text="$store.brand.config.colors.secondary"></span>
+            <span class="badge badge-xs" :style="{ background: $store.brand.config.colors.accent }"></span>
+            <span class="font-mono text-xs" x-text="$store.brand.config.colors.accent"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Export -->
+  <div x-show="tabActive === 6" class="card bg-base-100 border border-base-300">
+    <div class="card-body space-y-4">
+      <h3 class="card-title text-lg"><i class="bi bi-download"></i> Exportar Configuración</h3>
+      <p class="text-sm text-base-content/60">Descarga el archivo <code class="bg-base-200 px-1 rounded font-mono text-xs">brand.config.json</code> con toda la configuración de marca.</p>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="btn btn-primary" @click="$store.brand.exportConfig()">
+          <i class="bi bi-download"></i> Descargar brand.config.json
+        </button>
+        <button class="btn btn-secondary" @click="$store.brand.saveToDisk()"
+                :class="{ 'loading': $store.brand.saving }" :disabled="$store.brand.saving">
+          <i class="bi bi-floppy"></i>
+          <span x-text="$store.brand.isNeutralino ? 'Guardar en disco' : 'Guardar vista previa'"></span>
+        </button>
+        <button class="btn btn-accent" @click="confirmImport = true">
+          <i class="bi bi-upload"></i> Importar
+        </button>
+        <button class="btn btn-ghost text-warning" @click="confirmReset = true" x-show="!confirmReset">
+          <i class="bi bi-arrow-counterclockwise"></i> Restaurar defaults
+        </button>
+      </div>
+
+      <div x-show="confirmImport" class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>¿Importar configuración? Se sobrescribirá la marca actual.</span>
+        <div class="flex gap-2">
+          <button class="btn btn-sm btn-warning" @click="$store.brand.importConfig(); confirmImport = false">
+            Sí, importar
+          </button>
+          <button class="btn btn-sm btn-ghost" @click="confirmImport = false">Cancelar</button>
+        </div>
+      </div>
+
+      <div x-show="$store.brand.saved" class="alert alert-success">
+        <i class="bi bi-check-circle"></i>
+        <span x-text="$store.brand.isNeutralino ? 'Configuracion guardada en brand.config.json (junto al .exe)' : 'Vista previa guardada en el navegador'"></span>
+      </div>
+
+      <div x-show="$store.brand.saveError" class="alert alert-error">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span x-text="$store.brand.saveError"></span>
+      </div>
+
+      <div x-show="confirmReset" class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>¿Estás seguro? Se perderán todos los cambios.</span>
+        <div class="flex gap-2">
+          <button class="btn btn-sm btn-warning" @click="$store.brand.resetConfig(); confirmReset = false">
+            Sí, restaurar
+          </button>
+          <button class="btn btn-sm btn-ghost" @click="confirmReset = false">Cancelar</button>
+        </div>
+      </div>
+
+      <div class="p-4 bg-base-200 rounded-xl text-sm space-y-2">
+        <p class="font-semibold flex items-center gap-2"><i class="bi bi-info-circle text-primary"></i> ¿Cómo usar este archivo?</p>
+        <ol class="list-decimal list-inside space-y-1 text-base-content/70">
+          <li>Coloca <code class="font-mono text-xs bg-base-300 px-1 rounded">brand.config.json</code> en la misma carpeta del <code class="font-mono text-xs bg-base-300 px-1 rounded">.exe</code> o <code class="font-mono text-xs bg-base-300 px-1 rounded">index.html</code></li>
+          <li>La app lo detectará automáticamente al iniciar</li>
+          <li>Los cambios se aplican en vivo, sin recompilar</li>
+          <li>Para distribuir a un cliente, copia el ZIP completo con el archivo incluido</li>
+          <li x-show="$store.brand.isNeutralino">En Neutralino: usa "Guardar en disco" para sobrescribir el archivo junto al .exe</li>
+          <li>Para importar en otra app: abre Personalizar Marca → Exportar → Importar → selecciona el archivo</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function [ID]_branding() {
+  return {
+    tabActive: 0,
+    confirmReset: false,
+    confirmImport: false,
+
+    tabs: [
+      { label: 'General', icon: 'bi bi-gear' },
+      { label: 'Colores', icon: 'bi bi-palette' },
+      { label: 'Logo', icon: 'bi bi-image' },
+      { label: 'Fuentes', icon: 'bi bi-fonts' },
+      { label: 'CSS', icon: 'bi bi-code-slash' },
+      { label: 'Preview', icon: 'bi bi-eye' },
+      { label: 'Exportar', icon: 'bi bi-download' }
+    ],
+
+    colorPresets: [
+      {
+        label: 'Azul Corporativo',
+        swatch: ['#1e3a5f', '#3b82f6', '#0ea5e9'],
+        colors: { primary: '#1e3a5f', secondary: '#64748b', accent: '#0ea5e9', info: '#3b82f6', success: '#22c55e', warning: '#f59e0b', error: '#ef4444', neutral: '#1c1917', 'base-100': '#ffffff', 'base-200': '#f1f5f9', 'base-300': '#e2e8f0' }
+      },
+      {
+        label: 'Verde Natural',
+        swatch: ['#065f46', '#10b981', '#14b8a6'],
+        colors: { primary: '#065f46', secondary: '#6b7280', accent: '#14b8a6', info: '#06b6d4', success: '#22c55e', warning: '#f59e0b', error: '#ef4444', neutral: '#292524', 'base-100': '#ffffff', 'base-200': '#f0fdf4', 'base-300': '#dcfce7' }
+      },
+      {
+        label: 'Púrpura Moderno',
+        swatch: ['#4c1d95', '#8b5cf6', '#d946ef'],
+        colors: { primary: '#4c1d95', secondary: '#8b5cf6', accent: '#d946ef', info: '#6366f1', success: '#10b981', warning: '#f59e0b', error: '#ef4444', neutral: '#1c1917', 'base-100': '#ffffff', 'base-200': '#f5f3ff', 'base-300': '#ede9fe' }
+      },
+      {
+        label: 'Rojo Pasión',
+        swatch: ['#991b1b', '#ef4444', '#f97316'],
+        colors: { primary: '#991b1b', secondary: '#dc2626', accent: '#f97316', info: '#3b82f6', success: '#22c55e', warning: '#f59e0b', error: '#dc2626', neutral: '#292524', 'base-100': '#fff7f7', 'base-200': '#fef2f2', 'base-300': '#fee2e2' }
+      },
+      {
+        label: 'Oscuro Técnico',
+        swatch: ['#0f172a', '#3b82f6', '#06b6d4'],
+        colors: { primary: '#0f172a', secondary: '#334155', accent: '#06b6d4', info: '#3b82f6', success: '#10b981', warning: '#f59e0b', error: '#ef4444', neutral: '#0a0a0a', 'base-100': '#1e293b', 'base-200': '#0f172a', 'base-300': '#020617' }
+      },
+      {
+        label: 'Minimal Blanco',
+        swatch: ['#0f172a', '#f8fafc', '#3b82f6'],
+        colors: { primary: '#0f172a', secondary: '#475569', accent: '#3b82f6', info: '#3b82f6', success: '#10b981', warning: '#f59e0b', error: '#ef4444', neutral: '#0f172a', 'base-100': '#ffffff', 'base-200': '#f8fafc', 'base-300': '#f1f5f9' }
+      }
+    ],
+
+    init() {
+      // No need to load brand - it's already in $store.brand from brand-loader.js
+    },
+
+    resetColors() {
+      var defaults = {
+        primary: '#1e3a5f', secondary: '#64748b', accent: '#0ea5e9',
+        neutral: '#1c1917', 'base-100': '#ffffff', 'base-200': '#f1f5f9',
+        'base-300': '#e2e8f0', info: '#3b82f6', success: '#22c55e',
+        warning: '#f59e0b', error: '#ef4444'
+      };
+      Object.keys(defaults).forEach(function (key) {
+        this.$store.brand.setColor(key, defaults[key]);
+      }.bind(this));
+    },
+
+    applyPreset(colors) {
+      var self = this;
+      Object.keys(colors).forEach(function (key) {
+        self.$store.brand.setColor(key, colors[key]);
+        self.$store.brand.config.colors[key] = colors[key];
+      });
+    },
+
+    uploadLogo(key, event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        this.$store.brand.setLogo(key, e.target.result);
+        this.$store.brand.config.logo[key] = e.target.result;
+      }.bind(this);
+      reader.readAsDataURL(file);
+    }
+  }
+}
+</script>

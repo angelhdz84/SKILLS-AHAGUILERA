@@ -1,0 +1,104 @@
+<body class="min-h-screen bg-base-200" x-data="[ID]Shell()" x-init="init()"
+      :data-theme="$store.theme?.mode || 'light'">
+
+  <a href="#app-content" class="skip-link sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded-lg">
+    Saltar al contenido
+  </a>
+
+  <div id="a11y-live-region" aria-live="polite" class="sr-only"></div>
+
+  <div class="flex">
+    {file:code-generator/templates/components/layout/sidebar.html}
+    <div class="flex-1 flex flex-col min-h-screen transition-all duration-300"
+         :style="`margin-left: ${$store.sidebar?.colapsado ? '4rem' : '16rem'}`">
+      {file:code-generator/templates/components/layout/navbar.html}
+      <main id="app-content" class="flex-1 p-4 md:p-6">
+        <div class="flex items-center justify-center h-64 text-base-content/40" x-show="!$store.app?.moduloActual">
+          <div class="text-center">
+            <i class="bi bi-[LOADING_ICON] text-5xl mb-4 block animate-pulse"></i>
+            <p class="text-sm">Cargando...</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast toast-end toast-bottom z-[80]"></div>
+
+  <div id="ui-loading-overlay" class="fixed inset-0 z-[90] flex items-center justify-center bg-base-200/80 backdrop-blur-sm hidden">
+    <div class="text-center">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+      <p class="mt-2 text-sm text-base-content/60"></p>
+    </div>
+  </div>
+
+  <div id="search-palette-container"></div>
+
+  <script>
+    // Alpine stores — must be defined BEFORE Alpine processes the DOM
+    document.addEventListener('alpine:init', () => {
+      Alpine.store('app', {
+        moduloActual: '',
+        cargando: false,
+        error: null
+      });
+
+      Alpine.store('theme', {
+        mode: localStorage.getItem('theme') || 'light',
+        init() {
+          this.$watch('mode', val => {
+            localStorage.setItem('theme', val);
+            document.documentElement.setAttribute('data-theme', val);
+          });
+        }
+      });
+
+      Alpine.store('sidebar', {
+        colapsado: localStorage.getItem('sidebar_colapsado') === 'true',
+        mobileOpen: false,
+        toggleColapso() { this.colapsado = !this.colapsado; localStorage.setItem('sidebar_colapsado', this.colapsado); },
+        toggleMobile() { this.mobileOpen = !this.mobileOpen; }
+      });
+
+      Alpine.store('network', {
+        online: navigator.onLine,
+        init() {
+          window.addEventListener('online', () => this.online = true);
+          window.addEventListener('offline', () => this.online = false);
+        }
+      });
+    });
+  </script>
+
+  <script>
+    function [ID]Shell() {
+      return {
+        init() {
+          this.iniciarApp();
+        },
+
+        async iniciarApp() {
+          try {
+            await window.appRouter?.init();
+          } catch (err) {
+            console.error('Shell init error:', err);
+          }
+        }
+      };
+    }
+  </script>
+
+  {file:code-generator/templates/core/env.js}
+  {file:code-generator/templates/core/db.js}
+  {file:code-generator/templates/core/crypto.js}
+  {file:code-generator/templates/core/ui.js}
+  {file:code-generator/templates/core/theme.js}
+  {file:code-generator/templates/core/app.js}
+  {file:code-generator/templates/core/search-palette.js}
+  {file:code-generator/templates/file-store.js}
+  {file:code-generator/templates/core/sync.js}
+  {file:code-generator/templates/core/license.js}
+  {file:code-generator/templates/core/brand-loader.js}
+  {file:code-generator/templates/core/feature-flags.js}
+  {file:code-generator/templates/core/main.js}
+</body>

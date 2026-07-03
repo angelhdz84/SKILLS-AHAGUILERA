@@ -1,0 +1,163 @@
+<div x-data="[ID]_filters()" x-init="init()">
+  <div class="flex flex-wrap items-end gap-3">
+    <template x-for="(f, i) in fields" :key="f.key">
+      <label class="form-control min-w-[160px]" : class="f.cols || ''">
+        <span class="label-text text-xs font-medium text-base-content/60" x-text="f.label"></span>
+
+        <template x-if="f.type === 'search'">
+          <div class="relative">
+            <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-base-content/30 text-sm"></i>
+            <input type="search" x-model="filters[f.key]" @input.debounce.300ms="apply()"
+                   class="input input-bordered input-sm pl-8 w-full" :placeholder="f.placeholder || 'Buscar...'">
+          </div>
+        </template>
+
+        <template x-if="f.type === 'select'">
+          <select x-model="filters[f.key]" @change="apply()" class="select select-bordered select-sm w-full">
+            <option value="">Todos</option>
+            <template x-for="opt in f.options" :key="opt.value">
+              <option :value="opt.value" x-text="opt.label"></option>
+            </template>
+          </select>
+        </template>
+
+        <template x-if="f.type === 'date'">
+          <input type="date" x-model="filters[f.key]" @change="apply()" class="input input-bordered input-sm w-full">
+        </template>
+
+        <template x-if="f.type === 'daterange'">
+          <div class="flex items-center gap-1">
+            <input type="date" x-model="filters[f.key + '_from']" @change="apply()" class="input input-bordered input-sm w-full" placeholder="Desde">
+            <span class="text-base-content/30 text-xs">—</span>
+            <input type="date" x-model="filters[f.key + '_to']" @change="apply()" class="input input-bordered input-sm w-full" placeholder="Hasta">
+          </div>
+        </template>
+
+        <template x-if="f.type === 'status'">
+          <div class="flex flex-wrap gap-1 mt-1">
+            <template x-for="opt in f.options" :key="opt.value">
+              <button @click="toggleStatus(f.key, opt.value)"
+                      class="btn btn-xs"
+                      :class="isActive(f.key, opt.value) ? 'btn-primary' : 'btn-ghost'">
+                <span :class="opt.dot ? `w-1.5 h-1.5 rounded-full ${opt.dot} mr-1` : ''"></span>
+                <span x-text="opt.label"></span>
+              </button>
+            </template>
+          </div>
+        </template>
+      </label>
+    </template>
+
+    <div class="flex items-center gap-1 pb-1">
+      <button x-show="hasActiveFilters" @click="clear()" class="btn btn-ghost btn-xs text-base-content/40 hover:text-error">
+        <i class="bi bi-x-circle"></i> Limpiar
+      </button>
+    </div>
+  </div>
+
+  <template x-if="hasActiveFilters">
+    <div class="flex flex-wrap items-center gap-2 mt-3">
+      <span class="text-xs font-medium text-base-content/40 uppercase tracking-wider">Filtros activos:</span>
+      <template x-for="(v, k) in activeFilterLabels" :key="k">
+        <span class="badge badge-sm gap-1 cursor-pointer hover:badge-outline" @click="removeFilter(k)">
+          <span x-text="v.label + ':'" class="font-medium"></span>
+          <span x-text="v.value"></span>
+          <i class="bi bi-x"></i>
+        </span>
+      </template>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]_filters() {
+  return {
+    fields: [],
+    filters: {},
+    onApply: null,
+
+    init() {
+      const defaults = {}
+      this.fields.forEach(f => {
+        if (f.type === 'daterange') {
+          defaults[f.key + '_from'] = ''
+          defaults[f.key + '_to'] = ''
+        } else if (f.type === 'status') {
+          defaults[f.key] = []
+        } else {
+          defaults[f.key] = ''
+        }
+      })
+      this.filters = defaults
+    },
+
+    apply() {
+      const active = {}
+      Object.entries(this.filters).forEach(([k, v]) => {
+        if (v !== '' && v !== null && !(Array.isArray(v) && !v.length)) active[k] = v
+      })
+      if (this.onApply) this.onApply(active)
+    },
+
+    get hasActiveFilters() {
+      return Object.entries(this.filters).some(([k, v]) => {
+        if (Array.isArray(v)) return v.length > 0
+        return v !== '' && v !== null
+      })
+    },
+
+    get activeFilterLabels() {
+      const result = {}
+      this.fields.forEach(f => {
+        const v = this.filters[f.key]
+        if (f.type === 'daterange') {
+          const from = this.filters[f.key + '_from']
+          const to = this.filters[f.key + '_to']
+          if (from || to) result[f.key] = { label: f.label, value: (from || '...') + ' — ' + (to || '...') }
+        } else if (f.type === 'status') {
+          if (Array.isArray(v) && v.length) {
+            result[f.key] = { label: f.label, value: v.join(', ') }
+          }
+        } else if (v) {
+          const opt = f.options?.find(o => o.value === v)
+          result[f.key] = { label: f.label, value: opt?.label || v }
+        }
+      })
+      return result
+    },
+
+    isActive(key, value) {
+      return Array.isArray(this.filters[key]) && this.filters[key].includes(value)
+    },
+
+    toggleStatus(key, value) {
+      if (!Array.isArray(this.filters[key])) this.filters[key] = []
+      const idx = this.filters[key].indexOf(value)
+      if (idx > -1) this.filters[key].splice(idx, 1)
+      else this.filters[key].push(value)
+      this.apply()
+    },
+
+    removeFilter(key) {
+      if (key.endsWith('_from') || key.endsWith('_to')) {
+        const base = key.replace(/_(from|to)$/, '')
+        this.filters[base + '_from'] = ''
+        this.filters[base + '_to'] = ''
+      } else if (Array.isArray(this.filters[key])) {
+        this.filters[key] = []
+      } else {
+        this.filters[key] = ''
+      }
+      this.apply()
+    },
+
+    clear() {
+      Object.keys(this.filters).forEach(k => {
+        if (Array.isArray(this.filters[k])) this.filters[k] = []
+        else this.filters[k] = ''
+      })
+      this.apply()
+    }
+  }
+}
+</script>

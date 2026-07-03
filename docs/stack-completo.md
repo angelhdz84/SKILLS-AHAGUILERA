@@ -11,7 +11,7 @@
 
 Ateje Stack es un **meta-repo de skills OpenCode** que genera aplicaciones
 offline-first completas. No es una app en si misma — es un taller que construye
-apps en directorios externos usando 5 engines orquestadores, 8 skills standalone
+apps en directorios externos usando 5 engines orquestadores, 9 standalone skills + 1 writer skill
 y 16 skills externas de diseño (oh-my-design).
 
 Cada app generada comparte ~95% del frontend (Alpine + Dexie + DaisyUI),
@@ -23,11 +23,11 @@ diferenciandose solo en setup, empaquetado y perfil de entrega.
 
 | Aspecto | Inicio (Lite) | Profesional (Full) | Enterprise (Full custom) |
 |---------|--------------|--------------------|-------------------------|
-| **Runtime** | Doble clic `index.html` (file://) | NeutralinoJS .exe (~2MB) + Capacitor .apk | Fuente completa + .exe + .apk |
+| **Runtime** | Doble clic `index.html` (file://) | NeutralinoJS .exe + Capacitor .apk | NeutralinoJS .exe + Capacitor .apk + white-label |
 | **DB** | Dexie (IndexedDB) | Dexie + SQLite FTS5 | Dexie + SQLite FTS5 |
 | **Cifrado** | CryptoJS AES | CryptoJS AES | CryptoJS AES |
 | **IA Jutia** | FlexSearch + stats | FlexSearch + stats + QA con Transformers.js | Personalizable |
-| **Empaquetado** | ZIP + GitHub Pages | .exe + .apk + Pages + Release | .exe + .apk + codigo fuente + docs |
+| **Empaquetado** | ZIP + GitHub Pages | .exe + .apk + Pages + Release | .exe + .apk + white-label + docs + soporte prioritario |
 | **Plugins nativos** | — | SQLite FTS5, camara, GPS, notificaciones, compartir | Los mismos + UI custom |
 | **White-label** | Manual | Manual | Script brand.ps1 automatico |
 | **Distribucion** | ZIP descargable / Web | .exe descargable + Google Play | Todo + repositorio privado |
@@ -132,7 +132,7 @@ index.html
 | **setup-init** | Valida entorno, crea estructura exacta, descarga/instala librerias base y adicionales segun perfil. | lite, full |
 | **code-generator** | Genera codigo por fases desde specs. Entrega un modulo por turno para evitar perdida de contexto. Aplica stack-compliance-guard automaticamente. | lite, full |
 | **stack-compliance-guard** | Guarda automatica: bloquea imports ES6, CDNs, fetch, crypto faltante. Se activa tras cada output de codigo. | lite, full |
-| **deployment-jigue** | Commit + push + empaquetado segun perfil. Lite: ZIP + Pages. Full: .exe + .apk + Release. Incluye white-label (brand.ps1) y entrega Enterprise. | lite, full |
+| **deployment-jigue** | Commit + push + empaquetado segun perfil. Lite: ZIP + Pages. Professional: .exe + .apk + Release. Business: .exe + .apk + white-label + soporte prioritario. | lite, full |
 | **ia-jutia** | Mini IA v0.2 offline. Lite: FlexSearch + highlight/autocomplete/exportPDF + estadisticas + predicciones. Full: +OCR (Tesseract.js) + chat threads (Dexie) + busqueda hibrida (FlexSearch+embeddings) + QA extractivo (Transformers.js). | lite, full |
 | **alpine-ui-patterns** | Catalogo unificado ~100 componentes Alpine.js de Pines/Penguin/Pinemix con fallback chain (categorias A/B/C) y prioridad por calidad. | lite, full |
 | **capacitor** | Empaquetado .apk Android nativo con Capacitor. Incluye plugins: SQLite FTS5 nativo, camara, GPS, notificaciones, compartir. | full |
@@ -422,7 +422,7 @@ RESULTADO:
   - IA Full con QA, FTS5, WebWorker, WebGPU
 ```
 
-### 8.4 Enterprise — App white-label con branding completo
+### 8.4 Business — App white-label con branding completo + soporte prioritario
 
 ```
 Paso 1-5: Igual que Profesional (Full)
@@ -751,6 +751,6 @@ Cada paso es interactivo — OpenCode pausa y espera confirmacion.
 
 ## 📚 Recursos de Estudio
 
-- **`docs/guia-estudio-ateje.md`** — Guía completa de estudio del Stack Ateje: visión general, core, perfiles, 13 AHA Apps, módulos compartidos, pipeline, buenas prácticas (981 líneas con tablas, schemas y ejemplos)
+- **`docs/guia-estudio-ateje.md`** — Guía completa de estudio del Stack Ateje: visión general, core, perfiles, 15 AHA Apps, módulos compartidos, pipeline, buenas prácticas (1318 líneas con tablas, schemas y ejemplos)
 - **`docs/stack-completo.md`** — Este documento: referencia técnica detallada del stack
 - **`docs/guia-stack-skills-layer.md`** — Guía de habilidades y capas del stack

@@ -19,7 +19,7 @@
 - **IA Jutía:** Lite (FlexSearch + estadísticas + predicciones)
 - **Entregable:** ZIP + GitHub Pages. HTML visible (demo online)
 
-## Perfil Professional (Neutralino .exe + Fixed WebView2)
+## Perfil Professional (Neutralino .exe + Fixed WebView2 + .apk)
 
 - ✅ `import`/`export` NO permitido en `public/` (mismo que Lite, mismo código)
 - ✅ Build .exe: `neu build --release` + `package-professional.ps1`
@@ -31,18 +31,20 @@
 - ✅ Mismo frontend que Lite en `public/` (Alpine + Dexie + CryptoJS + DaisyUI)
 - ✅ **IA Jutía Full incluida**: FlexSearch + ingesta documentos + QA (WebGPU acelerado)
 - ✅ **Sin HTML visible para el cliente** (resources.neu ofuscado con terser)
-- ❌ No incluye .apk (solo .exe Windows)
-- 📦 Tamaño entregable: ~30MB ZIP (app ~3MB + WebView2 fixed stripped ~53MB → ~28MB comprimido)
-
-## Perfil Business (Professional + .apk + branding + docs)
-
-- Todo lo del perfil Professional, más:
+- ✅ **.apk Android incluido** — Capacitor con SQLite FTS5, cámara, GPS, notificaciones, compartir
 - ✅ Build .apk: `npx cap sync android && cd android && ./gradlew assembleRelease`
-- ✅ .apk Android nativo con Capacitor (SQLite FTS5, cámara, GPS, notificaciones, compartir)
 - ✅ `capacitor.config.json` en raíz del proyecto
 - ✅ `android/` directorio con proyecto Gradle
-- ✅ Branding personalizado: logo, colores, nombre del cliente aplicados en toda la UI
-- ✅ Documentación personalizada: `GUIA_USUARIO.md`, `GUIA_INSTALACION.md`
+- 📦 Tamaño entregable: ~30MB ZIP (app ~3MB + WebView2 fixed stripped ~53MB + .apk → ~28MB comprimido)
+
+## Perfil Business (Professional + white-label + soporte prioritario)
+
+- Todo lo del perfil Professional, más:
+- ✅ White-label completo: logo, colores, nombre del cliente aplicados en toda la UI
+- ✅ Documentación personalizada con marca del cliente: `GUIA_USUARIO.md`, `GUIA_INSTALACION.md`
+- ✅ Soporte prioritario 48h
+- ✅ Guía de marca personalizada (DESIGN.md hecho a medida)
+- ✅ Dominio personalizado (opcional)
 - 📦 Tamaño entregable: ~35MB ZIP
 
 ## Herramientas de desarrollo (opcionales)

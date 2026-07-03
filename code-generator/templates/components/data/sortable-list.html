@@ -1,0 +1,98 @@
+<div x-data="[ID]_sortable()" x-init="init()" class="space-y-3">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-list-columns-reverse"></i> [TITLE]</h3>
+    <button class="btn btn-primary btn-sm" @click="addItem()">
+      <i class="bi bi-plus-lg"></i> Agregar
+    </button>
+  </div>
+
+  <div class="space-y-1" @dragover.prevent @drop="drop($event)">
+    <template x-for="(item, i) in items" :key="item.id">
+      <div draggable="true"
+           @dragstart="startDrag(i, $event)"
+           @dragend="dragEnd"
+           @dragover.prevent="dragOver(i)"
+           @dragleave="dragLeave"
+           :class="{ 'opacity-30': dragging === i, 'border-primary': dragTarget === i }"
+           class="flex items-center gap-3 p-3 bg-base-100 border border-base-300 rounded-xl shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing">
+        <i class="bi bi-grip-vertical text-base-content/20 cursor-grab"></i>
+        <span class="w-6 h-6 rounded-full bg-base-200 flex items-center justify-center text-xs font-medium text-base-content/50 shrink-0" x-text="i + 1"></span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate" x-text="item.title"></p>
+          <p x-show="item.body" class="text-xs text-base-content/50 truncate" x-text="item.body"></p>
+        </div>
+        <span x-show="item.badge" class="badge badge-sm" :class="item.badgeClass || 'badge-ghost'" x-text="item.badge"></span>
+        <button @click="removeItem(i)" class="btn btn-ghost btn-xs btn-square text-base-content/20 hover:text-error shrink-0">
+          <i class="bi bi-trash3"></i>
+        </button>
+      </div>
+    </template>
+  </div>
+
+  <div x-show="!items.length" class="flex flex-col items-center py-12 text-base-content/40">
+    <i class="bi bi-inbox text-5xl mb-3"></i>
+    <p class="text-sm">Lista vacía</p>
+  </div>
+</div>
+
+<script>
+function [ID]_sortable() {
+  const DEFAULTS = [
+    { id: 's1', title: '[ITEM_1]', body: '[DESCRIPTION_1]', badge: 'Alta', badgeClass: 'badge-error' },
+    { id: 's2', title: '[ITEM_2]', body: '[DESCRIPTION_2]', badge: 'Media', badgeClass: 'badge-warning' },
+    { id: 's3', title: '[ITEM_3]', body: '[DESCRIPTION_3]', badge: 'Baja', badgeClass: 'badge-success' }
+  ]
+
+  return {
+    items: [],
+    dragging: null,
+    dragTarget: null,
+
+    init() { this.load() },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        this.items = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS))
+      } catch { this.items = JSON.parse(JSON.stringify(DEFAULTS)) }
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.items)) } catch {}
+    },
+
+    startDrag(i, ev) {
+      this.dragging = i
+      ev.dataTransfer.effectAllowed = 'move'
+      ev.dataTransfer.setData('text/plain', String(i))
+    },
+
+    dragOver(i) {
+      if (this.dragging === null || this.dragging === i) return
+      this.dragTarget = i
+      const [moved] = this.items.splice(this.dragging, 1)
+      this.items.splice(i, 0, moved)
+      this.dragging = i
+    },
+
+    dragLeave() { this.dragTarget = null },
+    dragEnd() { this.dragging = null; this.dragTarget = null; this.save() },
+
+    drop(ev) {
+      ev.preventDefault()
+      this.dragEnd()
+    },
+
+    addItem() {
+      const id = 's_' + Date.now().toString(36)
+      this.items.push({ id, title: 'Nuevo ítem', body: '', badge: '', badgeClass: 'badge-ghost' })
+      this.save()
+    },
+
+    removeItem(i) {
+      this.items.splice(i, 1)
+      this.save()
+    }
+  }
+}
+</script>

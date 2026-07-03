@@ -60,12 +60,38 @@ db.version(2).stores({
 });
 ```
 
-## Pricing sugerido
+## UI
 
-| Nivel | Precio USD |
-|-------|-----------|
-| Lite | $49 |
-| Standard | $99 |
-| Custom | $199+ |
+| Pantalla | Componentes |
+|----------|------------|
+| Dashboard | Tasa de conversión, ingresos del mes, deals por etapa, últimos contactos |
+| Pipeline | Kanban con 5 etapas, drag & drop, modal deal, barra de progreso |
+| Contactos | Lista con búsqueda, modal CRUD, historial de interacciones por contacto |
+| Cotizaciones | Lista, formulario items, botón generar PDF, botón compartir |
+| Facturación | Lista con estado, formulario, export PDF, folio automático |
+| Reportes | Gráficos Chart.js, selector de período, export CSV |
+
+## IA integrada
+
+- **Búsqueda**: buscar contactos y deals por nombre, empresa o teléfono
+- **Análisis**: "Tu tasa de conversión mejoró 15% este mes vs el anterior"
+- **Predicción**: "Basado en tu pipeline actual, proyectas $X en ingresos este mes"
+
+## WhatsApp para venta
+
+```
+Hola Angel, necesito un CRM offline para gestionar mis clientes
+y ventas sin mensualidades. ¿AHA CRM con pipeline Kanban?
+```
+
+## Checklist pre-lanzamiento
+
+- [ ] Probar flujo: crear contacto → crear deal → mover por pipeline → cerrar
+- [ ] Probar arrastrar deals entre etapas del Kanban
+- [ ] Probar generar PDF de cotización con items reales
+- [ ] Probar factura desde deal cerrado con folio automático
+- [ ] Probar gráficos de reportes con datos de 3 meses
+- [ ] Probar búsqueda por nombre y empresa
+- [ ] Probar export CSV de contactos y reportes
 
 

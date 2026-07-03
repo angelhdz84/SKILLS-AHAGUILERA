@@ -1,0 +1,79 @@
+<div x-data="[ID]_avatars()" x-init="init()" class="inline-flex items-center">
+  <div class="flex -space-x-2 rtl:space-x-reverse">
+    <template x-for="(user, i) in visible" :key="user.id">
+      <div class="relative group cursor-pointer" x-show="i < maxVisible">
+        <div class="w-9 h-9 rounded-full border-2 border-base-100 flex items-center justify-center text-xs font-bold text-white overflow-hidden shrink-0"
+             :style="'background:' + (user.color || fallbackColor(user.name))"
+             :title="user.name">
+          <img x-show="user.avatar" :src="user.avatar" :alt="user.name" class="w-full h-full object-cover">
+          <span x-show="!user.avatar" x-text="initials(user.name)"></span>
+        </div>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-base-300 text-base-content text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+          <span x-text="user.name"></span>
+          <span x-show="user.role" class="text-base-content/40" x-text="' — ' + user.role"></span>
+        </div>
+      </div>
+    </template>
+    <div x-show="overflow > 0" class="w-9 h-9 rounded-full border-2 border-base-100 bg-base-200 flex items-center justify-center text-xs font-medium text-base-content/60 shrink-0 cursor-pointer hover:bg-base-300 transition-colors"
+         @click="expanded = !expanded" :title="overflow + ' más'">
+      <span x-text="expanded ? '' : '+' + overflow"></span>
+      <span x-show="expanded" class="text-base-content/40">−</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function [ID]_avatars() {
+  const DEFAULT_USERS = [
+    { id: 1, name: 'Ana García', role: 'Admin', color: '#6366f1', avatar: '[AVATAR_URL_1]' },
+    { id: 2, name: 'Luis Martínez', role: 'Editor', color: '#8b5cf6', avatar: null },
+    { id: 3, name: 'Carmen López', role: 'Viewer', color: '#ec4899', avatar: null },
+    { id: 4, name: 'Pedro Sánchez', role: 'Editor', color: '#f59e0b', avatar: null },
+    { id: 5, name: 'Sofía Torres', role: 'Viewer', color: '#22c55e', avatar: null },
+    { id: 6, name: 'Diego Ramírez', role: 'Viewer', color: '#3b82f6', avatar: null }
+  ]
+
+  return {
+    users: [],
+    maxVisible: 4,
+    expanded: false,
+
+    init() {
+      this.load()
+      this.$watch('expanded', v => {
+        if (v) setTimeout(() => this.expanded = false, 3000)
+      })
+    },
+
+    get visible() {
+      return this.expanded ? this.users : this.users.slice(0, this.maxVisible)
+    },
+
+    get overflow() {
+      return Math.max(0, this.users.length - this.maxVisible)
+    },
+
+    initials(name) {
+      return name ? name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?'
+    },
+
+    fallbackColor(name) {
+      const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#3b82f6','#ef4444','#14b8a6']
+      let hash = 0
+      for (let i = 0; i < (name||'').length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
+      return colors[Math.abs(hash) % colors.length]
+    },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        this.users = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_USERS))
+      } catch { this.users = JSON.parse(JSON.stringify(DEFAULT_USERS)) }
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.users)) } catch {}
+    }
+  }
+}
+</script>

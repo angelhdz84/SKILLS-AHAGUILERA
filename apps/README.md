@@ -1,6 +1,6 @@
 # Ateje Stack — App Templates
 
-Catálogo de plantillas de apps listas para construir y vender con el Ateje Stack. Cada template es una spec completa que el `code-generator` puede consumir para generar la app.
+Catálogo de **15 plantillas** de apps (14 de negocio + 1 dev template) listas para construir y vender con el Ateje Stack. Cada template es una spec completa que el `code-generator` puede consumir para generar la app.
 
 ## Filosofía
 
@@ -14,6 +14,7 @@ Catálogo de plantillas de apps listas para construir y vender con el Ateje Stac
 
 | App | Vertical | Precio base | IA | Estado |
 |-----|----------|------------|----|--------|
+| [AHA Base](AHA-Base/template.md) | Desarrollo / Prototipado | Gratuito (dev) | ❌ No | 🟢 Listo |
 | [AHA Inventario](AHA-Inventario/template.md) | Retail / Comercio | $99 | ✅ Lite | 🟢 Listo |
 | [AHA Comanda](AHA-Comanda/template.md) | Restaurantes / Bares | $99 | ✅ Lite | 🟢 Listo |
 | [AHA CRM](AHA-CRM/template.md) | Ventas / Freelancers | $99 | ✅ Lite | 🟢 Listo |
@@ -31,22 +32,23 @@ Catálogo de plantillas de apps listas para construir y vender con el Ateje Stac
 
 ## Cómo usar un template
 
-Cada app tiene dos formatos de documentación:
+Cada app tiene su spec comercial en:
 
-1. **`apps/AHA-Nombre/template.md`** — template comercial con pricing, target, argumentos de venta
-2. **`Plantilla_AHA_Nombre.md`** (raíz del repo) — spec técnica lista para pasar al code-generador de OpenCode
+1. **`apps/AHA-Nombre/template.md`** — template completo con pricing, módulos, tablas Dexie y target de venta
 
 Para generar una app:
 
 ```bash
-# 1. Copiar la plantilla a specs/
-cp Plantilla_AHA_Nombre.md specs/[app].md
+# 1. Copiar la spec a specs/
+cp apps/AHA-Inventario/template.md specs/mi-app.md
 
-# 2. Ejecutar el pipeline
-/nuevo [nombre-app] --perfil full --ia full
+# 2. Ejecutar el pipeline en OpenCode
+/new    # Classic (5 fases)
+# o
+/pro    # Design (10 fases con brand layer)
 
-# 3. El pipeline ejecuta:
-#    setup-init → code-generator → validation → deployment
+# O con flags:
+# /nuevo [nombre-app] --perfil full --ia full
 ```
 
 Cada template incluye:

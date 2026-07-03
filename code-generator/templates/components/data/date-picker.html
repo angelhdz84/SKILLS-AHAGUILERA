@@ -1,0 +1,145 @@
+<div x-data="[ID]_datepicker()" x-init="init()" class="min-w-[280px]">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-calendar3"></i> [TITLE]</h3>
+    <button x-show="mode === 'range'" @click="mode = 'single'" class="btn btn-ghost btn-xs text-base-content/40 hover:text-primary">
+      <i class="bi bi-calendar"></i> Simple
+    </button>
+    <button x-show="mode === 'single'" @click="mode = 'range'" class="btn btn-ghost btn-xs text-base-content/40 hover:text-primary">
+      <i class="bi bi-calendar-range"></i> Rango
+    </button>
+  </div>
+
+  <div class="flex items-center justify-between mb-3">
+    <button @click="prevMonth()" class="btn btn-ghost btn-sm btn-square"><i class="bi bi-chevron-left"></i></button>
+    <span class="font-semibold text-sm" x-text="monthLabel"></span>
+    <button @click="nextMonth()" class="btn btn-ghost btn-sm btn-square"><i class="bi bi-chevron-right"></i></button>
+  </div>
+
+  <div class="grid grid-cols-7 gap-0.5 text-center">
+    <template x-for="d in dayHeaders" :key="d">
+      <span class="text-xs font-medium text-base-content/40 py-1" x-text="d"></span>
+    </template>
+    <template x-for="(day, i) in days" :key="i">
+      <button @click="selectDay(day)"
+              :disabled="!day"
+              :class="dayClass(day)"
+              class="btn btn-xs btn-ghost rounded-lg p-0 h-8 min-h-0 w-8 mx-auto text-sm disabled:opacity-0 disabled:cursor-default"
+              x-text="day || ''">
+      </button>
+    </template>
+  </div>
+
+  <div x-show="mode === 'range' && rangeStart && rangeEnd" class="mt-3 p-2 bg-base-200/70 rounded-xl text-xs text-center text-base-content/60">
+    <i class="bi bi-arrow-right"></i>
+    <span x-text="rangeStart.toLocaleDateString('es-MX')"></span> — <span x-text="rangeEnd.toLocaleDateString('es-MX')"></span>
+    <span class="font-medium text-base-content" x-text="' (' + rangeDays + ' días)'"></span>
+  </div>
+
+  <div x-show="selected" class="mt-2 p-2 bg-primary/10 rounded-xl text-xs text-center font-medium text-primary flex items-center justify-center gap-2">
+    <i class="bi bi-check-circle-fill"></i>
+    <span x-text="selected.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })"></span>
+  </div>
+</div>
+
+<script>
+function [ID]_datepicker() {
+  return {
+    mode: 'single',
+    year: 0,
+    month: 0,
+    selected: null,
+    rangeStart: null,
+    rangeEnd: null,
+    dayHeaders: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
+
+    init() {
+      const now = new Date()
+      this.year = now.getFullYear()
+      this.month = now.getMonth()
+      this.load()
+    },
+
+    get monthLabel() {
+      return new Date(this.year, this.month).toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })
+    },
+
+    get days() {
+      const first = new Date(this.year, this.month, 1).getDay()
+      const total = new Date(this.year, this.month + 1, 0).getDate()
+      const grid = []
+      for (let i = 0; i < first; i++) grid.push(null)
+      for (let d = 1; d <= total; d++) grid.push(d)
+      while (grid.length % 7) grid.push(null)
+      return grid
+    },
+
+    dayClass(day) {
+      if (!day) return ''
+      const date = new Date(this.year, this.month, day)
+      const today = new Date()
+      const isToday = date.toDateString() === today.toDateString()
+      let cls = isToday ? 'ring-1 ring-primary' : ''
+      if (this.selected && date.toDateString() === this.selected.toDateString()) cls += ' bg-primary text-primary-content'
+      if (this.rangeStart && date.toDateString() === this.rangeStart.toDateString()) cls += ' bg-primary text-primary-content rounded-r-none'
+      if (this.rangeEnd && date.toDateString() === this.rangeEnd.toDateString()) cls += ' bg-primary text-primary-content rounded-l-none'
+      if (this.inRange(date)) cls += ' bg-primary/10'
+      return cls
+    },
+
+    inRange(date) {
+      if (!this.rangeStart || !this.rangeEnd || this.mode !== 'range') return false
+      return date > this.rangeStart && date < this.rangeEnd
+    },
+
+    selectDay(day) {
+      if (!day) return
+      const date = new Date(this.year, this.month, day)
+      if (this.mode === 'single') {
+        this.selected = date
+        this.save()
+        return
+      }
+      if (!this.rangeStart || (this.rangeStart && this.rangeEnd)) {
+        this.rangeStart = date
+        this.rangeEnd = null
+        this.selected = null
+      } else {
+        if (date < this.rangeStart) {
+          this.rangeEnd = this.rangeStart
+          this.rangeStart = date
+        } else {
+          this.rangeEnd = date
+        }
+        this.save()
+      }
+    },
+
+    get rangeDays() {
+      if (!this.rangeStart || !this.rangeEnd) return 0
+      return Math.round((this.rangeEnd - this.rangeStart) / 86400000)
+    },
+
+    prevMonth() { this.month--; if (this.month < 0) { this.month = 11; this.year-- } },
+    nextMonth() { this.month++; if (this.month > 11) { this.month = 0; this.year++ } },
+
+    load() {
+      try {
+        const d = JSON.parse(localStorage.getItem('[STORAGE_KEY]'))
+        if (d) {
+          if (d.selected) this.selected = new Date(d.selected)
+          if (d.rangeStart) this.rangeStart = new Date(d.rangeStart)
+          if (d.rangeEnd) this.rangeEnd = new Date(d.rangeEnd)
+        }
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify({
+        selected: this.selected?.toISOString(),
+        rangeStart: this.rangeStart?.toISOString(),
+        rangeEnd: this.rangeEnd?.toISOString()
+      })) } catch {}
+    }
+  }
+}
+</script>

@@ -1,0 +1,196 @@
+<div x-data="[ID]_kanban()" x-init="init()" class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-columns-gap"></i> [TITLE]</h3>
+    <button class="btn btn-primary btn-sm" @click="addColumn()">
+      <i class="bi bi-plus-lg"></i> Columna
+    </button>
+  </div>
+
+  <div class="flex gap-4 overflow-x-auto pb-4 min-h-[400px]" x-ref="board">
+    <template x-for="(col, ci) in columns" :key="col.id">
+      <div class="flex-shrink-0 w-72 bg-base-200/70 rounded-2xl flex flex-col">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-base-300">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full" :style="`background:${col.color}`"></span>
+            <span class="font-semibold text-sm" x-text="col.title"></span>
+            <span class="badge badge-sm badge-ghost" x-text="col.cards.length"></span>
+          </div>
+          <button @click="deleteColumn(ci)" class="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-error">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 p-3 space-y-3 overflow-y-auto min-h-[200px]"
+             @dragover.prevent="dragOverCol = ci"
+             @dragleave="dragOverCol = null"
+             @drop="dropOnColumn(ci, $event)">
+
+          <template x-for="(card, ci2) in col.cards" :key="card.id">
+            <div draggable="true"
+                 @dragstart="startDrag(card, ci, ci2, $event)"
+                 @dragend="dragEnd"
+                 :class="{ 'opacity-50': dragging?.id === card.id, 'ring-2 ring-primary': dragOverCol === ci && hoverCard === ci2 }"
+                 class="bg-base-100 border border-base-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing">
+
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <p class="text-sm font-medium leading-snug" x-text="card.title"></p>
+                <button @click="deleteCard(ci, ci2)" class="btn btn-ghost btn-xs btn-square text-base-content/20 hover:text-error -mr-1 -mt-1 shrink-0">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+
+              <p x-show="card.body" class="text-xs text-base-content/60 leading-relaxed mb-3 line-clamp-2" x-text="card.body"></p>
+
+              <div class="flex flex-wrap items-center gap-2">
+                <template x-for="tag in card.tags" :key="tag">
+                  <span class="badge badge-sm" :class="tagColor(tag)" x-text="tag"></span>
+                </template>
+              </div>
+
+              <div x-show="card.due" class="flex items-center gap-1 mt-2 text-xs"
+                   :class="isOverdue(card.due) ? 'text-error' : 'text-base-content/40'">
+                <i class="bi bi-calendar3"></i>
+                <span x-text="formatDate(card.due)"></span>
+              </div>
+            </div>
+          </template>
+
+          <div x-show="!col.cards.length" class="flex flex-col items-center py-8 text-base-content/20">
+            <i class="bi bi-inbox text-3xl"></i>
+            <p class="text-xs mt-2">Arrastra tarjetas aquí</p>
+          </div>
+        </div>
+
+        <div class="p-3 border-t border-base-300">
+          <button @click="addCard(ci)" class="btn btn-ghost btn-xs w-full text-base-content/40 hover:text-primary">
+            <i class="bi bi-plus"></i> Agregar tarjeta
+          </button>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <div x-show="!columns.length" class="flex flex-col items-center py-16 text-base-content/40">
+    <i class="bi bi-columns-gap text-6xl mb-4"></i>
+    <p class="text-lg font-medium">Sin columnas aún</p>
+    <p class="text-sm mt-1">Crea tu primera columna para empezar</p>
+    <button class="btn btn-primary mt-4" @click="addColumn()">
+      <i class="bi bi-plus-lg"></i> Crear columna
+    </button>
+  </div>
+</div>
+
+<script>
+function [ID]_kanban() {
+  const DEFAULT_COLUMNS = [
+    { id: 'pendiente', title: 'Pendiente', color: '#f59e0b', cards: [
+      { id: 'c1', title: '[CARD_TITLE_1]', body: '[CARD_BODY_1]', tags: ['pendiente'], due: null },
+      { id: 'c2', title: '[CARD_TITLE_2]', body: '[CARD_BODY_2]', tags: ['urgente'], due: new Date(Date.now() + 86400000).toISOString() }
+    ]},
+    { id: 'progreso', title: 'En progreso', color: '#3b82f6', cards: [
+      { id: 'c3', title: '[CARD_TITLE_3]', tags: [], due: null }
+    ]},
+    { id: 'completado', title: 'Completado', color: '#22c55e', cards: [] }
+  ]
+
+  return {
+    columns: [],
+    dragging: null,
+    dragSource: null,
+    dragOverCol: null,
+    hoverCard: null,
+
+    init() {
+      this.load()
+    },
+
+    load() {
+      try {
+        const saved = localStorage.getItem('[STORAGE_KEY]')
+        this.columns = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_COLUMNS))
+      } catch { this.columns = JSON.parse(JSON.stringify(DEFAULT_COLUMNS)) }
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', JSON.stringify(this.columns)) } catch {}
+    },
+
+    addColumn() {
+      const id = 'col_' + Date.now().toString(36)
+      this.columns.push({ id, title: 'Nueva columna', color: '#8b5cf6', cards: [] })
+      this.save()
+      setTimeout(() => {
+        const board = this.$refs.board
+        if (board) board.scrollLeft = board.scrollWidth
+      }, 50)
+    },
+
+    deleteColumn(ci) {
+      this.columns.splice(ci, 1)
+      this.save()
+    },
+
+    addCard(ci) {
+      const col = this.columns[ci]
+      if (!col) return
+      col.cards.push({
+        id: 'card_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        title: 'Nueva tarjeta',
+        body: '',
+        tags: [],
+        due: null
+      })
+      this.save()
+    },
+
+    deleteCard(ci, ci2) {
+      this.columns[ci]?.cards.splice(ci2, 1)
+      this.save()
+    },
+
+    startDrag(card, ci, ci2, ev) {
+      this.dragging = card
+      this.dragSource = { colIdx: ci, cardIdx: ci2 }
+      ev.dataTransfer.effectAllowed = 'move'
+      ev.dataTransfer.setData('text/plain', card.id)
+    },
+
+    dragEnd() {
+      this.dragging = null
+      this.dragSource = null
+      this.dragOverCol = null
+      this.hoverCard = null
+    },
+
+    dropOnColumn(colIdx, ev) {
+      ev.preventDefault()
+      if (!this.dragSource) return
+      const src = this.dragSource
+      if (src.colIdx === colIdx) { this.dragEnd(); return }
+      const card = this.columns[src.colIdx]?.cards.splice(src.cardIdx, 1)[0]
+      if (card) {
+        this.columns[colIdx].cards.push(card)
+        this.save()
+      }
+      this.dragEnd()
+    },
+
+    tagColor(tag) {
+      const map = {
+        urgente: 'badge-error', pendiente: 'badge-warning', progreso: 'badge-info',
+        completo: 'badge-success', revision: 'badge-ghost'
+      }
+      return map[tag.toLowerCase()] || 'badge-ghost'
+    },
+
+    isOverdue(due) {
+      return due && new Date(due) < new Date()
+    },
+
+    formatDate(iso) {
+      if (!iso) return ''
+      return new Date(iso).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
+    }
+  }
+}
+</script>

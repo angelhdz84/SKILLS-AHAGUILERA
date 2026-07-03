@@ -1,4 +1,5 @@
 ---
+<!-- Archived — reemplazado por spec-engine -->
 # @deprecated — Reemplazado por spec-engine
 # Motivo: Fusión spec-creator + omd:init + omd:taste en spec-engine con DESIGN.md brand layer
 # Migración: Usar `/spec` que activa spec-engine
@@ -9,7 +10,7 @@ compatibility: Requiere @AGENTS.md y @project.config.js presentes. Funciona con 
 meta:
   author: Angel Hernandez - ahaguilera.dev
   version: "4.0"
-  perfiles: [lite, full]
+  perfiles: [lite, professional, business]
   generatedBy: "spec-creator skill"
   triggers: ["definir spec app", "nueva app completa", "crear especificación", "historia de app", "spec creator", "brainstorming app", "descubrir app", "diseñar app"]
   stack: ["offline-first", "alpine.js", "dexie.js", "cryptojs", "tailwind-css-local", "daisyui", "bootstrap-icons", "animate.css"]
@@ -279,7 +280,7 @@ Arregla lo que encuentres inline y avanza.
    | Campo | Tipo | Cifrado | Índice | Descripción |
    ### Relaciones
    ### Perfil Lite: schema Dexie
-   ### Perfil Full: schema SQL adicional
+    ### Perfil Professional: schema SQL adicional
    ## 🔐 Seguridad y Datos
    ## 🎨 UI/UX y Animaciones
    ## 🧭 User Journeys
@@ -360,9 +361,9 @@ Tu respuesta:
 
 ---
 
-## 🎨 INTEGRACIÓN CON design-ux-intelligence
+## 🎨 INTEGRACIÓN CON design-engine
 Si el usuario menciona "tono visual", "diseño distintivo" o "UX profesional":
-1. Activar automáticamente `design-ux-intelligence`
+1. Activar automáticamente `design-engine`
 2. Preguntar:
    ```
    🎨 Tono visual preferido:

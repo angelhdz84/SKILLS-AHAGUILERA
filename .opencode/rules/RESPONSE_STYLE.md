@@ -11,6 +11,6 @@
 
 - **Versiones**: en `meta.version` del YAML de cada SKILL.md. Bump al modificar.
 - **Auto-validación**: `stack-compliance-guard` chequea imports, CDNs, cifrado, UI, módulos, accesibilidad y privacidad. Corrige automático o pregunta si ambiguo.
-- **design-ux-intelligence**: activada por spec-creator cuando el usuario menciona "tono visual" o "diseño". No genera código, solo valida/sugiere.
+- **design-engine**: activada por spec-engine cuando el usuario menciona "tono visual" o "diseño". No genera código, solo valida/sugiere.
 - **code-generator**: un módulo por turno. Pausa tras cada uno. Lee `libreriasAdicionales` de la spec.
-- **validation-offline**: pregunta primero si tiene Python/Playwright. Si no, salta Fase 3.6 y solo da comandos DevTools manuales.
+- **validation-engine**: pregunta primero si tiene Python/Playwright. Si no, salta Fase 3.6 y solo da comandos DevTools manuales.

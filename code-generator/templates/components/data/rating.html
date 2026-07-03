@@ -1,0 +1,68 @@
+<div x-data="[ID]_rating()" x-init="init()" class="flex flex-col items-center gap-2">
+  <h3 x-show="label" class="font-semibold text-sm flex items-center gap-2" x-text="label"></h3>
+  <div class="flex items-center gap-1">
+    <template x-for="s in maxStars" :key="s">
+      <button @click="setRating(s)"
+              @mouseenter="hover = s"
+              @mouseleave="hover = 0"
+              class="text-2xl transition-all duration-150 p-0.5 focus:outline-none"
+              :class="starClass(s)">
+        <i class="bi" :class="starIcon(s)"></i>
+      </button>
+    </template>
+  </div>
+  <div class="flex items-center gap-2 text-xs text-base-content/50">
+    <span x-show="displayValue > 0" class="font-semibold text-primary" x-text="displayValue + '/' + maxStars"></span>
+    <span x-text="labelMap[displayValue] || ''"></span>
+    <span x-show="!displayValue" class="text-base-content/30">Sin calificar</span>
+  </div>
+  <div x-show="showClear && displayValue > 0" class="mt-1">
+    <button @click="setRating(0)" class="btn btn-ghost btn-xs text-base-content/30 hover:text-error">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+</div>
+
+<script>
+function [ID]_rating() {
+  return {
+    value: 0,
+    hover: 0,
+    maxStars: 5,
+    label: '[TITLE]',
+    showClear: true,
+    labelMap: { 1: 'Malo', 2: 'Regular', 3: 'Bueno', 4: 'Muy bueno', 5: 'Excelente' },
+
+    init() { this.load() },
+
+    get displayValue() { return this.hover || this.value },
+
+    setRating(v) {
+      this.value = v === this.value ? 0 : v
+      this.save()
+    },
+
+    starClass(s) {
+      if (s <= this.displayValue) return 'text-warning scale-110'
+      return 'text-base-content/20 hover:text-warning/50'
+    },
+
+    starIcon(s) {
+      if (s <= this.displayValue) return 'bi-star-fill'
+      if (s - 0.5 <= this.displayValue && this.displayValue % 1 !== 0) return 'bi-star-half'
+      return 'bi-star'
+    },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        if (s !== null) this.value = parseFloat(s) || 0
+      } catch {}
+    },
+
+    save() {
+      try { localStorage.setItem('[STORAGE_KEY]', String(this.value)) } catch {}
+    }
+  }
+}
+</script>

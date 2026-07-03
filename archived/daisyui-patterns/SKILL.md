@@ -1,9 +1,10 @@
 ---
+<!-- Archived — reemplazado por design-engine -->
 # @deprecated — Absorbido por design-engine
 # Motivo: El conocimiento de DaisyUI 5 + Alpine.js ahora es parte integral de design-engine
 # Migración: design-engine aplica patrones DaisyUI directamente al generar UI
 name: daisyui-patterns
-description: [DEPRECATED] Absorbido por design-engine. Patrones de componentes DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial via SKILL.md de daisyui.com + integracion con Alpine (x-data, $persist, modales, drawer, dropdowns). Consumido por code-generator, design-ux-intelligence, ux-refactor.
+description: [DEPRECATED] Absorbido por design-engine. Patrones de componentes DaisyUI 5 optimizados para Alpine.js + offline-first. Referencia oficial via SKILL.md de daisyui.com + integracion con Alpine (x-data, $persist, modales, drawer, dropdowns). Consumido por code-generator, design-engine, validation-engine.
 license: MIT
 compatibility: Requiere DaisyUI 5 + Tailwind CSS 4. Compatible con stack offline-first (assets/ local o CDN).
 meta:
@@ -172,9 +173,9 @@ Sin npm, sin build step. Todas las clases de DaisyUI 5 funcionan directamente.
 
 ## NOTAS DE PERFIL
 
-- DaisyUI 5 se usa igual en ambos perfiles (Lite y Full). No hay diferencias de componentes entre perfiles.
+- DaisyUI 5 se usa igual en ambos perfiles (Lite y Professional). No hay diferencias de componentes entre perfiles.
 - En perfil Lite: carga desde `assets/css/daisyui.min.css` (descargado por curl).
-- En perfil Full: carga vía `bun add daisyui` y configuración en `tailwind.config.js` como plugin.
+- En perfil Professional: carga vía `bun add daisyui` y configuración en `tailwind.config.js` como plugin.
 - Los patrones Alpine + DaisyUI (modales, drawers, dropdowns, tabs) son idénticos en ambos perfiles.
 
 ## REFERENCIAS

@@ -1,0 +1,93 @@
+<div x-data="[ID]_carousel()" x-init="init()" class="relative w-full overflow-hidden rounded-2xl bg-base-200" :style="{ aspectRatio: aspect }">
+  <div class="relative w-full h-full">
+    <template x-for="(slide, i) in slides" :key="slide.id || i">
+      <div x-show="current === i" class="absolute inset-0 transition-opacity duration-500">
+        <img :src="slide.src" :alt="slide.alt" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
+          <h3 class="text-lg font-bold mb-1" x-text="slide.title"></h3>
+          <p class="text-sm text-white/80 max-w-lg" x-text="slide.body"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <button @click="prev()" class="absolute left-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-sm btn-square bg-black/20 hover:bg-black/40 text-white border-0 rounded-full">
+    <i class="bi bi-chevron-left text-lg"></i>
+  </button>
+  <button @click="next()" class="absolute right-3 top-1/2 -translate-y-1/2 btn btn-ghost btn-sm btn-square bg-black/20 hover:bg-black/40 text-white border-0 rounded-full">
+    <i class="bi bi-chevron-right text-lg"></i>
+  </button>
+
+  <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+    <template x-for="(slide, i) in slides" :key="i">
+      <button @click="goTo(i)" class="w-2 h-2 rounded-full transition-all"
+              :class="i === current ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/70'">
+      </button>
+    </template>
+  </div>
+
+  <button x-show="autoplay" @click="toggleAutoplay()"
+          class="absolute top-3 right-3 btn btn-ghost btn-xs btn-square bg-black/20 hover:bg-black/40 text-white border-0 rounded-full">
+    <i class="bi" :class="playing ? 'bi-pause-fill' : 'bi-play-fill'"></i>
+  </button>
+</div>
+
+<script>
+function [ID]_carousel() {
+  const DEFAULT_SLIDES = [
+    { id: 'c1', src: '[SLIDE_URL_1]', alt: '[SLIDE_ALT_1]', title: '[SLIDE_TITLE_1]', body: '[SLIDE_BODY_1]' },
+    { id: 'c2', src: '[SLIDE_URL_2]', alt: '[SLIDE_ALT_2]', title: '[SLIDE_TITLE_2]', body: '[SLIDE_BODY_2]' },
+    { id: 'c3', src: '[SLIDE_URL_3]', alt: '[SLIDE_ALT_3]', title: '[SLIDE_TITLE_3]', body: '[SLIDE_BODY_3]' }
+  ]
+
+  return {
+    slides: [],
+    current: 0,
+    autoplay: true,
+    playing: true,
+    interval: null,
+    aspect: '16 / 9',
+
+    init() {
+      this.slides = JSON.parse(JSON.stringify(DEFAULT_SLIDES))
+      this.startAutoplay()
+    },
+
+    startAutoplay() {
+      if (this.interval) clearInterval(this.interval)
+      if (this.autoplay && this.playing) {
+        this.interval = setInterval(() => {
+          this.next()
+        }, 5000)
+      }
+    },
+
+    stopAutoplay() {
+      if (this.interval) { clearInterval(this.interval); this.interval = null }
+    },
+
+    toggleAutoplay() {
+      this.playing = !this.playing
+      if (this.playing) this.startAutoplay()
+      else this.stopAutoplay()
+    },
+
+    goTo(i) {
+      if (i === this.current) return
+      this.current = i
+      if (this.autoplay) { this.stopAutoplay(); this.startAutoplay() }
+    },
+
+    prev() {
+      this.current = (this.current - 1 + this.slides.length) % this.slides.length
+      if (this.autoplay) { this.stopAutoplay(); this.startAutoplay() }
+    },
+
+    next() {
+      this.current = (this.current + 1) % this.slides.length
+      if (this.autoplay) { this.stopAutoplay(); this.startAutoplay() }
+    }
+  }
+}
+</script>

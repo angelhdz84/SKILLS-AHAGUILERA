@@ -2,7 +2,7 @@
 // Depende: Alpine.js, Dexie, FlexSearch (carga lazy)
 // Uso: <script src='modules/ia-jutia/module.js'></script> (DESPUES de core/app.js)
 
-(function () {
+;(function () {
   'use strict';
 
   var MODULE_ID = 'ia-jutia';
@@ -26,8 +26,6 @@
       document.head.appendChild(s);
     });
   }
-
-  function loadFlexSearch () {
 
   function loadFlexSearch () {
     if (window.FlexSearch) return Promise.resolve(window.FlexSearch);

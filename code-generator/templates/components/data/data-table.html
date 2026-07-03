@@ -1,0 +1,285 @@
+<div x-data="[ID]Data()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="bi bi-[ICON]"></i> [TITLE]
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      <button class="btn btn-primary" @click="abrirForm()">
+        <i class="bi bi-plus-lg"></i> Agregar
+      </button>
+      <button class="btn btn-ghost btn-square" @click="exportPDF" x-show="items.length" title="Exportar PDF">
+        <i class="bi bi-file-earmark-pdf"></i>
+      </button>
+      <button class="btn btn-ghost btn-square" @click="exportExcel" x-show="items.length" title="Exportar Excel">
+        <i class="bi bi-file-earmark-spreadsheet"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-4">
+    <label class="input input-bordered flex items-center gap-2 flex-1 min-w-[200px]">
+      <i class="bi bi-search text-base-content/40"></i>
+      <input type="search" x-model="busqueda" @input.debounce="page=1" placeholder="Buscar..." class="grow" />
+      <button x-show="busqueda" @click="busqueda='';page=1" class="btn btn-xs btn-ghost btn-circle">✕</button>
+    </label>
+    <select x-model="perPage" @change="page=1" class="select select-bordered select-sm w-20">
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+  </div>
+
+  <template x-if="selected.size > 0">
+    <div class="flex items-center gap-3 mb-3 p-3 bg-base-200 rounded-box animate__animated animate__fadeIn">
+      <i class="bi bi-check2-square text-lg"></i>
+      <span class="text-sm font-medium"><span x-text="selected.size"></span> seleccionados</span>
+      <button class="btn btn-sm btn-error" @click="batchDelete">
+        <i class="bi bi-trash"></i> Eliminar seleccionados
+      </button>
+      <button class="btn btn-sm btn-ghost" @click="selected.clear()">
+        Deseleccionar
+      </button>
+    </div>
+  </template>
+
+  <template x-if="!cargando && !error && filtered.length === 0 && !busqueda">
+    {file:code-generator/templates/components/feedback/empty-state.html}
+  </template>
+
+  <template x-if="error">
+    {file:code-generator/templates/components/feedback/error-state.html}
+  </template>
+
+  <template x-if="cargando">
+    <div class="space-y-3">
+      <template x-for="i in 5" :key="i">
+        <div class="flex gap-3 items-center">
+          <div class="skeleton h-5 w-5 rounded"></div>
+          <div class="skeleton h-8 flex-1"></div>
+          <div class="skeleton h-8 w-20"></div>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <template x-if="!cargando && !error && paginated.length > 0">
+    <div>
+      <div class="overflow-x-auto hidden md:block">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th class="w-10">
+                <input type="checkbox" class="checkbox checkbox-sm"
+                       :checked="paginated.length > 0 && paginated.every(i => selected.has(i.id))"
+                       @click="toggleAll($el.checked)" />
+              </th>
+              [TABLE_HEADERS]
+              <th class="w-24 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="item in paginated" :key="item.id">
+              <tr :class="{ 'bg-primary/5': selected.has(item.id) }">
+                <td>
+                  <input type="checkbox" class="checkbox checkbox-sm"
+                         :checked="selected.has(item.id)"
+                         @click="toggle(item.id)" />
+                </td>
+                [TABLE_CELLS]
+                <td class="text-center">
+                  <div class="flex justify-center gap-0.5">
+                    <button class="btn btn-ghost btn-xs btn-square" @click="abrirForm(item)" title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-ghost btn-xs btn-square text-error" @click="eliminar(item)" title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="block md:hidden space-y-3">
+        <template x-for="item in paginated" :key="item.id">
+          <div class="card bg-base-100 border border-base-300" :class="{ 'ring-2 ring-primary': selected.has(item.id) }">
+            <div class="card-body p-4">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" class="checkbox checkbox-sm"
+                         :checked="selected.has(item.id)"
+                         @click="toggle(item.id)" />
+                  [MOBILE_CARD_CONTENT]
+                </div>
+                <div class="flex gap-0.5 shrink-0">
+                  <button class="btn btn-ghost btn-xs btn-square" @click="abrirForm(item)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-ghost btn-xs btn-square text-error" @click="eliminar(item)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-4 text-sm text-base-content/60">
+        <span>
+          Mostrando <span x-text="((page-1)*perPage)+1"></span>-<span x-text="Math.min(page*perPage, filtered.length)"></span>
+          de <span x-text="filtered.length"></span>
+          <template x-if="filtered.length !== items.length">
+            <span>(filtrados de <span x-text="items.length"></span>)</span>
+          </template>
+        </span>
+        <div class="join" x-show="totalPages > 1">
+          <button class="join-item btn btn-sm" :class="page === 1 ? 'btn-disabled' : ''" @click="page = Math.max(1, page-1)">
+            ‹
+          </button>
+          <template x-for="p in pages" :key="p">
+            <button class="join-item btn btn-sm" :class="p === page ? 'btn-active' : ''" @click="page = p" x-text="p"></button>
+          </template>
+          <button class="join-item btn btn-sm" :class="page === totalPages ? 'btn-disabled' : ''" @click="page = Math.min(totalPages, page+1)">
+            ›
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<script>
+function [ID]Data() {
+  return {
+    items: [],
+    filtered: [],
+    paginated: [],
+    busqueda: '',
+    cargando: true,
+    error: null,
+    page: 1,
+    perPage: 10,
+    sortField: '[SORT_FIELD]',
+    sortDir: 'asc',
+    selected: new Set(),
+    isMobile: false,
+
+    get totalPages() {
+      return Math.max(1, Math.ceil(this.filtered.length / this.perPage));
+    },
+
+    get pages() {
+      const total = this.totalPages;
+      const curr = this.page;
+      const range = [];
+      const maxShow = 5;
+      let start = Math.max(1, curr - Math.floor(maxShow / 2));
+      let end = Math.min(total, start + maxShow - 1);
+      if (end - start + 1 < maxShow) start = Math.max(1, end - maxShow + 1);
+      for (let i = start; i <= end; i++) range.push(i);
+      return range;
+    },
+
+    init() {
+      this.cargarDatos();
+      const mq = window.matchMedia('(max-width: 767px)');
+      this.isMobile = mq.matches;
+      mq.addEventListener('change', (e) => { this.isMobile = e.matches; });
+    },
+
+    async cargarDatos() {
+      this.cargando = true;
+      this.error = null;
+      try {
+        this.items = await window.MODULES['[ID]'].cargarLista();
+        this.aplicarFiltro();
+      } catch (err) {
+        this.error = err.message || 'Error al cargar datos';
+      } finally {
+        this.cargando = false;
+      }
+    },
+
+    aplicarFiltro() {
+      let result = this.items;
+      if (this.busqueda) {
+        const q = this.busqueda.toLowerCase();
+        result = result.filter(item =>
+          [SEARCH_FIELDS].some(f => String(item[f] || '').toLowerCase().includes(q))
+        );
+      }
+      const field = this.sortField;
+      const dir = this.sortDir === 'asc' ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        const va = a[field] ?? '';
+        const vb = b[field] ?? '';
+        return String(va).localeCompare(String(vb), 'es', { numeric: true }) * dir;
+      });
+      this.filtered = result;
+      this.page = 1;
+      this.actualizarPagina();
+    },
+
+    actualizarPagina() {
+      const start = (this.page - 1) * this.perPage;
+      this.paginated = this.filtered.slice(start, start + this.perPage);
+    },
+
+    sort(field) {
+      if (this.sortField === field) {
+        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortField = field;
+        this.sortDir = 'asc';
+      }
+      this.aplicarFiltro();
+    },
+
+    toggle(id) {
+      if (this.selected.has(id)) this.selected.delete(id);
+      else this.selected.add(id);
+    },
+
+    toggleAll(v) {
+      if (v) this.paginated.forEach(i => this.selected.add(i.id));
+      else this.paginated.forEach(i => this.selected.delete(i.id));
+    },
+
+    async batchDelete() {
+      const ok = await UI.confirm(
+        `¿Eliminar ${this.selected.size} registro(s)? Esta acción no se puede deshacer.`,
+        'Eliminar seleccionados'
+      );
+      if (!ok) return;
+      try {
+        const ids = [...this.selected];
+        await window.MODULES['[ID]'].batchEliminar(ids);
+        this.selected.clear();
+        UI.toast(`Se eliminaron ${ids.length} registro(s)`, 'success');
+        await this.cargarDatos();
+      } catch (err) {
+        UI.toast(err.message, 'error');
+      }
+    },
+
+    abrirForm(item) {
+      window.MODULES['[ID]'].abrirForm(item);
+    },
+
+    eliminar(item) {
+      window.MODULES['[ID]'].eliminar(item);
+    },
+
+    exportPDF() {
+      window.MODULES['[ID]'].exportPDF?.();
+    },
+
+    exportExcel() {
+      window.MODULES['[ID]'].exportExcel?.();
+    }
+  };
+}
+</script>

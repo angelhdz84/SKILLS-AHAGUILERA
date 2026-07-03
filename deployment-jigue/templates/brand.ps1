@@ -212,9 +212,6 @@ if (-not $DryRun) {
   New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 
   $brandedZip = "$OutputDir/$AppNameSafe-branded-v1.0.zip"
-  $compressItems = @(
-    @{ Path = "index.html"; Package = $brandedZip }
-  )
 
   # Recolectar archivos relevantes
   $include = @("index.html", "core", "modules", "assets", "docs", "project.config.js")

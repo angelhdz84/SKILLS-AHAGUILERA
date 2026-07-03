@@ -1,0 +1,106 @@
+<div x-data="[ID]_tree()" x-init="init()" class="min-w-[200px]">
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="font-semibold flex items-center gap-2"><i class="bi bi-diagram-2"></i> [TITLE]</h3>
+    <button @click="expandAll()" class="btn btn-ghost btn-xs text-base-content/40 hover:text-primary"><i class="bi bi-arrows-expand"></i></button>
+  </div>
+  <div class="space-y-0.5">
+    <template x-for="node in tree" :key="node.id">
+      <div>
+        <div class="flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-base-200/70 cursor-pointer select-none"
+             :class="{ 'bg-primary/10 text-primary': selected === node.id }"
+             @click="select(node)">
+          <button x-show="node.children?.length" @click.stop="toggle(node)" class="btn btn-ghost btn-xs btn-square p-0 h-5 w-5 min-h-0">
+            <i class="bi" :class="isOpen(node) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+          </button>
+          <span x-show="!node.children?.length" class="w-5"></span>
+          <i :class="node.icon || 'bi-folder'" class="text-sm text-base-content/40" :style="node.color ? 'color:'+node.color : ''"></i>
+          <span class="text-sm" x-text="node.label"></span>
+        </div>
+        <div x-show="isOpen(node)" x-transition class="ml-5 border-l border-base-300 pl-2 space-y-0.5">
+          <template x-for="child in node.children" :key="child.id">
+            <div>
+              <div class="flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-base-200/70 cursor-pointer select-none"
+                   :class="{ 'bg-primary/10 text-primary': selected === child.id }"
+                   @click="select(child)">
+                <button x-show="child.children?.length" @click.stop="toggle(child)" class="btn btn-ghost btn-xs btn-square p-0 h-5 w-5 min-h-0">
+                  <i class="bi" :class="isOpen(child) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+                </button>
+                <span x-show="!child.children?.length" class="w-5"></span>
+                <i :class="child.icon || 'bi-file-earmark'" class="text-sm text-base-content/40"></i>
+                <span class="text-sm" x-text="child.label"></span>
+              </div>
+              <div x-show="isOpen(child) && child.children?.length" x-transition class="ml-5 border-l border-base-300 pl-2 space-y-0.5">
+                <template x-for="sub in child.children" :key="sub.id">
+                  <div class="flex items-center gap-1 py-1 px-2 rounded-lg hover:bg-base-200/70 cursor-pointer select-none"
+                       :class="{ 'bg-primary/10 text-primary': selected === sub.id }"
+                       @click="select(sub)">
+                    <i class="bi bi-file-earmark text-sm text-base-content/40"></i>
+                    <span class="text-sm" x-text="sub.label"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<script>
+function [ID]_tree() {
+  const DEFAULT_TREE = [
+    { id: 'docs', label: 'Documentos', icon: 'bi-folder', open: true, children: [
+      { id: 'rpts', label: 'Reportes', icon: 'bi-folder', children: [
+        { id: 'r1', label: 'Reporte Q1.pdf' },
+        { id: 'r2', label: 'Reporte Q2.pdf' }
+      ]},
+      { id: 'invs', label: 'Facturas', icon: 'bi-folder', children: [
+        { id: 'inv1', label: 'Factura 001.pdf' },
+        { id: 'inv2', label: 'Factura 002.pdf' }
+      ]}
+    ]},
+    { id: 'img', label: 'Imágenes', icon: 'bi-folder', children: [
+      { id: 'img1', label: 'Logo.png' },
+      { id: 'img2', label: 'Banner.jpg' }
+    ]},
+    { id: 'cfg', label: 'Configuración', icon: 'bi-gear' }
+  ]
+
+  return {
+    tree: [],
+    selected: null,
+    openMap: {},
+
+    init() { this.load() },
+
+    load() {
+      try {
+        const s = localStorage.getItem('[STORAGE_KEY]')
+        this.tree = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_TREE))
+      } catch { this.tree = JSON.parse(JSON.stringify(DEFAULT_TREE)) }
+      this.buildOpenMap(this.tree)
+    },
+
+    buildOpenMap(nodes) {
+      for (const n of nodes) {
+        if (n.children) {
+          this.openMap[n.id] = n.open ?? false
+          this.buildOpenMap(n.children)
+        }
+      }
+    },
+
+    isOpen(node) { return !!this.openMap[node.id] },
+    toggle(node) { this.openMap[node.id] = !this.openMap[node.id] },
+
+    expandAll() {
+      for (const id in this.openMap) this.openMap[id] = true
+    },
+
+    select(node) {
+      this.selected = node.id
+    }
+  }
+}
+</script>
