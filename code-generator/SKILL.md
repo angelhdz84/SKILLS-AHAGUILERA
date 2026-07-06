@@ -451,6 +451,39 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="assets/js/libs/dayjs.min.js"></script>
 <!-- FIN librerías adicionales -->
 
+**⚠️ Alpine store initialization (importante — errores comunes):**
+Existen DOS patrones según cómo se cargue Alpine:
+
+**Patrón A — Alpine con `defer` (recomendado, como en aha-gastos):**
+```html
+<!-- Alpine stores: se registran ANTES de que Alpine cargue (el listener espera a alpine:init) -->
+<script>
+  document.addEventListener('alpine:init', function() {
+    Alpine.store('app', { moduloActual: '' });
+    Alpine.store('theme', { mode: 'light' });
+  });
+</script>
+<!-- Alpine carga DESPUÉS (defer) — cuando Alpine inicia, dispara alpine:init y los stores se crean -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js" defer></script>
+```
+
+**Patrón B — Alpine SIN defer (sincrónico):**
+```html
+<!-- Alpine carga PRIMERO -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+<!-- Alpine stores: se crean DIRECTAMENTE (alpine:init ya se disparó) -->
+<script>
+  Alpine.store('app', { moduloActual: '' });
+  Alpine.store('theme', { mode: 'light' });
+</script>
+```
+
+⚠️ **NO mezclar patrones:** Si Alpine carga sincrónico pero usas `document.addEventListener('alpine:init', ...)`, el listener NUNCA se ejecuta porque `alpine:init` ya ocurrió. Si Alpine carga con `defer` pero llamas `Alpine.store()` directamente, `Alpine` puede no estar definido aún.
+
+**Colocación:** Las stores Alpine deben ir ANTES de cualquier elemento con `x-data` que las use. Por eso se ponen al inicio del `<body>`, justo después de abrirlo, o justo después de las librerías JS si cargan sincrónicas.
+
+**Dexie y db.js:** La tabla Dexie debe inicializarse ANTES de que cualquier módulo intente leer/escribir. `core/db.js` crea `window.db` al cargar, y los módulos lo usan en `init()`. NO crear instancias Dexie dentro de módulos.
+
 **Layout shell:**
 Para el body HTML completo con sidebar + navbar + stores Alpine, referencia `{file:code-generator/templates/components/layout/app-shell.html}`. El generador debe adaptar `[ID]`, `[APP_NAME]`, `[PLAN]`, `[LOADING_ICON]` y `[VERSION]` según `project.config.js`.
 
@@ -603,6 +636,9 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Librerías adicionales cargadas vía CDN en vez de `assets/`? → REEMPLAZAR por ruta local
 - [ ] ¿`index.html` mezcla libs base con adicionales fuera de orden? → REORDENAR
 - [ ] ¿Librerías adicionales de la spec faltan en los `<script>` de index.html? → AGREGAR
+- [ ] **CRÍTICO: ¿Falta ALGUNA de las 5 librerías base JS (Alpine.js, Dexie, crypto-js, pako, chart.js) en `<head>` o `<body>`?** → AGREGAR INMEDIATAMENTE. Sin Alpine la app no renderiza, sin Dexie no hay DB, sin crypto-js no hay cifrado, sin pako no hay backup, sin chart.js no hay gráficos. Verificar con: `html.includes('alpinejs') || html.includes('alpine.js')`, `html.includes('dexie')`, etc.
+- [ ] **CRÍTICO: ¿Alpine cargado SINCÓNICAMENTE (sin `defer`) pero stores creados con `document.addEventListener('alpine:init', ...)`?** → CAMBIAR a `Alpine.store()` directo porque el evento `alpine:init` ya se disparó antes de que el listener se registre. Regla: Alpine sync → `Alpine.store()` directo; Alpine defer → `document.addEventListener('alpine:init', ...)`.
+- [ ] **CRÍTICO: ¿`async` usado como nombre de propiedad de objeto?** → CORREGIR. `async` es palabra reservada en ES5/ES6. NO usar `async nombreProp: function() {}`. Usar `nombreProp: async function() {}` o `nombreProp() { return ... }`.
 - [ ] ¿`sw.js` generado pero no registrado en index.html? → AGREGAR registro
 - [ ] ¿`manifest.json` generado pero no enlazado? → AGREGAR `<link rel="manifest">`
 - [ ] ¿Falta `core/network.js` en apps que monitorean conexión? → AGREGAR
@@ -637,6 +673,36 @@ Si falla: corrige silenciosamente y añade `🛡️ Ajustado a reglas offline-fi
 ---
 
 ## 📐 PATRONES DE CÓDIGO OBLIGATORIOS
+
+---
+**⚠️ REGLA CRÍTICA: `async` no es nombre de propiedad válido en ES5.**
+En JavaScript, `async` es una **palabra reservada**. NO se puede usar como nombre de propiedad en notación `{ nombre: function() }` si el nombre es `async`:
+
+```javascript
+// ❌ INCORRECTO — «async» es palabra reservada
+const obj = {
+  async: async function() { ... }  // SyntaxError
+};
+
+// ❌ TAMBIÉN INCORRECTO
+const obj = {
+  async nav: function() { ... }   // SyntaxError
+};
+
+// ✅ CORRECTO — mover async a la función
+const obj = {
+  nav: async function() { ... }   // OK: async es la función, no la propiedad
+};
+
+// ✅ TAMBIÉN CORRECTO (shorthand ES6)
+const obj = {
+  async nav() { ... }             // OK
+};
+```
+
+Aplica esto a TODAS las propiedades de objeto que sean funciones async: `guardar: async function()`, `init: async function()`, `render: async function()`, etc. Solo `async` como NOMBRE de propiedad causa error, usarlo como MODIFICADOR de función es correcto.
+
+---
 
 ### `module.js` (Estructura Base + Padrones UI)
 ```javascript
@@ -959,16 +1025,16 @@ self.addEventListener('fetch', (e) => {
 }
 ```
 
-**Registro en index.html:**
+**Registro en index.html (OBLIGATORIO para TODAS las apps, incluso sin PWA):**
 ```html
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    navigator.serviceWorker.register('sw.js?v=' + (window.DB_VERSION || 1));
   }
 </script>
 ```
-Colocar DESPUÉS del bloque de librerías adicionales, antes de Core.
+Colocar DESPUÉS del bloque de librerías adicionales, antes de Core. NO omitir aunque la app no requiera instalabilidad — el SW permite carga offline que es requisito del stack.
 
 ### Network Status Monitoring (core/network.js)
 ```javascript

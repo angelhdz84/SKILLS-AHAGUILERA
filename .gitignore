@@ -47,4 +47,6 @@ dist/
 tools/
 specs/
 wiki/
+modules/
+white-label/
 tests/*.pyz/
