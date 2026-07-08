@@ -162,11 +162,12 @@ Almacenamiento local de archivos de la aplicación.
 3. Instrucciones: `💾 Guarda como scripts/descargar-libs.bat y ejecuta con doble clic.`
 
 **Perfil Professional / Business:**
-1. Busca si existe `specs/[app].md` con `## 📚 Librerías Adicionales`.
-2. Inicializa npm e instala dependencias base:
+1. Lee `stack-versions.json` → `libraries.{key}.npmSpec` para las versiones semver de npm.
+2. Busca si existe `specs/[app].md` con `## 📚 Librerías Adicionales`.
+3. Inicializa npm e instala dependencias base con versión desde `stack-versions.json`:
 ```bash
 npm init -y
-npm install alpinejs dexie cryptojs pako chart.js jspdf xlsx
+npm install alpinejs@^3.14.0 dexie@^4.0.0 cryptojs@^4.2.0 pako@^2.1.0 chart.js@^4.4.0 jspdf@^2.5.0 xlsx@^0.20.0
 ```
 3. Si hay librerías adicionales en spec:
 ```bash
@@ -184,15 +185,15 @@ npx cap add android
 ```bash
 npm install @xenova/transformers pdfjs-dist mammoth marked
 ```
-6. Descarga `neutralino.js` (cliente Neutralino para frontend):
+6. Descarga `neutralino.js` (cliente Neutralino para frontend, versión desde `stack-versions.json → tools.neutralino-framework.pinned`):
 ```bash
 curl -o core/neutralino.js https://raw.githubusercontent.com/neutralinojs/neutralino.js/main/neutralino.js
 ```
-7. Si la spec incluye sql.js (IA Jutia Full con SQLite), descargar WASM:
+7. Si la spec incluye sql.js (IA Jutia Full con SQLite), descargar WASM (versión desde `stack-versions.json → libraries.sql-js.pinned`):
 ```bash
 mkdir -p assets/wasm
-curl -o assets/wasm/sql-wasm.wasm https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.wasm
-curl -o assets/wasm/sql-wasm.js https://cdn.jsdelivr.net/npm/sql.js@1.10/dist/sql-wasm.js
+curl -o assets/wasm/sql-wasm.wasm https://cdn.jsdelivr.net/npm/sql.js@{VER_SQLJS}/dist/sql-wasm.wasm
+curl -o assets/wasm/sql-wasm.js https://cdn.jsdelivr.net/npm/sql.js@{VER_SQLJS}/dist/sql-wasm.js
 ```
 8. Descarga modelos Transformers.js a `assets/models/`:
 ```bash
@@ -298,7 +299,29 @@ mkdir core modules assets\css assets\js\libs assets\fonts docs electron scripts
 ---
 
 ## 📦 CONTENIDO BASE DE `scripts/descargar-libs.bat`
-*(La IA debe outputtear este bloque + inyectar las URLs de librerías adicionales al final)*
+
+> **IMPORTANTE:** Las versiones están en `stack-versions.json` (raíz del repo).
+> La IA debe LEER `stack-versions.json` → `libraries.{key}.pinned` para resolver los placeholders `{VER_*}`.
+> NUNCA usar valores hardcodeados. Si `stack-versions.json` no existe, reportar error.
+
+Resolución de placeholders desde `stack-versions.json`:
+
+| Placeholder | Key en stack-versions.json |
+|------------|--------------------------|
+| `{VER_TAILWIND}` | `libraries.tailwindcss.pinned` |
+| `{VER_DAISYUI}` | `libraries.daisyui.pinned` |
+| `{VER_BSICONS}` | `libraries.bootstrap-icons.pinned` |
+| `{VER_ANIMATE}` | `libraries.animate-css.pinned` → `animate.css` |
+| `{VER_ALPINE}` | `libraries.alpinejs.pinned` |
+| `{VER_DEXIE}` | `libraries.dexie.pinned` |
+| `{VER_CRYPTOJS}` | `libraries.cryptojs.pinned` |
+| `{VER_PAKO}` | `libraries.pako.pinned` |
+| `{VER_CHARTJS}` | `libraries.chartjs.pinned` |
+| `{VER_JSPDF}` | `libraries.jspdf.pinned` |
+| `{VER_XLSX}` | `libraries.xlsx.pinned` |
+| `{VER_QRCODE}` | `libraries.qrcodejs.pinned` |
+
+*(La IA genera este bloque leyendo las versiones de `stack-versions.json`, reemplazando los placeholders con `libraries.{key}.pinned`, luego inyecta las URLs de librerías adicionales detectadas en la spec)*
 ```bat
 @echo off
 chcp 65001 >nul
@@ -316,23 +339,36 @@ if not exist "assets\fonts" mkdir "assets\fonts"
 set "CURL=curl -f -L --retry 3 --retry-delay 2 -# -o"
 
 echo --- Base: CSS y Fuentes ---
-%CURL% "assets/css/tailwind.min.css" "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.css"
-%CURL% "assets/css/bootstrap-icons.css" "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-%CURL% "assets/css/animate.min.css" "https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-%CURL% "assets/fonts/bootstrap-icons.woff2" "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/fonts/bootstrap-icons.woff2"
+rem tailwindcss@{VER_TAILWIND} — ver stack-versions.json
+%CURL% "assets/css/tailwind.min.css" "https://cdn.jsdelivr.net/npm/tailwindcss@{VER_TAILWIND}/dist/tailwind.min.css"
+rem daisyui@{VER_DAISYUI} — ver stack-versions.json
+%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/dist/full.css"
+rem bootstrap-icons@{VER_BSICONS} — ver stack-versions.json
+%CURL% "assets/css/bootstrap-icons.css" "https://cdn.jsdelivr.net/npm/bootstrap-icons@{VER_BSICONS}/font/bootstrap-icons.css"
+rem animate.css/{VER_ANIMATE} — ver stack-versions.json
+%CURL% "assets/css/animate.min.css" "https://cdnjs.cloudflare.com/ajax/libs/animate.css/{VER_ANIMATE}/animate.min.css"
+rem bootstrap-icons woff2@{VER_BSICONS} — ver stack-versions.json
+%CURL% "assets/fonts/bootstrap-icons.woff2" "https://cdn.jsdelivr.net/npm/bootstrap-icons@{VER_BSICONS}/font/fonts/bootstrap-icons.woff2"
 
 echo --- Base: JavaScript ---
-%CURL% "assets/js/libs/alpine.js" "https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
-%CURL% "assets/js/libs/dexie.js" "https://unpkg.com/dexie@4.0.8/dist/dexie.min.js"
-%CURL% "assets/js/libs/crypto-js.js" "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
-%CURL% "assets/js/libs/pako.js" "https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
-%CURL% "assets/js/libs/chart.js" "https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"
-%CURL% "assets/js/libs/jspdf.js" "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-%CURL% "assets/js/libs/xlsx.js" "https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"
+rem alpinejs@{VER_ALPINE} — ver stack-versions.json
+%CURL% "assets/js/libs/alpine.js" "https://cdn.jsdelivr.net/npm/alpinejs@{VER_ALPINE}/dist/cdn.min.js"
+rem dexie@{VER_DEXIE} — ver stack-versions.json
+%CURL% "assets/js/libs/dexie.js" "https://unpkg.com/dexie@{VER_DEXIE}/dist/dexie.min.js"
+rem crypto-js/{VER_CRYPTOJS} — ver stack-versions.json
+%CURL% "assets/js/libs/crypto-js.js" "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/{VER_CRYPTOJS}/crypto-js.min.js"
+rem pako/{VER_PAKO} — ver stack-versions.json
+%CURL% "assets/js/libs/pako.js" "https://cdnjs.cloudflare.com/ajax/libs/pako/{VER_PAKO}/pako.min.js"
+rem chart.js@{VER_CHARTJS} — ver stack-versions.json
+%CURL% "assets/js/libs/chart.js" "https://cdn.jsdelivr.net/npm/chart.js@{VER_CHARTJS}/dist/chart.umd.min.js"
+rem jspdf/{VER_JSPDF} — ver stack-versions.json
+%CURL% "assets/js/libs/jspdf.js" "https://cdnjs.cloudflare.com/ajax/libs/jspdf/{VER_JSPDF}/jspdf.umd.min.js"
+rem xlsx-{VER_XLSX} — ver stack-versions.json
+%CURL% "assets/js/libs/xlsx.js" "https://cdn.sheetjs.com/xlsx-{VER_XLSX}/package/dist/xlsx.full.min.js"
 
 echo --- Adicionales (desde spec) ---
-:: %CURL% "assets/js/libs/qrcode.min.js" "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"
+:: QRCode.js — ver stack-versions.json (libreria legacy, alternativa: npm qrcode)
+:: %CURL% "assets/js/libs/qrcode.min.js" "https://cdn.jsdelivr.net/npm/qrcodejs@{VER_QRCODE}/qrcode.min.js"
 :: (La IA inyecta aquí las URLs de librerías adicionales detectadas en la spec)
 
 echo ✅ Descarga finalizada. Presiona una tecla para salir.
@@ -341,6 +377,16 @@ pause >nul
 
 ---
 
+---
+## 🧬 FLUJO DE ACTUALIZACIÓN DE VERSIONES
+
+1. Ejecutar `scripts/update-libs.ps1 -Apply` para verificar y actualizar `stack-versions.json`
+2. La IA lee las nuevas versiones desde `stack-versions.json` antes de generar `descargar-libs.bat`
+3. Las versiones de npm (Professional/Business) se toman del campo `npmSpec` de cada librería
+4. Librerías con `status: legacy` o `deprecated` incluyen alternativas en el campo `alternative`
+5. Después de actualizar, ejecutar `/setup` para regenerar los scripts de descarga
+
+---
 ## 🔗 INTEGRACIÓN CON OTRAS SKILLs
 | SKILL | Relación | Trigger de Handoff |
 |-------|----------|-------------------|

@@ -182,6 +182,7 @@ Para generar una app: copiar `apps/AHA-Nombre/template.md` a `specs/[app].md` y 
 | `/upgrade` | `actualizar perfil` | upgrade-engine: diagnostico → migra Lite→Full y/o IA Lite→Full. Sin modificar modulos ni datos |
 | `/licencia` | `generar licencia` | `scripts/license.js` — CLI interactivo que genera archivos `.aha` firmados (RSA+AES). Pregunta plan, apps, cliente y guarda en `licencias/[fecha]/`. Soporta una app o kits completos. Subcomandos: `generar`, `generar --kit [vertical]` |
 | `/docs-gen` | `generar docs` | `scripts/generate-docs.js` — Escanea módulos y genera `docs/API.md` con funciones, parámetros, dependencias. Flags: `--watch`, `--dir [ruta]` |
+| `/update-libs` | `actualizar librerias` | Lee `stack-versions.json`, consulta npm registry, compara pinned vs latest, muestra diff. Con `apply` actualiza versiones. Alternativas para libs discontinued/legacy |
 
 ## Instalación Global
 
@@ -208,7 +209,7 @@ Efecto:
 
 `docs/` (incl. `docs/comercial/`) es output de engines. `specs/`, `wiki/`, `.omd/` también. `tests/` contiene app de prueba y resultados.
 
-**Excepciones versionadas:** `docs/guia-estudio-ateje.md`, `docs/stack-completo.md` y este `AGENTS.md` se mantienen en el repo como documentación viva del meta-repo.
+**Excepciones versionadas:** `docs/guia-estudio-ateje.md`, `docs/stack-completo.md`, `stack-versions.json` y este `AGENTS.md` se mantienen en el repo como documentación viva del meta-repo.
 
 ## Config (`opencode.json`)
 

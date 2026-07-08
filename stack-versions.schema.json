@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/anomalyco/Ateje/main/stack-versions.schema.json",
+  "title": "Stack Ateje — Central Version Manifest",
+  "description": "Schema for stack-versions.json, the single source of truth for all library versions in the Ateje Stack.",
+  "type": "object",
+  "required": ["version", "updated", "libraries", "profiles"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (not library versions)"
+    },
+    "updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO date when pinned versions were last updated"
+    },
+    "auditUrl": {
+      "type": "string",
+      "description": "URL to the human-readable audit report"
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Usage instructions for AI agents consuming this file"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Stack-level metadata: CDN bases, update policy"
+    },
+    "libraries": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z][a-z0-9._-]*$": {
+          "type": "object",
+          "required": ["name", "pinned", "type", "scope", "status"],
+          "properties": {
+            "name": { "type": "string", "description": "Human-readable library name" },
+            "pinned": { "type": "string", "description": "Currently frozen version used by the stack" },
+            "latest": { "type": "string", "description": "Most recent version available (updated by update-libs)" },
+            "type": { "type": "string", "enum": ["js", "css", "wasm"], "description": "Asset type" },
+            "scope": { "type": "string", "enum": ["core", "professional", "optional", "ia"], "description": "Scope within the stack" },
+            "status": {
+              "type": "string",
+              "enum": ["active", "legacy", "deprecated"],
+              "description": "Maintenance status: active = updates expected, legacy = no updates needed, deprecated = should migrate"
+            },
+            "profiles": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["lite", "professional", "business"] },
+              "description": "Which profiles include this library"
+            },
+            "files": {
+              "type": "object",
+              "patternProperties": { "^assets/": { "type": "string" } },
+              "description": "Map of local path -> CDN URL template with {version} placeholder"
+            },
+            "npm": { "type": "string", "description": "npm package name (for Professional/Business profiles)" },
+            "npmSpec": { "type": "string", "description": "npm semver specifier" },
+            "changelog": { "type": "string", "format": "uri", "description": "URL to changelog" },
+            "breaking": { "type": "boolean", "description": "Whether the latest version contains breaking changes from pinned" },
+            "migrationGuide": { "type": "string", "format": "uri", "description": "URL to migration guide (for breaking changes)" },
+            "alternative": {
+              "type": "object",
+              "description": "Suggested replacement for deprecated/legacy libraries",
+              "properties": {
+                "name": { "type": "string" },
+                "reason": { "type": "string" },
+                "effort": { "type": "string", "enum": ["Bajo", "Medio", "Alto"] },
+                "url": { "type": "string", "format": "uri" }
+              }
+            },
+            "notes": { "type": "string", "description": "Additional context for AI agents" }
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "description": "Library grouping by deployment profile",
+      "properties": {
+        "lite": { "$ref": "#/$defs/profile" },
+        "professional": { "$ref": "#/$defs/profile" },
+        "business": { "$ref": "#/$defs/profile" }
+      },
+      "required": ["lite", "professional", "business"]
+    },
+    "tools": {
+      "type": "object",
+      "description": "CLI tools and framework binaries used by the stack",
+      "patternProperties": {
+        "^[a-z][a-z0-9._-]*$": {
+          "type": "object",
+          "required": ["name", "pinned", "status"]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "required": ["display", "libs"],
+      "properties": {
+        "display": { "type": "string" },
+        "libs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required library keys"
+        },
+        "optional": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional library keys"
+        },
+        "ia": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IA module library keys"
+        }
+      }
+    }
+  }
+}
