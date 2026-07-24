@@ -1,7 +1,7 @@
 """
-Test E2E automatizado para {{APP_NAME}}.
-Usa Chrome del sistema (channel="chrome") porque Chromium está geobloqueado.
-Template base — reemplazar {{APP_NAME}} y {{APP_FILE}} antes de usar.
+Test E2E automatizado para template app.
+Usa Chrome del sistema via conftest.py (channel="chrome").
+Template base — copiar y adaptar para cada app.
 """
 import json
 import os
@@ -10,13 +10,13 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 TESTS_DIR = Path(__file__).parent
-APP_FILE = TESTS_DIR / "{{APP_FILE}}"
+APP_FILE = TESTS_DIR / "test-app.html"
 RESULTS_FILE = TESTS_DIR / "test_results.json"
 
 
 def test_page_loads(page):
     page.goto(APP_FILE.resolve().as_uri())
-    assert "{{APP_NAME}}" in page.title(), "Title mismatch"
+    assert "AHA" in page.title() or "Test" in page.title() or "Task" in page.title(), "Title mismatch"
     return True, f"Title OK: {page.title()}"
 
 
@@ -57,9 +57,9 @@ def test_touch_targets(page):
     return True, f"Touch targets OK: all {count} buttons >= 44px"
 
 
-# ─── Tests específicos de {{APP_NAME}} ─────────────────────────────
-# Agregar aquí funciones test específicas de la aplicación.
-# Cada función recibe `page` (Playwright Page) y retorna (bool, str).
+    # ─── Tests específicos de la app ─────────────────────────────
+    # Agregar aquí funciones test específicas de la aplicación.
+    # Cada función recibe `page` (Playwright Page) y retorna (bool, str).
 # Ejemplo:
 #
 # def test_mi_funcion(page):
@@ -73,14 +73,14 @@ CHECKS = [
     ("Alpine.js Interactivity", test_alpine_interactivity),
     ("Responsive Layout", test_responsive_layout),
     ("Touch Targets", test_touch_targets),
-    # ─── Tests de {{APP_NAME}} ──────────────────────────────────
+    # ─── Tests de la app ───────────────────────────────────────
     # Agregar aquí las tuplas (name, test_fn) para cada test específico.
 ]
 
 
 def main():
     print("=" * 60)
-    print("  TEST E2E - {{APP_NAME}}")
+    print("  TEST E2E - Template App")
     print("  Chrome (channel='chrome')")
     print(f"  App: {APP_FILE.name}")
     print("=" * 60)
