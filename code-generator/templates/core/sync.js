@@ -99,19 +99,34 @@
             }
           }
 
-          return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
-        }).then(function (blob) {
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url;
-          var timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          a.download = appName + '-' + timestamp + '.ahabackup';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          UI.toast('Respaldo exportado correctamente', 'success');
-          return true;
+          return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' }).then(function (blob) {
+            // ─── Exportar backup ────────────────────────────────
+            try {
+              var timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+              var filename = appName + '-' + timestamp + '.ahabackup';
+              var url = URL.createObjectURL(blob);
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = filename;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              setTimeout(function() { URL.revokeObjectURL(url); }, 10000);
+              UI.toast('Respaldo exportado correctamente', 'success');
+              return true;
+            } catch (e) {
+              // Fallback para Capacitor / WebView sin soporte de descarga
+              try {
+                if (typeof navigator !== 'undefined' && navigator.share) {
+                  return navigator.share({
+                    title: filename,
+                    text: JSON.stringify(data, null, 2)
+                  });
+                }
+              } catch (_) {}
+              throw e;
+            }
+          });
         }).catch(function (err) {
           UI.toast('Error al exportar: ' + (err.message || 'Error desconocido'), 'error');
           throw err;

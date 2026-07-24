@@ -60,6 +60,58 @@ db.version(3).stores({
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
   _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
 });
+
+## Migración Dexie
+
+```javascript
+// v1: tablas de sistema (creación inicial)
+// v2: tablas de negocio v1 (categorias, productos, ventas, ventas_items)
+// v3: añade cortes, devoluciones, gastosMenores + descuentoTotal en ventas
+
+db.version(1).stores({
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt'
+});
+
+db.version(2).stores({
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  categorias: 'id, nombre, color, createdAt, updatedAt',
+  productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
+  ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
+  ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento'
+}).upgrade(tx => {
+  // v2 no migra datos de v1 porque v1 solo tiene tablas de sistema
+  return Promise.resolve();
+});
+
+db.version(3).stores({
+  _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
+  _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  categorias: 'id, nombre, color, createdAt, updatedAt',
+  productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
+  ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
+  ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento',
+  cortes: 'id, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt, updatedAt',
+  devoluciones: 'id, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
+  gastosMenores: 'id, *corteId, *concepto, monto, *hora, *createdBy, createdAt'
+}).upgrade(tx => {
+  return tx.table('ventas').toCollection().modify(v => {
+    if (typeof v.descuentoTotal === 'undefined') v.descuentoTotal = 0;
+  });
+});
+
+window.DB_VERSION = 3;
+```
 ```
 
 ## Pricing sugerido

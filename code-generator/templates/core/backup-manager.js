@@ -15,6 +15,30 @@
     },
 
     async importarBackup(password) {
+      // ─── Importar backup ────────────────────────────────
+      // Detectar Capacitor WebView
+      var isCapacitor = (typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform());
+      // Detectar Neutralino
+      var isNeutralino = (typeof window !== 'undefined' && window.NL_VERSION);
+
+      if (isCapacitor) {
+        // En Capacitor usar Filesystem API para leer archivo
+        try {
+          return window.Capacitor.Plugins.Filesystem.readFile({
+            path: 'backup.json',
+            directory: window.Capacitor.Plugins.Filesystem.Directory.Documents
+          }).then(function(result) {
+            return JSON.parse(result.data);
+          }).catch(function(err) {
+            console.error('Error leyendo backup en Capacitor:', err);
+            throw new Error('No se pudo leer el archivo de backup en este dispositivo.');
+          });
+        } catch (capErr) {
+          console.error('Capacitor Filesystem no disponible, fallback a input file:', capErr);
+        }
+      }
+
+      // Fallback: input file para navegador y Capacitor WebView
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.ahabackup,.zip';

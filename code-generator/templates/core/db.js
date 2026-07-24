@@ -1,6 +1,7 @@
 // db.js — Inicialización Dexie con tablas de sistema
 // window.db expuesto globalmente
 // window.DB_VERSION auto-gestionado
+// window.dbLocal helper de solo-lectura
 // Dependencias: Dexie.js, APP_CONFIG
 
 (function () {
@@ -27,10 +28,37 @@
 
   var db = new Dexie(DB_NAME);
 
-  window.DB_VERSION = 1;
+  // ─── Versiones de schema ────────────────────────────
+  // [INYECCIÓN DEL GENERADOR]: Cada app template define sus versiones
+  // con stores() + upgrade() opcional. El generador reemplaza este bloque
+  // completo con las versiones del template.
+  //
+  // Formato esperado del template:
+  // ```javascript
+  // db.version(1).stores(SCHEMA_V1);
+  // db.version(2).stores(SCHEMA_V2).upgrade(tx => { ... });
+  // window.DB_VERSION = 2;
+  // ```
 
+  // Fallback: una sola versión si el template no define migraciones
+  window.DB_VERSION = 1;
   db.version(window.DB_VERSION).stores(SCHEMA);
 
+  // ─── Helper de migración (disponible globalmente) ──
+  // Las funciones upgrade() inyectadas pueden usar tx.table(name)
+  // para transformar datos entre versiones. Ver apps/*/template.md
+  // sección "Migración Dexie".
+
   window.db = db;
+
+  // dbLocal — Dexie read-only helper (lectura instantánea desde IndexedDB)
+  window.dbLocal = {
+    async getAll(table) { return db[table].toArray(); },
+    async get(table, id) { return db[table].get(id); },
+    async where(table, field, value) { return db[table].where(field).equals(value).toArray(); },
+    async first(table, field, value) { return db[table].where(field).equals(value).first(); },
+    async count(table) { return db[table].count(); }
+  };
+
   console.log('[db] Inicializado: ' + DB_NAME);
 })();

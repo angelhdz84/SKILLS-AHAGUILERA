@@ -80,6 +80,8 @@ El orden de carga debe ser: CSS base → CSS adicional (si hay) → Libs base �
 - `_file_blobs`: '&path'
   - Almacena los blobs binarios cuando no hay acceso a disco (file://)
 
+**Migraciones de schema:** Si el app template tiene una sección `## Migración Dexie` con definiciones de `db.version(N).stores(...).upgrade(...)`, inyectar esas definiciones completas en db.js reemplazando el bloque `[INYECCIÓN DEL GENERADOR]`. El generador debe leer las versiones en orden ascendente y usar `window.DB_VERSION = N` con el número más alto. SIEMPRE generar al menos 2 versiones si hay tablas de negocio: v1 con tablas de sistema, v2 añadiendo tablas de negocio. Esto permite migraciones futuras sin pérdida de datos.
+
 ### `core/crypto.js`
 [encrypt/decrypt + gestión de clave localStorage + uuid(). window.cryptoHelpers expuesto. window.uuid generador UUID v4 compatible file://]
 
@@ -436,6 +438,88 @@ todos los plugins nativos funcionen con fallback web automatico.
 <link rel="stylesheet" href="assets/css/daisyui.min.css">
 <link rel="stylesheet" href="assets/css/bootstrap-icons.css">
 <link rel="stylesheet" href="assets/css/animate.min.css">
+<link rel="stylesheet" href="assets/css/inter.css">
+
+<!-- Design System CSS (inline, sobreescribe defaults con tokens de marca) -->
+<style>
+  /* === THEMES === */
+  [data-theme="light"] { --p: [HUE] [SAT]% [LIGHT]%; --pf: [HUE] [SAT]% [LIGHT]%; --s: 220 30% 50%; --sf: 220 30% 42%; --a: [HUE] [SAT]% [LIGHT]%; --af: [HUE] [SAT]% [LIGHT]%; --n: 220 25% 14%; --nc: 220 20% 72%; --b1: 0 0% 97%; --b2: 0 0% 100%; --b3: 0 0% 92%; --bc: 220 25% 14%; --in: [HUE] [SAT]% [LIGHT]%; --su: 152 76% 40%; --wa: 38 92% 50%; --er: 0 72% 51%; }
+  [data-theme="dark"] { --p: [HUE] [SAT]% [LIGHT]%; --pf: [HUE] [SAT]% [LIGHT]%; --s: 220 30% 60%; --sf: 220 30% 52%; --a: [HUE] [SAT]% [LIGHT]%; --af: [HUE] [SAT]% [LIGHT]%; --n: 220 25% 14%; --nc: 220 20% 72%; --b1: 220 20% 8%; --b2: 220 20% 12%; --b3: 220 15% 18%; --bc: 220 20% 85%; --in: [HUE] [SAT]% [LIGHT]%; --su: 152 76% 50%; --wa: 38 92% 50%; --er: 0 72% 51%; }
+  [data-theme="emerald"] { --p: 152 76% 40%; --pf: 152 76% 32%; --s: 173 80% 40%; --sf: 173 80% 32%; --a: 38 92% 50%; --af: 38 92% 42%; --n: 160 25% 14%; --nc: 150 20% 72%; --b1: 152 76% 97%; --b2: 0 0% 100%; --b3: 152 30% 92%; --bc: 160 25% 14%; --in: 152 76% 40%; --su: 152 76% 50%; --wa: 38 92% 50%; --er: 0 72% 51%; }
+  [data-theme="autumn"] { --p: 14 80% 50%; --pf: 14 80% 42%; --s: 33 90% 60%; --sf: 33 90% 52%; --a: 14 80% 50%; --af: 14 80% 42%; --n: 160 25% 14%; --nc: 150 20% 72%; --b1: 36 50% 95%; --b2: 0 0% 100%; --b3: 36 30% 90%; --bc: 160 25% 14%; --in: 14 80% 50%; --su: 152 76% 50%; --wa: 38 92% 50%; --er: 0 72% 51%; }
+  html { font-family: 'Inter', system-ui, sans-serif; }
+  /* === SKELETONS (shimmer animation) === */
+  .sk-el { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 0.5rem; }
+  .sk-heading { height: 1.5rem; width: 60%; margin-bottom: 1rem; }
+  .sk-card { height: 8rem; width: 100%; margin-bottom: 0.75rem; }
+  .sk-row { height: 3rem; width: 100%; margin-bottom: 0.5rem; }
+  .sk-text { height: 0.875rem; width: 80%; margin-bottom: 0.5rem; }
+  .sk-badge { height: 1.5rem; width: 4rem; border-radius: 9999px; }
+  .sk-avatar { height: 2.5rem; width: 2.5rem; border-radius: 9999px; }
+  .sk-chart { height: 260px; width: 100%; border-radius: 0.75rem; }
+  .sk-progress { height: 0.75rem; width: 100%; border-radius: 9999px; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  /* === CARDS === */
+  .card-ds { background: #fff; border-radius: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.06); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .card-ds:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+  /* === INPUTS === */
+  .input-ds { height: 44px; border-radius: 24px; padding: 0 16px; border: 1px solid #E7EBF2; background: #fff; font-size: 14px; color: #1F2937; outline: none; transition: all 0.2s ease; }
+  .input-ds:focus { border-color: [PRIMARY_COLOR]; box-shadow: 0 0 0 3px [PRIMARY_COLOR]26; }
+  .input-ds::placeholder { color: #9CA3AF; }
+  /* === BUTTONS === */
+  .btn-ds { height: 40px; border-radius: 9999px; padding: 0 24px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-ds:active { transform: scale(0.97); }
+  .btn-ds-primary { background: [PRIMARY_COLOR]; color: #fff; }
+  .btn-ds-primary:hover { background: [PRIMARY_COLOR_DARK]; }
+  .btn-ds-secondary { background: #8B5CF6; color: #fff; }
+  .btn-ds-secondary:hover { background: #7C3AED; }
+  .btn-ds-ghost { background: #F3F4F6; color: #4B5563; }
+  .btn-ds-ghost:hover { background: #E5E7EB; }
+  .btn-ds-danger { background: rgba(239,68,68,0.1); color: #EF4444; }
+  .btn-ds-danger:hover { background: rgba(239,68,68,0.2); }
+  .btn-ds-success { background: rgba(16,185,129,0.1); color: #10B981; }
+  .btn-ds-success:hover { background: rgba(16,185,129,0.2); }
+  .btn-ds-sm { height: 32px; padding: 0 16px; font-size: 12px; border-radius: 9999px; }
+  .btn-spring { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease; }
+  .btn-spring:hover { transform: scale(1.03); }
+  .btn-spring:active { transform: scale(0.97); }
+  /* === FORM ERRORS === */
+  .field-error { color: #EF4444; font-size: 12px; margin-top: 4px; display: none; }
+  .input-error { border-color: #EF4444 !important; }
+  /* === KPI === */
+  .kpi-value { font-size: 24px; font-weight: 700; color: #1F2937; line-height: 1.2; }
+  .kpi-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #4B5563; }
+  /* === FAB (mobile) === */
+  .fab { display: none; position: fixed; bottom: 76px; right: 16px; z-index: 40; width: 52px; height: 52px; border-radius: 16px; background: [PRIMARY_COLOR]; color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 16px [PRIMARY_COLOR]59; font-size: 22px; align-items: center; justify-content: center; transition: transform 0.2s; }
+  .fab:active { transform: scale(0.92); }
+  @media (max-width: 1023px) { .fab { display: flex; } }
+  /* === BOTTOM NAV (mobile) === */
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: #fff; border-top: 1px solid #E5E7EB; padding: 6px 0 env(safe-area-inset-bottom, 8px); }
+  .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; font-weight: 500; color: #6B7280; text-decoration: none; padding: 4px 8px; border-radius: 8px; transition: all 0.15s; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .bottom-nav-item.active { color: [PRIMARY_COLOR]; }
+  .bottom-nav-item i { font-size: 20px; }
+  @media (max-width: 1023px) { .bottom-nav { display: flex; justify-content: space-around; } }
+  /* === EMPTY STATES === */
+  .empty-state { text-align: center; padding: 48px 24px; }
+  .empty-state-icon { width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .empty-state-icon i { font-size: 36px; }
+  .empty-state-title { font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+  .empty-state-desc { font-size: 13px; color: #6B7280; margin-bottom: 16px; }
+  /* === TOAST UNDO === */
+  .toast-undo-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 8px; white-space: nowrap; }
+  /* === OFFLINE BANNER === */
+  .offline-banner { animation: slideDown 0.3s ease-out; }
+  @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+  /* === AVATARS === */
+  .avatar-img { border-radius: 50%; object-fit: cover; display: block; flex-shrink: 0; }
+  .avatar-placeholder { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; background: [PRIMARY_COLOR]1F; color: [PRIMARY_COLOR]; flex-shrink: 0; }
+  /* === ANIMATIONS === */
+  .stagger-item { animation: fadeInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .module-enter { animation: fadeIn 0.25s ease-out; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+</style>
 
 <!-- JS Librerías base -->
 <script src="assets/js/libs/alpine.js"></script>
@@ -655,6 +739,16 @@ Internamente, ejecuta `stack-compliance-guard` sobre cada bloque:
 - [ ] ¿Sin offline banner en apps PWA? → SUGERIR indicador de conexión
 - [ ] **Padrones UI**: ¿Form crear/editar fuera de modal? → REEMPLAZAR por `UI.modalForm()`
 - [ ] **Padrones UI**: ¿`alert()` nativo en vez de `UI.toast()`? → REEMPLAZAR
+- [ ] **Diseño Sistema**: ¿Falta inter.css en los CSS? → AGREGAR `<link rel="stylesheet" href="assets/css/inter.css">`
+- [ ] **Diseño Sistema**: ¿Falta el bloque `<style>` con temas (light/dark/emerald/autumn)? → AGREGAR inline style con design system
+- [ ] **Diseño Sistema**: ¿Faltan clases .btn-ds / .card-ds / .input-ds / .sk-* / .kpi-*? → AGREGAR al bloque CSS
+- [ ] **Diseño Sistema**: ¿Falta .bottom-nav / .fab / .offline-banner en CSS? → AGREGAR utilidades UI
+- [ ] **Diseño Sistema**: ¿Falta offline banner HTML (`<div id="offline-banner">`)? → AGREGAR delante de `<div class="flex">`
+- [ ] **Diseño Sistema**: ¿Falta bottom nav HTML (`<nav class="bottom-nav" id="bottom-nav">`)? → AGREGAR antes de toast-container
+- [ ] **Diseño Sistema**: ¿Falta FAB HTML (`<button class="fab" id="fab-quick-add">`)? → AGREGAR después de bottom nav
+- [ ] **Diseño Sistema**: ¿Falta `Alpine.store('badges')`? → AGREGAR en alpine:init
+- [ ] **Diseño Sistema**: ¿Falta `window.dbLocal` en core/db.js? → AGREGAR helper de solo-lectura Dexie
+- [ ] **Diseño Sistema**: ¿Theme toggle solo light/dark en vez de 4 temas? → ACTUALIZAR a ciclo light→dark→emerald→autumn
 - [ ] **Padrones UI**: ¿`db.delete()` sin `UI.confirm()` previo? → AGREGAR confirmación
 - [ ] **Padrones UI**: ¿Lista sin tabla responsive (`overflow-x-auto` + `table`)? → CORREGIR
 - [ ] **Padrones UI**: ¿Falta empty state cuando no hay datos? → AGREGAR
