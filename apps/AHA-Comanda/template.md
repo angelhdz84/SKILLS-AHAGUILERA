@@ -49,15 +49,17 @@ Sistema de comandas offline para restaurantes, bares y cocinas. El mesero toma e
 
 ```javascript
 db.version(2).stores({
-  mesas: 'id, nombre, *capacidad, estado, *createdBy, createdAt, updatedAt',
-  categorias: 'id, nombre, *color, orden, createdAt, updatedAt',
-  platillos: 'id, nombre, *categoriaId, precio, disponible, *createdBy, createdAt, updatedAt',
-  comandas: 'id, *mesaId, *estado, *items, total, *createdBy, createdAt, updatedAt',
-  cuentas: 'id, *comandaId, total, *split, formaPago, *createdBy, createdAt, updatedAt',
-  cortes: 'id, fecha, totalVentas, *porFormaPago, *platillosVendidos, *createdBy, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  mesas: 'id, *uuid, nombre, *capacidad, estado, *createdBy, createdAt, updatedAt',
+  categorias: 'id, *uuid, nombre, *color, orden, createdAt, updatedAt',
+  platillos: 'id, *uuid, nombre, *categoriaId, precio, disponible, *createdBy, createdAt, updatedAt',
+  comandas: 'id, *uuid, *mesaId, *estado, *items, total, *createdBy, createdAt, updatedAt',
+  cuentas: 'id, *uuid, *comandaId, total, *split, formaPago, *createdBy, createdAt, updatedAt',
+  cortes: 'id, *uuid, fecha, totalVentas, *porFormaPago, *platillosVendidos, *createdBy, createdAt, updatedAt'
 });
 ```
 

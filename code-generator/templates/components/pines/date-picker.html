@@ -1,0 +1,458 @@
+<!--
+  pines/date-picker.html — Selector de fechas con presets
+  Componente de selección de fechas con presets (Hoy, Esta semana, Este mes, Rango personalizado)
+  Utiliza input[type=date] nativo + presets rápidos + previsualización
+  Dependencias: Alpine.js, DaisyUI, Bootstrap Icons
+  Uso: <div x-data="[ID]DatePicker()" x-init="init({...})">[INSERTAR ESTE TEMPLATE AQUÍ]</div>
+-->
+
+<div class="bg-base-100 rounded-xl border border-base-300 shadow-sm overflow-hidden w-full max-w-sm">
+  <!-- Cabecera con mes/año -->
+  <div class="flex items-center justify-between px-4 py-3 border-b border-base-200">
+    <button @click="mesAnterior()"
+            class="btn btn-ghost btn-sm btn-square rounded-lg"
+            aria-label="Mes anterior">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    <div class="text-sm font-semibold text-base-content">
+      <span x-text="nombreMes"></span>
+      <span class="text-base-content/40 ml-1" x-text="anioVisual"></span>
+    </div>
+    <button @click="mesSiguiente()"
+            class="btn btn-ghost btn-sm btn-square rounded-lg"
+            aria-label="Mes siguiente">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- Días de la semana -->
+  <div class="grid grid-cols-7 px-4 pt-3 pb-1">
+    <template x-for="(d, idx) in diasSemana" :key="idx">
+      <div class="text-center text-[10px] font-semibold uppercase tracking-wider text-base-content/30 py-1"
+           x-text="d">
+      </div>
+    </template>
+  </div>
+
+  <!-- Cuadrícula de días -->
+  <div class="grid grid-cols-7 px-4 pb-2">
+    <template x-for="(semana, sIdx) in calendario" :key="sIdx">
+      <template x-for="(dia, dIdx) in semana" :key="'d' + sIdx + '-' + dIdx">
+        <button @click="seleccionarDia(dia)"
+                x-show="dia !== 0"
+                class="relative text-sm rounded-lg transition-colors aspect-square flex items-center justify-center"
+                :class="obtenerClaseDia(dia)">
+          <span x-text="dia || ''"></span>
+        </button>
+      </template>
+    </template>
+  </div>
+
+  <!-- Presets rápidos -->
+  <div class="border-t border-base-200 px-4 py-3">
+    <div class="flex flex-wrap gap-1.5">
+      <template x-for="(preset, idx) in presets" :key="idx">
+        <button @click="aplicarPreset(preset)"
+                class="btn btn-xs rounded-full transition-colors"
+                :class="preset.activo
+                  ? 'btn-primary text-primary-content'
+                  : 'btn-ghost text-base-content/60 hover:text-base-content hover:bg-base-200'">
+          <i :class="preset.icono" class="mr-1" x-show="preset.icono"></i>
+          <span x-text="preset.label"></span>
+        </button>
+      </template>
+    </div>
+  </div>
+
+  <!-- Rango personalizado (se expande) -->
+  <div x-show="mostrarRango"
+       x-collapse.duration.200ms
+       class="border-t border-base-200 px-4 py-3 space-y-2">
+
+    <div class="flex items-center gap-2">
+      <div class="flex-1">
+        <label class="text-[10px] font-medium text-base-content/40 block mb-1">Desde</label>
+        <input type="date"
+               x-model="rangoDesde"
+               @change="validarRango()"
+               class="input input-bordered input-xs w-full text-xs">
+      </div>
+      <div class="pt-4">
+        <i class="bi bi-arrow-right text-base-content/20 text-xs"></i>
+      </div>
+      <div class="flex-1">
+        <label class="text-[10px] font-medium text-base-content/40 block mb-1">Hasta</label>
+        <input type="date"
+               x-model="rangoHasta"
+               @change="validarRango()"
+               class="input input-bordered input-xs w-full text-xs">
+      </div>
+    </div>
+
+    <button @click="aplicarRango()"
+            class="btn btn-primary btn-sm w-full mt-1 text-xs"
+            :disabled="!rangoValido">
+      <i class="bi bi-check-lg mr-1"></i>
+      Aplicar rango
+    </button>
+  </div>
+
+  <!-- Vista previa de selección -->
+  <div x-show="fechaInicio || fechaFin"
+       class="border-t border-base-200 px-4 py-2.5 bg-base-200/50 flex items-center justify-between">
+    <div class="flex items-center gap-2 text-xs text-base-content/60">
+      <i class="bi bi-calendar3"></i>
+      <span x-text="textoSeleccion"></span>
+    </div>
+    <button @click="limpiar()"
+            class="btn btn-ghost btn-xs text-base-content/30 hover:text-error transition-colors"
+            aria-label="Limpiar selección">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+/**
+ * [ID]DatePicker — Alpine.js componente selector de fechas con presets
+ * Uso: <div x-data="[ID]DatePicker()" x-init="init({...})">
+ *
+ * Opciones:
+ *   fechaInicio: string (YYYY-MM-DD) — fecha inicial
+ *   fechaFin: string (YYYY-MM-DD) — fecha final
+ *   onChange: function(inicio, fin) — callback al cambiar
+ *   presetsPersonalizados: Array — presets adicionales
+ *   modo: 'single' | 'range' — selección simple o rango
+ *
+ * Eventos:
+ *   'datepicker:change' — detail: { inicio, fin }
+ */
+function [ID]DatePicker() {
+  return {
+    // ─── Estado ──────────────────────────────────────
+    fechaInicio: '',
+    fechaFin: '',
+    mesVisual: 0,
+    anioVisual: 0,
+    mostrarRango: false,
+    rangoDesde: '',
+    rangoHasta: '',
+    rangoValido: false,
+    onChange: null,
+    modo: 'range',
+    presetsPersonalizados: [],
+
+    // ─── Constantes ──────────────────────────────────
+    diasSemana: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+    meses: [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ],
+
+    get nombreMes: function () {
+      return this.meses[this.mesVisual] || '';
+    },
+
+    // ─── Presets ─────────────────────────────────────
+    get presets: function () {
+      var base = [
+        {
+          label: 'Hoy',
+          icono: 'bi-sun',
+          activo: false,
+          action: (function (self) {
+            return function () {
+              var hoy = new Date();
+              self.fechaInicio = self._formatearFecha(hoy);
+              self.fechaFin = self.fechaInicio;
+              self._notificar();
+            };
+          })(this)
+        },
+        {
+          label: 'Esta semana',
+          icono: 'bi-calendar-week',
+          activo: false,
+          action: (function (self) {
+            return function () {
+              var ahora = new Date();
+              var diaSem = ahora.getDay();
+              var inicio = new Date(ahora);
+              inicio.setDate(ahora.getDate() - (diaSem === 0 ? 6 : diaSem - 1));
+              var fin = new Date(inicio);
+              fin.setDate(inicio.getDate() + 6);
+              self.fechaInicio = self._formatearFecha(inicio);
+              self.fechaFin = self._formatearFecha(fin);
+              self._notificar();
+            };
+          })(this)
+        },
+        {
+          label: 'Este mes',
+          icono: 'bi-calendar-month',
+          activo: false,
+          action: (function (self) {
+            return function () {
+              var ahora = new Date();
+              var inicio = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+              var fin = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+              self.fechaInicio = self._formatearFecha(inicio);
+              self.fechaFin = self._formatearFecha(fin);
+              self._notificar();
+            };
+          })(this)
+        },
+        {
+          label: 'Personalizado',
+          icono: 'bi-sliders',
+          activo: false,
+          action: (function (self) {
+            return function () {
+              self.mostrarRango = !self.mostrarRango;
+              if (self.mostrarRango) {
+                self.rangoDesde = self.fechaInicio || '';
+                self.rangoHasta = self.fechaFin || '';
+                self._validarRango();
+              }
+            };
+          })(this)
+        }
+      ];
+
+      // Marcar preset activo
+      for (var i = 0; i < base.length; i++) {
+        base[i].activo = false;
+      }
+      // Si hay presets personalizados
+      if (this.presetsPersonalizados && this.presetsPersonalizados.length) {
+        base = base.concat(this.presetsPersonalizados);
+      }
+
+      return base;
+    },
+
+    // ─── Calendario ──────────────────────────────────
+    get calendario() {
+      var primerDia = new Date(this.anioVisual, this.mesVisual, 1);
+      var ultimoDia = new Date(this.anioVisual, this.mesVisual + 1, 0);
+      var inicioSemana = primerDia.getDay(); // 0=Dom
+      var totalDias = ultimoDia.getDate();
+
+      var semanas = [];
+      var semana = [];
+
+      // Días vacíos antes del primer día
+      for (var i = 0; i < inicioSemana; i++) {
+        semana.push(0);
+      }
+
+      for (var d = 1; d <= totalDias; d++) {
+        semana.push(d);
+        if (semana.length === 7) {
+          semanas.push(semana);
+          semana = [];
+        }
+      }
+
+      // Completar última semana
+      if (semana.length > 0) {
+        while (semana.length < 7) {
+          semana.push(0);
+        }
+        semanas.push(semana);
+      }
+
+      return semanas;
+    },
+
+    // ─── Inicialización ──────────────────────────────
+    init: function (opts) {
+      opts = opts || {};
+      this.fechaInicio = opts.fechaInicio || '';
+      this.fechaFin = opts.fechaFin || '';
+      this.onChange = opts.onChange || null;
+      this.modo = opts.modo || 'range';
+      if (opts.presetsPersonalizados) {
+        this.presetsPersonalizados = opts.presetsPersonalizados;
+      }
+
+      var ahora = new Date();
+      this.mesVisual = ahora.getMonth();
+      this.anioVisual = ahora.getFullYear();
+
+      if (this.fechaInicio) {
+        var fecha = new Date(this.fechaInicio);
+        if (!isNaN(fecha.getTime())) {
+          this.mesVisual = fecha.getMonth();
+          this.anioVisual = fecha.getFullYear();
+        }
+      }
+    },
+
+    // ─── Navegación de meses ─────────────────────────
+    mesAnterior: function () {
+      this.mesVisual--;
+      if (this.mesVisual < 0) {
+        this.mesVisual = 11;
+        this.anioVisual--;
+      }
+    },
+
+    mesSiguiente: function () {
+      this.mesVisual++;
+      if (this.mesVisual > 11) {
+        this.mesVisual = 0;
+        this.anioVisual++;
+      }
+    },
+
+    // ─── Selección de día ────────────────────────────
+    seleccionarDia: function (dia) {
+      if (!dia) return;
+      var fecha = new Date(this.anioVisual, this.mesVisual, dia);
+      var fechaStr = this._formatearFecha(fecha);
+
+      if (this.modo === 'single') {
+        this.fechaInicio = fechaStr;
+        this.fechaFin = fechaStr;
+        this._notificar();
+        return;
+      }
+
+      // Modo rango
+      if (!this.fechaInicio || (this.fechaInicio && this.fechaFin)) {
+        // Iniciar nuevo rango
+        this.fechaInicio = fechaStr;
+        this.fechaFin = '';
+      } else {
+        // Completar rango
+        if (fechaStr < this.fechaInicio) {
+          this.fechaFin = this.fechaInicio;
+          this.fechaInicio = fechaStr;
+        } else {
+          this.fechaFin = fechaStr;
+        }
+        this._notificar();
+      }
+    },
+
+    // ─── Presets ─────────────────────────────────────
+    aplicarPreset: function (preset) {
+      if (preset.action && typeof preset.action === 'function') {
+        preset.action();
+      }
+      this.mostrarRango = false;
+    },
+
+    // ─── Rango personalizado ─────────────────────────
+    validarRango: function () {
+      this._validarRango();
+    },
+
+    _validarRango: function () {
+      this.rangoValido = !!(
+        this.rangoDesde &&
+        this.rangoHasta &&
+        this.rangoDesde <= this.rangoHasta
+      );
+    },
+
+    aplicarRango: function () {
+      if (!this.rangoValido) return;
+      this.fechaInicio = this.rangoDesde;
+      this.fechaFin = this.rangoHasta;
+      this.mostrarRango = false;
+      this._notificar();
+    },
+
+    // ─── Limpiar ─────────────────────────────────────
+    limpiar: function () {
+      this.fechaInicio = '';
+      this.fechaFin = '';
+      this._notificar();
+    },
+
+    // ─── Clases CSS para días ────────────────────────
+    obtenerClaseDia: function (dia) {
+      if (!dia) return '';
+      var fecha = new Date(this.anioVisual, this.mesVisual, dia);
+      var fechaStr = this._formatearFecha(fecha);
+      var hoy = this._formatearFecha(new Date());
+      var clases = [];
+
+      // Día actual
+      if (fechaStr === hoy) {
+        clases.push('font-bold');
+      }
+
+      // Dentro del rango seleccionado
+      if (this.fechaInicio && this.fechaFin) {
+        if (fechaStr >= this.fechaInicio && fechaStr <= this.fechaFin) {
+          clases.push('bg-primary/10 text-primary');
+        }
+      }
+
+      // Inicio/fin del rango
+      if (fechaStr === this.fechaInicio || fechaStr === this.fechaFin) {
+        clases.push('bg-primary text-primary-content font-semibold');
+      }
+
+      // Hover
+      if (clases.length === 0) {
+        clases.push('text-base-content/70 hover:bg-base-200');
+      }
+
+      return clases.join(' ');
+    },
+
+    // ─── Texto de vista previa ───────────────────────
+    get textoSeleccion() {
+      if (!this.fechaInicio) return 'Sin selección';
+      if (!this.fechaFin || this.fechaInicio === this.fechaFin) {
+        return this._formatearLegible(this.fechaInicio);
+      }
+      return (
+        this._formatearLegible(this.fechaInicio) +
+        ' — ' +
+        this._formatearLegible(this.fechaFin)
+      );
+    },
+
+    // ─── Helpers ─────────────────────────────────────
+    _formatearFecha: function (date) {
+      var y = date.getFullYear();
+      var m = ('0' + (date.getMonth() + 1)).slice(-2);
+      var d = ('0' + date.getDate()).slice(-2);
+      return y + '-' + m + '-' + d;
+    },
+
+    _formatearLegible: function (fechaStr) {
+      if (!fechaStr) return '';
+      var partes = fechaStr.split('-');
+      if (partes.length !== 3) return fechaStr;
+      return parseInt(partes[2], 10) + ' ' + this.meses[parseInt(partes[1], 10) - 1];
+    },
+
+    _notificar: function () {
+      // Callback
+      if (this.onChange && typeof this.onChange === 'function') {
+        try {
+          this.onChange(this.fechaInicio, this.fechaFin);
+        } catch (e) {
+          console.error('[datepicker] Error en onChange:', e);
+        }
+      }
+
+      // Evento DOM
+      try {
+        window.dispatchEvent(new CustomEvent('datepicker:change', {
+          detail: {
+            inicio: this.fechaInicio,
+            fin: this.fechaFin
+          }
+        }));
+      } catch (e) {}
+    }
+  };
+}
+</script>

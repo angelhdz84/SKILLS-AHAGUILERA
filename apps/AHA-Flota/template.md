@@ -48,13 +48,15 @@ Sistema de control de flota offline para transportistas y dueños de vehículos.
 
 ```javascript
 db.version(2).stores({
-  vehiculos: 'id, *placas, *numeroEconomico, marca, modelo, *anio, *tipo, *estado, *createdBy, createdAt, updatedAt',
-  cargas_combustible: 'id, *vehiculoId, litros, importe, *kilometraje, *tipo, createdAt',
-  mantenimientos: 'id, *vehiculoId, *tipo, costo, *kilometraje, *taller, *proximoKm, *createdBy, createdAt',
-  incidentes: 'id, *vehiculoId, *tipo, costo, descripcion, *createdBy, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  vehiculos: 'id, *uuid, *placas, *numeroEconomico, marca, modelo, *anio, *tipo, *estado, *createdBy, createdAt, updatedAt',
+  cargas_combustible: 'id, *uuid, *vehiculoId, litros, importe, *kilometraje, *tipo, createdAt',
+  mantenimientos: 'id, *uuid, *vehiculoId, *tipo, costo, *kilometraje, *taller, *proximoKm, *createdBy, createdAt',
+  incidentes: 'id, *uuid, *vehiculoId, *tipo, costo, descripcion, *createdBy, createdAt'
 });
 ```
 

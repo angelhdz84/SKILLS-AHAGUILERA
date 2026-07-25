@@ -1,0 +1,304 @@
+<!--
+  pines/command.html — Panel deslizable de comandos (slide-over)
+  Panel que entra desde la derecha tipo "command panel" o "slide-over"
+  Similar a los paneles de ajustes rápidos en macOS/iOS
+  Dependencias: Alpine.js, DaisyUI, Bootstrap Icons
+  Uso:
+    <div x-data="[ID]CommandPanel()" x-init="init()">
+      <button @click="abrir()">Abrir panel</button>
+      <template x-teleport="body">
+        [INSERTAR ESTE TEMPLATE AQUÍ]
+      </template>
+    </div>
+-->
+
+<!-- Overlay backdrop -->
+<div x-show="abierto"
+     x-transition:enter="transition-opacity duration-200 ease-out"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity duration-150 ease-in"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="cerrar()"
+     class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+     style="display: none;"
+     aria-hidden="true">
+</div>
+
+<!-- Panel -->
+<div x-show="abierto"
+     x-transition:enter="transition-transform duration-300 ease-out"
+     x-transition:enter-start="translate-x-full"
+     x-transition:enter-end="translate-x-0"
+     x-transition:leave="transition-transform duration-200 ease-in"
+     x-transition:leave-start="translate-x-0"
+     x-transition:leave-end="translate-x-full"
+     class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-base-100 shadow-2xl border-l border-base-300 flex flex-col"
+     style="display: none;"
+     role="dialog"
+     aria-modal="true"
+     :aria-label="titulo">
+
+  <!-- Cabecera -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-base-300 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+        <i :class="icono || 'bi-sliders2'" class="text-primary text-lg"></i>
+      </div>
+      <div>
+        <h2 class="text-base font-semibold text-base-content" x-text="titulo || 'Comandos'"></h2>
+        <p class="text-xs text-base-content/40" x-text="subtitulo || ''" x-show="subtitulo"></p>
+      </div>
+    </div>
+    <button @click="cerrar()"
+            class="btn btn-ghost btn-sm btn-square rounded-lg"
+            aria-label="Cerrar panel">
+      <i class="bi bi-x-lg text-lg"></i>
+    </button>
+  </div>
+
+  <!-- Cuerpo: input de búsqueda -->
+  <div class="px-4 pt-3 pb-2 shrink-0" x-show="mostrarBusqueda">
+    <div class="relative">
+      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-base-content/30 text-sm"></i>
+      <input type="text"
+             x-model="consulta"
+             @input="filtrar()"
+             @keydown.escape.window="cerrar()"
+             placeholder="Buscar..."
+             class="input input-bordered input-sm w-full pl-8 text-sm"
+             autocomplete="off"
+             autocorrect="off"
+             spellcheck="false">
+      <button @click="consulta = ''; filtrar()"
+              x-show="consulta"
+              class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-square text-base-content/30">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de acciones -->
+  <div class="flex-1 overflow-y-auto py-2 scrollbar-thin">
+    <template x-if="itemsFiltrados.length === 0">
+      <div class="flex flex-col items-center justify-center h-full text-base-content/30 py-12">
+        <i class="bi bi-search text-3xl mb-3"></i>
+        <p class="text-sm">Sin resultados</p>
+      </div>
+    </template>
+
+    <template x-for="(grupo, gIdx) in agrupar()" :key="gIdx">
+      <div>
+        <!-- Título de grupo -->
+        <div x-show="grupo.label"
+             class="px-5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-base-content/30"
+             x-text="grupo.label">
+        </div>
+        <!-- Items del grupo -->
+        <template x-for="(item, iIdx) in grupo.items" :key="item.id || iIdx">
+          <button @click="ejecutar(item)"
+                  :disabled="item.deshabilitado"
+                  class="flex items-center gap-3 w-full px-5 py-2.5 text-left transition-colors"
+                  :class="item.deshabilitado
+                    ? 'opacity-40 cursor-not-allowed'
+                    : 'hover:bg-base-200 active:bg-base-300 cursor-pointer'">
+
+            <!-- Icono -->
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                 :class="item.color || 'bg-base-300'">
+              <i :class="item.icono || 'bi-circle'" class="text-sm"
+                 :class="item.colorIcono || 'text-base-content/60'"></i>
+            </div>
+
+            <!-- Texto -->
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium truncate" x-text="item.label"></div>
+              <div class="text-xs text-base-content/40 truncate" x-text="item.descripcion || ''" x-show="item.descripcion"></div>
+            </div>
+
+            <!-- Atajo de teclado -->
+            <kbd x-show="item.atajo"
+                 class="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono bg-base-300 rounded text-base-content/30"
+                 x-text="item.atajo">
+            </kbd>
+
+            <!-- Chevron -->
+            <i x-show="item.children" class="bi bi-chevron-right text-xs text-base-content/20"></i>
+          </button>
+        </template>
+
+        <!-- Separador entre grupos -->
+        <div x-show="gIdx < grupos.length - 1" class="border-t border-base-200 mx-4 my-1"></div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Pie -->
+  <div class="border-t border-base-300 px-5 py-3 shrink-0 text-[10px] text-base-content/30 flex items-center justify-between">
+    <span><span x-text="itemsFiltrados.length"></span> comandos</span>
+    <span class="hidden sm:inline">
+      <kbd class="px-1 py-0.5 bg-base-300 rounded font-mono mr-1">â†‘â†“</kbd>
+      navegar
+      <kbd class="px-1 py-0.5 bg-base-300 rounded font-mono ml-2 mr-1">â†µ</kbd>
+      ejecutar
+    </span>
+  </div>
+</div>
+
+<script>
+/**
+ * [ID]CommandPanel — Alpine.js component para panel de comandos
+ * Uso: <div x-data="[ID]CommandPanel()" x-init="init()">
+ *
+ * Configuración vía init(options):
+ *   titulo: string - Título del panel
+ *   subtitulo: string - Subtítulo
+ *   icono: string - Clase Bootstrap Icon
+ *   items: Array - Lista de comandos [{id, label, descripcion, icono, color, colorIcono, atajo, deshabilitado, action, children}]
+ *   grupos: Array - Agrupaciones [{label, items: [...]}]
+ *   mostrarBusqueda: boolean - Mostrar campo de búsqueda
+ */
+function [ID]CommandPanel() {
+  return {
+    abierto: false,
+    titulo: 'Comandos',
+    subtitulo: '',
+    icono: 'bi-sliders2',
+    consulta: '',
+    items: [],
+    grupos: [],
+    mostrarBusqueda: true,
+    itemsFiltrados: [],
+
+    init: function (opts) {
+      opts = opts || {};
+      this.titulo = opts.titulo || 'Comandos';
+      this.subtitulo = opts.subtitulo || '';
+      this.icono = opts.icono || 'bi-sliders2';
+      this.items = opts.items || [];
+      this.grupos = opts.grupos || [];
+      this.mostrarBusqueda = opts.mostrarBusqueda !== false;
+      this.itemsFiltrados = this.items.slice();
+
+      // Escuchar atajo global
+      var self = this;
+      document.addEventListener('keydown', function (e) {
+        if (self.abierto && e.key === 'Escape') {
+          self.cerrar();
+        }
+      });
+    },
+
+    abrir: function () {
+      this.abierto = true;
+      this.consulta = '';
+      this.filtrar();
+      // Foco en input después de render
+      var self = this;
+      setTimeout(function () {
+        var input = document.querySelector('.sp-panel-input');
+        if (input) input.focus();
+      }, 350);
+    },
+
+    cerrar: function () {
+      this.abierto = false;
+      this.consulta = '';
+    },
+
+    toggle: function () {
+      if (this.abierto) {
+        this.cerrar();
+      } else {
+        this.abrir();
+      }
+    },
+
+    filtrar: function () {
+      var q = (this.consulta || '').toLowerCase().trim();
+      if (!q) {
+        this.itemsFiltrados = this.items.slice();
+        return;
+      }
+      var result = [];
+      var todos = this.items;
+      for (var i = 0; i < todos.length; i++) {
+        var item = todos[i];
+        if (
+          (item.label || '').toLowerCase().indexOf(q) !== -1 ||
+          (item.descripcion || '').toLowerCase().indexOf(q) !== -1 ||
+          (item.id || '').toLowerCase().indexOf(q) !== -1
+        ) {
+          result.push(item);
+        }
+      }
+      this.itemsFiltrados = result;
+    },
+
+    agrupar: function () {
+      // Si hay grupos definidos, filtrar items dentro de cada grupo
+      if (this.grupos && this.grupos.length > 0) {
+        var q = (this.consulta || '').toLowerCase().trim();
+        var out = [];
+        for (var g = 0; g < this.grupos.length; g++) {
+          var grupo = this.grupos[g];
+          var filtrados = [];
+          var itemsG = grupo.items || [];
+          for (var i = 0; i < itemsG.length; i++) {
+            var item = itemsG[i];
+            if (!q ||
+              (item.label || '').toLowerCase().indexOf(q) !== -1 ||
+              (item.descripcion || '').toLowerCase().indexOf(q) !== -1
+            ) {
+              filtrados.push(item);
+            }
+          }
+          if (filtrados.length > 0 || !q) {
+            out.push({ label: !q ? grupo.label : '', items: filtrados });
+          }
+        }
+        return out;
+      }
+      // Sin grupos: devolver un solo grupo
+      return [{ label: '', items: this.itemsFiltrados }];
+    },
+
+    ejecutar: function (item) {
+      if (!item || item.deshabilitado) return;
+      if (item.action && typeof item.action === 'function') {
+        try {
+          item.action();
+        } catch (e) {
+          console.error('[command] Error ejecutando acción:', e);
+        }
+      }
+      if (!item.children) {
+        this.cerrar();
+      }
+    },
+
+    // API pública para agregar items dinámicamente
+    agregarItem: function (item) {
+      if (!item || !item.id) return;
+      // Evitar duplicados
+      for (var i = 0; i < this.items.length; i++) {
+        if (this.items[i].id === item.id) return;
+      }
+      this.items.push(item);
+      this.filtrar();
+    },
+
+    eliminarItem: function (id) {
+      var idx = -1;
+      for (var i = 0; i < this.items.length; i++) {
+        if (this.items[i].id === id) { idx = i; break; }
+      }
+      if (idx !== -1) {
+        this.items.splice(idx, 1);
+        this.filtrar();
+      }
+    }
+  };
+}
+</script>

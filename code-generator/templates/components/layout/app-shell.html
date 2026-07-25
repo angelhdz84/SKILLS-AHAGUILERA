@@ -7,6 +7,12 @@
 
   <div id="a11y-live-region" aria-live="polite" class="sr-only"></div>
 
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner fixed top-0 left-0 right-0 z-50 bg-warning text-warning-content text-center text-sm py-1.5 flex items-center justify-center gap-2" style="display:none;">
+    <i class="bi bi-wifi-off"></i>
+    <span>Sin conexión — Los datos se guardan localmente</span>
+  </div>
+
   <div class="flex">
     {file:code-generator/templates/components/layout/sidebar.html}
     <div class="flex-1 flex flex-col min-h-screen transition-all duration-300"
@@ -22,6 +28,23 @@
       </main>
     </div>
   </div>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <template x-for="mod in $store.app?.modulos?.slice(0,5) || []" :key="mod.id">
+      <a :href="'#/' + mod.id" class="bottom-nav-item"
+         :class="{ 'active': $store.app?.moduloActual === mod.id }"
+         :data-module="mod.id">
+        <i :class="mod.icono || 'bi bi-circle'"></i>
+        <span x-text="(mod.titulo || mod.id).substring(0,12)"></span>
+      </a>
+    </template>
+  </nav>
+
+  <!-- FAB (mobile quick-add) -->
+  <button class="fab" id="fab-quick-add" aria-label="Agregar" title="Agregar">
+    <i class="bi bi-plus-lg"></i>
+  </button>
 
   <div id="toast-container" class="toast toast-end toast-bottom z-[80]"></div>
 
@@ -45,11 +68,20 @@
 
       Alpine.store('theme', {
         mode: localStorage.getItem('theme') || 'light',
+        themes: ['light', 'dark', 'emerald', 'autumn'],
+        themeIcons: { light: 'bi bi-moon-stars', dark: 'bi bi-sun', emerald: 'bi bi-flower1', autumn: 'bi bi-tree' },
         init() {
           this.$watch('mode', val => {
             localStorage.setItem('theme', val);
             document.documentElement.setAttribute('data-theme', val);
           });
+        },
+        cycle() {
+          var idx = this.themes.indexOf(this.mode);
+          this.mode = this.themes[(idx + 1) % this.themes.length];
+        },
+        currentIcon() {
+          return this.themeIcons[this.mode] || 'bi bi-moon-stars';
         }
       });
 
@@ -67,6 +99,8 @@
           window.addEventListener('offline', () => this.online = false);
         }
       });
+
+      Alpine.store('badges', {});
     });
   </script>
 
@@ -80,8 +114,42 @@
         async iniciarApp() {
           try {
             await window.appRouter?.init();
+            this.configurarShellUI();
           } catch (err) {
             console.error('Shell init error:', err);
+          }
+        },
+
+        configurarShellUI() {
+          // Offline banner
+          var offlineBanner = document.getElementById('offline-banner');
+          if (offlineBanner) {
+            var fn = function() { offlineBanner.style.display = navigator.onLine ? 'none' : 'flex'; };
+            window.addEventListener('online', fn);
+            window.addEventListener('offline', fn);
+            fn();
+          }
+
+          // Bottom nav active state
+          var fnNav = function() {
+            var hash = window.location.hash || '#/';
+            var match = hash.match(/^#\/([^?]+)/);
+            var moduleId = match ? match[1] : '';
+            document.querySelectorAll('.bottom-nav-item').forEach(function(item) {
+              item.classList.toggle('active', item.getAttribute('data-module') === moduleId);
+            });
+          };
+          window.addEventListener('hashchange', fnNav);
+          fnNav();
+
+          // FAB handler
+          var fab = document.getElementById('fab-quick-add');
+          if (fab) {
+            fab.addEventListener('click', function () {
+              if (window.appRouter && window.appRouter.currentModule && window.appRouter.currentModule.onQuickAdd) {
+                window.appRouter.currentModule.onQuickAdd();
+              }
+            });
           }
         }
       };

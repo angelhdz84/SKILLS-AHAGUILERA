@@ -32,7 +32,9 @@ db.version(1).stores({
   _template: 'id, nombre, estado, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt'
 });
 ```
 

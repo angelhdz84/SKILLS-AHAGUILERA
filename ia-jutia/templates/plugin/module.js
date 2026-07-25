@@ -31,25 +31,14 @@
     if (window.FlexSearch) return Promise.resolve(window.FlexSearch);
     return new Promise(function (resolve, reject) {
       var local = 'modules/ia-jutia/assets/flexsearch.min.js';
-      var fallback = 'https://cdn.jsdelivr.net/npm/flexsearch@0.7.31/dist/flexsearch.min.js';
       var script = document.createElement('script');
       script.src = local;
       script.onload = function () {
         if (window.FlexSearch) { resolve(window.FlexSearch); return; }
-        // local failed, try CDN fallback
-        var s2 = document.createElement('script');
-        s2.src = fallback;
-        s2.onload = function () { resolve(window.FlexSearch); };
-        s2.onerror = function () { reject(new Error('FlexSearch no pudo cargarse')); };
-        document.head.appendChild(s2);
+        reject(new Error('FlexSearch local no disponible'));
       };
       script.onerror = function () {
-        // local file not found, try CDN
-        var s2 = document.createElement('script');
-        s2.src = fallback;
-        s2.onload = function () { resolve(window.FlexSearch); };
-        s2.onerror = function () { reject(new Error('FlexSearch no pudo cargarse')); };
-        document.head.appendChild(s2);
+        reject(new Error('FlexSearch no pudo cargarse desde ruta local'));
       };
       document.head.appendChild(script);
     });
@@ -194,13 +183,37 @@
         },
 
         cargarFull: function () {
-          if (window.ia && window.ia.initFull) {
-            window.ia.initFull().then(function () {
-              var store = Alpine.store('ia');
-              store.modeloListo = true;
-              store.perfilReal = 'full';
-            });
+          var store = Alpine.store('ia');
+          store.isLoading = true;
+          // Load Full files dynamically
+          var self = this;
+          function loadNext(files, idx) {
+            if (idx >= files.length) {
+              // All loaded, init Full
+              if (window.iaFull && typeof window.iaFull.initFull === 'function') {
+                window.iaFull.initFull().then(function () {
+                  store.perfilReal = 'full';
+                  store.modeloListo = true;
+                  store.isLoading = false;
+                }).catch(function (err) {
+                  console.warn('[ia-jutia] Error initFull:', err.message);
+                  store.isLoading = false;
+                });
+              } else {
+                store.isLoading = false;
+              }
+              return;
+            }
+            var s = document.createElement('script');
+            s.src = 'modules/ia-jutia/' + files[idx];
+            s.onload = function () { loadNext(files, idx + 1); };
+            s.onerror = function () {
+              console.warn('[ia-jutia] Error cargando ' + files[idx]);
+              loadNext(files, idx + 1); // continue despite error
+            };
+            document.head.appendChild(s);
           }
+          loadNext(['ia-full.js', 'ia-sqlite.js', 'ia-worker.js'], 0);
         }
       });
       console.log('[ia-jutia] Alpine.store(ia) registrado');

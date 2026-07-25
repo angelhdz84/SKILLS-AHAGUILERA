@@ -54,17 +54,19 @@ Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos — t
 
 ```javascript
 db.version(2).stores({
-  lotes: 'id, nombre, *hectareas, *cultivoActual, *createdBy, createdAt, updatedAt',
-  ciclos: 'id, *loteId, *cultivo, *fechaSiembra, *fechaCosecha, *createdBy, createdAt, updatedAt',
-  registros_diarios: 'id, *loteId, *fecha, *tipo, *descripcion, *fotos, *createdBy, createdAt',
-  animales: 'id, *arete, nombre, *especie, *raza, *fechaNacimiento, *createdBy, createdAt, updatedAt',
-  eventos_animal: 'id, *animalId, *tipo, *fecha, *descripcion, *proximaFecha, *createdBy, createdAt',
-  insumos: 'id, nombre, *tipo, *stockActual, *stockMinimo, *unidad, *createdBy, createdAt, updatedAt',
-  movimientos_insumo: 'id, *insumoId, *tipo, *cantidad, *loteId, *animalId, *proveedor, *costo, *createdBy, createdAt',
-  gastos: 'id, *concepto, *monto, *categoria, *loteId, *createdBy, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  lotes: 'id, *uuid, nombre, *hectareas, *cultivoActual, *createdBy, createdAt, updatedAt',
+  ciclos: 'id, *uuid, *loteId, *cultivo, *fechaSiembra, *fechaCosecha, *createdBy, createdAt, updatedAt',
+  registros_diarios: 'id, *uuid, *loteId, *fecha, *tipo, *descripcion, *fotos, *createdBy, createdAt',
+  animales: 'id, *uuid, *arete, nombre, *especie, *raza, *fechaNacimiento, *createdBy, createdAt, updatedAt',
+  eventos_animal: 'id, *uuid, *animalId, *tipo, *fecha, *descripcion, *proximaFecha, *createdBy, createdAt',
+  insumos: 'id, *uuid, nombre, *tipo, *stockActual, *stockMinimo, *unidad, *createdBy, createdAt, updatedAt',
+  movimientos_insumo: 'id, *uuid, *insumoId, *tipo, *cantidad, *loteId, *animalId, *proveedor, *costo, *createdBy, createdAt',
+  gastos: 'id, *uuid, *concepto, *monto, *categoria, *loteId, *createdBy, createdAt'
 });
 ```
 

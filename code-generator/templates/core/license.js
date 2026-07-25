@@ -10,7 +10,8 @@
   window.APP_CONFIG = window.APP_CONFIG || {
     plan: 'lite',
     maxRecords: 30,
-    canExport: false,
+    canExport: true,
+    canBackup: true,
     iaTier: 'lite',
     canWhiteLabel: false,
     customer: null
@@ -63,7 +64,7 @@
     var isLite = plan === 'lite';
     window.APP_CONFIG.plan = plan;
     window.APP_CONFIG.maxRecords = isLite ? 30 : Infinity;
-    window.APP_CONFIG.canExport = !isLite;
+    window.APP_CONFIG.canExport = true;
     window.APP_CONFIG.iaTier = isLite ? 'lite' : 'full';
     window.APP_CONFIG.canWhiteLabel = plan === 'enterprise' || plan === 'business';
     window.APP_CONFIG.customer = data.customer || null;

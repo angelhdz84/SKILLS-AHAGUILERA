@@ -52,15 +52,17 @@ Agenda digital para negocios de servicios que manejan citas. Gestión de cliente
 
 ```javascript
 db.version(2).stores({
-  clientes: 'id, nombre, *telefono, email, *frecuente, *createdBy, createdAt, updatedAt',
-  profesionales: 'id, nombre, *horario, *diasDescanso, *serviciosOfrece, *createdBy, createdAt, updatedAt',
-  servicios: 'id, nombre, *categoriaId, duracion, precio, *createdBy, createdAt, updatedAt',
-  categorias_servicios: 'id, nombre, createdAt, updatedAt',
-  citas: 'id, *clienteId, *profesionalId, *servicioId, *fecha, *horaInicio, *horaFin, *estado, *motivoCancelacion, *createdBy, createdAt, updatedAt',
-  pagos: 'id, *citaId, *monto, *formaPago, *createdBy, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  clientes: 'id, *uuid, nombre, *telefono, email, *frecuente, *createdBy, createdAt, updatedAt',
+  profesionales: 'id, *uuid, nombre, *horario, *diasDescanso, *serviciosOfrece, *createdBy, createdAt, updatedAt',
+  servicios: 'id, *uuid, nombre, *categoriaId, duracion, precio, *createdBy, createdAt, updatedAt',
+  categorias_servicios: 'id, *uuid, nombre, createdAt, updatedAt',
+  citas: 'id, *uuid, *clienteId, *profesionalId, *servicioId, *fecha, *horaInicio, *horaFin, *estado, *motivoCancelacion, *createdBy, createdAt, updatedAt',
+  pagos: 'id, *uuid, *citaId, *monto, *formaPago, *createdBy, createdAt'
 });
 ```
 

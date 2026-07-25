@@ -49,16 +49,18 @@ Sistema POS (punto de venta) offline para tiendas, ferias, puestos y pequeños c
 
 ```javascript
 db.version(3).stores({
-  productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
-  categorias: 'id, nombre, color, createdAt, updatedAt',
-  ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
-  ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento',
-  cortes: 'id, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt, updatedAt',
-  devoluciones: 'id, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
-  gastosMenores: 'id, *corteId, *concepto, monto, *hora, *createdBy, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  productos: 'id, *uuid, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
+  categorias: 'id, *uuid, nombre, color, createdAt, updatedAt',
+  ventas: 'id, *uuid, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
+  ventas_items: 'id, *uuid, *ventaId, *productoId, cantidad, precioUnitario, descuento',
+  cortes: 'id, *uuid, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt, updatedAt',
+  devoluciones: 'id, *uuid, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
+  gastos_menores: 'id, *uuid, *corteId, *concepto, monto, *hora, *createdBy, createdAt'
 });
 
 ## Migración Dexie
@@ -66,7 +68,7 @@ db.version(3).stores({
 ```javascript
 // v1: tablas de sistema (creación inicial)
 // v2: tablas de negocio v1 (categorias, productos, ventas, ventas_items)
-// v3: añade cortes, devoluciones, gastosMenores + descuentoTotal en ventas
+// v3: añade cortes, devoluciones, gastos_menores + descuentoTotal en ventas
 
 db.version(1).stores({
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
@@ -82,10 +84,10 @@ db.version(2).stores({
   _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
   _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
   _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
-  categorias: 'id, nombre, color, createdAt, updatedAt',
-  productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
-  ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
-  ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento'
+  categorias: 'id, *uuid, nombre, color, createdAt, updatedAt',
+  productos: 'id, *uuid, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
+  ventas: 'id, *uuid, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
+  ventas_items: 'id, *uuid, *ventaId, *productoId, cantidad, precioUnitario, descuento'
 }).upgrade(tx => {
   // v2 no migra datos de v1 porque v1 solo tiene tablas de sistema
   return Promise.resolve();
@@ -97,13 +99,13 @@ db.version(3).stores({
   _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
   _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
   _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
-  categorias: 'id, nombre, color, createdAt, updatedAt',
-  productos: 'id, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
-  ventas: 'id, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
-  ventas_items: 'id, *ventaId, *productoId, cantidad, precioUnitario, descuento',
-  cortes: 'id, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt, updatedAt',
-  devoluciones: 'id, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
-  gastosMenores: 'id, *corteId, *concepto, monto, *hora, *createdBy, createdAt'
+  categorias: 'id, *uuid, nombre, color, createdAt, updatedAt',
+  productos: 'id, *uuid, nombre, *codigoBarras, *categoriaId, precio, stock, createdAt, updatedAt',
+  ventas: 'id, *uuid, *folio, total, *metodoPago, *createdBy, createdAt, updatedAt',
+  ventas_items: 'id, *uuid, *ventaId, *productoId, cantidad, precioUnitario, descuento',
+  cortes: 'id, *uuid, *folio, apertura, cierre, totalEsperado, totalReal, *createdBy, createdAt, updatedAt',
+  devoluciones: 'id, *uuid, *ventaId, *productoId, cantidad, *motivo, reembolso, createdAt',
+  gastos_menores: 'id, *uuid, *corteId, *concepto, monto, *hora, *createdBy, createdAt'
 }).upgrade(tx => {
   return tx.table('ventas').toCollection().modify(v => {
     if (typeof v.descuentoTotal === 'undefined') v.descuentoTotal = 0;
@@ -111,7 +113,6 @@ db.version(3).stores({
 });
 
 window.DB_VERSION = 3;
-```
 ```
 
 ## Pricing sugerido

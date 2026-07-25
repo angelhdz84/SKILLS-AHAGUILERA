@@ -47,13 +47,15 @@ Sistema de inventario offline para tiendas, bodegas y almacenes. Registro de pro
 
 ```javascript
 db.version(2).stores({
-  categorias: 'id, nombre, *color, createdAt, updatedAt',
-  productos: 'id, nombre, *sku, *categoriaId, precio, cantidad, *imagen, *umbralMinimo, *createdBy, createdAt, updatedAt',
-  movimientos: 'id, *productoId, *tipo, cantidad, *motivo, *createdBy, createdAt',
-  alertas: 'id, *productoId, *tipo, leida, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  categorias: 'id, *uuid, nombre, *color, createdAt, updatedAt',
+  productos: 'id, *uuid, nombre, *sku, *categoriaId, precio, cantidad, *imagen, *umbralMinimo, *createdBy, createdAt, updatedAt',
+  movimientos: 'id, *uuid, *productoId, *tipo, cantidad, *motivo, *createdBy, createdAt',
+  alertas: 'id, *uuid, *productoId, *tipo, leida, createdAt'
 });
 ```
 

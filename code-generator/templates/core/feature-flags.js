@@ -8,9 +8,9 @@
   var BUILTIN = {
     lite: {
       maxRecords: 30,
-      canExport: false,
+      canExport: true,
       canSync: false,
-      canBackup: false,
+      canBackup: true,
       canWhiteLabel: false,
       iaTier: 'lite',
       multiUser: false,

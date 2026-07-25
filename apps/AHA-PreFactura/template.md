@@ -51,13 +51,15 @@ Sistema de prefacturación offline para freelancers y pequeños negocios. Genera
 
 ```javascript
 db.version(2).stores({
-  clientes_fiscales: 'id, nombre, *rfc, *regimen, direccion, email, *telefono, createdAt, updatedAt',
-  productos_fiscales: 'id, *clave, nombre, precioUnitario, *iva, *categoria, createdAt, updatedAt',
-  facturas: 'id, *folio, *serie, *clienteId, subtotal, iva, total, *createdBy, createdAt, updatedAt',
-  facturas_items: 'id, *facturaId, *productoId, cantidad, precioUnitario, importe',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  clientes_fiscales: 'id, *uuid, nombre, *rfc, *regimen, direccion, email, *telefono, createdAt, updatedAt',
+  productos_fiscales: 'id, *uuid, *clave, nombre, precioUnitario, *iva, *categoria, createdAt, updatedAt',
+  facturas: 'id, *uuid, *folio, *serie, *clienteId, subtotal, iva, total, *createdBy, createdAt, updatedAt',
+  facturas_items: 'id, *uuid, *facturaId, *productoId, cantidad, precioUnitario, importe'
 });
 ```
 

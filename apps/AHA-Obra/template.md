@@ -52,14 +52,16 @@ Sistema de control de obra offline para constructores y contratistas. Gestión d
 
 ```javascript
 db.version(2).stores({
-  obras: 'id, nombre, direccion, *tipo, presupuestoTotal, *estado, *createdBy, createdAt, updatedAt',
-  etapas: 'id, *obraId, nombre, *estado, avance, createdAt, updatedAt',
-  materiales: 'id, *obraId, *etapaId, nombre, *unidad, cantidad, precioUnitario, stockMinimo, createdAt, updatedAt',
-  gastos_obra: 'id, *obraId, *etapaId, concepto, monto, *categoria, *createdBy, createdAt, updatedAt',
-  avances_fotos: 'id, *obraId, *etapaId, *imagen, descripcion, createdAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  obras: 'id, *uuid, nombre, direccion, *tipo, presupuestoTotal, *estado, *createdBy, createdAt, updatedAt',
+  etapas: 'id, *uuid, *obraId, nombre, *estado, avance, createdAt, updatedAt',
+  materiales: 'id, *uuid, *obraId, *etapaId, nombre, *unidad, cantidad, precioUnitario, stockMinimo, createdAt, updatedAt',
+  gastos_obra: 'id, *uuid, *obraId, *etapaId, concepto, monto, *categoria, *createdBy, createdAt, updatedAt',
+  avances_fotos: 'id, *uuid, *obraId, *etapaId, *imagen, descripcion, createdAt'
 });
 ```
 

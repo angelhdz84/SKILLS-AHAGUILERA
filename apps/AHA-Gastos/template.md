@@ -39,11 +39,13 @@ Lleva el control de ingresos y egresos diarios de tu negocio sin depender de int
 
 ```javascript
 db.version(2).stores({
-  movimientos: 'id, tipo, *categoria, monto, *fecha, *nota, *createdBy, createdAt',
-  categorias: 'id, nombre, tipo, *createdBy, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  movimientos: 'id, *uuid, tipo, *categoria, monto, *fecha, *nota, *createdBy, createdAt',
+  categorias: 'id, *uuid, nombre, tipo, *createdBy, createdAt, updatedAt'
 });
 ```
 

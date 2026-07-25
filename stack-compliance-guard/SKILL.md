@@ -379,6 +379,19 @@ Antes de mostrar código al usuario, verificar:
 [ ] ¿Se guarda automáticamente sin consentimiento? → ❌ AÑADIR flujo de consentimiento
 [ ] ¿Se recolectan datos opcionales como obligatorios? → ⚠️ MARCAR como opcional
 
+=== CHECKS DE DISEÑO SISTEMA (UPGRADE PHASE 1) ===
+[ ] ¿Falta inter.css? → ❌ AÑADIR <link rel="stylesheet" href="assets/css/inter.css">
+[ ] ¿Faltan clases .btn-ds / .card-ds / .input-ds en el <style> block? → ❌ AÑADIR design system CSS
+[ ] ¿Faltan clases .sk-* (skeleton shimmer) en el <style> block? → ❌ AÑADIR skeleton CSS
+[ ] ¿Falta .bottom-nav / .fab / .offline-banner / .kpi-* / .empty-state CSS? → ❌ AÑADIR utilidades UI
+[ ] ¿Faltan los 4 data-theme (light/dark/emerald/autumn)? → ⚠️ AÑADIR temas extra
+[ ] ¿Falta el Alpine.store('badges') en alpine:init? → ⚠️ AÑADIR badges store
+[ ] ¿Falta window.dbLocal en core/db.js? → ❌ AÑADIR dbLocal helper
+[ ] ¿Falta offline banner HTML (<div id="offline-banner">)? → ❌ AÑADIR offline banner
+[ ] ¿Falta bottom nav HTML (<nav class="bottom-nav" id="bottom-nav">)? → ❌ AÑADIR bottom nav
+[ ] ¿Falta FAB HTML (<button class="fab" id="fab-quick-add">)? → ⚠️ AÑADIR FAB (mobile quick-add)
+[ ] ¿Theme toggle solo light/dark en vez de ciclo 4 temas? → ⚠️ ACTUALIZAR a 4-theme cycle
+
 === CHECKS DE CODE REVIEW ===
 [ ] ¿Nombres de variables claros y consistentes? → ⚠️ SUGERIR rename
 [ ] ¿Funciones >50 líneas sin dividir? → ⚠️ SUGERIR refactor

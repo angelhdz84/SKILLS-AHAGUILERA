@@ -48,13 +48,15 @@ Sistema de recetas médicas offline para médicos generales y consultorios. Regi
 
 ```javascript
 db.version(2).stores({
-  pacientes: 'id, nombre, *telefono, direccion, *fechaNacimiento, alergias, createdAt, updatedAt',
-  medicamentos: 'id, nombre, *presentacion, *laboratorio, createdAt, updatedAt',
-  recetas: 'id, *pacienteId, *diagnostico, indicaciones, *proximaCita, *createdBy, createdAt, updatedAt',
-  recetas_items: 'id, *recetaId, *medicamentoId, dosis, frecuencia, duracion',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  pacientes: 'id, *uuid, nombre, *telefono, direccion, *fechaNacimiento, alergias, createdAt, updatedAt',
+  medicamentos: 'id, *uuid, nombre, *presentacion, *laboratorio, createdAt, updatedAt',
+  recetas: 'id, *uuid, *pacienteId, *diagnostico, indicaciones, *proximaCita, *createdBy, createdAt, updatedAt',
+  recetas_items: 'id, *uuid, *recetaId, *medicamentoId, dosis, frecuencia, duracion'
 });
 ```
 

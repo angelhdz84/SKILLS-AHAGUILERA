@@ -1,0 +1,281 @@
+<!--
+  pines/slide-over.html — Panel deslizable lateral (drawer derecho)
+  Slide-over panel reutilizable para detalles, edición, navegación secundaria
+  Similar a los paneles de detalle en iPadOS / mail.app
+  Dependencias: Alpine.js, DaisyUI, Bootstrap Icons
+  Uso:
+    <div x-data="[ID]SlideOver()" x-init="init()">
+      <button @click="abrir()">Abrir</button>
+      <template x-teleport="body">
+        [INSERTAR ESTE TEMPLATE AQUÍ]
+      </template>
+    </div>
+-->
+
+<!-- Overlay -->
+<div x-show="abierto"
+     x-transition:enter="transition-opacity duration-200 ease-out"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition-opacity duration-150 ease-in"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="cerrar()"
+     class="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px]"
+     style="display: none;"
+     aria-hidden="true">
+</div>
+
+<!-- Panel -->
+<div x-show="abierto"
+     x-transition:enter="transition-transform duration-300 ease-out"
+     x-transition:enter-start="translate-x-full"
+     x-transition:enter-end="translate-x-0"
+     x-transition:leave="transition-transform duration-200 ease-in"
+     x-transition:leave-start="translate-x-0"
+     x-transition:leave-end="translate-x-full"
+     class="fixed top-0 right-0 z-50 h-full bg-base-100 shadow-xl border-l border-base-300 flex flex-col"
+     :class="anchoClase"
+     style="display: none;"
+     role="dialog"
+     aria-modal="true"
+     :aria-label="titulo">
+
+  <!-- Cabecera -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-base-300 shrink-0"
+       :class="{ 'cursor-move': redimensionable }"
+       @mousedown="redimensionable ? iniciarRedimension($event) : null">
+
+    <div class="flex items-center gap-3 min-w-0 flex-1">
+      <!-- Botón cerrar (móvil) -->
+      <button @click="cerrar()"
+              class="btn btn-ghost btn-sm btn-square rounded-lg lg:hidden shrink-0"
+              aria-label="Cerrar panel">
+        <i class="bi bi-arrow-left text-lg"></i>
+      </button>
+
+      <!-- Icono + título -->
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+           :class="colorCabecera || 'bg-primary/10'">
+        <i :class="icono || 'bi-info-lg'" class="text-lg"
+           :class="colorIcono || 'text-primary'"></i>
+      </div>
+      <div class="min-w-0">
+        <h2 class="text-base font-semibold text-base-content truncate" x-text="titulo"></h2>
+        <p class="text-xs text-base-content/40 truncate" x-text="subtitulo" x-show="subtitulo"></p>
+      </div>
+    </div>
+
+    <!-- Acciones cabecera -->
+    <div class="flex items-center gap-1 shrink-0">
+      <template x-for="(accion, idx) in accionesCabecera" :key="idx">
+        <button @click="accion.action ? accion.action() : null"
+                class="btn btn-ghost btn-sm btn-square rounded-lg"
+                :title="accion.label || ''"
+                :aria-label="accion.label || ''">
+          <i :class="accion.icono || 'bi-three-dots'" class="text-base"></i>
+        </button>
+      </template>
+      <button @click="cerrar()"
+              class="btn btn-ghost btn-sm btn-square rounded-lg hidden lg:inline-flex"
+              aria-label="Cerrar panel">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de pestañas (opcional) -->
+  <div x-show="pestanas.length > 0"
+       class="flex border-b border-base-300 px-3 shrink-0 overflow-x-auto scrollbar-hide">
+    <template x-for="(tab, idx) in pestanas" :key="idx">
+      <button @click="pestanaActiva = idx"
+              class="px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors"
+              :class="pestanaActiva === idx
+                ? 'border-primary text-primary'
+                : 'border-transparent text-base-content/40 hover:text-base-content/70 hover:border-base-200'">
+        <i :class="tab.icono" class="mr-1.5 text-xs" x-show="tab.icono"></i>
+        <span x-text="tab.label"></span>
+      </button>
+    </template>
+  </div>
+
+  <!-- Cuerpo (slot para contenido) -->
+  <div class="flex-1 overflow-y-auto scrollbar-thin">
+    <!-- Si usa pestañas -->
+    <template x-if="pestanas.length > 0">
+      <div>
+        <template x-for="(tab, idx) in pestanas" :key="idx">
+          <div x-show="pestanaActiva === idx"
+               x-transition:enter="transition-opacity duration-200"
+               x-transition:enter-start="opacity-0"
+               x-transition:enter-end="opacity-100"
+               class="p-5"
+               x-html="tab.contenido || ''">
+          </div>
+        </template>
+      </div>
+    </template>
+    <!-- Sin pestañas: contenido directo -->
+    <template x-if="pestanas.length === 0">
+      <div class="p-5" x-html="contenido || ''">
+      </div>
+    </template>
+  </div>
+
+  <!-- Pie con acciones -->
+  <div x-show="acciones.length > 0"
+       class="border-t border-base-300 px-5 py-4 shrink-0 flex items-center gap-2 justify-end">
+    <template x-for="(accion, idx) in acciones" :key="idx">
+      <button @click="accion.action ? accion.action() : null"
+              :class="accion.clase || 'btn btn-ghost btn-sm'"
+              :disabled="accion.deshabilitado">
+        <i :class="accion.icono" class="mr-1" x-show="accion.icono"></i>
+        <span x-text="accion.label"></span>
+      </button>
+    </template>
+  </div>
+
+  <!-- Indicador de estado de carga -->
+  <div x-show="cargando"
+       class="absolute inset-0 z-10 bg-base-100/80 backdrop-blur-sm flex items-center justify-center">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+</div>
+
+<script>
+/**
+ * [ID]SlideOver — Alpine.js componente slide-over reutilizable
+ * Uso: <div x-data="[ID]SlideOver()" x-init="init({...})">
+ *
+ * Opciones:
+ *   titulo: string
+ *   subtitulo: string
+ *   icono: string (clase Bootstrap Icon)
+ *   colorCabecera: string (clase bg-*)
+ *   colorIcono: string (clase text-*)
+ *   ancho: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+ *   redimensionable: boolean
+ *   contenido: string (HTML del cuerpo)
+ *   pestanas: [{label, icono, contenido}]
+ *   acciones: [{label, icono, clase, action, deshabilitado}]
+ *   accionesCabecera: [{label, icono, action}]
+ *   cargando: boolean
+ */
+function [ID]SlideOver() {
+  return {
+    abierto: false,
+    titulo: 'Detalle',
+    subtitulo: '',
+    icono: 'bi-info-lg',
+    colorCabecera: 'bg-primary/10',
+    colorIcono: 'text-primary',
+    ancho: 'md',
+    redimensionable: false,
+    contenido: '',
+    pestanas: [],
+    pestanaActiva: 0,
+    acciones: [],
+    accionesCabecera: [],
+    cargando: false,
+
+    // Estado interno de redimension
+    _redimensionando: false,
+    _anchoActual: null,
+
+    get anchoClase: function () {
+      if (this._anchoActual) return this._anchoActual;
+      var map = {
+        sm: 'max-w-sm',
+        md: 'max-w-md',
+        lg: 'max-w-lg',
+        xl: 'max-w-xl',
+        full: 'max-w-full'
+      };
+      return map[this.ancho] || 'max-w-md';
+    },
+
+    init: function (opts) {
+      opts = opts || {};
+      this.titulo = opts.titulo || 'Detalle';
+      this.subtitulo = opts.subtitulo || '';
+      this.icono = opts.icono || 'bi-info-lg';
+      this.colorCabecera = opts.colorCabecera || 'bg-primary/10';
+      this.colorIcono = opts.colorIcono || 'text-primary';
+      this.ancho = opts.ancho || 'md';
+      this.redimensionable = opts.redimensionable === true;
+      this.contenido = opts.contenido || '';
+      this.pestanas = opts.pestanas || [];
+      this.acciones = opts.acciones || [];
+      this.accionesCabecera = opts.accionesCabecera || [];
+
+      var self = this;
+      document.addEventListener('keydown', function (e) {
+        if (self.abierto && e.key === 'Escape') {
+          self.cerrar();
+        }
+      });
+    },
+
+    abrir: function (opts) {
+      if (opts) {
+        this.titulo = opts.titulo || this.titulo;
+        this.subtitulo = opts.subtitulo || '';
+        this.contenido = opts.contenido || this.contenido;
+        this.pestanas = opts.pestanas || this.pestanas;
+        this.acciones = opts.acciones || this.acciones;
+        this.icono = opts.icono || this.icono;
+        this.pestanaActiva = 0;
+      }
+      this.abierto = true;
+    },
+
+    cerrar: function () {
+      this.abierto = false;
+      this._anchoActual = null;
+    },
+
+    toggle: function () {
+      if (this.abierto) {
+        this.cerrar();
+      } else {
+        this.abrir();
+      }
+    },
+
+    // ─── Redimensionar (arrastrar borde izquierdo) ────
+    iniciarRedimension: function (e) {
+      // Solo desde el borde izquierdo del panel
+      var rect = e.currentTarget.getBoundingClientRect();
+      var dist = e.clientX - rect.left;
+      if (dist > 20) return; // Solo desde el borde
+
+      this._redimensionando = true;
+      var self = this;
+
+      function onMove(ev) {
+        if (!self._redimensionando) return;
+        var w = window.innerWidth - ev.clientX;
+        if (w < 280) w = 280;
+        if (w > window.innerWidth * 0.9) w = window.innerWidth * 0.9;
+        self._anchoActual = 'w-[' + w + 'px]';
+        // Aplicar inline
+        var panel = ev.currentTarget.closest('[role="dialog"]');
+        if (panel) {
+          panel.style.width = w + 'px';
+          panel.style.maxWidth = w + 'px';
+        }
+      }
+
+      function onUp() {
+        self._redimensionando = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      e.preventDefault();
+    }
+  };
+}
+</script>

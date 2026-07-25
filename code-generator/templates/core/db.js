@@ -39,6 +39,10 @@
   // db.version(2).stores(SCHEMA_V2).upgrade(tx => { ... });
   // window.DB_VERSION = 2;
   // ```
+  //
+  // Buenas prácticas:
+  // - Agregar *uuid a cada tabla de negocio para que el hook
+  //   db.on('creating') auto-genere identificadores estables de sync.
 
   // Fallback: una sola versión si el template no define migraciones
   window.DB_VERSION = 1;
@@ -50,6 +54,17 @@
   // sección "Migración Dexie".
 
   window.db = db;
+
+  // ─── Hook UUID automático ──────────────────────────
+  // Genera uuid en cada nuevo registro si no lo tiene.
+  // Requiere window.uuid() de crypto.js.
+  db.on('creating', function (primKey, obj, transaction) {
+    if (obj && !obj.uuid) {
+      if (typeof window.uuid === 'function') {
+        obj.uuid = window.uuid();
+      }
+    }
+  });
 
   // dbLocal — Dexie read-only helper (lectura instantánea desde IndexedDB)
   window.dbLocal = {

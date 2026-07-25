@@ -49,14 +49,16 @@ Registro de entrada y salida de empleados sin internet. Cada empleado marca desd
 
 ```javascript
 db.version(2).stores({
-  empleados: 'id, nombre, *puesto, *horario, telefono, activo, *createdBy, createdAt, updatedAt',
-  turnos: 'id, nombre, *horaEntrada, *horaSalida, createdAt, updatedAt',
-  marcajes: 'id, *empleadoId, *tipo, *fecha, *hora, *ubicacion, *metodo, *createdBy, createdAt',
-  reportes: 'id, *empleadoId, *periodo, *totalHoras, *retardos, *faltas, *createdBy, createdAt, updatedAt',
-  festivos: 'id, *fecha, nombre, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  empleados: 'id, *uuid, nombre, *puesto, *horario, telefono, activo, *createdBy, createdAt, updatedAt',
+  turnos: 'id, *uuid, nombre, *horaEntrada, *horaSalida, createdAt, updatedAt',
+  marcajes: 'id, *uuid, *empleadoId, *tipo, *fecha, *hora, *ubicacion, *metodo, *createdBy, createdAt',
+  reportes: 'id, *uuid, *empleadoId, *periodo, *totalHoras, *retardos, *faltas, *createdBy, createdAt, updatedAt',
+  festivos: 'id, *uuid, *fecha, nombre, createdAt, updatedAt'
 });
 ```
 

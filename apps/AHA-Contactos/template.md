@@ -50,13 +50,15 @@ Gestiona tus contactos de ventas, da seguimiento a clientes y organiza tu agenda
 
 ```javascript
 db.version(2).stores({
-  contactos: 'id, nombre, *telefono, *email, *empresa, *etiqueta, *notas, *ultimoContacto, *createdBy, createdAt, updatedAt',
-  historial: 'id, *contactoId, *tipo, *descripcion, *fecha, createdAt',
-  plantillas: 'id, nombre, *contenido, *categoria, *createdBy, createdAt, updatedAt',
-  recordatorios: 'id, *contactoId, *fecha, *nota, completado, *createdBy, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  contactos: 'id, *uuid, nombre, *telefono, *email, *empresa, *etiqueta, *notas, *ultimoContacto, *createdBy, createdAt, updatedAt',
+  historial: 'id, *uuid, *contactoId, *tipo, *descripcion, *fecha, createdAt',
+  plantillas: 'id, *uuid, nombre, *contenido, *categoria, *createdBy, createdAt, updatedAt',
+  recordatorios: 'id, *uuid, *contactoId, *fecha, *nota, completado, *createdBy, createdAt, updatedAt'
 });
 ```
 

@@ -48,15 +48,17 @@ Crea plantillas de inspección, asígnelas a equipos o ubicaciones, y capture re
 
 ```javascript
 db.version(2).stores({
-  plantillas: 'id, nombre, *categoriaId, *items, *createdBy, createdAt, updatedAt',
-  categorias_plantillas: 'id, nombre, createdAt, updatedAt',
-  ubicaciones: 'id, nombre, *area, *createdBy, createdAt, updatedAt',
-  equipos: 'id, nombre, *codigo, *ubicacionId, frecuencia, *createdBy, createdAt, updatedAt',
-  inspecciones: 'id, *plantillaId, *ubicacionId, *equipoId, *resultados, *fotos, *firma, resultado, *createdBy, createdAt, updatedAt',
-  programacion: 'id, *ubicacionId, *equipoId, *plantillaId, frecuencia, *proximaFecha, *ultimaFecha, *createdBy, createdAt, updatedAt',
   _sync_log: 'id, *tabla, *operacion, *idRegistro, *estado, *fecha, *createdBy, createdAt',
   _ia_chats: 'id, *titulo, *modelo, *createdBy, createdAt, updatedAt',
-  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt'
+  _ia_messages: 'id, *chatId, *rol, contenido, *createdBy, createdAt',
+  _files: '&path, tipo, nombre, mime, size, hash, refCount, createdAt, updatedAt',
+  _analytics: 'id, *page, *category, *action, *synced, *timestamp, createdAt',
+  plantillas: 'id, *uuid, nombre, *categoriaId, *items, *createdBy, createdAt, updatedAt',
+  categorias_plantillas: 'id, *uuid, nombre, createdAt, updatedAt',
+  ubicaciones: 'id, *uuid, nombre, *area, *createdBy, createdAt, updatedAt',
+  equipos: 'id, *uuid, nombre, *codigo, *ubicacionId, frecuencia, *createdBy, createdAt, updatedAt',
+  inspecciones: 'id, *uuid, *plantillaId, *ubicacionId, *equipoId, *resultados, *fotos, *firma, resultado, *createdBy, createdAt, updatedAt',
+  programacion: 'id, *uuid, *ubicacionId, *equipoId, *plantillaId, frecuencia, *proximaFecha, *ultimaFecha, *createdBy, createdAt, updatedAt'
 });
 ```
 
