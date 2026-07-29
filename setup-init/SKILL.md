@@ -342,7 +342,7 @@ echo --- CSS + Themes ---
 rem @tailwindcss/browser@{VER_TAILWIND} — ver stack-versions.json (JS runtime, genera CSS en browser)
 %CURL% "assets/js/libs/tailwind-browser.js" "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@{VER_TAILWIND}/dist/index.global.js"
 rem daisyui@{VER_DAISYUI} — ver stack-versions.json
-%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/dist/daisyui.min.css"
+%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/daisyui.css"
 %CURL% "assets/css/daisyui-themes.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/themes.css"
 rem bootstrap-icons@{VER_BSICONS} — ver stack-versions.json
 %CURL% "assets/css/bootstrap-icons.css" "https://cdn.jsdelivr.net/npm/bootstrap-icons@{VER_BSICONS}/font/bootstrap-icons.css"

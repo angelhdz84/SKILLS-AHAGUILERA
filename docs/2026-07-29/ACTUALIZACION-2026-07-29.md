@@ -177,7 +177,7 @@ Se auditó cada documento contra el estado real del repositorio.
 - assets/css/tailwind.min.css           ← tailwindcss@2.2.19 (CSS estático)
 + assets/js/libs/tailwind-browser.js    ← @tailwindcss/browser@4 (JS runtime)
 - assets/css/daisyui.min.css            ← daisyui@4.12.10/dist/full.css
-+ assets/css/daisyui.min.css            ← daisyui@5.6.14/dist/daisyui.min.css
++ assets/css/daisyui.min.css            ← daisyui@5.6.14/daisyui.css (en raíz, no dist/)
 + assets/css/daisyui-themes.css         ← daisyui@5.6.14/themes.css (nuevo)
 ```
 

@@ -62,7 +62,7 @@
       "status": "active",
       "profiles": ["lite", "professional", "business"],
       "files": {
-        "assets/css/daisyui.min.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/dist/daisyui.min.css",
+        "assets/css/daisyui.min.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/daisyui.css",
         "assets/css/daisyui-themes.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/themes.css"
       },
       "npm": "daisyui",

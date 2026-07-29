@@ -120,6 +120,6 @@ Desde julio 2026, todas las versiones de librerías se gestionan desde **un úni
 # Verificar que las URLs de CDN funcionan
 curl -I "https://cdn.jsdelivr.net/npm/alpinejs@3.15.12/dist/cdn.min.js"
 curl -I "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.0.14/dist/index.global.js"
-curl -I "https://cdn.jsdelivr.net/npm/daisyui@5.6.14/dist/daisyui.min.css"
+curl -I "https://cdn.jsdelivr.net/npm/daisyui@5.6.14/daisyui.css"
 curl -I "https://cdn.jsdelivr.net/npm/daisyui@5.6.14/themes.css"
 ```
