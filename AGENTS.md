@@ -41,6 +41,7 @@ Prompts in `.opencode/prompts/[agent].md`.
 | `/build` | code-generator: Fase A (core/index.html) + Fase B (modules, one per turn) |
 | `/test` | validation-engine: compliance → brand audit → DevTools/Playwright → QA rubric |
 | `/deploy` | deployment-jigue: commit + push + package per profile |
+| `/upgrade` | upgrade-engine: migra perfil Lite/Professional/Business e IA Lite/Full |
 
 Full command list in `.opencode/commands/`.
 
