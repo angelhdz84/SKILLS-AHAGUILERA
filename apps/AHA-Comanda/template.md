@@ -1,4 +1,4 @@
-# AHA Comanda — Toma de pedidos offline para restaurantes y bares
+﻿# AHA Comanda — Toma de pedidos offline para restaurantes y bares
 
 ## Descripción comercial
 
@@ -14,7 +14,7 @@ Sistema de comandas offline para restaurantes, bares y cocinas. El mesero toma e
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos
@@ -103,7 +103,7 @@ Me interesa el plan Standard.
 - [ ] Probar split de cuenta (2, 3, 4 personas)
 - [ ] Probar corte de caja contra ventas del día
 - [ ] Verificar export PDF del corte
-- [ ] Probar en .exe (Bun --compile)
+- [ ] Probar en .exe (NeutralinoJS)
 - [ ] Probar en .apk (GitHub Actions)
 - [ ] Tomar screenshot del mapa de mesas y comanda activa
 - [ ] Redactar descripción landing

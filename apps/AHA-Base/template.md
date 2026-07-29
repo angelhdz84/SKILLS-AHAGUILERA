@@ -1,4 +1,4 @@
-# AHA Base \u2014 Proyecto base para desarrollo de apps offline-first
+﻿# AHA Base \u2014 Proyecto base para desarrollo de apps offline-first
 
 ## Descripci\u00f3n comercial
 
@@ -13,7 +13,7 @@ Punto de partida para construir cualquier app AHA. Incluye el shell completo (ro
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada + branding | FlexSearch + Transformers.js QA |
 
 ## M\u00f3dulos

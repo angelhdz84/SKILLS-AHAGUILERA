@@ -1,4 +1,4 @@
-# AHA Rx — Recetas médicas offline para consultorios
+﻿# AHA Rx — Recetas médicas offline para consultorios
 
 ## Descripción comercial
 
@@ -13,7 +13,7 @@ Sistema de recetas médicas offline para médicos generales y consultorios. Regi
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos

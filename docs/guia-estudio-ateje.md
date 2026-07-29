@@ -203,7 +203,7 @@ Ateje/
 |   +-- plugin/                  # Plugin unificado (module.js, ia-core.js, ia-chat.js, tools/)
 |   +-- archived/                # Versiones viejas (lite/ y full/ separados)
 |
-+-- components/                  # Componentes UI (Pines)
++-- component-examples/          # Componentes UI de ejemplo (Pines)
 |   +-- pines/                   # ~40 componentes avanzados
 |
 +-- data/                        # (generado) Datos de la app

@@ -1,4 +1,4 @@
-# AHA Obra — Control de construcción y avance de obra offline
+﻿# AHA Obra — Control de construcción y avance de obra offline
 
 ## Descripción comercial
 
@@ -13,7 +13,7 @@ Sistema de control de obra offline para constructores y contratistas. Gestión d
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos

@@ -192,7 +192,7 @@ document.addEventListener('alpine:init', () => {
 Se inyecta como un **Drawer** fijo en el layout general de cualquier app AHA.
 
 ```html
-<!-- components/ui-ia-jutia.html -->
+<!-- ia-jutia/templates/plugin/module.js (Drawer inyectado via JS) -->
 
 <!-- Botón Flotante (se agrega en el layout base de AHA) -->
 <button 

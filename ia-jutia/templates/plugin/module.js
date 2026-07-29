@@ -1,4 +1,4 @@
-// modules/ia-jutia/module.js — IA Jutia Plugin Entry Point v1.0
+// modules/ia-jutia/module.js — IA Jutia Plugin Entry Point v2.0-plugin
 // Depende: Alpine.js, Dexie, FlexSearch (carga lazy)
 // Uso: <script src='modules/ia-jutia/module.js'></script> (DESPUES de core/app.js)
 
@@ -455,7 +455,7 @@
     '    <!-- Acerca de -->',
     '    <div class="card bg-base-200 rounded-box p-3">',
     '      <p class="text-xs font-semibold text-base-content/60 uppercase tracking-wider mb-2">Acerca de</p>',
-    '      <p class="text-[10px] text-base-content/40">IA Jutia Plugin v1.0</p>',
+    '      <p class="text-[10px] text-base-content/40">IA Jutia Plugin v2.0</p>',
     '      <p class="text-[10px] text-base-content/40">Motor FlexSearch + patrones offline</p>',
     '    </div>',
     '  </div>',
@@ -463,7 +463,7 @@
     '  <!-- Footer minimo (visible en todas las vistas) -->',
     '  <div class="p-2 border-t border-base-200 text-center">',
     '    <p class="text-[10px] text-base-content/30">',
-    '      <i class="bi bi-robot me-1"></i> IA Jutia v1.0 &mdash; respuestas offline',
+    '      <i class="bi bi-robot me-1"></i> IA Jutia v2.0 &mdash; respuestas offline',
     '    </p>',
     '  </div>',
     '</div>'

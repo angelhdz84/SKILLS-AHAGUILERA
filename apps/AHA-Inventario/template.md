@@ -1,4 +1,4 @@
-# AHA Inventario — Control de stock offline para pequeños negocios
+﻿# AHA Inventario — Control de stock offline para pequeños negocios
 
 ## Descripción comercial
 
@@ -13,7 +13,7 @@ Sistema de inventario offline para tiendas, bodegas y almacenes. Registro de pro
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos

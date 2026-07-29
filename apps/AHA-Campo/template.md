@@ -1,4 +1,4 @@
-# AHA Campo — Registro de campo offline para agricultura y ganadería
+﻿# AHA Campo — Registro de campo offline para agricultura y ganadería
 
 ## Descripción comercial
 
@@ -14,7 +14,7 @@ Lleva el registro diario de tus lotes de cultivo, ganado, insumos y gastos — t
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos

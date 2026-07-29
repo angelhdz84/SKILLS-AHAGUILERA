@@ -60,7 +60,7 @@ Business     ─────────►  Business                .exe + .apk
 | **Dexie.js** | 4.0+ | IndexedDB wrapper (CRUD offline) |
 | **CryptoJS** | 4.2+ | Cifrado AES de campos sensibles |
 | **Tailwind CSS** | 2.2+ | CSS utility-first (local, sin CDN) |
-| **DaisyUI** | 5.x | Componentes UI |
+| **DaisyUI** | 4.12+ | Componentes UI |
 | **Bootstrap Icons** | 1.11+ | Iconos vectoriales locales |
 | **Chart.js** | 4.4+ | Gráficos interactivos |
 | **jsPDF** | 2.5+ | Exportación PDF offline |

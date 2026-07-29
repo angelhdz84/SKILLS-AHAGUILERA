@@ -1,4 +1,4 @@
-# AHA Citas — Gestión de citas y agenda offline para negocios de servicios
+﻿# AHA Citas — Gestión de citas y agenda offline para negocios de servicios
 
 ## Descripción comercial
 
@@ -14,7 +14,7 @@ Agenda digital para negocios de servicios que manejan citas. Gestión de cliente
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos

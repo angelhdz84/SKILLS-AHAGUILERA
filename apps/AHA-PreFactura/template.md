@@ -1,4 +1,4 @@
-# AHA PreFactura — Prefacturación offline para freelancers
+﻿# AHA PreFactura — Prefacturación offline para freelancers
 
 ## Descripción comercial
 
@@ -15,7 +15,7 @@ Sistema de prefacturación offline para freelancers y pequeños negocios. Genera
 | Nivel | Perfil tecnico | Formato | IA |
 |-------|---------------|---------|----|
 | Inicio | Lite | ZIP + GitHub Pages | FlexSearch |
-| Profesional | Full | Bun --compile .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
+| Profesional | Full | NeutralinoJS .exe + GitHub Pages + Release | FlexSearch + Transformers.js QA |
 | Enterprise | Full + custom | Codigo fuente + UI personalizada | FlexSearch + Transformers.js QA |
 
 ## Módulos
