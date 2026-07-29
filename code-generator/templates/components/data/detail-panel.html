@@ -52,7 +52,7 @@
         </template>
       </div>
 
-      <div role="tablist" class="tabs tabs-bordered mb-6">
+      <div role="tablist" class="tabs tabs-border mb-6">
         <template x-for="(tab, idx) in tabs" :key="idx">
           <a role="tab" class="tab text-sm" :class="{ 'tab-active': tabActivo === idx }"
              @click="tabActivo = idx" x-text="tab.titulo"></a>
