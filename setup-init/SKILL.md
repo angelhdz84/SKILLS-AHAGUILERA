@@ -266,7 +266,7 @@ Antes de mostrar cualquier bloque, verifica:
 ### Perfil Lite:
 - [ ] ¿Incluye `<script type="module">` o `import/export`? → RECHAZAR
 - [ ] ¿Usa CDNs en `<head>` o `<body>`? → REEMPLAZAR por `assets/`
-- [ ] ¿Falta `pako.js`, `jspdf.js` o `xlsx.js`? → AGREGAR
+- [ ] ¿Falta `pako.umd.min.js`, `jspdf.js` o `xlsx.js`? → AGREGAR
 - [ ] ¿`index.html` no carga scripts en orden (libs → core → modules → main)? → REORDENAR
 - [ ] ¿No genera `project.config.js` con `modulosActivos` y `tema.colores`? → AGREGAR
 - [ ] ¿Existe `specs/[app].md` con `libreriasAdicionales`? → INYECTAR URLs en el script de descarga
@@ -319,7 +319,7 @@ Resolución de placeholders desde `stack-versions.json`:
 | `{VER_CHARTJS}` | `libraries.chartjs.pinned` |
 | `{VER_JSPDF}` | `libraries.jspdf.pinned` |
 | `{VER_XLSX}` | `libraries.xlsx.pinned` |
-| `{VER_QRCODE}` | `libraries.qrcodejs.pinned` |
+| `{VER_QRCODE}` | `libraries.qrcode.pinned` |
 
 *(La IA genera este bloque leyendo las versiones de `stack-versions.json`, reemplazando los placeholders con `libraries.{key}.pinned`, luego inyecta las URLs de librerías adicionales detectadas en la spec)*
 ```bat
@@ -359,7 +359,7 @@ rem dexie@{VER_DEXIE} — ver stack-versions.json
 rem crypto-js/{VER_CRYPTOJS} — ver stack-versions.json
 %CURL% "assets/js/libs/crypto-js.js" "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/{VER_CRYPTOJS}/crypto-js.min.js"
 rem pako/{VER_PAKO} — ver stack-versions.json
-%CURL% "assets/js/libs/pako.js" "https://cdnjs.cloudflare.com/ajax/libs/pako/{VER_PAKO}/pako.min.js"
+%CURL% "assets/js/libs/pako.umd.min.js" "https://cdn.jsdelivr.net/npm/pako@{VER_PAKO}/dist/browser/pako.umd.min.js"
 rem chart.js@{VER_CHARTJS} — ver stack-versions.json
 %CURL% "assets/js/libs/chart.js" "https://cdn.jsdelivr.net/npm/chart.js@{VER_CHARTJS}/dist/chart.umd.min.js"
 rem jspdf/{VER_JSPDF} — ver stack-versions.json
@@ -368,8 +368,8 @@ rem xlsx-{VER_XLSX} — ver stack-versions.json
 %CURL% "assets/js/libs/xlsx.js" "https://cdn.sheetjs.com/xlsx-{VER_XLSX}/package/dist/xlsx.full.min.js"
 
 echo --- Adicionales (desde spec) ---
-:: QRCode.js — ver stack-versions.json (libreria legacy, alternativa: npm qrcode)
-:: %CURL% "assets/js/libs/qrcode.min.js" "https://cdn.jsdelivr.net/npm/qrcodejs@{VER_QRCODE}/qrcode.min.js"
+:: qrcode — ver stack-versions.json (npm qrcode, reemplaza QRCode.js legacy)
+%CURL% "assets/js/libs/qrcode.min.js" "https://cdn.jsdelivr.net/npm/qrcode@{VER_QRCODE}/lib/browser.min.js"
 :: (La IA inyecta aquí las URLs de librerías adicionales detectadas en la spec)
 
 echo ✅ Descarga finalizada. Presiona una tecla para salir.

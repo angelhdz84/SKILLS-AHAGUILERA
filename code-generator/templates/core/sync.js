@@ -170,7 +170,7 @@
                       json = JSON.parse(content);
                     } catch (e) {
                       try {
-                        var decompressed = pako.ungzip(content, { to: 'string' });
+                        var decompressed = pako.ungzip(content, { toText: true });
                         json = JSON.parse(decompressed);
                       } catch (e2) {
                         json = JSON.parse(content);

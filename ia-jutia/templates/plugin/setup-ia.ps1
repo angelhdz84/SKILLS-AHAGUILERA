@@ -27,7 +27,7 @@ if (-not (Test-Path $assetsDir)) {
 
 # --- FlexSearch ---
 $flexPath = Join-Path $assetsDir "flexsearch.min.js"
-$flexUrl = "https://cdn.jsdelivr.net/npm/flexsearch@0.7.31/dist/flexsearch.min.js"
+$flexUrl = "https://cdn.jsdelivr.net/npm/flexsearch@0.8.212/dist/flexsearch.bundle.min.js"
 $flexMinSize = 10000  # 10KB min esperado
 
 if ((Test-Path $flexPath) -and -not $Force) {

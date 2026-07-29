@@ -86,6 +86,16 @@ Playwright + pytest for template structure validation.
 | `code-generator/templates/core/` | 20 core templates (app, db, crypto, ui, theme, main, sw, manifest, etc.) |
 | `apps/AHA-*/template.md` | 15 app templates (14 business + 1 dev) ready for pipeline |
 
+## Library Migrations (Jul 2026)
+
+| # | Migration | Status | Key Changes |
+|---|-----------|--------|-------------|
+| 4 | QRCode.js → qrcode npm v1.5.4 | ✅ | `QRCode.toDataURL()` Promise API, CDN jsDelivr |
+| 5 | pako v2.1.0 → v3.0.1 | ✅ | `{to:'string'}`→`{toText:true}`, CDN→jsDelivr, `pako.umd.min.js` |
+| 6 | jsPDF v2.5.1 → v4.2.1 | ✅ | Constructor compatible, CVE path traversal corregido |
+| 7 | FlexSearch v0.7.31 → v0.8.212 | ✅ | CDN `flexsearch.bundle.min.js`, API backward compatible |
+| 3 | CryptoJS → Web Crypto API | ⏭️ | Diferido (esfuerzo Alto, sin bug activo) |
+
 ## Global Installation
 
 ```powershell

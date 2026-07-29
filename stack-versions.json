@@ -113,20 +113,20 @@
     },
     "pako": {
       "name": "pako",
-      "pinned": "2.1.0",
-      "latest": "3.0.0",
+      "pinned": "3.0.1",
+      "latest": "3.0.1",
       "type": "js",
       "scope": "core",
       "status": "active",
       "profiles": ["lite", "professional", "business"],
       "files": {
-        "assets/js/libs/pako.js": "https://cdnjs.cloudflare.com/ajax/libs/pako/{version}/pako.min.js"
+        "assets/js/libs/pako.umd.min.js": "https://cdn.jsdelivr.net/npm/pako@{version}/dist/browser/pako.umd.min.js"
       },
       "npm": "pako",
-      "npmSpec": "^2.1.0",
+      "npmSpec": "^3.0.0",
       "changelog": "https://github.com/nodeca/pako/blob/master/CHANGELOG.md",
       "breaking": true,
-      "notes": "v3.0.0 (Jun 2026) cambia a named-only exports, TypeScript. Esperar antes de migrar."
+      "notes": "v3: {to:'string'}→{toText:true}, CDN jsDelivr (cdnjs no tiene v3), pako.min.js→pako.umd.min.js."
     },
     "chartjs": {
       "name": "Chart.js",
@@ -180,7 +180,7 @@
     },
     "jspdf": {
       "name": "jsPDF",
-      "pinned": "2.5.1",
+      "pinned": "4.2.1",
       "latest": "4.2.1",
       "type": "js",
       "scope": "core",
@@ -190,10 +190,10 @@
         "assets/js/libs/jspdf.js": "https://cdnjs.cloudflare.com/ajax/libs/jspdf/{version}/jspdf.umd.min.js"
       },
       "npm": "jspdf",
-      "npmSpec": "^2.5.0",
+      "npmSpec": "^4.2.0",
       "changelog": "https://github.com/parallax/jsPDF/releases",
       "breaking": true,
-      "notes": "v3 y v4 tienen breaking changes. v4.2.1 corrige CVE path traversal. Migrar con precaucion."
+      "notes": "v4 constructor API compatible con nuestro export.js. CVE path traversal corregido. CDN cdnjs ok."
     },
     "xlsx": {
       "name": "SheetJS (xlsx)",
@@ -212,28 +212,22 @@
       "breaking": false,
       "notes": "npm registry esta desactualizado (0.18.5). Usar siempre CDN oficial sheetjs.com."
     },
-    "qrcodejs": {
-      "name": "QRCode.js",
-      "pinned": "1.0.0",
-      "latest": "1.0.0",
+    "qrcode": {
+      "name": "QRCode (npm qrcode)",
+      "pinned": "1.5.4",
+      "latest": "1.5.4",
       "type": "js",
       "scope": "optional",
-      "status": "legacy",
+      "status": "active",
       "profiles": ["lite", "professional", "business"],
       "files": {
-        "assets/js/libs/qrcode.min.js": "https://cdn.jsdelivr.net/npm/qrcodejs@{version}/qrcode.min.js"
+        "assets/js/libs/qrcode.min.js": "https://cdn.jsdelivr.net/npm/qrcode@{version}/lib/browser.min.js"
       },
       "npm": "qrcode",
-      "npmSpec": "^1.5.4",
-      "changelog": "https://github.com/cozmo/qrcode/releases",
+      "npmSpec": "^1.5.0",
+      "changelog": "https://github.com/soldair/node-qrcode/releases",
       "breaking": false,
-      "alternative": {
-        "name": "qrcode (npm)",
-        "reason": "QRCode.js original abandonado desde 2015. 'qrcode' npm (v1.5.4) es activo, compatible con canvas/SVG/table.",
-        "effort": "Bajo (API similar, cambiar nombre de la funcion)",
-        "url": "https://www.npmjs.com/package/qrcode"
-      },
-      "notes": "Actual libreria original de davidshimjs abandonada. Recomendado migrar a 'qrcode' npm."
+      "notes": "Migrado desde QRCode.js (davidshimjs, abandonado). API: QRCode.toCanvas(), QRCode.toDataURL()."
     },
     "sql.js": {
       "name": "sql.js (SQLite WASM)",
@@ -254,7 +248,7 @@
     },
     "flexsearch": {
       "name": "FlexSearch",
-      "pinned": "0.7.31",
+      "pinned": "0.8.212",
       "latest": "0.8.212",
       "type": "js",
       "scope": "ia",
@@ -264,10 +258,10 @@
         "assets/js/libs/flexsearch.min.js": "https://cdn.jsdelivr.net/npm/flexsearch@{version}/dist/flexsearch.bundle.min.js"
       },
       "npm": "flexsearch",
-      "npmSpec": "^0.7.0",
+      "npmSpec": "^0.8.0",
       "changelog": "https://github.com/nextapps-de/flexsearch/releases",
       "breaking": true,
-      "notes": "v0.8 introduce Persistent Indexes y cambios de API. Evaluar si el modulo IA lo necesita."
+      "notes": "v0.8: Persistent Indexes vía IndexedDB. API backward compatible con v0.7 (Document constructor same). Para persistencia: mount(db) + commit()."
     },
     "dayjs": {
       "name": "Day.js",
@@ -289,7 +283,7 @@
   "profiles": {
     "lite": {
       "display": "Lite (Essential)",
-      "libs": ["alpinejs", "tailwindcss", "daisyui", "dexie", "cryptojs", "pako", "chartjs", "bootstrap-icons", "animate.css", "jspdf", "xlsx", "qrcodejs"],
+      "libs": ["alpinejs", "tailwindcss", "daisyui", "dexie", "cryptojs", "pako", "chartjs", "bootstrap-icons", "animate.css", "jspdf", "xlsx", "qrcode"],
       "optional": ["dayjs"],
       "ia": ["flexsearch"]
     },

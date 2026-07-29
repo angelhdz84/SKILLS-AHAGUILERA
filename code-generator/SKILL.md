@@ -525,13 +525,14 @@ todos los plugins nativos funcionen con fallback web automatico.
 <script src="assets/js/libs/alpine.js"></script>
 <script src="assets/js/libs/dexie.js"></script>
 <script src="assets/js/libs/crypto-js.js"></script>
-<script src="assets/js/libs/pako.js"></script>
+<script src="assets/js/libs/pako.umd.min.js"></script>
 <script src="assets/js/libs/chart.js"></script>
 <script src="assets/js/libs/jspdf.js"></script>
 <script src="assets/js/libs/xlsx.js"></script>
 
 <!-- 📚 JS Librerías adicionales (desde spec) -->
 <script src="assets/js/libs/qrcode.min.js"></script>
+
 <script src="assets/js/libs/dayjs.min.js"></script>
 <!-- FIN librerías adicionales -->
 
@@ -1281,9 +1282,9 @@ window.SyncEngine = {
         for (let i = 0; i < words.sigBytes; i++) {
           bytes[i] = (words.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
         }
-        decompressed = pako.inflate(bytes, { to: 'string' });
+        decompressed = pako.inflate(bytes, { toText: true });
       } else {
-        decompressed = pako.inflate(data, { to: 'string' });
+        decompressed = pako.inflate(data, { toText: true });
       }
 
       const backup = JSON.parse(decompressed);

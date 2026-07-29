@@ -50,7 +50,7 @@ function [ID]_qr() {
     error: '',
 
     init() {
-      if (typeof QRCode === 'undefined') {
+      if (typeof QRCode === 'undefined' || typeof QRCode.toDataURL !== 'function') {
         this.error = 'QRCode library not loaded. Include qrcode.min.js'
         return
       }
@@ -60,12 +60,14 @@ function [ID]_qr() {
     generateQR() {
       this.error = ''
       if (!this.text.trim()) { this.qrSrc = ''; return }
-      try {
-        const qr = new QRCode({ content: this.text, width: this.size, height: this.size, color: '#000000', background: '#ffffff' })
-        this.qrSrc = qr.toDataURL()
-      } catch (e) {
+      QRCode.toDataURL(this.text, {
+        width: this.size,
+        color: { dark: '#000000', light: '#ffffff' }
+      }).then(url => {
+        this.qrSrc = url
+      }).catch(e => {
         this.error = e.message || 'Error generando QR'
-      }
+      })
     },
 
     async copyQR() {

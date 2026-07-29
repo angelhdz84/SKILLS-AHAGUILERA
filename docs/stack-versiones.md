@@ -40,10 +40,10 @@ Desde julio 2026, todas las versiones de librerías se gestionan desde **un úni
 | **Chart.js** | `4.4.6` | `4.5.1` | patch | active | — |
 | **Bootstrap Icons** | `1.11.3` | `1.13.1` | minor | active | — |
 | **animate.css** | `4.1.1` | `4.1.1` | — | **legacy** 💤 | CSS nativo (bajo) |
-| **pako** | `2.1.0` | `3.0.0` | **major** 🔴 | active | v3 breaking (TypeScript) |
-| **jsPDF** | `2.5.1` | `4.2.1` | **major** 🔴 | active | v3/v4 breaking + fix CVE |
+| **pako** | `3.0.1` | `3.0.1` | **major** ✅ | **active** | v3 migrada (toText, CDN jsDelivr) |
+| **jsPDF** | `4.2.1` | `4.2.1` | **major** ✅ | **active** | v4 migrada, CVE corregido |
 | **SheetJS** | `0.20.2` | `0.20.3` | patch | active | — |
-| **QRCode.js** | `1.0.0` | `1.0.0` | — | **legacy** 💤 | qrcode npm (bajo) |
+| **QRCode (npm)** | `1.5.4` | `1.5.4` | — | **active** ✅ | QRCode.js reemplazado |
 | **sql.js** | `1.10` | `1.14.1` | minor | active | — |
 | **FlexSearch** | `0.7.31` | `0.8.212` | major 🟡 | active | Persistent Indexes |
 
@@ -65,19 +65,11 @@ Desde julio 2026, todas las versiones de librerías se gestionan desde **un úni
 
 **Recomendación:** Mantener `4.2.0` por ahora. Evaluar migración a Web Crypto API cuando se refactorice el módulo de cifrado.
 
-### QRCode.js `1.0.0` (legacy)
+### QRCode (npm) `1.5.4` ✅
 
-**Situación:** Proyecto original de davidshimjs abandonado desde 2015. npm `qrcodejs` no recibe actualizaciones.
+**Situación:** Migrado desde QRCode.js (davidshimjs, abandonado 2015). Ahora usa `qrcode` npm v1.5.4 (soldair/node-qrcode, activo).
 
-**Opciones:**
-
-| Opción | Esfuerzo | Pros | Contras |
-|--------|:--------:|------|---------|
-| 🔀 **Seguir con 1.0.0** | Ninguno | Funciona, 0 dependencias | Sin mantenimiento |
-| ✅ **qrcode npm `^1.5.4`** | Bajo | Activo, canvas/SVG/table, 10M semanales | API similar, cambiar nombre de función |
-| 🎨 **qr-code-styling** | Medio | QR con estilo (logo, colores, forma) | Más peso, API diferente |
-
-**Recomendación:** Migrar a `qrcode` npm cuando se trabaje en el módulo que lo use. Cambio sencillo.
+**API:** `QRCode.toDataURL(text, options)` → devuelve Promise\<string\>. `QRCode.toCanvas(canvas, text, options)`. Ambas compatibles con UMD browser.
 
 ### animate.css `4.1.1` (legacy)
 

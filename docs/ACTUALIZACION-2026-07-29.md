@@ -1,7 +1,7 @@
 # ACTUALIZACION del Stack Ateje
 
 > **Fecha:** 29 de julio de 2026
-> **Commits involucrados:** cce112b → 0437ce6 + migración (7+ commits, main)
+> **Commits involucrados:** cce112b → e5bb8df (8 commits, main)
 > **Líneas cambiadas:** ~34 insertadas, ~7,000 eliminadas
 
 ---
@@ -243,7 +243,7 @@ docs/
 | **SheetJS** | 0.20.2 | Excel export |
 | **pako** | 2.1.0 | Compresión |
 | **sql.js** | 1.10 | SQLite WASM (Professional/Business) |
-| **FlexSearch** | 0.7.31 | Búsqueda semántica |
+| **FlexSearch** | 0.8.212 | Búsqueda semántica |
 
 ### Herramientas globales
 
@@ -261,6 +261,9 @@ docs/
 ## 6. Historial de Commits
 
 ```
+e5bb8df fix: migrate tabs DaisyUI v4->v5 patterns in code-generator templates
+88c608d fix: update DaisyUI v5 CDN path (daisyui.css at root, not dist/daisyui.min.css)
+970b8a7 feat: migrate Tailwind v2->v4 (@tailwindcss/browser) + DaisyUI v4->v5
 0437ce6 docs: minimal doc set — remove redundant docs, fix Bun→NeutralinoJS, DaisyUI version, IA Jutia version
 7146892 chore: remove portable zip from tracking, add to gitignore
 047a749 chore: cleanup repo — remove backups, archived skills, generated HTMLs, rename components
@@ -278,9 +281,9 @@ cce112b feat(core): migraciones Dexie, CRM enriquecido, índices POS, edge cases
 | 1 | ✅ DaisyUI v4.12 → v5.6 (con Tailwind v4) | **Completa** | Migrado |
 | 2 | ✅ Tailwind v2 → v4 (@tailwindcss/browser) | **Completa** | Migrado |
 | 3 | Migrar CryptoJS → Web Crypto API | Baja | Solo si se refactoriza módulo cipher |
-| 4 | Migrar QRCode.js → qrcode npm | Baja | API similar, cambio sencillo |
-| 5 | Migrar pako v2 → v3 | Baja | Breaking: named-only exports, esperar |
-| 6 | Migrar jsPDF v2 → v4 | Baja | Breaking + CVE path traversal corregido |
-| 7 | Evaluar FlexSearch v0.8 (Persistent Indexes) | Baja | Si el módulo IA lo necesita |
-| 8 | Verificar tests con DaisyUI v5 + Tailwind v4 | Media | Clases DaisyUI pueden requerir ajustes |
-| 9 | Actualizar app templates (14 AHA-*) si usan markup DaisyUI 4 | Media | bg-opacity-* → bg-*/50 |
+| 4 | ✅ QRCode.js → qrcode npm v1.5.4 | **Completa** | Componente + CDN + docs migrados |
+| 5 | ✅ pako v2.1.0 → v3.0.1 | **Completa** | CDN→jsDelivr, toText, breaking migrado |
+| 6 | ✅ jsPDF v2.5.1 → v4.2.1 | **Completa** | Constructor compatible, CVE corregido |
+| 7 | ✅ FlexSearch v0.7.31 → v0.8.212 | **Completa** | CDN jsDelivr mismo path, API backward compatible |
+| 8 | ✅ Migrar code-generator templates a DaisyUI v5 | **Completa** | tabs-bordered→tabs-border, tab-lg→container |
+| 9 | ✅ App templates (14 AHA-*) sin markup HTML | **Completa** | Son specs, no requieren cambios |

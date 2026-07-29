@@ -46,8 +46,11 @@ Lee `stack-versions.json` (fuente central de versiones), consulta las últimas v
   💤 Legacy: 2  |  ⚠️ Deprecated: 1
 
 📋 Alternativas disponibles:
-  CryptoJS → Web Crypto API (esfuerzo Alto)
-  QRCode.js → qrcode npm (esfuerzo Bajo)
+  CryptoJS → Web Crypto API (esfuerzo Alto — diferido)
+  ✅ QRCode.js → qrcode npm (completada)
+  ✅ pako v2.1.0 → v3.0.1 (completada)
+  ✅ jsPDF v2.5.1 → v4.2.1 (completada)
+  ✅ FlexSearch v0.7.31 → v0.8.212 (completada)
 ```
 
 ## Archivos modificados

@@ -297,7 +297,7 @@ Esto escanea el HTML generado contra 24 anti-patrones sin LLM. Integrar resultad
 ### ❌ Regla 6: Librerías Adicionales mal referenciadas
 ```html
 <!-- PATRÓN PROHIBIDO: Cargar librería adicional desde CDN en runtime -->
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/lib/browser.min.js"></script>
 
 <!-- PATRÓN PROHIBIDO: Librería adicional no listada en spec -->
 <!-- La librería se usa en un módulo pero nunca se agregó a la spec ni al index.html -->
