@@ -308,7 +308,7 @@ Resolución de placeholders desde `stack-versions.json`:
 
 | Placeholder | Key en stack-versions.json |
 |------------|--------------------------|
-| `{VER_TAILWIND}` | `libraries.tailwindcss.pinned` |
+| `{VER_TAILWIND}` | `libraries.tailwindcss.pinned` (ahora @tailwindcss/browser) |
 | `{VER_DAISYUI}` | `libraries.daisyui.pinned` |
 | `{VER_BSICONS}` | `libraries.bootstrap-icons.pinned` |
 | `{VER_ANIMATE}` | `libraries.animate-css.pinned` → `animate.css` |
@@ -338,11 +338,12 @@ if not exist "assets\fonts" mkdir "assets\fonts"
 
 set "CURL=curl -f -L --retry 3 --retry-delay 2 -# -o"
 
-echo --- Base: CSS y Fuentes ---
-rem tailwindcss@{VER_TAILWIND} — ver stack-versions.json
-%CURL% "assets/css/tailwind.min.css" "https://cdn.jsdelivr.net/npm/tailwindcss@{VER_TAILWIND}/dist/tailwind.min.css"
+echo --- CSS + Themes ---
+rem @tailwindcss/browser@{VER_TAILWIND} — ver stack-versions.json (JS runtime, genera CSS en browser)
+%CURL% "assets/js/libs/tailwind-browser.js" "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@{VER_TAILWIND}/dist/index.global.js"
 rem daisyui@{VER_DAISYUI} — ver stack-versions.json
-%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/dist/full.css"
+%CURL% "assets/css/daisyui.min.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/dist/daisyui.min.css"
+%CURL% "assets/css/daisyui-themes.css" "https://cdn.jsdelivr.net/npm/daisyui@{VER_DAISYUI}/themes.css"
 rem bootstrap-icons@{VER_BSICONS} — ver stack-versions.json
 %CURL% "assets/css/bootstrap-icons.css" "https://cdn.jsdelivr.net/npm/bootstrap-icons@{VER_BSICONS}/font/bootstrap-icons.css"
 rem animate.css/{VER_ANIMATE} — ver stack-versions.json

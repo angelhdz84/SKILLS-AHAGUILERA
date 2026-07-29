@@ -1,7 +1,7 @@
 {
   "$schema": "./stack-versions.schema.json",
   "version": "1.0.0",
-  "updated": "2026-07-08",
+  "updated": "2026-07-29",
   "auditUrl": "https://raw.githubusercontent.com/anomalyco/Ateje/main/docs/stack-versiones.md",
   "notes": [
     "Este archivo es la UNICA fuente de verdad para versiones de librerias del Stack Ateje.",
@@ -36,40 +36,41 @@
       "breaking": false
     },
     "tailwindcss": {
-      "name": "Tailwind CSS",
-      "pinned": "2.2.19",
-      "latest": "4.3.2",
-      "type": "css",
+      "name": "Tailwind CSS (Browser CDN)",
+      "pinned": "4.0.14",
+      "latest": "4.0.14",
+      "type": "js",
       "scope": "core",
-      "status": "deprecated",
+      "status": "active",
       "profiles": ["lite", "professional", "business"],
       "files": {
-        "assets/css/tailwind.min.css": "https://cdn.jsdelivr.net/npm/tailwindcss@{version}/dist/tailwind.min.css"
+        "assets/js/libs/tailwind-browser.js": "https://cdn.jsdelivr.net/npm/@tailwindcss/browser@{version}/dist/index.global.js"
       },
-      "npm": "tailwindcss",
-      "npmSpec": "^2.2.0",
+      "npm": "@tailwindcss/browser",
+      "npmSpec": "^4.0.0",
       "changelog": "https://github.com/tailwindlabs/tailwindcss/releases",
       "breaking": true,
       "migrationGuide": "https://tailwindcss.com/docs/upgrade-guide",
-      "notes": "v2.2.19 MUY obsoleta. La migracion a v3 requiere cambios en clases CSS (bg-opacity-* -> bg-black/50). v4 es CSS-first sin PostCSS. Evaluar migracion con DaisyUI coordinada."
+      "notes": "v4 es CSS-first + browser runtime (@tailwindcss/browser). Reemplaza tailwindcss v2 CSS estatico. Incluir como <script> en <head>, antes de daisyui. Escanea DOM y genera utilidades en runtime."
     },
     "daisyui": {
       "name": "DaisyUI",
-      "pinned": "4.12.10",
+      "pinned": "5.6.14",
       "latest": "5.6.14",
       "type": "css",
       "scope": "core",
-      "status": "deprecated",
+      "status": "active",
       "profiles": ["lite", "professional", "business"],
       "files": {
-        "assets/css/daisyui.min.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/dist/full.css"
+        "assets/css/daisyui.min.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/dist/daisyui.min.css",
+        "assets/css/daisyui-themes.css": "https://cdn.jsdelivr.net/npm/daisyui@{version}/themes.css"
       },
       "npm": "daisyui",
-      "npmSpec": "^4.12.0",
+      "npmSpec": "^5.0.0",
       "changelog": "https://daisyui.com/docs/changelog/",
       "breaking": true,
       "migrationGuide": "https://daisyui.com/docs/migration/",
-      "notes": "v4 -> v5 cambia a configuracion CSS-only (sin tailwind.config.js). Requiere Tailwind v3+. Migrar siempre junto con Tailwind."
+      "notes": "v5 es CSS-only (@plugin 'daisyui' en PostCSS). Para CDN: incluir daisyui.min.css + themes.css. Requiere @tailwindcss/browser@4 como <script>. Variables de color cambiaron a formato oklch (--color-primary en vez de --p)."
     },
     "dexie": {
       "name": "Dexie.js",

@@ -36,8 +36,8 @@ Lee `stack-versions.json` (fuente central de versiones), consulta las últimas v
    2026-07-08 14:30
 
 ✅ Alpine.js    3.14.1 → 3.15.12  (minor)
-🔴 Tailwind CSS 2.2.19 → 4.3.2   (major) [BREAKING]
-🟡 DaisyUI      4.12.10 → 5.6.14 (major)
+✅ Tailwind CSS 4.0.14 → 4.0.14  (actual)
+✅ DaisyUI      5.6.14 → 5.6.14  (actual)
 ✅ Dexie.js     4.0.8 → 4.4.4    (minor)
 💤 CryptoJS     4.2.0 → 4.2.0    (legacy)
   ...
