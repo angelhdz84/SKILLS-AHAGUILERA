@@ -20,6 +20,27 @@
     initFull: async function() {
       console.log('[ia-full] Inicializando perfil Full+...');
 
+      // 0. Cargar assets bajo demanda (offline-first: no bloquea DOMContentLoaded)
+      var assets = [
+        'assets/flexsearch.min.js',
+        'assets/transformers.min.js',
+        'assets/pdf.min.js',
+        'assets/mammoth.min.js',
+        'assets/xlsx.full.min.js',
+        'assets/tesseract.min.js'
+      ];
+      for (var ai = 0; ai < assets.length; ai++) {
+        try {
+          if (!window.__iaAssetLoaded || !window.__iaAssetLoaded[assets[ai]]) {
+            await Full._loadScript(MODULE_PATH + assets[ai]);
+            window.__iaAssetLoaded = window.__iaAssetLoaded || {};
+            window.__iaAssetLoaded[assets[ai]] = true;
+          }
+        } catch(e) {
+          console.warn('[ia-full] No se pudo cargar ' + assets[ai] + ': ' + e.message);
+        }
+      }
+
       // 1. Configurar Transformers.js para modo offline
       if (typeof self.Transformers !== 'undefined') {
         self.Transformers.env.localModelPath = MODULE_PATH + 'models/';

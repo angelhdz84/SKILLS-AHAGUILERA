@@ -129,6 +129,19 @@ if ((Test-Path $iaFullPath)) {
         Write-Output "[OK]  Mammoth.js presente"
     }
 
+    # SheetJS UMD (XLSX)
+    $xlsPath = Join-Path $assetsDir "xlsx.full.min.js"
+    if (-not (Test-Path $xlsPath) -or $Force) {
+        Write-Output "[Full+] Descargando SheetJS..."
+        try {
+            Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" -OutFile $xlsPath -UseBasicParsing
+        } catch {
+            Write-Output "[ERR]  No se pudo descargar SheetJS: $_"
+        }
+    } else {
+        Write-Output "[OK]  SheetJS presente"
+    }
+
     # Tesseract.js UMD (OCR) + assets offline (worker, core WASM, datos spa)
     $tesAssets = @(
         @("tesseract.min.js", "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"),
