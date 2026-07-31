@@ -404,6 +404,9 @@
         reader.onload = async function() {
           try {
             var result = await window.Tesseract.recognize(reader.result, 'spa', {
+              workerPath: 'modules/ia-jutia/assets/worker.min.js',
+              corePath: 'modules/ia-jutia/assets/tesseract-core-simd.wasm.js',
+              langPath: 'modules/ia-jutia/assets/tessdata/',
               logger: function(m) {
                 if (m.status === 'recognizing text') {
                   var store = typeof Alpine !== 'undefined' ? Alpine.store('ia') : null;
