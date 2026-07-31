@@ -52,7 +52,7 @@ if (-not (Test-Path $flexPath) -or $Force) {
             Write-Output "[WARN] Archivo pequeno ($size bytes). Podria estar incompleto."
         }
     } catch {
-        Write-Output "[ERR]  No se pudo descargar FlexSearch: $_"
+        $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar FlexSearch: $_"
         Write-Output "[...] El plugin usara CDN fallback en tiempo de ejecucion."
     }
 }
@@ -64,6 +64,8 @@ if ((Test-Path $iaFullPath)) {
     Write-Output ""
     Write-Output "[Full+] Detectado perfil Full+"
 
+    $script:dlErrors = 0
+
     # Transformers.js UMD (mismo global window.Transformers que espera ia-full.js/ia-worker.js)
     $tfPath = Join-Path $assetsDir "transformers.min.js"
     if (-not (Test-Path $tfPath) -or $Force) {
@@ -71,7 +73,7 @@ if ((Test-Path $iaFullPath)) {
         try {
             Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0/dist/transformers.min.js" -OutFile $tfPath -UseBasicParsing
         } catch {
-            Write-Output "[ERR]  No se pudo descargar Transformers.js: $_"
+            $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar Transformers.js: $_"
         }
     } else {
         Write-Output "[OK]  Transformers.js presente"
@@ -94,7 +96,7 @@ if ((Test-Path $iaFullPath)) {
             try {
                 Invoke-WebRequest -Uri $file[1] -OutFile $path -UseBasicParsing
             } catch {
-                Write-Output "[ERR]  No se pudo descargar $($file[0]): $_"
+                $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar $($file[0]): $_"
             }
         } else {
             Write-Output "[OK]  WASM $($file[0]) presente"
@@ -110,7 +112,7 @@ if ((Test-Path $iaFullPath)) {
             $pdfWorker = Join-Path $assetsDir "pdf.worker.min.js"
             Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js" -OutFile $pdfWorker -UseBasicParsing
         } catch {
-            Write-Output "[ERR]  No se pudo descargar PDF.js: $_"
+            $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar PDF.js: $_"
         }
     } else {
         Write-Output "[OK]  PDF.js presente"
@@ -123,7 +125,7 @@ if ((Test-Path $iaFullPath)) {
         try {
             Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js" -OutFile $mamPath -UseBasicParsing
         } catch {
-            Write-Output "[ERR]  No se pudo descargar Mammoth.js: $_"
+            $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar Mammoth.js: $_"
         }
     } else {
         Write-Output "[OK]  Mammoth.js presente"
@@ -136,7 +138,7 @@ if ((Test-Path $iaFullPath)) {
         try {
             Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" -OutFile $xlsPath -UseBasicParsing
         } catch {
-            Write-Output "[ERR]  No se pudo descargar SheetJS: $_"
+            $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar SheetJS: $_"
         }
     } else {
         Write-Output "[OK]  SheetJS presente"
@@ -155,7 +157,7 @@ if ((Test-Path $iaFullPath)) {
             try {
                 Invoke-WebRequest -Uri $tes[1] -OutFile $tesPath -UseBasicParsing
             } catch {
-                Write-Output "[ERR]  No se pudo descargar $($tes[0]): $_"
+                $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar $($tes[0]): $_"
             }
         } else {
             Write-Output "[OK]  $($tes[0]) presente"
@@ -171,7 +173,7 @@ if ((Test-Path $iaFullPath)) {
         try {
             Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/@tesseract.js-data/spa/4.0.0_best_int/spa.traineddata.gz" -OutFile $spaPath -UseBasicParsing
         } catch {
-            Write-Output "[ERR]  No se pudo descargar spa.traineddata.gz: $_"
+            $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar spa.traineddata.gz: $_"
         }
     } else {
         Write-Output "[OK]  spa.traineddata.gz presente"
@@ -200,11 +202,40 @@ if ((Test-Path $iaFullPath)) {
             try {
                 Invoke-WebRequest -Uri $model[1] -OutFile $path -UseBasicParsing
             } catch {
-                Write-Output "[ERR]  No se pudo descargar $($model[0]): $_"
+                $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar $($model[0]): $_"
             }
         } else {
             Write-Output "[OK]  Modelo $($model[0]) presente"
         }
+    }
+
+    # Validacion de integridad: archivos clave no vacios ni truncados
+    $clave = @(
+        @("assets\wasm\ort-wasm-simd-threaded.wasm", 1000000),
+        @("assets\wasm\sql-wasm.wasm", 100000),
+        @("assets\pdf.min.js", 100000),
+        @("assets\transformers.min.js", 100000),
+        @("assets\tesseract.min.js", 50000),
+        @("models\Xenova\all-MiniLM-L6-v2\onnx\model_quantized.onnx", 1000000)
+    )
+    foreach ($ck in $clave) {
+        $cp = Join-Path $pluginDir $ck[0]
+        if (Test-Path $cp) {
+            $sz = (Get-Item $cp).Length
+            if ($sz -lt $ck[1]) {
+                Write-Output "[WARN] Tamano inesperado: $($ck[0]) = $sz bytes"
+                $script:dlErrors++
+            }
+        } else {
+            Write-Output "[WARN] No existe: $($ck[0])"
+            $script:dlErrors++
+        }
+    }
+
+    if ($script:dlErrors -gt 0) {
+        Write-Output "[WARN] $($script:dlErrors) problema(s) de descarga - revise los mensajes [ERR]/[WARN]"
+    } else {
+        Write-Output "[OK]  Todas las descargas verificadas"
     }
 
     Write-Output "[Full+] Descarga completa"
