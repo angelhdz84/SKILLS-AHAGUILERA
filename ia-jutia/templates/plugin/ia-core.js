@@ -19,7 +19,7 @@
         document: {
           id: 'id',
           index: ['nombre', 'descripcion', 'notas', 'texto'],
-          store: ['nombre', 'tipo', 'tabla']
+          store: ['nombre', 'tipo', 'tabla', 'texto', 'descripcion']
         },
         tokenize: 'forward',
         cache: true

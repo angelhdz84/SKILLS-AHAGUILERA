@@ -122,9 +122,13 @@
     ask: async function(chatId, pregunta) {
       if (!pregunta) return { respuesta: 'Escribe una pregunta.', fuente: null };
 
-      // Guardar mensaje usuario
+      // Guardar mensaje usuario (fallo de persistencia no bloquea la respuesta)
       if (chatId) {
-        await this.addMessage(chatId, 'user', pregunta, null, null);
+        try {
+          await this.addMessage(chatId, 'user', pregunta, null, null);
+        } catch (e) {
+          console.warn('[ia-chat] No se pudo guardar mensaje usuario:', e.message);
+        }
       }
 
       // 1. Intentar patrones NL primero
@@ -133,30 +137,43 @@
         var result = await this._executePattern(patron, pregunta);
         if (result) {
           if (chatId) {
-            await this.addMessage(chatId, 'ia', result.respuesta, result.fuente, result.score);
+            try {
+              await this.addMessage(chatId, 'ia', result.respuesta, result.fuente, result.score);
+            } catch (e) {
+              console.warn('[ia-chat] No se pudo guardar respuesta IA:', e.message);
+            }
           }
           return result;
         }
       }
 
       // 2. Fallback: busqueda semantica (Full+) o FlexSearch (Lite)
+      // Contrato searchHybrid: Promise<Array<{ nombre, texto, tabla }>>
       var respuestaIA = '';
       var fuente = 'flexsearch';
 
       if (window.iaFull && window.iaFull._ready && window.iaFull.searchHybrid) {
         // Full+: embeddings semanticos
-        var semResults = await window.iaFull.searchHybrid(pregunta, { limit: 3 });
-        if (semResults && semResults.length > 0) {
-          respuestaIA = this._formatearResultados(semResults);
-          fuente = 'semantico';
+        try {
+          var semResults = await window.iaFull.searchHybrid(pregunta, { limit: 3 });
+          if (semResults && semResults.length > 0) {
+            respuestaIA = this._formatearResultados(semResults);
+            fuente = 'semantico';
+          }
+        } catch (e) {
+          console.warn('[ia-chat] Busqueda semantica fallo:', e.message);
         }
       }
 
       if (!respuestaIA) {
-        var flexResult = await this._flexFallback(pregunta);
-        if (flexResult) {
-          respuestaIA = flexResult.respuesta;
-          fuente = flexResult.fuente;
+        try {
+          var flexResult = await this._flexFallback(pregunta);
+          if (flexResult) {
+            respuestaIA = flexResult.respuesta;
+            fuente = flexResult.fuente;
+          }
+        } catch (e) {
+          console.warn('[ia-chat] Busqueda FlexSearch fallo:', e.message);
         }
       }
 
@@ -182,7 +199,7 @@
       for (var i = 0; i < Math.min(resultados.length, 3); i++) {
         var r = resultados[i];
         var nombre = r.nombre || r.tabla || 'documento';
-        var texto = r.texto || r.descripcion || '';
+        var texto = String(r.texto || r.descripcion || '');
         lines.push((i + 1) + '. **' + nombre + '**: ' + texto.slice(0, 200));
       }
       return lines.join('\n');
