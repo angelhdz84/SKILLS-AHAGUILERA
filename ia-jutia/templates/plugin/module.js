@@ -12,7 +12,10 @@
   // Lista de tools a cargar (ordenados: registry primero)
   var TOOL_FILES = [
     'tools/_registry.js',
-    'tools/extraer-factura.js'
+    'tools/extraer-factura.js',
+    'tools/extraer-pdf.js',
+    'tools/extraer-docx.js',
+    'tools/extraer-xlsx.js'
   ];
 
   // ─── 1. Loaders ───────────────────────────────────────────────────────
@@ -214,6 +217,25 @@
             document.head.appendChild(s);
           }
           loadNext(['ia-full.js', 'ia-sqlite.js', 'ia-worker.js'], 0);
+        },
+
+        uploadDocumento: async function(event) {
+          var store = Alpine.store('ia');
+          var file = event.target.files[0];
+          if (!file || !window.iaFull) return;
+          store.isLoading = true;
+          try {
+            var result = await window.iaFull.ingestFile(file, file.name);
+            if (result.error) {
+              console.warn('[ia-jutia] Error subiendo:', result.error);
+            } else {
+              store.documentos = await window.iaFull.getDocumentos();
+            }
+          } catch(e) {
+            console.warn('[ia-jutia] Error:', e.message);
+          }
+          store.isLoading = false;
+          event.target.value = '';
         }
       });
       console.log('[ia-jutia] Alpine.store(ia) registrado');
@@ -283,17 +305,17 @@
     '',
     '  <!-- Tabs de navegacion dentro del Drawer -->',
     '  <div class="flex border-b border-base-200" role="tablist">',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
     '            :class="$store.ia.drawerView === \'' + TAB_CHAT + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_CHAT + '\')">',
     '      <i class="bi bi-chat-dots block text-sm mb-0.5"></i> Chat',
     '    </button>',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
     '            :class="$store.ia.drawerView === \'' + TAB_THREADS + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_THREADS + '\'); $store.ia.refreshThreads()">',
     '      <i class="bi bi-list-ul block text-sm mb-0.5"></i> Hilos',
     '    </button>',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
     '            :class="$store.ia.drawerView === \'' + TAB_SETTINGS + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_SETTINGS + '\')">',
     '      <i class="bi bi-gear block text-sm mb-0.5"></i> Ajustes',
@@ -438,16 +460,27 @@
     '      </template>',
     '    </div>',
     '',
-    '    <!-- Documentos -->',
-    '    <div class="card bg-base-200 rounded-box p-3 mb-3">',
-    '      <p class="text-xs font-semibold text-base-content/60 uppercase tracking-wider mb-2">Documentos indexados</p>',
+    '    <!-- Documentos (Full+) -->',
+    '    <div class="card bg-base-200 rounded-box p-3 mb-3" x-show="$store.ia.perfilReal === \'full\'">',
+    '      <p class="text-xs font-semibold text-base-content/60 uppercase tracking-wider mb-2">',
+    '        <i class="bi bi-file-earmark"></i> Documentos',
+    '      </p>',
+    '      <div class="flex gap-2 mb-2">',
+    '        <input type="file" id="ia-file-upload" accept=".pdf,.docx,.xlsx,.txt,.csv,.md,.jpg,.png"',
+    '               class="file-input file-input-bordered file-input-xs w-full"',
+    '               @change="$store.ia.uploadDocumento($event)" />',
+    '      </div>',
     '      <template x-if="$store.ia.documentos.length === 0">',
-    '        <p class="text-[10px] text-base-content/40">Sin documentos</p>',
+    '        <p class="text-[10px] text-base-content/40">Sin documentos. Sube un PDF, DOCX o XLSX para consultar.</p>',
     '      </template>',
     '      <template x-for="doc in $store.ia.documentos" :key="doc.id">',
     '        <div class="flex items-center justify-between py-1">',
-    '          <span class="text-xs truncate" x-text="doc.nombre"></span>',
-    '          <span class="text-[10px] text-base-content/40" x-text="doc.tipo"></span>',
+    '          <span class="text-xs truncate flex-1" x-text="doc.nombre"></span>',
+    '          <button class="btn btn-ghost btn-xs btn-square text-error/60 hover:text-error"',
+    '                  @click="if(window.iaFull) window.iaFull.deleteDocumento(doc.id)"',
+    '                  title="Eliminar">',
+    '            <i class="bi bi-trash3"></i>',
+    '          </button>',
     '        </div>',
     '      </template>',
     '    </div>',
@@ -492,52 +525,98 @@
     icono: MODULE_ICON,
 
     async init () {
-      console.log('[ia-jutia] Plugin IA Jutia listo');
-      // FlexSearch lazy load
+      console.log('[ia-jutia] Plugin IA Jutia iniciando...');
+      var store = null;
+
+      // 1. FlexSearch lazy load
       try {
         var FS = await loadFlexSearch();
-        console.log('[ia-jutia] FlexSearch cargado:', FS ? 'ok' : 'no disponible');
+        console.log('[ia-jutia] FlexSearch:', FS ? 'ok' : 'no disponible');
       } catch (e) {
         console.warn('[ia-jutia] FlexSearch no disponible:', e.message);
       }
-      // Cargar ia-core.js y ia-chat.js dinamicamente
+
+      // 2. Cargar ia-core.js + ia-chat.js (siempre)
       try {
         await loadScript('modules/ia-jutia/ia-core.js');
-        console.log('[ia-jutia] ia-core.js cargado');
-      } catch (e) {
-        console.warn('[ia-jutia] Error cargando ia-core.js:', e.message);
-      }
-      try {
         await loadScript('modules/ia-jutia/ia-chat.js');
-        console.log('[ia-jutia] ia-chat.js cargado');
+        console.log('[ia-jutia] Core + Chat cargados');
       } catch (e) {
-        console.warn('[ia-jutia] Error cargando ia-chat.js:', e.message);
+        console.warn('[ia-jutia] Error cargando core:', e.message);
+        return;
       }
-      // Cargar tools (en orden)
+
+      // 3. Cargar tools
       for (var ti = 0; ti < TOOL_FILES.length; ti++) {
         try {
           await loadScript('modules/ia-jutia/' + TOOL_FILES[ti]);
-          console.log('[ia-jutia] Tool cargado: ' + TOOL_FILES[ti]);
-        } catch (e) {
-          console.warn('[ia-jutia] Error cargando tool ' + TOOL_FILES[ti] + ':', e.message);
-        }
+        } catch (e) { /* tool opcional */ }
       }
-      // Inicializar IA core + chat
+
+      // 4. Inicializar IA core + chat
       if (window.ia && typeof window.ia.init === 'function') {
         window.ia.init();
-        if (typeof window.ia.chat !== 'undefined' && typeof window.ia.chat.init === 'function') {
+        if (window.ia.chat && typeof window.ia.chat.init === 'function') {
           window.ia.chat.init();
         }
       }
-      // asegurar tablas DB
+
+      // 5. Asegurar tablas DB
       ensureDBTables();
-      // registrar store Alpine
+
+      // 6. Registrar store Alpine (necesario para FAB+Drawer)
       registerAlpineStore();
-      // inyectar FAB + Drawer
+      store = Alpine.store('ia');
+
+      // 7. Detectar Full+: intentar cargar transformers.min.js desde assets/
+      this._detectarFull(store).then(function() {
+        console.log('[ia-jutia] Plugin listo, perfil:', store ? store.perfilReal : 'unknown');
+      });
+
+      // 8. Inyectar FAB + Drawer
       injectFabDrawer();
-      // dispatchear ready
+
+      // 9. Disparar evento ready
       var evt = new CustomEvent('jutia:ready', { detail: { id: MODULE_ID } });
       window.dispatchEvent(evt);
+    },
+
+    _detectarFull: async function(store) {
+      // Intentar cargar Transformers.js desde assets local
+      try {
+        await loadScript('modules/ia-jutia/assets/transformers.min.js');
+        console.log('[ia-jutia] Transformers.js cargado — perfil Full+');
+      } catch (e) {
+        console.log('[ia-jutia] Transformers.js no disponible — perfil Lite');
+        if (store) store.perfilReal = 'lite';
+        return;
+      }
+
+      // Transformers.js cargado, cargar modulos Full+
+      try {
+        await loadScript('modules/ia-jutia/ia-full.js');
+        await loadScript('modules/ia-jutia/ia-sqlite.js');
+        console.log('[ia-jutia] Modulos Full+ cargados');
+      } catch (e) {
+        console.warn('[ia-jutia] Error cargando modulos Full+:', e.message);
+        if (store) store.perfilReal = 'lite';
+        return;
+      }
+
+      // Inicializar Full+
+      if (window.iaFull && typeof window.iaFull.initFull === 'function') {
+        try {
+          await window.iaFull.initFull();
+          if (store) {
+            store.perfilReal = 'full';
+            store.modeloListo = true;
+          }
+          console.log('[ia-jutia] Perfil Full+ listo');
+        } catch (e) {
+          console.warn('[ia-jutia] Error initFull:', e.message);
+          if (store) store.perfilReal = 'lite';
+        }
+      }
     },
 
     async render (params) {
