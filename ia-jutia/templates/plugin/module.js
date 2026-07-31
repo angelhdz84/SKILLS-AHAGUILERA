@@ -198,8 +198,14 @@
               // All loaded, init Full
               if (window.iaFull && typeof window.iaFull.initFull === 'function') {
                 window.iaFull.initFull().then(function () {
-                  store.perfilReal = 'full';
-                  store.modeloListo = true;
+                  // Solo reportar Full+ si initFull termino con _ready=true
+                  if (window.iaFull._ready) {
+                    store.perfilReal = 'full';
+                    store.modeloListo = true;
+                  } else {
+                    store.perfilReal = 'lite';
+                    store.modeloListo = false;
+                  }
                   store.isLoading = false;
                   window.__iaJutiaCargandoFull = false;
                 }).catch(function (err) {

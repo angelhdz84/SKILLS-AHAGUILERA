@@ -222,6 +222,22 @@
       if (window.iaDB) {
         var docId = 'doc_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
         try {
+          // Escribir chunks primero (bulkPut) y el doc al final:
+          // si algo falla a mitad, el doc no queda registrado como completo
+          var chunkRows = [];
+          for (var ci = 0; ci < chunks.length; ci++) {
+            chunkRows.push({
+              id: docId + '-chunk-' + ci,
+              docId: docId,
+              texto: chunks[ci],
+              indice: ci,
+              createdAt: new Date().toISOString()
+            });
+          }
+          if (chunkRows.length > 0) {
+            await window.iaDB._ia_chunks.bulkPut(chunkRows);
+          }
+
           await window.iaDB._ia_docs.put({
             id: docId,
             nombre: nombre,
@@ -231,16 +247,6 @@
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
-
-          for (var ci = 0; ci < chunks.length; ci++) {
-            await window.iaDB._ia_chunks.put({
-              id: docId + '-chunk-' + ci,
-              docId: docId,
-              texto: chunks[ci],
-              indice: ci,
-              createdAt: new Date().toISOString()
-            });
-          }
 
           // Indexar chunks en FlexSearch
           if (window.ia && window.ia._flex) {
@@ -271,6 +277,11 @@
           console.log('[ia-full] Documento indexado:', docId, '-', chunks.length, 'chunks');
           return { id: docId, nombre: nombre, chunks: chunks.length };
         } catch(e) {
+          // Cleanup best-effort: eliminar doc y chunks parciales
+          try {
+            await window.iaDB._ia_docs.delete(docId);
+            await window.iaDB._ia_chunks.where('docId').equals(docId).delete();
+          } catch(ce) { /* ignorar */ }
           console.error('[ia-full] Error guardando documento:', e);
           return { error: e.message };
         }
@@ -418,46 +429,44 @@
       var results = [];
 
       // 1. Puntuar chunks por coincidencia de terminos
+      // (scoring keyword; el embedding real se almacenaria por chunk en una fase futura)
       if (window.iaDB && window.iaDB._ia_chunks) {
         try {
-          var queryVec = await Full.embed(query);
-          if (queryVec && queryVec.length > 0) {
-            var allChunks = await window.iaDB._ia_chunks.toArray();
-            var qWords = query.toLowerCase().split(/\s+/).filter(function(w) { return w.length > 2; });
-            var scored = [];
-            for (var ci = 0; ci < allChunks.length; ci++) {
-              var text = (allChunks[ci].texto || '').toLowerCase();
-              var score = 0;
-              for (var wi = 0; wi < qWords.length; wi++) {
-                var idx = text.indexOf(qWords[wi]);
-                if (idx !== -1) {
-                  score++;
-                  // Bonus por posicion temprana
-                  if (idx < 50) score += 0.5;
-                }
-              }
-              if (score > 0) {
-                scored.push({ chunk: allChunks[ci], score: score });
+          var allChunks = await window.iaDB._ia_chunks.toArray();
+          var qWords = query.toLowerCase().split(/\s+/).filter(function(w) { return w.length > 2; });
+          var scored = [];
+          for (var ci = 0; ci < allChunks.length; ci++) {
+            var text = (allChunks[ci].texto || '').toLowerCase();
+            var score = 0;
+            for (var wi = 0; wi < qWords.length; wi++) {
+              var idx = text.indexOf(qWords[wi]);
+              if (idx !== -1) {
+                score++;
+                // Bonus por posicion temprana
+                if (idx < 50) score += 0.5;
               }
             }
-            scored.sort(function(a, b) { return b.score - a.score; });
-
-            // Mapa docId -> nombre para mostrar el nombre real del documento
-            var docMap = {};
-            var docs = await window.iaDB._ia_docs.toArray();
-            for (var di = 0; di < docs.length; di++) {
-              docMap[docs[di].id] = docs[di].nombre;
+            if (score > 0) {
+              scored.push({ chunk: allChunks[ci], score: score });
             }
-
-            results = scored.slice(0, opts.limit || 5).map(function(s) {
-              return {
-                texto: s.chunk.texto,
-                nombre: docMap[s.chunk.docId] || s.chunk.docId,
-                score: s.score,
-                tabla: '_ia_docs'
-              };
-            });
           }
+          scored.sort(function(a, b) { return b.score - a.score; });
+
+          // Mapa docId -> nombre para mostrar el nombre real del documento
+          var docMap = {};
+          var docs = await window.iaDB._ia_docs.toArray();
+          for (var di = 0; di < docs.length; di++) {
+            docMap[docs[di].id] = docs[di].nombre;
+          }
+
+          results = scored.slice(0, opts.limit || 5).map(function(s) {
+            return {
+              texto: s.chunk.texto,
+              nombre: docMap[s.chunk.docId] || s.chunk.docId,
+              score: s.score,
+              tabla: '_ia_docs'
+            };
+          });
         } catch(e) {
           console.warn('[ia-full] Error en searchHybrid:', e.message);
         }
@@ -489,16 +498,15 @@
     deleteDocumento: async function(docId) {
       if (!window.iaDB || !docId) return;
       try {
-        // Delete chunks
-        var chunks = await window.iaDB._ia_chunks.where('docId').equals(docId).toArray();
-        for (var i = 0; i < chunks.length; i++) {
-          await window.iaDB._ia_chunks.delete(chunks[i].id);
-        }
+        // Contar chunks para limpiar FlexSearch (un id por chunk, sin wildcards)
+        var chunkCount = await window.iaDB._ia_chunks.where('docId').equals(docId).count();
+        // Delete chunks (atomico)
+        await window.iaDB._ia_chunks.where('docId').equals(docId).delete();
         // Delete doc metadata
         await window.iaDB._ia_docs.delete(docId);
-        // Remove from FlexSearch (un id por chunk, sin wildcards)
+        // Remove from FlexSearch
         if (window.ia && window.ia._flex) {
-          for (var fi = 0; fi < chunks.length; fi++) {
+          for (var fi = 0; fi < chunkCount; fi++) {
             window.ia._flex.remove(docId + '-flex-' + fi);
           }
         }
