@@ -51,3 +51,7 @@ wiki/
 modules/
 white-label/
 tests/*.pyz/
+
+# IA Jutia plugin templates are source, not generated
+!ia-jutia/templates/plugin/tools/
+!ia-jutia/templates/plugin/tools/*.js
