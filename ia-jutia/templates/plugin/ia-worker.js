@@ -9,7 +9,7 @@ self.onmessage = function(e) {
   switch (msg.type) {
     case 'init':
       // Transformers.js UMD debe estar cargado via importScripts ANTES de crear el worker
-      self.postMessage({ type: 'ready', worker: 'ia-jutia', version: '2.0-full' });
+      self.postMessage({ type: 'ready', worker: 'ia-jutia', version: '1.0-plugin-full' });
       break;
 
     case 'embed':
@@ -41,23 +41,36 @@ function _handleEmbed(msg) {
 
     self.Transformers.env.localModelPath = msg.modelPath || 'modules/ia-jutia/models/';
     self.Transformers.env.allowRemoteModels = false;
+    // Configurar rutas WASM offline (como ia-full.js)
+    if (self.Transformers.env.backends && self.Transformers.env.backends.onnx) {
+      self.Transformers.env.backends.onnx.wasm = self.Transformers.env.backends.onnx.wasm || {};
+      self.Transformers.env.backends.onnx.wasm.wasmPaths = 'modules/ia-jutia/assets/wasm/';
+    }
 
-    var pipeline = self.Transformers.pipeline;
+    var pipelineFn = self.Transformers.pipeline;
 
-    pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2').then(function(extract) {
+    // Cachear pipeline para no recargar el modelo ONNX por mensaje
+    var p = self._pipeline || pipelineFn('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+    self._pipeline = p;
+
+    p.then(function(extract) {
       return extract(texto, { pooling: 'mean', normalize: true });
     }).then(function(result) {
-      var data = result.tolist ? result.tolist() : [];
+      var data = result.tolist ? result.tolist() : (result.data || []);
+      var dim = 0;
+      if (Array.isArray(data) && data.length > 0) {
+        dim = Array.isArray(data[0]) ? data[0].length : data.length;
+      }
       self.postMessage({
         type: 'embed_result',
         vector: data,
-        dimension: Array.isArray(data) && data.length > 0 && Array.isArray(data[0]) ? data[0].length : 384
+        dimension: dim
       });
     }).catch(function(err) {
-      self.postMessage({ type: 'embed_result', vector: [], dimension: 0, error: err.message });
+      self.postMessage({ type: 'embed_result', vector: [], dimension: 0, error: (err && err.message) || String(err) });
     });
   } catch(e) {
-    self.postMessage({ type: 'embed_result', vector: [], dimension: 0, error: e.message });
+    self.postMessage({ type: 'embed_result', vector: [], dimension: 0, error: (e && e.message) || String(e) });
   }
 }
 
@@ -77,27 +90,39 @@ function _handleQA(msg) {
     return;
   }
 
-  // Retrieval por coincidencia keyword (sin modelo QA — decision de producto)
-  var best = null;
-  var bestScore = 0;
-  var qWords = pregunta.toLowerCase().split(/\s+/);
-  for (var i = 0; i < chunks.length; i++) {
-    var text = (chunks[i].texto || '').toLowerCase();
-    var score = 0;
-    for (var j = 0; j < qWords.length; j++) {
-      if (qWords[j].length > 2 && text.indexOf(qWords[j]) !== -1) {
-        score++;
+  try {
+    // Retrieval por coincidencia keyword (sin modelo QA — decision de producto)
+    var best = null;
+    var bestScore = 0;
+    // Filtrar stop-words (<=2 chars) para no diluir la confianza
+    var qWords = pregunta.toLowerCase().split(/\s+/).filter(function(w) { return w.length > 2; });
+    for (var i = 0; i < chunks.length; i++) {
+      if (!chunks[i] || !chunks[i].texto) continue;
+      var text = chunks[i].texto.toLowerCase();
+      var score = 0;
+      for (var j = 0; j < qWords.length; j++) {
+        if (text.indexOf(qWords[j]) !== -1) {
+          score++;
+        }
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        best = chunks[i];
       }
     }
-    if (score > bestScore) {
-      bestScore = score;
-      best = chunks[i];
-    }
+    self.postMessage({
+      type: 'qa_result',
+      respuesta: best ? best.texto.slice(0, 500) : 'No se encontro respuesta',
+      confianza: qWords.length > 0 ? bestScore / qWords.length : 0,
+      chunkId: best ? best.id : null
+    });
+  } catch(e) {
+    self.postMessage({
+      type: 'qa_result',
+      respuesta: 'No se encontro respuesta',
+      confianza: 0,
+      chunkId: null,
+      error: (e && e.message) || String(e)
+    });
   }
-  self.postMessage({
-    type: 'qa_result',
-    respuesta: best ? best.texto.slice(0, 500) : 'No se encontro respuesta',
-    confianza: bestScore / Math.max(qWords.length, 1),
-    chunkId: best ? best.id : null
-  });
 }
