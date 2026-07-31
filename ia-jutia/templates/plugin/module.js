@@ -186,6 +186,9 @@
         },
 
         cargarFull: function () {
+          // Flag compartido: evita doble carga concurrente con _detectarFull()
+          if (window.__iaJutiaCargandoFull) return;
+          window.__iaJutiaCargandoFull = true;
           var store = Alpine.store('ia');
           store.isLoading = true;
           // Load Full files dynamically
@@ -198,12 +201,15 @@
                   store.perfilReal = 'full';
                   store.modeloListo = true;
                   store.isLoading = false;
+                  window.__iaJutiaCargandoFull = false;
                 }).catch(function (err) {
                   console.warn('[ia-jutia] Error initFull:', err.message);
                   store.isLoading = false;
+                  window.__iaJutiaCargandoFull = false;
                 });
               } else {
                 store.isLoading = false;
+                window.__iaJutiaCargandoFull = false;
               }
               return;
             }
@@ -222,7 +228,10 @@
         uploadDocumento: async function(event) {
           var store = Alpine.store('ia');
           var file = event.target.files[0];
-          if (!file || !window.iaFull) return;
+          if (!file || !window.iaFull) {
+            event.target.value = '';
+            return;
+          }
           store.isLoading = true;
           try {
             var result = await window.iaFull.ingestFile(file, file.name);
@@ -236,6 +245,17 @@
           }
           store.isLoading = false;
           event.target.value = '';
+        },
+
+        eliminarDocumento: async function(docId) {
+          if (!window.iaFull || !docId) return;
+          var store = Alpine.store('ia');
+          try {
+            await window.iaFull.deleteDocumento(docId);
+            store.documentos = await window.iaFull.getDocumentos();
+          } catch(e) {
+            console.warn('[ia-jutia] Error eliminando documento:', e.message);
+          }
         }
       });
       console.log('[ia-jutia] Alpine.store(ia) registrado');
@@ -305,17 +325,17 @@
     '',
     '  <!-- Tabs de navegacion dentro del Drawer -->',
     '  <div class="flex border-b border-base-200" role="tablist">',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors"',
     '            :class="$store.ia.drawerView === \'' + TAB_CHAT + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_CHAT + '\')">',
     '      <i class="bi bi-chat-dots block text-sm mb-0.5"></i> Chat',
     '    </button>',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors"',
     '            :class="$store.ia.drawerView === \'' + TAB_THREADS + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_THREADS + '\'); $store.ia.refreshThreads()">',
     '      <i class="bi bi-list-ul block text-sm mb-0.5"></i> Hilos',
     '    </button>',
-    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors",',
+    '    <button class="flex-1 py-2 text-xs font-medium text-center transition-colors"',
     '            :class="$store.ia.drawerView === \'' + TAB_SETTINGS + '\' ? \'text-primary border-b-2 border-primary\' : \'text-base-content/50 hover:text-base-content\'"',
     '            @click="$store.ia.cambiarVista(\'' + TAB_SETTINGS + '\')">',
     '      <i class="bi bi-gear block text-sm mb-0.5"></i> Ajustes',
@@ -477,7 +497,7 @@
     '        <div class="flex items-center justify-between py-1">',
     '          <span class="text-xs truncate flex-1" x-text="doc.nombre"></span>',
     '          <button class="btn btn-ghost btn-xs btn-square text-error/60 hover:text-error"',
-    '                  @click="if(window.iaFull) window.iaFull.deleteDocumento(doc.id)"',
+    '                  @click="$store.ia.eliminarDocumento(doc.id)"',
     '                  title="Eliminar">',
     '            <i class="bi bi-trash3"></i>',
     '          </button>',
@@ -566,11 +586,13 @@
 
       // 6. Registrar store Alpine (necesario para FAB+Drawer)
       registerAlpineStore();
-      store = Alpine.store('ia');
+      store = (window.Alpine && Alpine.store('ia')) || null;
 
       // 7. Detectar Full+: intentar cargar transformers.min.js desde assets/
       this._detectarFull(store).then(function() {
         console.log('[ia-jutia] Plugin listo, perfil:', store ? store.perfilReal : 'unknown');
+      }).catch(function(err) {
+        console.warn('[ia-jutia] detectFull:', err.message);
       });
 
       // 8. Inyectar FAB + Drawer
@@ -582,44 +604,51 @@
     },
 
     _detectarFull: async function(store) {
-      // Intentar cargar Transformers.js desde assets local
+      // Flag compartido: evita doble carga concurrente con cargarFull()
+      if (window.__iaJutiaCargandoFull) return;
+      window.__iaJutiaCargandoFull = true;
       try {
-        await loadScript('modules/ia-jutia/assets/transformers.min.js');
-        console.log('[ia-jutia] Transformers.js cargado — perfil Full+');
-      } catch (e) {
-        console.log('[ia-jutia] Transformers.js no disponible — perfil Lite');
-        if (store) store.perfilReal = 'lite';
-        return;
-      }
-
-      // Transformers.js cargado, cargar modulos Full+
-      try {
-        await loadScript('modules/ia-jutia/ia-full.js');
-        await loadScript('modules/ia-jutia/ia-sqlite.js');
-        console.log('[ia-jutia] Modulos Full+ cargados');
-      } catch (e) {
-        console.warn('[ia-jutia] Error cargando modulos Full+:', e.message);
-        if (store) store.perfilReal = 'lite';
-        return;
-      }
-
-      // Inicializar Full+
-      if (window.iaFull && typeof window.iaFull.initFull === 'function') {
+        // Intentar cargar Transformers.js desde assets local
         try {
-          await window.iaFull.initFull();
-          if (store) {
-            store.perfilReal = 'full';
-            store.modeloListo = true;
-          }
-          console.log('[ia-jutia] Perfil Full+ listo');
+          await loadScript('modules/ia-jutia/assets/transformers.min.js');
+          console.log('[ia-jutia] Transformers.js cargado — perfil Full+');
         } catch (e) {
-          console.warn('[ia-jutia] Error initFull:', e.message);
+          console.log('[ia-jutia] Transformers.js no disponible — perfil Lite');
           if (store) store.perfilReal = 'lite';
+          return;
         }
+
+        // Transformers.js cargado, cargar modulos Full+
+        try {
+          await loadScript('modules/ia-jutia/ia-full.js');
+          await loadScript('modules/ia-jutia/ia-sqlite.js');
+          console.log('[ia-jutia] Modulos Full+ cargados');
+        } catch (e) {
+          console.warn('[ia-jutia] Error cargando modulos Full+:', e.message);
+          if (store) store.perfilReal = 'lite';
+          return;
+        }
+
+        // Inicializar Full+
+        if (window.iaFull && typeof window.iaFull.initFull === 'function') {
+          try {
+            await window.iaFull.initFull();
+            if (store) {
+              store.perfilReal = 'full';
+              store.modeloListo = true;
+            }
+            console.log('[ia-jutia] Perfil Full+ listo');
+          } catch (e) {
+            console.warn('[ia-jutia] Error initFull:', e.message);
+            if (store) store.perfilReal = 'lite';
+          }
+        }
+      } finally {
+        window.__iaJutiaCargandoFull = false;
       }
     },
 
-    async render (params) {
+    render: function (params) {
       params = params || {};
       return MODULE_HTML;
     },
