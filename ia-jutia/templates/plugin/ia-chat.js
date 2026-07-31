@@ -122,24 +122,70 @@
     ask: async function(chatId, pregunta) {
       if (!pregunta) return { respuesta: 'Escribe una pregunta.', fuente: null };
 
+      // Guardar mensaje usuario
+      if (chatId) {
+        await this.addMessage(chatId, 'user', pregunta, null, null);
+      }
+
+      // 1. Intentar patrones NL primero
       var patron = this._matchPattern(pregunta);
       if (patron) {
         var result = await this._executePattern(patron, pregunta);
-        if (result) return result;
+        if (result) {
+          if (chatId) {
+            await this.addMessage(chatId, 'ia', result.respuesta, result.fuente, result.score);
+          }
+          return result;
+        }
       }
 
-      var flexResult = await this._flexFallback(pregunta);
-      if (flexResult) return flexResult;
+      // 2. Fallback: busqueda semantica (Full+) o FlexSearch (Lite)
+      var respuestaIA = '';
+      var fuente = 'flexsearch';
 
-      return {
-        respuesta: 'No entendi tu pregunta. Intenta con:\n\n' +
+      if (window.iaFull && window.iaFull._ready && window.iaFull.searchHybrid) {
+        // Full+: embeddings semanticos
+        var semResults = await window.iaFull.searchHybrid(pregunta, { limit: 3 });
+        if (semResults && semResults.length > 0) {
+          respuestaIA = this._formatearResultados(semResults);
+          fuente = 'semantico';
+        }
+      }
+
+      if (!respuestaIA) {
+        var flexResult = await this._flexFallback(pregunta);
+        if (flexResult) {
+          respuestaIA = flexResult.respuesta;
+          fuente = flexResult.fuente;
+        }
+      }
+
+      if (!respuestaIA) {
+        respuestaIA = 'No entendi tu pregunta. Intenta con:\n\n' +
           '- "¿Cuantos clientes hay?"\n' +
           '- "Total de ventas"\n' +
           '- "Productos con stock menor a 10"\n' +
           '- "Muestra los proveedores"\n' +
-          '- "¿Que compro Juan?"',
-        fuente: null
-      };
+          '- "¿Que compro Juan?"';
+        fuente = null;
+      }
+
+      if (chatId) {
+        await this.addMessage(chatId, 'ia', respuestaIA, fuente, null);
+      }
+      return { respuesta: respuestaIA, fuente: fuente };
+    },
+
+    _formatearResultados: function(resultados) {
+      if (!resultados || resultados.length === 0) return 'Sin resultados.';
+      var lines = ['Encontre esto en tus datos:\n'];
+      for (var i = 0; i < Math.min(resultados.length, 3); i++) {
+        var r = resultados[i];
+        var nombre = r.nombre || r.tabla || 'documento';
+        var texto = r.texto || r.descripcion || '';
+        lines.push((i + 1) + '. **' + nombre + '**: ' + texto.slice(0, 200));
+      }
+      return lines.join('\n');
     },
 
     _matchPattern: function(pregunta) {
