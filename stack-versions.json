@@ -1,7 +1,7 @@
 {
   "$schema": "./stack-versions.schema.json",
   "version": "1.0.0",
-  "updated": "2026-07-29",
+  "updated": "2026-08-01",
   "auditUrl": "https://raw.githubusercontent.com/anomalyco/Ateje/main/docs/stack-versiones.md",
   "notes": [
     "Este archivo es la UNICA fuente de verdad para versiones de librerias del Stack Ateje.",
@@ -263,6 +263,94 @@
       "breaking": true,
       "notes": "v0.8: Persistent Indexes vía IndexedDB. API backward compatible con v0.7 (Document constructor same). Para persistencia: mount(db) + commit()."
     },
+    "transformers": {
+      "name": "Transformers.js",
+      "pinned": "4.2.0",
+      "latest": "4.2.0",
+      "type": "js",
+      "scope": "ia",
+      "status": "active",
+      "profiles": ["lite", "professional", "business"],
+      "files": {
+        "modules/ia-jutia/assets/transformers.min.js": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@{version}/dist/transformers.min.js"
+      },
+      "npm": "@huggingface/transformers",
+      "npmSpec": "^4.2.0",
+      "changelog": "https://github.com/huggingface/transformers.js/releases",
+      "breaking": false,
+      "notes": "Plugin IA Jutia Full+. UMD bundle, usa onnxruntime-web + modelos Xenova/all-MiniLM-L6-v2 (embedding). Modelos NO se versionan (DLC ~40MB)."
+    },
+    "onnxruntime-web": {
+      "name": "ONNX Runtime Web",
+      "pinned": "1.20.0",
+      "latest": "1.20.0",
+      "type": "wasm",
+      "scope": "ia",
+      "status": "active",
+      "profiles": ["lite", "professional", "business"],
+      "files": {
+        "modules/ia-jutia/assets/wasm/ort-wasm-simd-threaded.wasm": "https://cdn.jsdelivr.net/npm/onnxruntime-web@{version}/dist/ort-wasm-simd-threaded.wasm"
+      },
+      "npm": "onnxruntime-web",
+      "npmSpec": "^1.20.0",
+      "changelog": "https://github.com/microsoft/onnxruntime/releases",
+      "breaking": false,
+      "notes": "v1.20 NO distribuye ort-wasm-simd.wasm (solo threaded + jsep). No agregar el build simd simple."
+    },
+    "pdfjs-dist": {
+      "name": "PDF.js",
+      "pinned": "3.11.174",
+      "latest": "4.8.69",
+      "type": "js",
+      "scope": "ia",
+      "status": "active",
+      "profiles": ["lite", "professional", "business"],
+      "files": {
+        "modules/ia-jutia/assets/pdf.min.js": "https://cdn.jsdelivr.net/npm/pdfjs-dist@{version}/build/pdf.min.js",
+        "modules/ia-jutia/assets/pdf.worker.min.js": "https://cdn.jsdelivr.net/npm/pdfjs-dist@{version}/build/pdf.worker.min.js"
+      },
+      "npm": "pdfjs-dist",
+      "npmSpec": "~3.11.0",
+      "changelog": "https://github.com/mozilla/pdf.js/releases",
+      "breaking": true,
+      "notes": "Pinned en 3.11.174 (UMD window.pdfjsLib). v4 es SOLO ESM (.mjs) y rompe el patron script global. No migrar a v4."
+    },
+    "mammoth": {
+      "name": "Mammoth.js",
+      "pinned": "1.8.0",
+      "latest": "1.8.0",
+      "type": "js",
+      "scope": "ia",
+      "status": "active",
+      "profiles": ["lite", "professional", "business"],
+      "files": {
+        "modules/ia-jutia/assets/mammoth.min.js": "https://cdn.jsdelivr.net/npm/mammoth@{version}/mammoth.browser.min.js"
+      },
+      "npm": "mammoth",
+      "npmSpec": "^1.8.0",
+      "changelog": "https://github.com/mwilliamson/mammoth.js/releases",
+      "breaking": false
+    },
+    "tesseract": {
+      "name": "Tesseract.js",
+      "pinned": "5.1.1",
+      "latest": "5.1.1",
+      "type": "js",
+      "scope": "ia",
+      "status": "active",
+      "profiles": ["lite", "professional", "business"],
+      "files": {
+        "modules/ia-jutia/assets/tesseract.min.js": "https://cdn.jsdelivr.net/npm/tesseract.js@{version}/dist/tesseract.min.js",
+        "modules/ia-jutia/assets/worker.min.js": "https://cdn.jsdelivr.net/npm/tesseract.js@{version}/dist/worker.min.js",
+        "modules/ia-jutia/assets/tesseract-core-simd.wasm.js": "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.0/tesseract-core-simd.wasm.js",
+        "modules/ia-jutia/assets/tessdata/spa.traineddata.gz": "https://cdn.jsdelivr.net/npm/@tesseract.js-data/spa/4.0.0_best_int/spa.traineddata.gz"
+      },
+      "npm": "tesseract.js",
+      "npmSpec": "^5.1.0",
+      "changelog": "https://github.com/naptha/tesseract.js/releases",
+      "breaking": false,
+      "notes": "OCR 100% offline: workerPath/corePath/langPath locales. Datos spa build 4.0.0_best_int (2.1MB)."
+    },
     "dayjs": {
       "name": "Day.js",
       "pinned": "1.11.10",
@@ -285,19 +373,19 @@
       "display": "Lite (Essential)",
       "libs": ["alpinejs", "tailwindcss", "daisyui", "dexie", "cryptojs", "pako", "chartjs", "bootstrap-icons", "animate.css", "jspdf", "xlsx", "qrcode"],
       "optional": ["dayjs"],
-      "ia": ["flexsearch"]
+      "ia": ["flexsearch", "transformers", "onnxruntime-web", "pdfjs-dist", "mammoth", "tesseract"]
     },
     "professional": {
       "display": "Professional",
       "libs": ["alpinejs", "tailwindcss", "daisyui", "dexie", "cryptojs", "pako", "chartjs", "bootstrap-icons", "animate.css", "jspdf", "xlsx", "qrcodejs", "sql.js"],
       "optional": ["dayjs"],
-      "ia": ["flexsearch"]
+      "ia": ["flexsearch", "transformers", "onnxruntime-web", "pdfjs-dist", "mammoth", "tesseract"]
     },
     "business": {
       "display": "Business",
       "libs": ["alpinejs", "tailwindcss", "daisyui", "dexie", "cryptojs", "pako", "chartjs", "bootstrap-icons", "animate.css", "jspdf", "xlsx", "qrcodejs", "sql.js"],
       "optional": ["dayjs"],
-      "ia": ["flexsearch"]
+      "ia": ["flexsearch", "transformers", "onnxruntime-web", "pdfjs-dist", "mammoth", "tesseract"]
     }
   },
   "tools": {

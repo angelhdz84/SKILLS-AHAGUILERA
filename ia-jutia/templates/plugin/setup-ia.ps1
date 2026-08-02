@@ -136,7 +136,7 @@ if ((Test-Path $iaFullPath)) {
     if (-not (Test-Path $xlsPath) -or $Force) {
         Write-Output "[Full+] Descargando SheetJS..."
         try {
-            Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" -OutFile $xlsPath -UseBasicParsing
+            Invoke-WebRequest -Uri "https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js" -OutFile $xlsPath -UseBasicParsing
         } catch {
             $script:dlErrors++; Write-Output "[ERR]  No se pudo descargar SheetJS: $_"
         }

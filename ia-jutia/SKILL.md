@@ -149,7 +149,8 @@ NO modificar:
 📁 modules/ia-jutia/
 ├── ia-full.js          → window.iaFull: ingest + embeddings + parsers + OCR
 ├── ia-sqlite.js        → sql.js FTS5 wrapper (Professional/Business)
-├── ia-worker.js        → Web Worker para Transformers.js
+├── ia-worker.js        → Web Worker para Transformers.js (FUTURO: no se carga en runtime;
+│                         embed() corre en main thread con pipeline cacheado en ia-full.js)
 ├── scripts/
 │   └── build-ia-zips.ps1 → Genera los 2 ZIPs distribuibles (Lite + Full+)
 ├── assets/             → FlexSearch, Transformers, PDF.js, mammoth, SheetJS,
@@ -338,7 +339,7 @@ templates/plugin/
 - **Eventos**: `jutia:ready` al completar init. `jutia:trigger` para abrir drawer desde otros modulos.
 - **Lotes de 200**: `registerTable()` pagina en lotes de 200. `statsAll()` usa `count()`.
 - **Predicciones**: Regresion lineal `y = mx + b` con minimos cuadrados.
-- **Transformers.js (Full+)**: `pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')` en worker (carga `onnx/model_quantized.onnx` por defecto). Pipeline cacheado en `self._pipeline`.
+- **Transformers.js (Full+)**: `pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')` en main thread (carga `onnx/model_quantized.onnx` por defecto). Pipeline cacheado en `Full._pipeline` (lazy init). El worker ia-worker.js NO se usa en runtime — queda como implementacion futura para no bloquear UI.
 - **OCR offline**: Tesseract.js `recognize(dataUrl, 'spa', { workerPath, corePath, langPath })` con assets locales. Datos spa: build `4.0.0_best_int` (2.1MB).
 - **PDF.js v3 UMD**: `window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'modules/ia-jutia/assets/pdf.worker.min.js'` (v4 es solo ESM).
 - **Ruta compartida**: Los modelos Full se almacenan fuera de la app (ProgramData, .local/share, etc).

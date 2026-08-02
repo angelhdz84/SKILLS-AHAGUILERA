@@ -228,7 +228,9 @@
             };
             document.head.appendChild(s);
           }
-          loadNext(['ia-full.js', 'ia-sqlite.js', 'ia-worker.js'], 0);
+          // Nota: ia-worker.js NO se carga en runtime (embed() corre en main thread
+          // con pipeline cacheado en ia-full.js). El archivo queda como worker futuro.
+          loadNext(['ia-full.js', 'ia-sqlite.js'], 0);
         },
 
         uploadDocumento: async function(event) {
