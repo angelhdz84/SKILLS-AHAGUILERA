@@ -122,24 +122,87 @@
     ask: async function(chatId, pregunta) {
       if (!pregunta) return { respuesta: 'Escribe una pregunta.', fuente: null };
 
+      // Guardar mensaje usuario (fallo de persistencia no bloquea la respuesta)
+      if (chatId) {
+        try {
+          await this.addMessage(chatId, 'user', pregunta, null, null);
+        } catch (e) {
+          console.warn('[ia-chat] No se pudo guardar mensaje usuario:', e.message);
+        }
+      }
+
+      // 1. Intentar patrones NL primero
       var patron = this._matchPattern(pregunta);
       if (patron) {
         var result = await this._executePattern(patron, pregunta);
-        if (result) return result;
+        if (result) {
+          if (chatId) {
+            try {
+              await this.addMessage(chatId, 'ia', result.respuesta, result.fuente, result.score);
+            } catch (e) {
+              console.warn('[ia-chat] No se pudo guardar respuesta IA:', e.message);
+            }
+          }
+          return result;
+        }
       }
 
-      var flexResult = await this._flexFallback(pregunta);
-      if (flexResult) return flexResult;
+      // 2. Fallback: busqueda semantica (Full+) o FlexSearch (Lite)
+      // Contrato searchHybrid: Promise<Array<{ nombre, texto, tabla }>>
+      var respuestaIA = '';
+      var fuente = 'flexsearch';
 
-      return {
-        respuesta: 'No entendi tu pregunta. Intenta con:\n\n' +
+      if (window.iaFull && window.iaFull._ready && window.iaFull.searchHybrid) {
+        // Full+: embeddings semanticos
+        try {
+          var semResults = await window.iaFull.searchHybrid(pregunta, { limit: 3 });
+          if (semResults && semResults.length > 0) {
+            respuestaIA = this._formatearResultados(semResults);
+            fuente = 'semantico';
+          }
+        } catch (e) {
+          console.warn('[ia-chat] Busqueda semantica fallo:', e.message);
+        }
+      }
+
+      if (!respuestaIA) {
+        try {
+          var flexResult = await this._flexFallback(pregunta);
+          if (flexResult) {
+            respuestaIA = flexResult.respuesta;
+            fuente = flexResult.fuente;
+          }
+        } catch (e) {
+          console.warn('[ia-chat] Busqueda FlexSearch fallo:', e.message);
+        }
+      }
+
+      if (!respuestaIA) {
+        respuestaIA = 'No entendi tu pregunta. Intenta con:\n\n' +
           '- "¿Cuantos clientes hay?"\n' +
           '- "Total de ventas"\n' +
           '- "Productos con stock menor a 10"\n' +
           '- "Muestra los proveedores"\n' +
-          '- "¿Que compro Juan?"',
-        fuente: null
-      };
+          '- "¿Que compro Juan?"';
+        fuente = null;
+      }
+
+      if (chatId) {
+        await this.addMessage(chatId, 'ia', respuestaIA, fuente, null);
+      }
+      return { respuesta: respuestaIA, fuente: fuente };
+    },
+
+    _formatearResultados: function(resultados) {
+      if (!resultados || resultados.length === 0) return 'Sin resultados.';
+      var lines = ['Encontre esto en tus datos:\n'];
+      for (var i = 0; i < Math.min(resultados.length, 3); i++) {
+        var r = resultados[i];
+        var nombre = r.nombre || r.tabla || 'documento';
+        var texto = String(r.texto || r.descripcion || '');
+        lines.push((i + 1) + '. **' + nombre + '**: ' + texto.slice(0, 200));
+      }
+      return lines.join('\n');
     },
 
     _matchPattern: function(pregunta) {

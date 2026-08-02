@@ -32,7 +32,7 @@
         if (this._tools.hasOwnProperty(name)) {
           var t = this._tools[name];
           result.push({
-            nombre: name,
+            nombre: t.nombre || name,
             estado: t.estado || 'disponible',
             descripcion: t.descripcion || ''
           });

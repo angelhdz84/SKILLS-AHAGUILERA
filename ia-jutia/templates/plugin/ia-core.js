@@ -19,7 +19,7 @@
         document: {
           id: 'id',
           index: ['nombre', 'descripcion', 'notas', 'texto'],
-          store: ['nombre', 'tipo', 'tabla']
+          store: ['nombre', 'tipo', 'tabla', 'texto', 'descripcion']
         },
         tokenize: 'forward',
         cache: true
@@ -247,6 +247,28 @@
         resultado.push(+(sum / ventana).toFixed(2));
       }
       return resultado;
+    },
+
+    embed: function(texto) {
+      // Si Full+ esta activo, usa transformers embedding
+      if (window.iaFull && typeof window.iaFull.embed === 'function') {
+        return window.iaFull.embed(texto);
+      }
+      // Fallback Lite: TF-IDF simple
+      if (!texto) return [];
+      var palabras = texto.toLowerCase().split(/\s+/);
+      var freq = {};
+      for (var i = 0; i < palabras.length; i++) {
+        if (palabras[i].length > 2) {
+          freq[palabras[i]] = (freq[palabras[i]] || 0) + 1;
+        }
+      }
+      var keys = Object.keys(freq);
+      var vec = [];
+      for (var j = 0; j < keys.length; j++) {
+        vec.push(freq[keys[j]]);
+      }
+      return vec;
     },
 
     exportResumen: async function(tabla) {
