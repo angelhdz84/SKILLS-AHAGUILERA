@@ -5,7 +5,8 @@ $GLOBAL_CONFIG = "$env:USERPROFILE\.config\opencode\opencode.json"
 $ATEJE_SKILLS = @(
     "pipeline-engine", "spec-engine", "design-engine", "validation-engine", "wiki-engine",
     "setup-init", "code-generator", "stack-compliance-guard", "deployment-jigue",
-    "ia-jutia", "alpine-ui-patterns", "capacitor", "upgrade-engine", "white-label"
+    "ia-jutia", "alpine-ui-patterns", "capacitor", "upgrade-engine", "white-label",
+    "code-review-engine"
 )
 
 Write-Host ("=" * 50) -ForegroundColor Cyan

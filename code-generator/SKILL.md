@@ -429,6 +429,12 @@ de Capacitor desde `capacitor/templates/capacitor-detect.js`. Esto permite que
 todos los plugins nativos funcionen con fallback web automatico.
 
 ⏸️ PAUSA. Revisa estructura. Responde "✅ FASE 2 OK" para continuar.
+
+**Antes de la pausa, ejecutar revisión automática:**
+Lanza `code-review-engine` (modo auto) sobre el bloque de FASE 2 entregado:
+1. Subagente `review-agent` (Ejes 1+2: compliance + calidad) y `spec-reviewer` (Ejes 3+4: spec + brand) en paralelo.
+2. Si hay `[BLOCK]`: corregir con auto-fix (confirmación del usuario) antes de la pausa.
+3. Aplicar auto-fix determinístico en lote, re-revisar (máx 2 rondas), y solo entonces anunciar el código como listo.
 ```
 
 **Reglas para inyectar librerías adicionales en index.html:**
@@ -680,6 +686,9 @@ Para cada módulo en la spec:
     [HTML puro + Alpine x-data/x-init, componentes según `component_library` (DaisyUI / Pines / Penguin / Pinemix), Bootstrap Icons en botones, Animate.css en entradas, responsive mobile-first]
 
     🛡️ Stack Compliance: ✅ Validado automáticamente (sin imports, rutas relativas, cifrado aplicado, UI consistente)
+
+    **Revisión automática del módulo (code-review-engine modo auto):**
+    Antes de anunciar el módulo como listo, lanzar `review-agent` (Ejes 1+2) y `spec-reviewer` (Ejes 3+4) en paralelo sobre `modules/[nombre-id]/module.js` + `module.html`. Si hay `[BLOCK]`, aplicar auto-fix con confirmación antes de la pausa.
    ⏸️ PAUSA. Responde "✅ [nombre-id] OK" para el siguiente módulo.
    ```
 3. Repite hasta completar todos los módulos de la spec.

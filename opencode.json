@@ -33,6 +33,18 @@
       "prompt": "{file:.opencode/prompts/test-agent.md}",
       "description": "Valida apps con validation-engine 4 fases + refactor",
       "permission": { "edit": "ask", "bash": "ask" }
+    },
+    "review-agent": {
+      "mode": "subagent",
+      "prompt": "{file:code-review-engine/agents/standards-reviewer.md}",
+      "description": "Revisa compliance (stack Ateje) + calidad (smells Fowler, ES5)",
+      "permission": { "edit": "deny", "bash": "read-only" }
+    },
+    "spec-reviewer": {
+      "mode": "subagent",
+      "prompt": "{file:code-review-engine/agents/spec-reviewer.md}",
+      "description": "Revisa alineacion con spec (specs/[app].md) + brand/UX (DESIGN.md)",
+      "permission": { "edit": "deny", "bash": "read-only" }
     }
   },
   "mcp": {

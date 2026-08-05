@@ -45,7 +45,7 @@
                  minlength="3"
                  required>
           <button type="submit"
-                  class="btn btn-primary gap-2 focus-ring"
+                  class="btn btn-primary gap-2 focus-ring min-h-[44px]"
                   aria-label="Agregar tarea"
                   :disabled="!nuevaTarea.trim()">
             <i class="bi bi-plus-lg"></i>
@@ -93,10 +93,10 @@
     </footer>
   </div>
 
-  <nav id="bottom-nav" class="btm-nav btm-nav-sm">
-    <button class="active" aria-label="Inicio"><i class="bi bi-house-fill"></i><span class="btm-nav-label">Inicio</span></button>
-    <button aria-label="Buscar"><i class="bi bi-search"></i><span class="btm-nav-label">Buscar</span></button>
-    <button aria-label="Perfil"><i class="bi bi-person"></i><span class="btm-nav-label">Perfil</span></button>
+  <nav id="bottom-nav" class="btm-nav">
+    <button class="active min-h-[44px]" aria-label="Inicio"><i class="bi bi-house-fill"></i><span class="btm-nav-label">Inicio</span></button>
+    <button class="min-h-[44px]" aria-label="Buscar"><i class="bi bi-search"></i><span class="btm-nav-label">Buscar</span></button>
+    <button class="min-h-[44px]" aria-label="Perfil"><i class="bi bi-person"></i><span class="btm-nav-label">Perfil</span></button>
   </nav>
 
   <div id="ui-loading-overlay" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">

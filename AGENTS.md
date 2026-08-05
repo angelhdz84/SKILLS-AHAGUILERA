@@ -29,6 +29,8 @@ Registered in `opencode.json`. Primary is `orchestrator` which dispatches `pipel
 | `spec-agent` | subagent | edit: deny, bash: deny |
 | `design-agent` | subagent | edit: deny, bash: deny |
 | `test-agent` | subagent | edit: ask, bash: ask |
+| `review-agent` | subagent | edit: deny, bash: read-only |
+| `spec-reviewer` | subagent | edit: deny, bash: read-only |
 
 Prompts in `.opencode/prompts/[agent].md`.
 
@@ -86,6 +88,7 @@ Playwright + pytest for template structure validation.
 | `.opencode/rules/*.md` | Rule files loaded into every session via `{file:}` |
 | `code-generator/templates/core/` | 20 core templates (app, db, crypto, ui, theme, main, sw, manifest, etc.) |
 | `apps/AHA-*/template.md` | 15 app templates (14 business + 1 dev) ready for pipeline |
+| `code-review-engine/` | Skill de revisión continua 4 ejes (compliance, calidad, spec, brand) + subagentes `review-agent`/`spec-reviewer` + comando `/review` |
 
 ## Library Migrations (Jul 2026)
 
