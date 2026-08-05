@@ -228,8 +228,8 @@
             };
             document.head.appendChild(s);
           }
-          // Nota: ia-worker.js NO se carga en runtime (embed() corre en main thread
-          // con pipeline cacheado en ia-full.js). El archivo queda como worker futuro.
+          // Nota: ia-worker.js NO se carga como script (se crea como Worker real
+          // bajo demanda desde ia-full.js embed(), con fallback a main thread).
           loadNext(['ia-full.js', 'ia-sqlite.js'], 0);
         },
 

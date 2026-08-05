@@ -204,36 +204,49 @@ v0.2 — L3 Export stats PDF
 
 ## ia-sqlite
 
-**Archivo:** `ia-jutia/templates/archived/full/core/ia-sqlite.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-sqlite.js`
 
-ia-sqlite.js — SQLite con FTS5 para IA Jutia (sql.js WASM) [ARCHIVED: funcionalidad integrada en ia-core.js]
+ia-sqlite.js — SQLite FTS5 para IA Jutia (sql.js WASM). Wrapper que expone `window.sqliteDB` con búsqueda FTS5 en chunks de documentos (Full+).
 
 ### Dependencias
 
-- `initSqlJs`
-- `db`
-- `sqliteDB`
+- `initSqlJs` (sql.js UMD, local en `assets/wasm/sql-wasm.js`)
+- `window.db` (AppDB principal)
+- `sqliteDB` (window)
 - `db._ia_sqlite`
-- `db.run`
-- `db.export`
-- `db.prepare`
-- `db.exec`
+
+### API
+
+- `init()` — Carga sql.js (locateFile → `modules/ia-jutia/assets/wasm/`), crea DB en memoria con FTS5 y hace lazy rebuild desde Dexie si la DB no está sincronizada.
+- `addChunks(docId, chunks)` — Inserta chunks y reconstruye el índice FTS5 (ROLLBACK + `stmt.free()` en errores).
+- `searchChunks(query)` — Búsqueda FTS5 (escape de comillas + `toLowerCase`), con `_fallbackSearch` por scoring de palabras si FTS5 no devuelve resultados.
+- `count()` — Conteo total (con `try/finally` para liberar statements).
 
 ---
 
 ## ia-worker
 
-**Archivo:** `ia-jutia/templates/archived/full/core/ia-worker.js`
+**Archivo:** `ia-jutia/templates/plugin/ia-worker.js`
 
-ia-worker.js — Transformers.js en Web Worker + q4 quantization [ARCHIVED: funcionalidad integrada en ia-core.js]
+ia-worker.js — Web Worker real para Transformers.js (Full+). Creado bajo demanda por `ia-full.js.embed()` para NO bloquear la UI al cargar el modelo ONNX de embeddings (`all-MiniLM-L6-v2`, ~23MB) ni al generar vectores.
 
----
+### Carga
 
-## ia-worker
+- `importScripts('modules/ia-jutia/assets/transformers.min.js')` al arrancar (UMD local, 100% offline).
+- Requiere servirse por HTTP (fetch de modelos bloqueado en `file://`).
+- Si el worker falla, `ia-full.js` hace fallback a pipeline en main thread (`Full._embedMain`).
 
-**Archivo:** `ia-jutia/templates/archived/lite/core/ia-worker.js`
+### Mensajes
 
-ia-worker.js — [ARCHIVED: funcionalidad integrada en ia-core.js]
+- `{ type: 'init', modelPath }` → `{ type: 'ready' }` o `{ type: 'error' }`
+- `{ type: 'embed', text, modelPath }` → `{ type: 'embed_result', vector, dimension, error? }`
+- `{ type: 'qa', question, chunks }` → `{ type: 'qa_result', respuesta, confianza, chunkId }` (retrieval por keyword, decisión de producto: sin modelo QA NLP)
+
+### Configuración offline (worker)
+
+- `env.localModelPath = 'modules/ia-jutia/models/'`
+- `env.allowRemoteModels = false`
+- `env.backends.onnx.wasm.wasmPaths = 'modules/ia-jutia/assets/wasm/'`
 
 ---
 

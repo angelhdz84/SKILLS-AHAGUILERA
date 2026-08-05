@@ -99,6 +99,7 @@
 | **design-engine** | Brand context injection + tokens DaisyUI/alpine-ui-patterns + extraccion de tokens via OpenPencil (opcional, Business) + captura de preferencias persistentes + decision tree component_library | design-ux-intelligence, daisyui-patterns, omd:apply, omd:sync, omd:remember, omd:learn |
 | **validation-engine** | 4 fases: compliance -> brand audit -> DevTools/Playwright -> QA rubric + modo refactor | validation-offline, ux-refactor, omd:designer-review, omd:final-qa |
 | **wiki-engine** | Wiki persistente + preferencias de diseno `.omd/preferences.md` + MCP memory (Engram opcional) | llm-wiki, omd:remember, omd:learn |
+| **code-review-engine** | Revision continua 4 ejes (compliance, calidad, spec, brand) con 2 subagentes en paralelo (`review-agent` + `spec-reviewer`), auto-fix con confirmacion por lote y comando `/review` para diffs git. Corre tras cada bloque de codigo y antes de validation-engine. | mattpocock code-review (patron 2 ejes), requesting/receiving-code-review (superpowers) |
 
 ### Skills Standalone
 
@@ -183,11 +184,12 @@ Ateje/
 |   +-- design-engine/SKILL.md
 |   +-- validation-engine/SKILL.md
 |   +-- wiki-engine/SKILL.md
+|   +-- code-review-engine/SKILL.md
 |
-+-- skills/                      # Skills standalone (9 directorios + 1 writer)
++-- skills/                      # Skills standalone (10 directorios + 1 writer)
 |   +-- setup-init/       code-generator/       stack-compliance-guard/
 |   +-- deployment-jigue/ ia-jutia/             alpine-ui-patterns/
-|   +-- capacitor/        upgrade-engine/
+|   +-- capacitor/        upgrade-engine/       code-review-engine/
 |
 +-- code-generator/templates/    # 20 templates core + patrones de modulo
 |   +-- core/                    # app.js, db.js, crypto.js, ui.js, theme.js, main.js,
@@ -200,8 +202,8 @@ Ateje/
 |   +-- delete.js
 |
 +-- ia-jutia/templates/          # Templates de la IA Jutia
-|   +-- plugin/                  # Plugin unificado (module.js, ia-core.js, ia-chat.js, tools/)
-|   +-- archived/                # Versiones viejas (lite/ y full/ separados)
+|   +-- plugin/                  # Plugin unificado (module.js, ia-core.js, ia-chat.js, ia-full.js, ia-sqlite.js, ia-worker.js, tools/)
+|   +-- scripts/                 # build-ia-zips.ps1 (ZIPs distribuibles Lite + Full+)
 |
 +-- component-examples/          # Componentes UI de ejemplo (Pines)
 |   +-- pines/                   # ~40 componentes avanzados
@@ -1030,6 +1032,7 @@ El `pipeline-engine` es el orquestador maestro. Soporta dos modos. El **perfil**
 | `/validate` | `validar diseno` | validation-engine modo brand audit |
 | `/refactor` | `refactorizar ux` | validation-engine modo refactor: auto-corrige desviaciones |
 | `/compliance` | -- | stack-compliance-guard manual |
+| `/review` | `revisar codigo` | code-review-engine: revisa diff git en 4 ejes (compliance, calidad, spec, brand) |
 | `/status` | -- | Lee pipeline state (specs/, project.config.js, docs/) |
 | `/archive` | -- | Mueve spec + reporte a specs/archive/ |
 | `/docs` | -- | Abre docs/guia-estudio-ateje.md (guia completa de estudio) |

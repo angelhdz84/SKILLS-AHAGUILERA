@@ -15,6 +15,7 @@
     version: '1.0-plugin-full',
     _ready: false,
     _pipeline: null,
+    _worker: null,
 
     // ─── Inicializacion ───
     initFull: async function() {
@@ -110,13 +111,80 @@
       }
     },
 
-    // ─── Embeddings ───
+    // ─── Embeddings (worker real, fallback main thread) ───
     embed: async function(texto) {
       if (!texto) return [];
+      var w = Full._getWorker();
+      if (w) {
+        try {
+          return await Full._embedViaWorker(w, texto);
+        } catch (e) {
+          var msgErr = (e && e.message) || String(e);
+          // Descartar worker roto (importScripts/modelo no disponible) para no reintentar
+          if (/no disponible|no cargo|importScripts/i.test(msgErr)) {
+            Full._worker = null;
+          }
+          console.warn('[ia-full] Worker fallo, usando main thread:', msgErr);
+        }
+      }
+      return Full._embedMain(texto);
+    },
+
+    // Crea el worker lazy (solo cuando embed() se llama por primera vez)
+    _getWorker: function() {
+      if (Full._worker !== null) return Full._worker;
       try {
+        if (typeof Worker === 'undefined') { Full._worker = null; return null; }
+        var w = new Worker(MODULE_PATH + 'ia-worker.js');
+        Full._worker = w;
+        return w;
+      } catch (e) {
+        console.warn('[ia-full] No se pudo crear worker:', e.message);
+        Full._worker = null;
+        return null;
+      }
+    },
+
+    _embedViaWorker: function(w, texto) {
+      return new Promise(function(resolve, reject) {
+        // 120s: la primera carga descarga transformers.js + modelo ONNX en el worker
+        var timeout = setTimeout(function() {
+          cleanup();
+          reject(new Error('Timeout en worker (primera carga de modelo lenta)'));
+        }, 120000);
+
+        function onMsg(ev) {
+          var m = ev.data || {};
+          if (m.type === 'embed_result') {
+            cleanup();
+            if (m.error) { reject(new Error(m.error)); return; }
+            resolve(m.vector || []);
+          } else if (m.type === 'error') {
+            cleanup();
+            reject(new Error(m.message || 'Error en worker'));
+          }
+        }
+        function onErr() {
+          cleanup();
+          reject(new Error('Evento error del worker'));
+        }
+        function cleanup() {
+          clearTimeout(timeout);
+          w.removeEventListener('message', onMsg);
+          w.removeEventListener('error', onErr);
+        }
+        w.addEventListener('message', onMsg);
+        w.addEventListener('error', onErr);
+        w.postMessage({ type: 'embed', text: texto, modelPath: MODULE_PATH + 'models/' });
+      });
+    },
+
+    // Fallback: pipeline en main thread (bloquea UI, solo si worker no disponible)
+    _embedMain: async function(texto) {
+      try {
+        if (typeof self.Transformers === 'undefined') return [];
         // Lazy init: crear pipeline de embeddings
         if (!Full._pipeline) {
-          if (typeof self.Transformers === 'undefined') return [];
           var pipelineFn = self.Transformers.pipeline;
           Full._pipeline = await pipelineFn(
             'feature-extraction',
@@ -136,7 +204,7 @@
         }
         return data;
       } catch(e) {
-        console.warn('[ia-full] Error en embed:', e.message);
+        console.warn('[ia-full] Error en embed main:', e.message);
         return [];
       }
     },
