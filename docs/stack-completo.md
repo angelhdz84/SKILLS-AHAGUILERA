@@ -124,6 +124,7 @@ index.html
 | **design-engine** | Aplica tokens de marca (colores, tipografia, spacing) a componentes DaisyUI/alpine-ui-patterns segun DESIGN.md. Captura correcciones del usuario como preferencias persistentes. | `.omd/preferences.md` + tokens aplicados |
 | **validation-engine** | 4 fases: compliance (stack rules) → brand audit (DESIGN.md) → DevTools QA → rubric 8 items. Modo refactor para auto-correccion. | `docs/validacion-[app].md` |
 | **wiki-engine** | Wiki persistente + preferencias de diseño. Doble capa: markdown versionado (humanos) + MCP memory graph (agente). | `wiki/*.md` + `.omd/preferences.md` |
+| **code-review-engine** | Revision continua 4 ejes (compliance, calidad, spec, brand) con 2 subagentes en paralelo (review-agent + spec-reviewer), auto-fix con confirmacion y comando /review para diffs git. Corre entre cada bloque de codigo y la validacion final. | Reporte por bloque + `[BLOCK]`/`[WARN]`/`[FYI]` |
 
 ### 4.2 Standalone skills
 
@@ -151,6 +152,7 @@ pipeline-engine
   │    └─→ code-generator (tokens aplicados en vivo)
   ├─→ code-generator
   │    ├─→ stack-compliance-guard (validacion automatica)
+  │    ├─→ code-review-engine (revision continua 4 ejes por bloque)
   │    ├─→ validation-engine (reporte)
   │    └─→ wiki-engine (ingesta)
   ├─→ validation-engine
@@ -205,7 +207,8 @@ FASE 3: BUILD
      a. design-engine aplica tokens de marca
      b. code-generator genera module.js + module.html
      c. stack-compliance-guard valida automaticamente
-     d. PAUSA hasta confirmacion
+     d. code-review-engine revisa el modulo en 4 ejes (auto)
+     e. PAUSA hasta confirmacion
   6. Si IA Jutia: generar core/ia.js + core/ia-ingest.js + module IA
   7. Si Full: generar neutralino.config.json + capacitor.config.json
 
@@ -476,6 +479,7 @@ RESULTADO:
 | `/validate` | Solo brand audit (validation-engine modo audit) |
 | `/refactor` | Solo correccion UX (validation-engine modo refactor) |
 | `/compliance` | Solo stack-compliance-guard |
+| `/review` | code-review-engine: revisa diff git en 4 ejes (compliance, calidad, spec, brand) |
 | `/ia` | Configurar IA Jutia (Lite/Full/No) |
 | `/wiki` | Gestionar wiki + preferencias |
 | `/status` | Ver estado actual del pipeline |
@@ -587,6 +591,9 @@ component_library: pines
 # Tests unitarios (pytest)
 cd tests
 python -m pytest test_app.py -v
+
+# Test estructural de la skill code-review-engine (sin browser)
+python test-code-review-engine.py
 
 # Playwright E2E sobre test-app.html
 # Requiere Chrome system channel

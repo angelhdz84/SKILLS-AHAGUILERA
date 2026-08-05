@@ -42,6 +42,7 @@ Prompts in `.opencode/prompts/[agent].md`.
 | `/pro` | Design pipeline (10 fases): taste → init → design → spec → code → inject → review → QA → pack → deploy |
 | `/build` | code-generator: Fase A (core/index.html) + Fase B (modules, one per turn) |
 | `/test` | validation-engine: compliance → brand audit → DevTools/Playwright → QA rubric |
+| `/review` | code-review-engine: revisa diff git en 4 ejes (compliance, calidad, spec, brand) |
 | `/deploy` | deployment-jigue: commit + push + package per profile |
 | `/upgrade` | upgrade-engine: migra perfil Lite/Professional/Business e IA Lite/Full |
 
@@ -71,6 +72,12 @@ cd tests; python -m pytest test-template.py -v
 ```
 
 Playwright + pytest for template structure validation.
+
+```powershell
+cd tests; python test-code-review-engine.py
+```
+
+Structural checks for the `code-review-engine` skill: SKILL.md sections, reviewer agents, Fowler smells baseline, opencode.json subagents, `/review` command.
 
 ## CI/CD
 
